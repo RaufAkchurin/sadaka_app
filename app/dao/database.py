@@ -2,15 +2,20 @@ import uuid
 from datetime import datetime
 from decimal import Decimal
 from typing import Annotated
-from sqlalchemy import func, TIMESTAMP, Integer, inspect
+from sqlalchemy import func, TIMESTAMP, Integer, inspect, NullPool
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase, declared_attr
 from sqlalchemy.ext.asyncio import AsyncAttrs, async_sessionmaker, create_async_engine, AsyncSession
-from app.config import database_url
+from app.config import settings
 
 
+if settings.MODE == "TEST":
+    DATABASE_URL = f"sqlite+aiosqlite:///{settings.BASE_DIR}/data/db_test.sqlite3"
+    DATABASE_PARAMS = {"poolclass": NullPool}
+else:
+    DATABASE_URL = f"sqlite+aiosqlite:///{settings.BASE_DIR}/data/db.sqlite3"
+    DATABASE_PARAMS = {}
 
-
-engine = create_async_engine(url=database_url)
+engine = create_async_engine(url=DATABASE_URL, **DATABASE_PARAMS)
 async_session_maker = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 str_uniq = Annotated[str, mapped_column(unique=True, nullable=False)]
 

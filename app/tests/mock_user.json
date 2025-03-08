@@ -1,0 +1,37 @@
+[
+  {
+    "email": "john.doe@example.com",
+    "phone_number": "+79179876543",
+    "first_name": "John",
+    "last_name": "Doe",
+    "password": "password123"
+  },
+  {
+    "email": "mary.smith@example.com",
+    "phone_number": "+79179876544",
+    "first_name": "Mary",
+    "last_name": "Smith",
+    "password": "securePass987"
+  },
+  {
+    "email": "alex.jones@example.com",
+    "phone_number": "+79179876545",
+    "first_name": "Alex",
+    "last_name": "Jones",
+    "password": "alex2021pass"
+  },
+  {
+    "email": "kate.brown@example.com",
+    "phone_number": "+79179876546",
+    "first_name": "Kate",
+    "last_name": "Brown",
+    "password": "superstrongPass22"
+  },
+  {
+    "email": "michael.white@example.com",
+    "phone_number": "+79179876547",
+    "first_name": "Michael",
+    "last_name": "White",
+    "password": "michael12345"
+  }
+]
