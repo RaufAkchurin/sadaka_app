@@ -1,5 +1,5 @@
 import pytest
-from app.tests.conftest import async_client
+from app.tests.conftest import ac
 
 
 @pytest.mark.parametrize("email, phone_number, first_name, last_name, password, confirm_password, status_code, response_message",
@@ -11,11 +11,17 @@ from app.tests.conftest import async_client
     ("abcde", "+79179876625", "string", "string", "password", "password", 422, None), #email validation
 ]
 )
-async def test_register(async_client, email, phone_number, first_name, last_name, password, confirm_password, status_code, response_message):
+async def test_register(ac, email, phone_number, first_name, last_name, password, confirm_password, status_code, response_message):
     # Сначала регистрируем пользователя
-    user_data = {"email": email, "phone_number": phone_number, "first_name": first_name,
-                 "last_name": last_name, "password": password, "confirm_password": confirm_password}
-    response = await async_client.post("/auth/register/", json=user_data)
+    user_data = {
+                "email": email,
+                 "phone_number": phone_number,
+                 "first_name": first_name,
+                 "last_name": last_name,
+                 "password": password,
+                 "confirm_password": confirm_password
+                 }
+    response = await ac.post("/auth/register/", json=user_data)
     assert response.status_code == status_code
     if response_message:
         assert response.json() == response_message
@@ -27,9 +33,9 @@ async def test_register(async_client, email, phone_number, first_name, last_name
      ("test1@test.com", "wrong_password", 400, {'detail': 'Неверная почта или пароль'}),
      ("test1@test.com", "password", 200, {"ok":True,"message":"Авторизация успешна!"}),
   ])
-async def test_login(async_client, email, password, status_code, response_message):
+async def test_login(ac, email, password, status_code, response_message):
     user_data = {"email": email, "password": password}
-    response = await async_client.post("/auth/login/", json=user_data)
+    response = await ac.post("/auth/login/", json=user_data)
     assert response.status_code == status_code
     if response_message:
         assert response.json() == response_message
@@ -40,16 +46,16 @@ async def test_login(async_client, email, password, status_code, response_messag
 
 
 
-async def test_me_400(self):
-    async with AsyncClient(transport=ASGITransport(app),
-                           base_url="http://test/auth",
-                           ) as client:
-        response = await client.get("/me/")
-        assert response.status_code == 400
-        assert response.json() == {'detail': 'Токен отсутствует в заголовке'}
+async def test_me_400(authenticated_ac):
+    response = await authenticated_ac.get("/auth/me/",
+                                          headers={"Authorization": f"Bearer {authenticated_ac.cookies['user_access_token']}"}
+                                          )
+    token = response.cookies.get('user_access_token')
+    assert response.status_code == 200
+    assert response.json() == {'detail': 'Токен отсутствует в заголовке'}
 
-async def test_root(async_client):
-    response = await async_client.get("/")
+async def test_root(ac):
+    response = await ac.get("/")
     assert response.status_code == 200
     assert response.json() == {'author': 'Яковенко Алексей', 'community': 'https://t.me/PythonPathMaster',
                                'message': "Добро пожаловать! Проект создан для сообщества 'Легкий путь в Python'."}

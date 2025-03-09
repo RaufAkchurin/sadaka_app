@@ -42,13 +42,25 @@ def event_loop(request):
     yield loop
     loop.close()
 
-@pytest.fixture(scope="session")
-async def async_client():
-    async with AsyncClient(transport=ASGITransport(fastapi_app),
-                           base_url="http://test/") as async_client:
-        yield async_client
 
 @pytest.fixture(scope="session")
 async def session():
     async with async_session_maker() as session:
         yield session
+
+@pytest.fixture(scope="function")
+async def ac():
+    async with AsyncClient(transport=ASGITransport(fastapi_app),
+                           base_url="http://test/") as async_client:
+        yield async_client
+
+
+@pytest.fixture(scope="session")
+async def authenticated_ac():
+    async with AsyncClient(transport=ASGITransport(fastapi_app),
+                           base_url="http://test") as ac:
+
+        await ac.post("/auth/login/", json={"email": "test1@test.com", "password": "password"})
+
+        assert ac.cookies["user_access_token"]
+        yield ac
