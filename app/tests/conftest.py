@@ -8,8 +8,9 @@ from fastapi.testclient import TestClient
 from sqlalchemy import insert
 from app.config import settings
 from app.dao.database import async_session_maker, engine, Base
-from app.auth.models import User
+from app.auth.models import User, Role
 from app.main import app as fastapi_app
+from typing import NamedTuple, Dict, Any
 
 
 
@@ -28,10 +29,13 @@ async def prepare_database(session):
             return json.load(file)
 
     users = open_mock_json("user")
+    roles = open_mock_json("role")
 
     async with async_session_maker() as session:
         add_users = insert(User).values(users)
+        add_roles = insert(Role).values(roles)
         await session.execute(add_users)
+        await session.execute(add_roles)
         await session.commit()
 
     # Взято из документации к pytest-asyncio
@@ -59,8 +63,8 @@ async def ac():
 async def authenticated_ac():
     async with AsyncClient(transport=ASGITransport(fastapi_app),
                            base_url="http://test") as ac:
-
         await ac.post("/auth/login/", json={"email": "test1@test.com", "password": "password"})
-
         assert ac.cookies["user_access_token"]
-        yield ac
+        tokens ={"user_access_token": ac.cookies.get('user_access_token'),
+                "user_refresh_token": ac.cookies.get('user_refresh_token')}
+        yield ac, tokens

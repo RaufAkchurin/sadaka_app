@@ -1,6 +1,12 @@
 import pytest
 from app.tests.conftest import ac
 
+async def test_root(ac):
+    response = await ac.get("/")
+    assert response.status_code == 200
+    assert response.json() == {'author': 'Яковенко Алексей', 'community': 'https://t.me/PythonPathMaster',
+                               'message': "Добро пожаловать! Проект создан для сообщества 'Легкий путь в Python'."}
+
 
 @pytest.mark.parametrize("email, phone_number, first_name, last_name, password, confirm_password, status_code, response_message",
 [
@@ -27,7 +33,6 @@ async def test_register(ac, email, phone_number, first_name, last_name, password
         assert response.json() == response_message
 
 
-
 @pytest.mark.parametrize("email, password, status_code, response_message",
  [
      ("test1@test.com", "wrong_password", 400, {'detail': 'Неверная почта или пароль'}),
@@ -45,20 +50,32 @@ async def test_login(ac, email, password, status_code, response_message):
         assert response.cookies.get('user_refresh_token')
 
 
-
-async def test_me_400(authenticated_ac):
-    response = await authenticated_ac.get("/auth/me/",
-                                          headers={"Authorization": f"Bearer {authenticated_ac.cookies['user_access_token']}"}
-                                          )
-    token = response.cookies.get('user_access_token')
+async def test_logout(authenticated_ac):
+    authenticated_ac, cookies_with_tokens = authenticated_ac
+    assert cookies_with_tokens is not None
+    response = await authenticated_ac.post("/auth/logout/")
     assert response.status_code == 200
-    assert response.json() == {'detail': 'Токен отсутствует в заголовке'}
+    assert response.json() == {"message": "Пользователь успешно вышел из системы"}
+    assert cookies_with_tokens is None
 
-async def test_root(ac):
-    response = await ac.get("/")
+
+
+async def test_me_200(authenticated_ac):
+    authenticated_ac, cookies_with_tokens = authenticated_ac
+    response = await authenticated_ac.get("/auth/me/", cookies=cookies_with_tokens)
     assert response.status_code == 200
-    assert response.json() == {'author': 'Яковенко Алексей', 'community': 'https://t.me/PythonPathMaster',
-                               'message': "Добро пожаловать! Проект создан для сообщества 'Легкий путь в Python'."}
+    assert response.json() == {'email': 'test1@test.com',
+                               'first_name': 'test1',
+                               'id': 1,
+                               'last_name': 'test1',
+                               'phone_number': '+71111111111',
+                               'role_id': 1,
+                               'role_name': 'superadmin'}
+
+async def test_me_400(ac):
+    response = await ac.get("/auth/me/")
+    assert response.status_code == 400
+    assert response.json() == {"detail":"Токен отсутствует в заголовке"}
 
 
 import pytest
