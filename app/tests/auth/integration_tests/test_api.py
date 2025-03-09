@@ -52,11 +52,20 @@ async def test_login(ac, email, password, status_code, response_message):
 
 async def test_logout(authenticated_ac):
     authenticated_ac, cookies_with_tokens = authenticated_ac
-    assert cookies_with_tokens is not None
-    response = await authenticated_ac.post("/auth/logout/")
+
+    user_access_token = authenticated_ac.cookies.get('user_access_token')
+    user_refresh_token = authenticated_ac.cookies.get('user_refresh_token')
+    assert user_access_token is not None
+    assert user_refresh_token is not None
+
+    response = await authenticated_ac.post("/auth/logout")
     assert response.status_code == 200
     assert response.json() == {"message": "Пользователь успешно вышел из системы"}
-    assert cookies_with_tokens is None
+
+    user_access_token = authenticated_ac.cookies.get('user_access_token')
+    user_refresh_token = authenticated_ac.cookies.get('user_refresh_token')
+    assert user_access_token is None
+    assert user_refresh_token is None
 
 
 
