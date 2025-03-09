@@ -14,7 +14,7 @@ from app.main import app as fastapi_app
 
 
 @pytest.fixture(scope='session', autouse=True)
-async def prepare_database():
+async def prepare_database(session):
     assert settings.MODE == "TEST"
 
     async with engine.begin() as conn:
@@ -42,8 +42,13 @@ def event_loop(request):
     yield loop
     loop.close()
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="session")
 async def async_client():
     async with AsyncClient(transport=ASGITransport(fastapi_app),
                            base_url="http://test/") as async_client:
         yield async_client
+
+@pytest.fixture(scope="session")
+async def session():
+    async with async_session_maker() as session:
+        yield session

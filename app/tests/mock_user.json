@@ -1,37 +1,37 @@
 [
   {
-    "email": "john.doe@example.com",
-    "phone_number": "+79179876543",
-    "first_name": "John",
-    "last_name": "Doe",
-    "password": "password123"
+    "email": "test1@test.com",
+    "phone_number": "+71111111111",
+    "first_name": "test1",
+    "last_name": "test1",
+    "password": "$2b$12$rm7Bu.bjhNHKU25th37EFO6tpnvjz5EiB2s7QyJX/BKx9aOsIwEKm"
   },
   {
-    "email": "mary.smith@example.com",
-    "phone_number": "+79179876544",
-    "first_name": "Mary",
-    "last_name": "Smith",
-    "password": "securePass987"
+    "email": "test2@test.com",
+    "phone_number": "+72222222222",
+    "first_name": "test2",
+    "last_name": "test2",
+    "password": "$2b$12$rm7Bu.bjhNHKU25th37EFO6tpnvjz5EiB2s7QyJX/BKx9aOsIwEKm"
   },
   {
-    "email": "alex.jones@example.com",
-    "phone_number": "+79179876545",
-    "first_name": "Alex",
-    "last_name": "Jones",
-    "password": "alex2021pass"
+    "email": "test3@test.com",
+    "phone_number": "+73333333333",
+    "first_name": "test3",
+    "last_name": "test3",
+    "password": "$2b$12$rm7Bu.bjhNHKU25th37EFO6tpnvjz5EiB2s7QyJX/BKx9aOsIwEKm"
   },
   {
-    "email": "kate.brown@example.com",
-    "phone_number": "+79179876546",
-    "first_name": "Kate",
-    "last_name": "Brown",
-    "password": "superstrongPass22"
+    "email": "test4@test.com",
+    "phone_number": "+74444444444",
+    "first_name": "test4",
+    "last_name": "test4",
+    "password": "$2b$12$rm7Bu.bjhNHKU25th37EFO6tpnvjz5EiB2s7QyJX/BKx9aOsIwEKm"
   },
   {
-    "email": "michael.white@example.com",
-    "phone_number": "+79179876547",
-    "first_name": "Michael",
-    "last_name": "White",
-    "password": "michael12345"
+    "email": "test5@test.com",
+    "phone_number": "+75555555555",
+    "first_name": "test5",
+    "last_name": "test5",
+    "password": "$2b$12$rm7Bu.bjhNHKU25th37EFO6tpnvjz5EiB2s7QyJX/BKx9aOsIwEKm"
   }
 ]
