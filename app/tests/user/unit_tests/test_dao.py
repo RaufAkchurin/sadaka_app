@@ -1,6 +1,7 @@
 import pytest
 
-from app.auth.dao import UsersDAO
+from app.auth.dao import UsersDAO, RoleDAO
+
 
 @pytest.mark.parametrize("user_id, email, is_exist",
 [
@@ -15,3 +16,4 @@ async def test_find_one_or_none_by_id(session, user_id, email, is_exist):
         assert user.email == email
     else:
         assert user is None
+

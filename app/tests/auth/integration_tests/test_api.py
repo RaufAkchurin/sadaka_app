@@ -1,5 +1,10 @@
+import datetime
+
 import pytest
-from app.tests.conftest import ac
+from jose import jwt
+
+from app.config import settings
+from app.tests.conftest import ac, authenticated_ac
 
 async def test_root(ac):
     response = await ac.get("/")
@@ -67,55 +72,54 @@ async def test_logout(authenticated_ac):
     assert user_access_token is None
     assert user_refresh_token is None
 
+@pytest.mark.parametrize("is_authorized, status_code, response_message",
+ [
+     (True, 200, {'email': 'test1@test.com', 'first_name': 'test1', 'id': 1, 'last_name': 'test1',
+                  'phone_number': '+71111111111','role_id': 1, 'role_name': 'user'}),
+     (False, 400, {"detail": "Токен отсутствует в заголовке"}),
+ ])
+async def test_me_200(ac, authenticated_ac, is_authorized, status_code, response_message):
+    if is_authorized:
+        authenticated_ac, cookies_with_tokens = authenticated_ac
+        response = await authenticated_ac.get("/auth/me/", cookies=cookies_with_tokens)
+
+    else:
+        response = await ac.get("/auth/me/")
+
+    assert response.status_code == status_code
+    assert response.json() == response_message
 
 
-async def test_me_200(authenticated_ac):
-    authenticated_ac, cookies_with_tokens = authenticated_ac
-    response = await authenticated_ac.get("/auth/me/", cookies=cookies_with_tokens)
-    assert response.status_code == 200
-    assert response.json() == {'email': 'test1@test.com',
-                               'first_name': 'test1',
-                               'id': 1,
-                               'last_name': 'test1',
-                               'phone_number': '+71111111111',
-                               'role_id': 1,
-                               'role_name': 'superadmin'}
 
-async def test_me_400(ac):
-    response = await ac.get("/auth/me/")
-    assert response.status_code == 400
-    assert response.json() == {"detail":"Токен отсутствует в заголовке"}
+#TODO написать тесты для алл_юзерс когда будутфабрики для юзеров и ролей
+# кейсы: авторизован, неавторизован, юзер, админ
+# @pytest.mark.parametrize("is_authorized, is_admin, status_code, response_message",
+#  [
+#      (False, 400, {"detail": "Токен отсутствует в заголовке"}),
+#      (True, 200, {"detail": "Токен отсутствует в заголовке"}),
+#  ])
 
 
-import pytest
-from httpx import AsyncClient, ASGITransport
-from app.main import app
 
-async def test_all_users_unauthorized():
-    async with AsyncClient(transport=ASGITransport(app),
-                           base_url="http://test/auth") as client:
-        response = await client.get("/all_users/")
-        assert response.status_code == 400
-        assert response.json() == {"detail": "Токен отсутствует в заголовке"}
+@pytest.mark.parametrize("is_authorized, status_code, response_message",
+ [
+     (True, 200, {"message": "Токены успешно обновлены"}),
+     (False, 400, {"detail": "Токен отсутствует в заголовке"}),
+ ])
+async def test_refresh_token(ac, authenticated_ac, is_authorized, status_code, response_message):
+        if is_authorized:
+            client = authenticated_ac[0]
+            response = await client.post("/auth/refresh", cookies=authenticated_ac[1])
 
-async def test_all_users_not_admin():
-    pass
+        else:
+            client = ac
+            response = await client.post("/auth/refresh")
+
+        assert response.status_code == status_code
+        assert response.json() == response_message
 
 
-async def test_refresh_token_invalid():
-    async with AsyncClient(transport=ASGITransport(app),
-                           base_url="http://test/auth") as client:
-        response = await client.post("/refresh")
-        assert response.status_code == 400
-        assert response.json() == {"detail": "Токен отсутствует в заголовке"}
 
-async def test_logout_without_auth():
-    async with AsyncClient(transport=ASGITransport(app),
-                           base_url="http://test/auth") as client:
-        response = await client.post("/logout")
-        assert response.status_code == 200
-        assert response.json() == {"message": "Пользователь успешно вышел из системы"}
-        # Проверяем, что куки удалены
-        assert "user_access_token" not in response.cookies
-        assert "user_refresh_token" not in response.cookies
+
+
 

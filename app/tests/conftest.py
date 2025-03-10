@@ -4,17 +4,15 @@ import os
 
 import pytest
 from httpx import AsyncClient, ASGITransport
-from fastapi.testclient import TestClient
 from sqlalchemy import insert
 from app.config import settings
 from app.dao.database import async_session_maker, engine, Base
 from app.auth.models import User, Role
 from app.main import app as fastapi_app
-from typing import NamedTuple, Dict, Any
 
 
 
-@pytest.fixture(scope='session', autouse=True)
+@pytest.fixture(scope='package', autouse=True)
 async def prepare_database(session):
     assert settings.MODE == "TEST"
 
