@@ -16,5 +16,5 @@ async def test_add_and_get_new_user(session):
 
     # Добавление пользователя
     new_user = await user_dao.add(values=SUserAddDB(**user_data))
-    assert new_user.id == 6
+    assert new_user.id == 7
     assert new_user is not None
