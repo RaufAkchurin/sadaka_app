@@ -10,36 +10,41 @@ from app.dao.database import async_session_maker, engine, Base
 from app.auth.models import User, Role
 from app.main import app as fastapi_app
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="class")
 def event_loop(request):
     """Create an instance of the default event loop for each test case."""
     loop = asyncio.get_event_loop_policy().new_event_loop()
     yield loop
     loop.close()
 
+def open_mock_json(model: str):
+    test_dir = os.path.dirname(os.path.dirname(__file__))
+    file_path = os.path.join(test_dir, f"tests/mock_{model}.json")
+    with open(file_path, "r") as file:
+        return json.load(file)
+
 @pytest.fixture(scope='class', autouse=True)
 async def prepare_database(session):
-    assert settings.MODE == "TEST"
+    try:
+        assert settings.MODE == "TEST"
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.drop_all)
+            await conn.run_sync(Base.metadata.create_all)
 
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
-        await conn.run_sync(Base.metadata.create_all)
+        users = open_mock_json("user")
+        roles = open_mock_json("role")
 
-    def open_mock_json(model: str):
-        test_dir = os.path.dirname(os.path.dirname(__file__))
-        file_path = os.path.join(test_dir, f"tests/mock_{model}.json")
-        with open(file_path, "r") as file:
-            return json.load(file)
-
-    users = open_mock_json("user")
-    roles = open_mock_json("role")
-
-    async with async_session_maker() as session:
-        add_users = insert(User).values(users)
-        add_roles = insert(Role).values(roles)
-        await session.execute(add_users)
-        await session.execute(add_roles)
-        await session.commit()
+        async with async_session_maker() as session:
+            add_users = insert(User).values(users)
+            add_roles = insert(Role).values(roles)
+            await session.execute(add_users)
+            await session.execute(add_roles)
+            await session.commit()
+    except:
+        session.rollback()
+        raise
+    finally:
+        session.close()
 
     # Взято из документации к pytest-asyncio
 

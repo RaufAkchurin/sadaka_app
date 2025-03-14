@@ -1,8 +1,4 @@
-import factory.fuzzy
-from faker import Faker
-from app.tests.conftest import session
-from random import randint
-from polyfactory.factories.sqlalchemy_factory import SQLAlchemyFactory
+
 
 from app.auth.dao import UsersDAO
 from app.auth.models import User, Role

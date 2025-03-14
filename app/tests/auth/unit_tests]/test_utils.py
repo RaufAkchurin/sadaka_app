@@ -46,7 +46,7 @@ class TestUtils:
                           "last_name": "test12",
                           "password": hash}
 
-        new_user = await user_dao.add(values=SUserAddDB(**user_data_dict))
+        await user_dao.add(values=SUserAddDB(**user_data_dict))
         user = await user_dao.find_one_or_none(
             filters=EmailModel(email="test12@test.com")
         )
