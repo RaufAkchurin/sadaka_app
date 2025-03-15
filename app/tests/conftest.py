@@ -82,9 +82,8 @@ async def authenticated_ac():
                            base_url="http://test") as ac:
         await ac.post("/auth/login/", json={"email": "user1@test.com", "password": "password"})
         assert ac.cookies["user_access_token"]
-        tokens ={"user_access_token": ac.cookies.get('user_access_token'),
-                "user_refresh_token": ac.cookies.get('user_refresh_token')}
-        yield ac, tokens
+        yield AuthorizedClientModel(client=ac, cookies=CookiesModel(user_access_token=ac.cookies.get('user_access_token'),
+                                                                    user_refresh_token=ac.cookies.get('user_refresh_token')))
 
 @pytest.fixture(scope="class")
 async def authenticated_super():
@@ -93,9 +92,9 @@ async def authenticated_super():
         response = await ac.post("/auth/login/", json={"email": "superadmin@test.com", "password": "password"})
         assert response.status_code == 200
         assert ac.cookies["user_access_token"]
-        tokens ={"user_access_token": ac.cookies.get('user_access_token'),
-                "user_refresh_token": ac.cookies.get('user_refresh_token')}
-        yield ac, tokens
+
+        yield AuthorizedClientModel(client=ac, cookies=CookiesModel(user_access_token=ac.cookies.get('user_access_token'),
+                                                                    user_refresh_token=ac.cookies.get('user_refresh_token')))
 
 
 async def authorize_by(ac: AsyncClient, user: User):

@@ -54,19 +54,19 @@ class TestApi:
 
 
     async def test_logout(self, authenticated_ac):
-        authenticated_ac, cookies_with_tokens = authenticated_ac
+        client = authenticated_ac.client
 
-        user_access_token = authenticated_ac.cookies.get('user_access_token')
-        user_refresh_token = authenticated_ac.cookies.get('user_refresh_token')
+        user_access_token = client.cookies.get('user_access_token')
+        user_refresh_token = client.cookies.get('user_refresh_token')
         assert user_access_token is not None
         assert user_refresh_token is not None
 
-        response = await authenticated_ac.post("/auth/logout")
+        response = await client.post("/auth/logout")
         assert response.status_code == 200
         assert response.json() == {"message": "Пользователь успешно вышел из системы"}
 
-        user_access_token = authenticated_ac.cookies.get('user_access_token')
-        user_refresh_token = authenticated_ac.cookies.get('user_refresh_token')
+        user_access_token = client.cookies.get('user_access_token')
+        user_refresh_token = client.cookies.get('user_refresh_token')
         assert user_access_token is None
         assert user_refresh_token is None
 
@@ -79,8 +79,7 @@ class TestApi:
 
     async def test_me_200(self, ac, authenticated_ac, is_authorized, status_code, response_message):
         if is_authorized:
-            authenticated_ac, cookies_with_tokens = authenticated_ac
-            response = await authenticated_ac.get("/auth/me/", cookies=cookies_with_tokens)
+            response = await authenticated_ac.client.get("/auth/me/", cookies=authenticated_ac.cookies.dict())
 
         else:
             response = await ac.get("/auth/me/")
@@ -96,8 +95,8 @@ class TestApi:
      ])
     async def test_refresh_token(self, ac, authenticated_ac, is_authorized, status_code, response_message):
             if is_authorized:
-                client = authenticated_ac[0]
-                response = await client.post("/auth/refresh", cookies=authenticated_ac[1])
+                client = authenticated_ac.client
+                response = await client.post("/auth/refresh", cookies=authenticated_ac.cookies.dict())
 
             else:
                 client = ac
