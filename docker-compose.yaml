@@ -1,8 +1,0 @@
-services:
-
-  db:
-    image: postgres:15
-    container_name: sadaka_app_test_db
-    env_file: .env
-    ports:
-      - 5434:5432
