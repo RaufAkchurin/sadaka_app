@@ -1,5 +1,7 @@
 import pytest
-from app.tests.conftest import ac, authenticated_ac
+from app.auth.schemas import EmailModel
+from app.tests.conftest import ac, authenticated_ac, authorize_by
+
 
 class TestApi:
     async def test_root(self, ac):
@@ -36,8 +38,8 @@ class TestApi:
 
     @pytest.mark.parametrize("email, password, status_code, response_message",
      [
-         ("test1@test.com", "wrong_password", 400, {'detail': 'Неверная почта или пароль'}),
-         ("test1@test.com", "password", 200, {"ok":True,"message":"Авторизация успешна!"}),
+         ("user1@test.com", "wrong_password", 400, {'detail': 'Неверная почта или пароль'}),
+         ("user1@test.com", "password", 200, {"ok":True,"message":"Авторизация успешна!"}),
       ])
     async def test_login(self, ac, email, password, status_code, response_message):
         user_data = {"email": email, "password": password}
@@ -70,7 +72,7 @@ class TestApi:
 
     @pytest.mark.parametrize("is_authorized, status_code, response_message",
      [
-         (True, 200, {'email': 'test1@test.com', 'first_name': 'test1', 'id': 1, 'last_name': 'test1',
+         (True, 200, {'email': 'user1@test.com', 'first_name': 'user1', 'id': 4, 'last_name': 'user1',
                       'phone_number': '+71111111111','role_id': 1, 'role_name': 'user'}),
          (False, 400, {"detail": "Токен отсутствует в заголовке"}),
      ])
@@ -85,17 +87,6 @@ class TestApi:
 
         assert response.status_code == status_code
         assert response.json() == response_message
-
-
-
-    #TODO написать тесты для алл_юзерс когда будутфабрики для юзеров и ролей
-    # кейсы: авторизован, неавторизован, юзер, админ
-    # @pytest.mark.parametrize("is_authorized, is_admin, status_code, response_message",
-    #  [
-    #      (False, 400, {"detail": "Токен отсутствует в заголовке"}),
-    #      (True, 200, {"detail": "Токен отсутствует в заголовке"}),
-    #  ])
-
 
 
     @pytest.mark.parametrize("is_authorized, status_code, response_message",
@@ -116,7 +107,29 @@ class TestApi:
             assert response.json() == response_message
 
 
+    @pytest.mark.parametrize("role, is_authorized, status_code, users_count, response_message",
+     [   #AUTHORIZED USERS
+         ("superadmin@test.com",  True, 200, 6,    None),
+         ("admin@test.com",       True, 200, 6,    None),
+         ("moderator@test.com",   True, 403, None,    {'detail': 'Недостаточно прав'}),
+         ("user1@test.com",        True, 403, None,    {'detail': 'Недостаточно прав'}),
+         # NOT AUTHORIZED USERS
+         (None, False, 400, None, {"detail":"Токен отсутствует в заголовке"} ),
+     ])
+    async def test_all_users(self, ac,authenticated_super, user_dao,role, is_authorized, status_code, users_count, response_message):
+        if is_authorized:
+            current_user = await user_dao.find_one_or_none(filters=EmailModel(email=role))
+            if current_user is None:
+                raise ValueError("User not found")
+            authorized_client = await authorize_by(ac, current_user)
+            client = authorized_client.client
 
+            response = await client.get("/auth/all_users/", cookies=authorized_client.cookies.dict())
 
+            assert response.status_code == status_code
 
+            if users_count:
+                assert len(response.json()) == users_count
 
+            if response_message:
+                assert response.json() == response_message

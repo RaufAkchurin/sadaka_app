@@ -9,6 +9,8 @@ from app.config import settings
 from app.dao.database import async_session_maker, engine, Base
 from app.auth.models import User, Role
 from app.main import app as fastapi_app
+from app.tests.schemas import AuthorizedClientModel, CookiesModel
+
 
 @pytest.fixture(scope="class")
 def event_loop(request):
@@ -55,7 +57,7 @@ async def session():
         yield session
 
 @pytest.fixture(scope="class")
-async def user_dao(session):
+async def user_dao(session) -> UsersDAO:
     user_dao = UsersDAO(session)
     return user_dao
 
@@ -70,8 +72,32 @@ async def ac():
 async def authenticated_ac():
     async with AsyncClient(transport=ASGITransport(fastapi_app),
                            base_url="http://test") as ac:
-        await ac.post("/auth/login/", json={"email": "test1@test.com", "password": "password"})
+        await ac.post("/auth/login/", json={"email": "user1@test.com", "password": "password"})
         assert ac.cookies["user_access_token"]
         tokens ={"user_access_token": ac.cookies.get('user_access_token'),
                 "user_refresh_token": ac.cookies.get('user_refresh_token')}
         yield ac, tokens
+
+@pytest.fixture(scope="class")
+async def authenticated_super():
+    async with AsyncClient(transport=ASGITransport(fastapi_app),
+                           base_url="http://test") as ac:
+        response = await ac.post("/auth/login/", json={"email": "superadmin@test.com", "password": "password"})
+        assert response.status_code == 200
+        assert ac.cookies["user_access_token"]
+        tokens ={"user_access_token": ac.cookies.get('user_access_token'),
+                "user_refresh_token": ac.cookies.get('user_refresh_token')}
+        yield ac, tokens
+
+
+async def authorize_by(ac: AsyncClient, user: User):
+    logout_response = await ac.post("/auth/logout/")
+    assert logout_response.status_code == 307
+
+    login_response = await ac.post("/auth/login/", json={"email": user.email, "password": "password"})
+    assert login_response.status_code == 200
+
+    return AuthorizedClientModel(client=ac,
+                                 cookies=CookiesModel(user_access_token=ac.cookies.get('user_access_token'),
+                                                     user_refresh_token=ac.cookies.get('user_refresh_token'),
+                                                    ))

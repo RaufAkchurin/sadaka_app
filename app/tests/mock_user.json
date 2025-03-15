@@ -1,37 +1,40 @@
 [
   {
-    "email": "test1@test.com",
+    "email": "superadmin@test.com",
+    "phone_number": "+77711111114",
+    "first_name": "superadmin",
+    "last_name": "superadmin",
+    "password": "$2b$12$rm7Bu.bjhNHKU25th37EFO6tpnvjz5EiB2s7QyJX/BKx9aOsIwEKm",
+    "role_id": 4
+  },
+    {
+    "email": "admin@test.com",
+    "phone_number": "+77711111113",
+    "first_name": "admin",
+    "last_name": "admin",
+    "password": "$2b$12$rm7Bu.bjhNHKU25th37EFO6tpnvjz5EiB2s7QyJX/BKx9aOsIwEKm",
+    "role_id": 3
+  },
+      {
+    "email": "moderator@test.com",
+    "phone_number": "+77711111112",
+    "first_name": "moderator",
+    "last_name": "moderator",
+    "password": "$2b$12$rm7Bu.bjhNHKU25th37EFO6tpnvjz5EiB2s7QyJX/BKx9aOsIwEKm",
+    "role_id": 2
+  },
+  {
+    "email": "user1@test.com",
     "phone_number": "+71111111111",
-    "first_name": "test1",
-    "last_name": "test1",
+    "first_name": "user1",
+    "last_name": "user1",
     "password": "$2b$12$rm7Bu.bjhNHKU25th37EFO6tpnvjz5EiB2s7QyJX/BKx9aOsIwEKm"
   },
   {
-    "email": "test2@test.com",
+    "email": "user2@test.com",
     "phone_number": "+72222222222",
-    "first_name": "test2",
-    "last_name": "test2",
-    "password": "$2b$12$rm7Bu.bjhNHKU25th37EFO6tpnvjz5EiB2s7QyJX/BKx9aOsIwEKm"
-  },
-  {
-    "email": "test3@test.com",
-    "phone_number": "+73333333333",
-    "first_name": "test3",
-    "last_name": "test3",
-    "password": "$2b$12$rm7Bu.bjhNHKU25th37EFO6tpnvjz5EiB2s7QyJX/BKx9aOsIwEKm"
-  },
-  {
-    "email": "test4@test.com",
-    "phone_number": "+74444444444",
-    "first_name": "test4",
-    "last_name": "test4",
-    "password": "$2b$12$rm7Bu.bjhNHKU25th37EFO6tpnvjz5EiB2s7QyJX/BKx9aOsIwEKm"
-  },
-  {
-    "email": "test5@test.com",
-    "phone_number": "+75555555555",
-    "first_name": "test5",
-    "last_name": "test5",
+    "first_name": "user2",
+    "last_name": "user2",
     "password": "$2b$12$rm7Bu.bjhNHKU25th37EFO6tpnvjz5EiB2s7QyJX/BKx9aOsIwEKm"
   }
 ]
