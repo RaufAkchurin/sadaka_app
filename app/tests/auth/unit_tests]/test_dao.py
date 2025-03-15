@@ -1,8 +1,7 @@
-from pydantic import BaseModel
-
-from app.auth.models import User
 from app.auth.schemas import SUserRegister, SUserAddDB, EmailModel, UserBase
 from app.tests.factory.factories_polyfactory import generate_phone_number, faker
+from app.tests.factory.mimesis import person
+
 
 class TestDAO:
     async def test_bulk_update(self, user_dao): #DONT MOVE FROM HERE !!!
@@ -60,7 +59,7 @@ class TestDAO:
     async def test_add_many(self, user_dao):
         users = [
             {"email": faker.email(domain='test.com'),
-             "phone_number": generate_phone_number(),
+             "phone_number": person.telephone(mask='+7##########'),
              "first_name": f"first name",
              "last_name": f"last name",
              "password": "8654567"}
