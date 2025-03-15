@@ -1,6 +1,8 @@
 import asyncio
 import json
 import os
+
+import httpx
 import pytest
 from httpx import AsyncClient, ASGITransport
 from sqlalchemy import insert
@@ -25,8 +27,8 @@ def open_mock_json(model: str):
     with open(file_path, "r") as file:
         return json.load(file)
 
-@pytest.fixture(scope='class', autouse=True)
-async def prepare_database(session):
+
+async def prepare_database_core(session):
     try:
         assert settings.MODE == "TEST"
         async with engine.begin() as conn:
@@ -48,7 +50,13 @@ async def prepare_database(session):
     finally:
         session.close()
 
-    # Взято из документации к pytest-asyncio
+@pytest.fixture(scope='class', autouse=True)
+async def prepare_database(session):
+    await prepare_database_core(session)
+
+@pytest.fixture(scope='class')
+async def prepare_database_manually(session):
+    await prepare_database_core(session)
 
 
 @pytest.fixture(scope="class")
@@ -96,8 +104,6 @@ async def authorize_by(ac: AsyncClient, user: User):
 
     login_response = await ac.post("/auth/login/", json={"email": user.email, "password": "password"})
     assert login_response.status_code == 200
-
-    return AuthorizedClientModel(client=ac,
-                                 cookies=CookiesModel(user_access_token=ac.cookies.get('user_access_token'),
-                                                     user_refresh_token=ac.cookies.get('user_refresh_token'),
-                                                    ))
+    assert isinstance(ac.cookies, httpx.Cookies)
+    return AuthorizedClientModel(client=ac, cookies=CookiesModel(user_access_token=ac.cookies.get('user_access_token'),
+                                                                 user_refresh_token=ac.cookies.get('user_refresh_token')))

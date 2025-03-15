@@ -1,6 +1,6 @@
 import pytest
 from app.auth.schemas import EmailModel
-from app.tests.conftest import ac, authenticated_ac, authorize_by
+from app.tests.conftest import ac, authenticated_ac, authorize_by, prepare_database
 
 
 class TestApi:
@@ -106,30 +106,29 @@ class TestApi:
             assert response.status_code == status_code
             assert response.json() == response_message
 
-
-    @pytest.mark.parametrize("role, is_authorized, status_code, users_count, response_message",
+    @pytest.mark.usefixtures("prepare_database_manually")
+    @pytest.mark.parametrize("email, status_code, users_count, response_message",
      [   #AUTHORIZED USERS
-         ("superadmin@test.com",  True, 200, 6,    None),
-         ("admin@test.com",       True, 200, 6,    None),
-         ("moderator@test.com",   True, 403, None,    {'detail': 'Недостаточно прав'}),
-         ("user1@test.com",        True, 403, None,    {'detail': 'Недостаточно прав'}),
+         ("superadmin@test.com", 200, 5,    None),
+         ("admin@test.com",      200, 5,    None),
+         ("moderator@test.com",  403, None, {'detail': 'Недостаточно прав'}),
+         ("user1@test.com",      403, None, {'detail': 'Недостаточно прав'}),
          # NOT AUTHORIZED USERS
-         (None, False, 400, None, {"detail":"Токен отсутствует в заголовке"} ),
+         (None,                  400, None, {"detail":"Токен отсутствует в заголовке"} ),
      ])
-    async def test_all_users(self, ac,authenticated_super, user_dao,role, is_authorized, status_code, users_count, response_message):
-        if is_authorized:
-            current_user = await user_dao.find_one_or_none(filters=EmailModel(email=role))
+    async def test_all_users(self, ac, user_dao, email, status_code, users_count, response_message):
+        if email:
+            current_user = await user_dao.find_one_or_none(filters=EmailModel(email=email))
             if current_user is None:
                 raise ValueError("User not found")
             authorized_client = await authorize_by(ac, current_user)
             client = authorized_client.client
-
             response = await client.get("/auth/all_users/", cookies=authorized_client.cookies.dict())
+        else:
+            response = await ac.get("/auth/all_users/")
 
-            assert response.status_code == status_code
-
-            if users_count:
-                assert len(response.json()) == users_count
-
-            if response_message:
-                assert response.json() == response_message
+        assert response.status_code == status_code
+        if users_count:
+            assert len(response.json()) == users_count
+        if response_message:
+            assert response.json() == response_message

@@ -1,4 +1,5 @@
-from httpx import AsyncClient, Cookies
+import httpx
+from httpx import AsyncClient
 from pydantic import BaseModel
 
 class CookiesModel(BaseModel):
@@ -10,4 +11,4 @@ class AuthorizedClientModel(BaseModel):
     cookies: CookiesModel
 
     class Config:
-        arbitrary_types_allowed = True
+        arbitrary_types_allowed = True # чтобы AsyncClient был принят в pydantic модели
