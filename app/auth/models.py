@@ -1,8 +1,10 @@
+from dataclasses import dataclass
+
 from sqlalchemy import text, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.dao.database import Base, str_uniq
 
-
+@dataclass
 class Role(Base):
     name: Mapped[str_uniq]
     users: Mapped[list["User"]] = relationship(back_populates="role")
@@ -10,7 +12,7 @@ class Role(Base):
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.id}, name={self.name})"
 
-
+@dataclass
 class User(Base):
     phone_number: Mapped[str_uniq]
     first_name: Mapped[str]

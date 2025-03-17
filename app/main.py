@@ -45,11 +45,11 @@ def create_app() -> FastAPI:
     )
 
     # Монтирование статических файлов
-    app.mount(
-        '/static',
-        StaticFiles(directory='app/static'),
-        name='static'
-    )
+    # app.mount(
+    #     '/static',
+    #     StaticFiles(directory='app/static'),
+    #     name='static'
+    # )
 
     # Регистрация роутеров
     register_routers(app)
