@@ -2,7 +2,7 @@ import datetime
 import pytest
 from app.auth.models import User
 from app.auth.schemas import EmailModel, SUserAuth, SUserAddDB
-from app.auth.utils import create_tokens, authenticate_user, get_password_hash
+from app.auth.service import create_tokens, authenticate_user, get_password_hash
 from jose import jwt
 
 from app.settings import settings

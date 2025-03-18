@@ -1,7 +1,8 @@
 import re
 from typing import Self
-from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator, model_validator, computed_field
-from app.auth.utils import get_password_hash
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator, model_validator, computed_field, HttpUrl
+
+from app.auth.service import get_password_hash
 
 
 class EmailModel(BaseModel):
@@ -58,3 +59,11 @@ class SUserInfo(UserBase):
     @computed_field
     def role_id(self) -> int:
         return self.role.id
+
+
+class GoogleUserData(BaseModel):
+    id: str
+    email: EmailStr
+    name: str
+    picture: HttpUrl
+    access_token : str

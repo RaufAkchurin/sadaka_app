@@ -1,10 +1,14 @@
 from typing import List
+
+import requests
 from fastapi import APIRouter, Response, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
+from starlette.requests import Request
 from starlette.responses import RedirectResponse
 
 from app.auth.models import User
-from app.auth.utils import authenticate_user, set_tokens
+from app.auth.service import authenticate_user, set_tokens
+from app.client.google import GoogleClient
 from app.dependencies.auth_dep import get_current_user, get_current_admin_user, check_refresh_token
 from app.dependencies.dao_dep import get_session_with_commit, get_session_without_commit
 from app.exceptions import UserAlreadyExistsException, IncorrectEmailOrPasswordException
@@ -13,6 +17,7 @@ from app.auth.schemas import SUserRegister, SUserAuth, EmailModel, SUserAddDB, S
 
 router = APIRouter()
 
+google_client = GoogleClient()
 
 @router.post("/register/")
 async def register_user(user_data: SUserRegister,
@@ -53,14 +58,16 @@ async def auth_user(
         'message': 'Авторизация успешна!'
     }
 
-@router.get('google/login',
-            response_class=RedirectResponse)
-async def google_login(request):
-  pass
+@router.get('/google/login/', response_class=RedirectResponse)
+async def google_login():
+    redirect_url = google_client.get_google_redirect_url()
+    print(redirect_url)
+    return RedirectResponse(redirect_url)
 
-# @router.get('google/')
-# async def google_auth():
-
+@router.get('/google/auth/')
+async def google_auth(code: str):
+    user = google_client.google_auth(code)
+    print(123)
 
 @router.post("/logout")
 async def logout(response: Response):
