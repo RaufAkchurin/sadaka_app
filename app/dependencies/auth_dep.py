@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.dao import UsersDAO
 from app.auth.models import User
-from app.config import settings
+from app.settings import settings
 from app.dependencies.dao_dep import get_session_without_commit
 from app.exceptions import (
     TokenNoFound, NoJwtException, TokenExpiredException, NoUserIdException, ForbiddenException, UserNotFoundException

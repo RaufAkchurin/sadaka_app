@@ -6,7 +6,7 @@ import pytest
 from httpx import AsyncClient, ASGITransport
 from sqlalchemy import insert
 from app.auth.dao import UsersDAO
-from app.config import settings
+from app.settings import settings
 from app.dao.database import async_session_maker, engine, Base
 from app.auth.models import User, Role
 from app.main import app as fastapi_app

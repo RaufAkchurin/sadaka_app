@@ -5,7 +5,7 @@ from app.auth.schemas import EmailModel, SUserAuth, SUserAddDB
 from app.auth.utils import create_tokens, authenticate_user, get_password_hash
 from jose import jwt
 
-from app.config import settings
+from app.settings import settings
 
 class TestUtils:
     @pytest.mark.parametrize("user_id", ['123', '456'])

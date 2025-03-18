@@ -1,6 +1,7 @@
 from typing import List
 from fastapi import APIRouter, Response, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
+from starlette.responses import RedirectResponse
 
 from app.auth.models import User
 from app.auth.utils import authenticate_user, set_tokens
@@ -51,6 +52,14 @@ async def auth_user(
         'ok': True,
         'message': 'Авторизация успешна!'
     }
+
+@router.get('google/login',
+            response_class=RedirectResponse)
+async def google_login(request):
+  pass
+
+# @router.get('google/')
+# async def google_auth():
 
 
 @router.post("/logout")

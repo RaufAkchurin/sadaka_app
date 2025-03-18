@@ -10,6 +10,11 @@ class Settings(BaseSettings):
     ALGORITHM: str
     MODE: Literal["PROD", "DEV", "TEST"]
 
+    GOOGLE_CLIENT_ID: str = ''
+    GOOGLE_CLIENT_SECRET: str = ''
+    GOOGLE_REDIRECT_URI: str = ''
+    GOOGLE_TOKEN_URI: str = 'https://accounts.google.com/o/oauth2/token'
+
     TEST_POSTGRES_PASSWORD: str
     TEST_POSTGRES_USER: str
     TEST_POSTGRES_DB: str
@@ -17,6 +22,11 @@ class Settings(BaseSettings):
     TEST_POSTGRES_PORT: int
 
     model_config = SettingsConfigDict(env_file=f"{BASE_DIR}/.env")
+
+    @property
+    def google_redirect_url(self) -> str:
+        return (f"https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={self.GOOGLE_CLIENT_ID}"
+                f"&redirect_uri={self.GOOGLE_REDIRECT_URI}&scope=openid%20profile%20email&access_type=offline")
 
 # Получаем параметры для загрузки переменных среды
 settings = Settings()
