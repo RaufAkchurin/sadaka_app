@@ -3,13 +3,13 @@ from datetime import datetime, timedelta, timezone
 from fastapi.responses import Response
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.auth.dao import UsersDAO
-from app.auth.schemas import EmailModel
-from app.auth.schemas_auth import GoogleUserAddDB
+from app.auth.schemas import EmailModel, UserBase
+from app.auth.google.schemas import GoogleUserAddDB
 from app.auth.service_jwt import verify_password
 from app.client.google import get_user_info
 from app.settings import settings
 
-async def google_auth_service(code: str, session: AsyncSession) -> None:
+async def google_auth_service(code: str, session: AsyncSession) -> UserBase:
     user_data = get_user_info(code)
     user_dao = UsersDAO(session)
     user = await user_dao.find_one_or_none(filters=EmailModel(email=user_data.email))
@@ -19,11 +19,15 @@ async def google_auth_service(code: str, session: AsyncSession) -> None:
         google_access_token=user_data.google_access_token,
         picture=str(user_data.picture)
     )
-
     if not user:
-        await user_dao.add(values=update_data)
+        authorized_user = await user_dao.add(values=update_data)
     else:
         await user_dao.update(filters=EmailModel(email=user_data.email), values=update_data)
+        authorized_user = user
+
+    return authorized_user
+
+
 
 
 def create_tokens(data: dict) -> dict:
@@ -31,7 +35,7 @@ def create_tokens(data: dict) -> dict:
     now = datetime.now(timezone.utc)
 
     # AccessToken - 30 минут
-    access_expire = now + timedelta(seconds=10)
+    access_expire = now + timedelta(minutes=60)
     access_payload = data.copy()
     access_payload.update({"exp": int(access_expire.timestamp()), "type": "access"})
     access_token = jwt.encode(

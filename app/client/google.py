@@ -1,7 +1,7 @@
 import requests
 
-from app.auth.schemas_auth import GoogleUserData
-from app.settings import Settings, settings
+from app.auth.google.schemas import GoogleUserData
+from app.settings import settings
 
 
 def get_user_info( code: str) -> GoogleUserData:
