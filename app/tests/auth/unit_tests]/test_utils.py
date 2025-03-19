@@ -41,7 +41,6 @@ class TestUtils:
     async def test_authenticate_user(self, user_dao):
         hash = get_password_hash("12345")
         user_data_dict = {"email": "test12@test.com",
-                          "phone_number": "+74444444999",
                           "first_name": "test12",
                           "last_name": "test12",
                           "password": hash}

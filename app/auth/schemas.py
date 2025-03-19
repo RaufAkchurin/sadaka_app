@@ -1,8 +1,7 @@
-import re
 from typing import Self
-from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator, model_validator, computed_field, HttpUrl
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, model_validator, computed_field, HttpUrl
 
-from app.auth.service import get_password_hash
+from app.auth.service_jwt import get_password_hash
 
 
 class EmailModel(BaseModel):
@@ -11,18 +10,10 @@ class EmailModel(BaseModel):
 
 
 class UserBase(EmailModel):
-    phone_number: str = Field(description="Номер телефона в международном формате, начинающийся с '+'")
-    first_name: str = Field(min_length=3, max_length=50, description="Имя, от 3 до 50 символов")
-    last_name: str = Field(min_length=3, max_length=50, description="Фамилия, от 3 до 50 символов")
-
-    @field_validator("phone_number")
-    def validate_phone_number(cls, value: str) -> str:
-        if not re.match(r'^\+\d{5,15}$', value):
-            raise ValueError('Номер телефона должен начинаться с "+" и содержать от 5 до 15 цифр')
-        return value
+    name: str = Field(min_length=3, max_length=50, description="Имя, от 3 до 50 символов")
 
 
-class SUserRegister(UserBase):
+class SUserEmailRegister(UserBase):
     password: str = Field(min_length=5, max_length=50, description="Пароль, от 5 до 50 знаков")
     confirm_password: str = Field(min_length=5, max_length=50, description="Повторите пароль")
 
@@ -61,9 +52,4 @@ class SUserInfo(UserBase):
         return self.role.id
 
 
-class GoogleUserData(BaseModel):
-    id: str
-    email: EmailStr
-    name: str
-    picture: HttpUrl
-    access_token : str
+

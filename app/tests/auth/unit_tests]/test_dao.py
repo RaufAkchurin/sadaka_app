@@ -1,5 +1,5 @@
-from app.auth.schemas import SUserRegister, SUserAddDB, EmailModel, UserBase
-from app.tests.factory.factories_polyfactory import generate_phone_number, faker
+from app.auth.schemas import SUserEmailRegister, SUserAddDB, EmailModel, UserBase
+from app.tests.factory.factories_polyfactory import faker
 from app.tests.factory.mimesis import person
 
 
@@ -26,7 +26,6 @@ class TestDAO:
 
     async def test_add_user_and_find_by_id(self, user_dao):
         user_data_dict = {"email": "1test@test.com",
-                         "phone_number": "+74444444499",
                          "first_name": "test",
                          "last_name": "test",
                          "password": "8654567"}
@@ -40,7 +39,6 @@ class TestDAO:
 
     async def test_find_one_or_none(self, user_dao):
         user_data_dict = {"email": "2test@test.com",
-                         "phone_number": "+74444444498",
                          "first_name": "test4",
                          "last_name": "test4",
                          "password": "876trfghy6t5r"}
@@ -59,7 +57,6 @@ class TestDAO:
     async def test_add_many(self, user_dao):
         users = [
             {"email": faker.email(domain='test.com'),
-             "phone_number": person.telephone(mask='+7##########'),
              "first_name": f"first name",
              "last_name": f"last name",
              "password": "8654567"}
@@ -71,7 +68,6 @@ class TestDAO:
 
     async def test_update(self, user_dao):
         user_data_dict = {"email": "3test@test.com",
-                         "phone_number": "+74444444497",
                          "first_name": "test3",
                          "last_name": "test3",
                          "password": "8654567"}
@@ -90,7 +86,6 @@ class TestDAO:
 
     async def test_delete(self, user_dao):
         user_data_dict = {"email": "4test@test.com",
-                         "phone_number": "+74444444496",
                          "first_name": "test4",
                          "last_name": "test4",
                          "password": "8654567"}

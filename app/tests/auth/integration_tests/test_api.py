@@ -7,24 +7,21 @@ class TestApi:
     async def test_root(self, ac):
         response = await ac.get("/")
         assert response.status_code == 200
-        assert response.json() == {'author': 'Яковенко Алексей', 'community': 'https://t.me/PythonPathMaster',
-                                   'message': "Добро пожаловать! Проект создан для сообщества 'Легкий путь в Python'."}
+        assert response.json() == {'message': "ok"}
 
 
-    @pytest.mark.parametrize("email, phone_number, first_name, last_name, password, confirm_password, status_code, response_message",
+    @pytest.mark.parametrize("email, first_name, last_name, password, confirm_password, status_code, response_message",
     [
-        ("user@example.com", "+79179876622", "string", "string", "password", "password", 200, {'message': 'Вы успешно зарегистрированы!'}),
-        ("user@example.com", "+79179876622", "string", "string", "password", "password", 409, {'detail': 'Пользователь уже существует'}),
-        ("user@example.com", "+791", "string", "string", "password", "password", 422, None), #phone number validation
-        ("user@example.com", "+79179876622", "string", "string", "password", "password1", 422, None), #password confirm validation
-        ("abcde", "+79179876625", "string", "string", "password", "password", 422, None), #email validation
+        ("user@example.com", "string", "string", "password", "password", 200, {'message': 'Вы успешно зарегистрированы!'}),
+        ("user@example.com", "string", "string", "password", "password", 409, {'detail': 'Пользователь уже существует'}),
+        ("user@example.com",  "string", "string", "password", "password1", 422, None), #password confirm validation
+        ("abcde", "string", "string", "password", "password", 422, None), #email validation
     ]
     )
-    async def test_register(self, ac, email, phone_number, first_name, last_name, password, confirm_password, status_code, response_message):
+    async def test_register(self, ac, email, first_name, last_name, password, confirm_password, status_code, response_message):
         # Сначала регистрируем пользователя
         user_data = {
                     "email": email,
-                     "phone_number": phone_number,
                      "first_name": first_name,
                      "last_name": last_name,
                      "password": password,
@@ -73,7 +70,7 @@ class TestApi:
     @pytest.mark.parametrize("is_authorized, status_code, response_message",
      [
          (True, 200, {'email': 'user1@test.com', 'first_name': 'user1', 'id': 4, 'last_name': 'user1',
-                      'phone_number': '+71111111111','role_id': 1, 'role_name': 'user'}),
+                      'role_id': 1, 'role_name': 'user'}),
          (False, 400, {"detail": "Токен отсутствует в заголовке"}),
      ])
 

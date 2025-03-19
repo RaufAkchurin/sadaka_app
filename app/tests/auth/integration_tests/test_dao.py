@@ -12,7 +12,6 @@ from app.tests.conftest import session
 
 # async def test_add_and_get_new_user(user_dao):
 #     user_data = {
-#         "phone_number": "+79189876622",
 #         "first_name": "first_name",
 #         "last_name": "last_name",
 #         "email": "user_factory@femail.com",

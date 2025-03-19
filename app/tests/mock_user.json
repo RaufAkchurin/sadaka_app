@@ -1,7 +1,6 @@
 [
   {
     "email": "superadmin@test.com",
-    "phone_number": "+77711111114",
     "first_name": "superadmin",
     "last_name": "superadmin",
     "password": "$2b$12$rm7Bu.bjhNHKU25th37EFO6tpnvjz5EiB2s7QyJX/BKx9aOsIwEKm",
@@ -9,7 +8,6 @@
   },
     {
     "email": "admin@test.com",
-    "phone_number": "+77711111113",
     "first_name": "admin",
     "last_name": "admin",
     "password": "$2b$12$rm7Bu.bjhNHKU25th37EFO6tpnvjz5EiB2s7QyJX/BKx9aOsIwEKm",
@@ -17,7 +15,6 @@
   },
       {
     "email": "moderator@test.com",
-    "phone_number": "+77711111112",
     "first_name": "moderator",
     "last_name": "moderator",
     "password": "$2b$12$rm7Bu.bjhNHKU25th37EFO6tpnvjz5EiB2s7QyJX/BKx9aOsIwEKm",
@@ -25,14 +22,12 @@
   },
   {
     "email": "user1@test.com",
-    "phone_number": "+71111111111",
     "first_name": "user1",
     "last_name": "user1",
     "password": "$2b$12$rm7Bu.bjhNHKU25th37EFO6tpnvjz5EiB2s7QyJX/BKx9aOsIwEKm"
   },
   {
     "email": "user2@test.com",
-    "phone_number": "+72222222222",
     "first_name": "user2",
     "last_name": "user2",
     "password": "$2b$12$rm7Bu.bjhNHKU25th37EFO6tpnvjz5EiB2s7QyJX/BKx9aOsIwEKm"

@@ -1,8 +1,30 @@
-from passlib.context import CryptContext
 from jose import jwt
 from datetime import datetime, timedelta, timezone
 from fastapi.responses import Response
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.auth.dao import UsersDAO
+from app.auth.schemas import EmailModel
+from app.auth.schemas_auth import GoogleUserAddDB
+from app.auth.service_jwt import verify_password
+from app.client.google import get_user_info
 from app.settings import settings
+
+async def google_auth_service(code: str, session: AsyncSession) -> None:
+    user_data = get_user_info(code)
+    user_dao = UsersDAO(session)
+    user = await user_dao.find_one_or_none(filters=EmailModel(email=user_data.email))
+    update_data = GoogleUserAddDB(
+        name=user_data.name,
+        email=user_data.email,
+        google_access_token=user_data.google_access_token,
+        picture=str(user_data.picture)
+    )
+
+    if not user:
+        await user_dao.add(values=update_data)
+    else:
+        await user_dao.update(filters=EmailModel(email=user_data.email), values=update_data)
+
 
 def create_tokens(data: dict) -> dict:
     # Текущее время в UTC
@@ -56,14 +78,3 @@ def set_tokens(response: Response, user_id: int):
         secure=True,
         samesite="lax"
     )
-
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-
-def get_password_hash(password: str) -> str:
-    return pwd_context.hash(password)
-
-
-def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
