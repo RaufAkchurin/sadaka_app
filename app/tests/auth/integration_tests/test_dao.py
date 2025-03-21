@@ -1,15 +1,3 @@
-
-
-from app.auth.dao import UsersDAO
-from app.auth.models import User, Role
-from sqlalchemy.orm import Session
-
-from app.auth.schemas import SUserAddDB
-from app.tests.conftest import session
-
-
-
-
 # async def test_add_and_get_new_user(user_dao):
 #     user_data = {
 #         "first_name": "first_name",

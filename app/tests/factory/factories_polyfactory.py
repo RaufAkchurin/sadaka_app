@@ -1,7 +1,8 @@
 from faker import Faker
 from random import randint
 from polyfactory.factories.sqlalchemy_factory import SQLAlchemyFactory
-from app.auth.models import User, Role
+
+from app.users.models import Role, User
 
 faker = Faker()
 

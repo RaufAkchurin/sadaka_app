@@ -1,6 +1,6 @@
-from pydantic import BaseModel, EmailStr, HttpUrl
+from pydantic import HttpUrl
 
-from app.auth.schemas import UserBase
+from app.users.schemas import UserBase
 
 
 class GoogleUserData(UserBase):

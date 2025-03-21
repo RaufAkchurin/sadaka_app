@@ -3,7 +3,7 @@ from fastapi import Response, Depends
 from loguru import logger
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import RedirectResponse, JSONResponse
-from app.auth.service import set_tokens, google_auth_service
+from app.auth.service_auth import set_tokens, google_auth_service
 from app.client.google import get_google_redirect_url
 from app.dependencies.dao_dep import get_session_with_commit
 

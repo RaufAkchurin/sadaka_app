@@ -7,6 +7,7 @@ from loguru import logger
 
 from app.auth.router import router as router_auth
 from app.auth.google.router import router as router_google
+from app.users.router import router as router_users
 
 
 @asynccontextmanager
@@ -25,7 +26,7 @@ def create_app() -> FastAPI:
        Сконфигурированное приложение FastAPI
    """
     app = FastAPI(
-        title="Стартовая сборка FastAPI",
+        title="Приложение sadaka app",
         lifespan=lifespan,
     )
 
@@ -66,6 +67,7 @@ def register_routers(app: FastAPI) -> None:
     app.include_router(root_router, tags=["root"])
     app.include_router(router_auth, prefix='/auth', tags=['Auth'])
     app.include_router(router_google, prefix='/google_oauth', tags=['Google OAuth'])
+    app.include_router(router_users, prefix='/users', tags=['Users'])
 
 
 # Создание экземпляра приложения

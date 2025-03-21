@@ -2,8 +2,8 @@ from jose import jwt
 from datetime import datetime, timedelta, timezone
 from fastapi.responses import Response
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.auth.dao import UsersDAO
-from app.auth.schemas import EmailModel, UserBase
+from app.users.dao import UsersDAO
+from app.users.schemas import EmailModel, UserBase
 from app.auth.google.schemas import GoogleUserAddDB
 from app.auth.service_jwt import verify_password
 from app.client.google import get_user_info

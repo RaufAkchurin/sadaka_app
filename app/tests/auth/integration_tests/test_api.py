@@ -1,6 +1,6 @@
 import pytest
-from app.auth.schemas import EmailModel
-from app.tests.conftest import ac, authenticated_ac, authorize_by, prepare_database
+from app.users.schemas import EmailModel
+from app.tests.conftest import ac, authenticated_ac, authorize_by
 
 
 class TestApi:
@@ -10,24 +10,23 @@ class TestApi:
         assert response.json() == {'message': "ok"}
 
 
-    @pytest.mark.parametrize("email, first_name, last_name, password, confirm_password, status_code, response_message",
+    @pytest.mark.parametrize("email, name, password, confirm_password, status_code, response_message",
     [
-        ("user@example.com", "string", "string", "password", "password", 200, {'message': 'Вы успешно зарегистрированы!'}),
-        ("user@example.com", "string", "string", "password", "password", 409, {'detail': 'Пользователь уже существует'}),
-        ("user@example.com",  "string", "string", "password", "password1", 422, None), #password confirm validation
-        ("abcde", "string", "string", "password", "password", 422, None), #email validation
+        ("user@example.com", "string", "password", "password", 200, {'message': 'Вы успешно зарегистрированы!'}),
+        ("user@example.com", "string", "password", "password", 409, {'detail': 'Пользователь уже существует'}),
+        ("user@example.com",  "string", "password", "password1", 422, None), #password confirm validation
+        ("abcde", "string", "password", "password", 422, None), #email validation
     ]
     )
-    async def test_register(self, ac, email, first_name, last_name, password, confirm_password, status_code, response_message):
+    async def test_register(self, ac, email, name, password, confirm_password, status_code, response_message):
         # Сначала регистрируем пользователя
         user_data = {
                     "email": email,
-                     "first_name": first_name,
-                     "last_name": last_name,
+                     "name": name,
                      "password": password,
                      "confirm_password": confirm_password
                      }
-        response = await ac.post("/auth/register/", json=user_data)
+        response = await ac.post("/users/register/", json=user_data)
         assert response.status_code == status_code
         if response_message:
             assert response.json() == response_message
@@ -69,17 +68,16 @@ class TestApi:
 
     @pytest.mark.parametrize("is_authorized, status_code, response_message",
      [
-         (True, 200, {'email': 'user1@test.com', 'first_name': 'user1', 'id': 4, 'last_name': 'user1',
-                      'role_id': 1, 'role_name': 'user'}),
+         (True, 200, {'email': 'user1@test.com', 'name': 'user1', 'id': 4, 'role_id': 1, 'role_name': 'user'}),
          (False, 400, {"detail": "Токен отсутствует в заголовке"}),
      ])
 
     async def test_me_200(self, ac, authenticated_ac, is_authorized, status_code, response_message):
         if is_authorized:
-            response = await authenticated_ac.client.get("/auth/me/", cookies=authenticated_ac.cookies.dict())
+            response = await authenticated_ac.client.get("/users/me/", cookies=authenticated_ac.cookies.dict())
 
         else:
-            response = await ac.get("/auth/me/")
+            response = await ac.get("/users/me/")
 
         assert response.status_code == status_code
         assert response.json() == response_message
@@ -119,9 +117,9 @@ class TestApi:
                 raise ValueError("User not found")
             authorized_client = await authorize_by(ac, current_user)
             client = authorized_client.client
-            response = await client.get("/auth/all_users/", cookies=authorized_client.cookies.dict())
+            response = await client.get("/users/all_users/", cookies=authorized_client.cookies.dict())
         else:
-            response = await ac.get("/auth/all_users/")
+            response = await ac.get("/users/all_users/")
 
         assert response.status_code == status_code
         if users_count:

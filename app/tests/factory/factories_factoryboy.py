@@ -2,7 +2,7 @@ import factory
 from factory.alchemy import SQLAlchemyModelFactory
 from app.auth.models import User, Role
 from sqlalchemy.orm import Session
-from app.auth.schemas import SUserAddDB
+from app.users.schemas import SUserAddDB
 from app.tests.conftest import session
 
 

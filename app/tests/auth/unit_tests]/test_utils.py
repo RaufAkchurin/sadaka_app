@@ -1,10 +1,12 @@
 import datetime
 import pytest
-from app.auth.models import User
-from app.auth.schemas import EmailModel, SUserAuth, SUserAddDB
-from app.auth.service import create_tokens, authenticate_user, get_password_hash
+
+from app.users.models import User
+from app.users.schemas import EmailModel, SUserAddDB
+from app.auth.service_auth import create_tokens, authenticate_user
 from jose import jwt
 
+from app.auth.service_jwt import get_password_hash
 from app.settings import settings
 
 class TestUtils:
@@ -41,8 +43,7 @@ class TestUtils:
     async def test_authenticate_user(self, user_dao):
         hash = get_password_hash("12345")
         user_data_dict = {"email": "test12@test.com",
-                          "first_name": "test12",
-                          "last_name": "test12",
+                          "name": "test12",
                           "password": hash}
 
         await user_dao.add(values=SUserAddDB(**user_data_dict))
