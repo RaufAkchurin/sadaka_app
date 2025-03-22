@@ -26,7 +26,7 @@ def create_app() -> FastAPI:
        Сконфигурированное приложение FastAPI
    """
     app = FastAPI(
-        title="Приложение sadaka app",
+        title="Садака_app",
         lifespan=lifespan,
     )
 
