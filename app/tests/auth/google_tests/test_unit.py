@@ -4,12 +4,6 @@ from app.auth.google.service import google_auth_service
 
 
 @pytest.fixture
-def mock_get_user_info():
-    with patch('app.client.google.get_user_info') as mock:
-        yield mock
-
-
-@pytest.fixture
 def mock_requests_post():
     with patch('requests.post') as mock:
         yield mock

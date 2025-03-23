@@ -8,3 +8,6 @@ class TestGoogle:
         assert response.status_code == 307
         assert response.headers.get('location') == url
 
+#TODO сделать фейк гугл клиент
+#TODO эмитаця регистрации нового пользака и проверка наличия ЖВТ токенов
+#TODO эмитаця логаут и проверка отсуствия токенов
