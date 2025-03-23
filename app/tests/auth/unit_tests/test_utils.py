@@ -25,7 +25,7 @@ class TestUtils:
         now = datetime.datetime.now(datetime.timezone.utc)
 
         # Проверка времени истечения токенов
-        access_expire = now + datetime.timedelta(seconds=10)
+        access_expire = now + datetime.timedelta(minutes=60)
         refresh_expire = now + datetime.timedelta(days=7)
 
         # Декодируем access_token и проверяем его содержимое

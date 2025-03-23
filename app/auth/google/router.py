@@ -25,7 +25,7 @@ async def google_auth(code: str, response: Response, session: AsyncSession = Dep
     google_permitted_user = await google_auth_service(code, session)
     if google_permitted_user:
         set_tokens(response, google_permitted_user.id)
-        return RedirectResponse(url="http://localhost:8000/docs#/Users/get_me_users_me__get",
+        return RedirectResponse(url="http://localhost:8000/users/me/",
                                 headers=response.headers)
     else:
         raise FailedGoogleOauthException
