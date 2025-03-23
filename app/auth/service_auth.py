@@ -1,8 +1,8 @@
-from passlib.context import CryptContext
 from jose import jwt
 from datetime import datetime, timedelta, timezone
 from fastapi.responses import Response
-from app.config import settings
+from app.auth.service_jwt import verify_password
+from app.settings import settings
 
 
 def create_tokens(data: dict) -> dict:
@@ -10,7 +10,7 @@ def create_tokens(data: dict) -> dict:
     now = datetime.now(timezone.utc)
 
     # AccessToken - 30 минут
-    access_expire = now + timedelta(seconds=10)
+    access_expire = now + timedelta(minutes=60)
     access_payload = data.copy()
     access_payload.update({"exp": int(access_expire.timestamp()), "type": "access"})
     access_token = jwt.encode(
@@ -41,12 +41,13 @@ def set_tokens(response: Response, user_id: int):
     new_tokens = create_tokens(data={"sub": str(user_id)})
     access_token = new_tokens.get('access_token')
     refresh_token = new_tokens.get("refresh_token")
+    secure = settings.MODE in ['PROD', 'TEST']
 
     response.set_cookie(
         key="user_access_token",
         value=access_token,
         httponly=True,
-        secure=True,
+        secure=secure,
         samesite="lax"
     )
 
@@ -54,17 +55,6 @@ def set_tokens(response: Response, user_id: int):
         key="user_refresh_token",
         value=refresh_token,
         httponly=True,
-        secure=True,
+        secure=secure,
         samesite="lax"
     )
-
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-
-def get_password_hash(password: str) -> str:
-    return pwd_context.hash(password)
-
-
-def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)

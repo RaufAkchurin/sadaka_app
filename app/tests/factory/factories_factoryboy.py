@@ -2,7 +2,7 @@ import factory
 from factory.alchemy import SQLAlchemyModelFactory
 from app.auth.models import User, Role
 from sqlalchemy.orm import Session
-from app.auth.schemas import SUserAddDB
+from app.users.schemas import SUserAddDB
 from app.tests.conftest import session
 
 
@@ -29,7 +29,6 @@ class UserFactory(BaseFactory):
         model = User
 
     id = factory.LazyFunction(int)
-    phone_number = factory.Faker("phone_number")
     first_name = factory.Faker("first_name")
     last_name = factory.Faker("last_name")
     email = factory.Faker("email")
@@ -40,7 +39,6 @@ class UserFactory(BaseFactory):
 async def test_add_and_get_new_user(user_dao):
     user_factory = UserFactory.build()
     user_data = {
-        "phone_number": user_factory.phone_number,
         "first_name": user_factory.first_name,
         "last_name": user_factory.last_name,
         "email": user_factory.email,

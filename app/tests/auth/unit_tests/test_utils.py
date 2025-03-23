@@ -1,11 +1,13 @@
 import datetime
 import pytest
-from app.auth.models import User
-from app.auth.schemas import EmailModel, SUserAuth, SUserAddDB
-from app.auth.utils import create_tokens, authenticate_user, get_password_hash
+
+from app.users.models import User
+from app.users.schemas import EmailModel, SUserAddDB
+from app.auth.service_auth import create_tokens, authenticate_user
 from jose import jwt
 
-from app.config import settings
+from app.auth.service_jwt import get_password_hash
+from app.settings import settings
 
 class TestUtils:
     @pytest.mark.parametrize("user_id", ['123', '456'])
@@ -23,7 +25,7 @@ class TestUtils:
         now = datetime.datetime.now(datetime.timezone.utc)
 
         # Проверка времени истечения токенов
-        access_expire = now + datetime.timedelta(seconds=10)
+        access_expire = now + datetime.timedelta(minutes=60)
         refresh_expire = now + datetime.timedelta(days=7)
 
         # Декодируем access_token и проверяем его содержимое
@@ -41,9 +43,7 @@ class TestUtils:
     async def test_authenticate_user(self, user_dao):
         hash = get_password_hash("12345")
         user_data_dict = {"email": "test12@test.com",
-                          "phone_number": "+74444444999",
-                          "first_name": "test12",
-                          "last_name": "test12",
+                          "name": "test12",
                           "password": hash}
 
         await user_dao.add(values=SUserAddDB(**user_data_dict))

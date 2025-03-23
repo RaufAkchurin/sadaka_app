@@ -6,6 +6,8 @@ from fastapi.staticfiles import StaticFiles
 from loguru import logger
 
 from app.auth.router import router as router_auth
+from app.auth.google.router import router as router_google
+from app.users.router import router as router_users
 
 
 @asynccontextmanager
@@ -24,14 +26,7 @@ def create_app() -> FastAPI:
        Сконфигурированное приложение FastAPI
    """
     app = FastAPI(
-        title="Стартовая сборка FastAPI",
-        description=(
-            "Стартовая сборка с интегрированной SQLAlchemy 2 для разработки FastAPI приложений с продвинутой "
-            "архитектурой, включающей авторизацию, аутентификацию и управление ролями пользователей.\n\n"
-            "**Автор проекта**: Яковенко Алексей\n"
-            "**Telegram**: https://t.me/PythonPathMaster"
-        ),
-        version="1.0.0",
+        title="Садака_app",
         lifespan=lifespan,
     )
 
@@ -65,14 +60,14 @@ def register_routers(app: FastAPI) -> None:
     @root_router.get("/", tags=["root"])
     def home_page():
         return {
-            "message": "Добро пожаловать! Проект создан для сообщества 'Легкий путь в Python'.",
-            "community": "https://t.me/PythonPathMaster",
-            "author": "Яковенко Алексей"
+            "message": "ok"
         }
 
     # Подключение роутеров
     app.include_router(root_router, tags=["root"])
     app.include_router(router_auth, prefix='/auth', tags=['Auth'])
+    app.include_router(router_google, prefix='/google_oauth', tags=['Google OAuth'])
+    app.include_router(router_users, prefix='/users', tags=['Users'])
 
 
 # Создание экземпляра приложения

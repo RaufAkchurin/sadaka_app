@@ -24,6 +24,13 @@ IncorrectEmailOrPasswordException = HTTPException(
     detail='Неверная почта или пароль'
 )
 
+# Неверная почта или пароль
+FailedGoogleOauthException = HTTPException(
+    status_code=status.HTTP_400_BAD_REQUEST,
+    detail='Google авторизация не удалась'
+           'Попробуйте позже'
+)
+
 # Токен истек
 TokenExpiredException = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,

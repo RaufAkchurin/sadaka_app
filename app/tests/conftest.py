@@ -5,12 +5,12 @@ import httpx
 import pytest
 from httpx import AsyncClient, ASGITransport
 from sqlalchemy import insert
-from app.auth.dao import UsersDAO
-from app.config import settings
+from app.users.dao import UsersDAO
+from app.settings import settings
 from app.dao.database import async_session_maker, engine, Base
-from app.auth.models import User, Role
 from app.main import app as fastapi_app
 from app.tests.schemas import AuthorizedClientModel, CookiesModel
+from app.users.models import User, Role
 
 
 @pytest.fixture(scope="class")
