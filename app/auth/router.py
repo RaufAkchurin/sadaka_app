@@ -4,15 +4,43 @@ from app.auth.service_auth import authenticate_user, set_tokens
 from app.dependencies.auth_dep import get_current_user, get_current_admin_user, check_refresh_token
 from app.dependencies.dao_dep import get_session_with_commit, get_session_without_commit
 from app.exceptions import UserAlreadyExistsException, IncorrectEmailOrPasswordException
+from app.tests.factory.mimesis import person
 from app.users.dao import UsersDAO
 from app.users.models import User
-from app.users.schemas import SUserEmailRegister, SUserAuth, EmailModel, SUserAddDB, SUserInfo
+from app.users.schemas import SUserEmailRegister, SUserAuth, EmailModel, SUserAddDB, SUserInfo, UserBase
 
 router = APIRouter()
 
+@router.post("/register_by_email/")
+async def register_by_email(user_data: SUserEmailRegister,
+                        session: AsyncSession = Depends(get_session_with_commit)) -> dict:
+    # Проверка существования пользователя
+    user_dao = UsersDAO(session)
 
-@router.post("/login/")
-async def auth_user(
+    existing_user = await user_dao.find_one_or_none(filters=EmailModel(email=user_data.email))
+    if existing_user:
+        raise UserAlreadyExistsException
+
+    # Подготовка данных для добавления
+    user_data_dict = user_data.model_dump()
+    user_data_dict.pop('confirm_password', None)
+
+    # Добавление пользователя
+    await user_dao.add(values=SUserAddDB(**user_data_dict))
+
+    return {'message': 'Вы успешно зарегистрированы!'}
+
+
+@router.post("/login_anonymous/")
+async def register_and_login_anonymous(response: Response, session: AsyncSession = Depends(get_session_with_commit)) -> dict:
+    user_dao = UsersDAO(session)
+    user = await user_dao.add(values=UserBase(email=person.email(), name=person.name()))
+    set_tokens(response, user.id)
+    return {'message': 'Анонимный пользователь добавлен'}
+
+
+@router.post("/login_by_email/")
+async def login_by_email(
         response: Response,
         user_data: SUserAuth,
         session: AsyncSession = Depends(get_session_without_commit)

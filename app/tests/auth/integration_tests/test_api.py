@@ -18,18 +18,36 @@ class TestApi:
         ("abcde", "string", "password", "password", 422, None), #email validation
     ]
     )
-    async def test_register(self, ac, email, name, password, confirm_password, status_code, response_message):
-        # Сначала регистрируем пользователя
+    async def test_register_by_email(self,user_dao, ac, email, name, password, confirm_password, status_code, response_message):
+        if status_code == 200:
+            assert await user_dao.count() == 5
+
         user_data = {
                     "email": email,
                      "name": name,
                      "password": password,
                      "confirm_password": confirm_password
                      }
-        response = await ac.post("/users/register/", json=user_data)
+        response = await ac.post("/auth/register_by_email/", json=user_data)
         assert response.status_code == status_code
         if response_message:
             assert response.json() == response_message
+
+        if status_code == 200:
+            assert await user_dao.count() == 6
+
+    async def test_login_anonymous(self, ac, user_dao):
+        assert await user_dao.count() == 6
+        response = await ac.post("/auth/login_anonymous/")
+        assert response.status_code == 200
+        assert response.json() == {'message': 'Анонимный пользователь добавлен'}
+        assert await user_dao.count() == 7
+
+        assert response.cookies.get('user_access_token')
+        assert response.cookies.get('user_refresh_token')
+
+
+
 
 
     @pytest.mark.parametrize("email, password, status_code, response_message",
@@ -39,7 +57,7 @@ class TestApi:
       ])
     async def test_login(self, ac, email, password, status_code, response_message):
         user_data = {"email": email, "password": password}
-        response = await ac.post("/auth/login/", json=user_data)
+        response = await ac.post("/auth/login_by_email/", json=user_data)
         assert response.status_code == status_code
         if response_message:
             assert response.json() == response_message
