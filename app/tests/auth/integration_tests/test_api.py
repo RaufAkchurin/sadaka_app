@@ -88,7 +88,7 @@ class TestApi:
 
     @pytest.mark.parametrize("is_authorized, status_code, response_message",
      [
-         (True, 200, {'email': 'user1@test.com', 'name': 'user1', 'id': 4, 'role_id': 1, 'role_name': 'user', 'anonymous': False}),
+         (True, 200, {'email': 'user1@test.com', 'name': 'user1', 'id': 4, 'role_id': 1, 'role_name': 'user', 'anonymous': False, 'picture': None}),
          (False, 400, {"detail": "Токен отсутствует в заголовке"}),
      ])
 

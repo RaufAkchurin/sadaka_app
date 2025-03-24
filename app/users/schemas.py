@@ -1,4 +1,4 @@
-from typing import Self
+from typing import Self, Optional
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, model_validator, computed_field, HttpUrl
 
 from app.auth.service_jwt import get_password_hash
@@ -45,6 +45,7 @@ class RoleModel(BaseModel):
 class SUserInfo(UserBase):
     id: int = Field(description="Идентификатор пользователя")
     anonymous: bool = Field(description="Анонимный пользователь")
+    picture: Optional[str]
     role: RoleModel = Field(exclude=True)
 
     @computed_field
