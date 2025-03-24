@@ -43,6 +43,10 @@ class TestApi:
         assert response.json() == {'message': 'Анонимный пользователь добавлен'}
         assert await user_dao.count() == 7
 
+        users = await user_dao.find_all()
+        last_user = users[-1]
+        assert last_user.anonymous == True
+
         assert response.cookies.get('user_access_token')
         assert response.cookies.get('user_refresh_token')
 
