@@ -1,13 +1,8 @@
 from typing import List
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-from starlette.responses import Response
-
-from app.auth.service_auth import set_tokens
 from app.dependencies.auth_dep import get_current_user, get_current_admin_user, check_refresh_token
 from app.dependencies.dao_dep import get_session_with_commit
-from app.exceptions import UserAlreadyExistsException
-from app.tests.factory.mimesis import person
 from app.users.dao import UsersDAO
 from app.users.models import User
 from app.users.schemas import SUserInfo, SUserEmailRegister, EmailModel, SUserAddDB, UserBase
