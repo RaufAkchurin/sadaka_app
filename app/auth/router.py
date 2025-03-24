@@ -7,7 +7,8 @@ from app.exceptions import UserAlreadyExistsException, IncorrectEmailOrPasswordE
 from app.tests.factory.mimesis import person
 from app.users.dao import UsersDAO
 from app.users.models import User
-from app.users.schemas import SUserEmailRegister, SUserAuth, EmailModel, SUserAddDB, SUserInfo, UserBase
+from app.users.schemas import SUserEmailRegister, SUserAuth, EmailModel, SUserAddDB, SUserInfo, UserBase, \
+    AnonymousUserAddDB
 
 router = APIRouter()
 
@@ -34,7 +35,7 @@ async def register_by_email(user_data: SUserEmailRegister,
 @router.post("/login_anonymous/")
 async def register_and_login_anonymous(response: Response, session: AsyncSession = Depends(get_session_with_commit)) -> dict:
     user_dao = UsersDAO(session)
-    user = await user_dao.add(values=UserBase(email=person.email(), name=person.name()))
+    user = await user_dao.add(values=AnonymousUserAddDB(email=person.email(), name=person.name(), anonymous=True))
     set_tokens(response, user.id)
     return {'message': 'Анонимный пользователь добавлен'}
 
