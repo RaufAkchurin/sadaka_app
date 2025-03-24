@@ -18,18 +18,38 @@ class TestApi:
         ("abcde", "string", "password", "password", 422, None), #email validation
     ]
     )
-    async def test_register(self, ac, email, name, password, confirm_password, status_code, response_message):
-        # Сначала регистрируем пользователя
+    async def test_register_by_email(self,user_dao, ac, email, name, password, confirm_password, status_code, response_message):
+        if status_code == 200:
+            assert await user_dao.count() == 5
+
         user_data = {
                     "email": email,
                      "name": name,
                      "password": password,
                      "confirm_password": confirm_password
                      }
-        response = await ac.post("/users/register/", json=user_data)
+        response = await ac.post("/auth/register_by_email/", json=user_data)
         assert response.status_code == status_code
         if response_message:
             assert response.json() == response_message
+
+        if status_code == 200:
+            assert await user_dao.count() == 6
+
+    async def test_login_anonymous(self, ac, user_dao):
+        assert await user_dao.count() == 6
+        response = await ac.post("/auth/login_anonymous/")
+        assert response.status_code == 200
+        assert response.json() == {'message': 'Анонимный пользователь добавлен'}
+        assert await user_dao.count() == 7
+
+        users = await user_dao.find_all()
+        last_user = users[-1]
+        assert last_user.anonymous == True
+
+        assert response.cookies.get('user_access_token')
+        assert response.cookies.get('user_refresh_token')
+
 
 
     @pytest.mark.parametrize("email, password, status_code, response_message",
@@ -39,7 +59,7 @@ class TestApi:
       ])
     async def test_login(self, ac, email, password, status_code, response_message):
         user_data = {"email": email, "password": password}
-        response = await ac.post("/auth/login/", json=user_data)
+        response = await ac.post("/auth/login_by_email/", json=user_data)
         assert response.status_code == status_code
         if response_message:
             assert response.json() == response_message
@@ -68,7 +88,7 @@ class TestApi:
 
     @pytest.mark.parametrize("is_authorized, status_code, response_message",
      [
-         (True, 200, {'email': 'user1@test.com', 'name': 'user1', 'id': 4, 'role_id': 1, 'role_name': 'user'}),
+         (True, 200, {'email': 'user1@test.com', 'name': 'user1', 'id': 4, 'role_id': 1, 'role_name': 'user', 'anonymous': False}),
          (False, 400, {"detail": "Токен отсутствует в заголовке"}),
      ])
 

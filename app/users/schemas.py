@@ -12,6 +12,9 @@ class EmailModel(BaseModel):
 class UserBase(EmailModel):
     name: str = Field(min_length=3, max_length=50, description="Имя, от 3 до 50 символов")
 
+class AnonymousUserAddDB(UserBase):
+    anonymous: bool = Field(default=True)
+
 
 class SUserEmailRegister(UserBase):
     password: str = Field(min_length=5, max_length=50, description="Пароль, от 5 до 50 знаков")
@@ -41,6 +44,7 @@ class RoleModel(BaseModel):
 
 class SUserInfo(UserBase):
     id: int = Field(description="Идентификатор пользователя")
+    anonymous: bool = Field(description="Анонимный пользователь")
     role: RoleModel = Field(exclude=True)
 
     @computed_field

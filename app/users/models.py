@@ -19,6 +19,7 @@ class User(Base):
     password: Mapped[Optional[str]]
     picture: Mapped[Optional[str]]
     google_access_token: Mapped[Optional[str]]
+    anonymous: Mapped[bool] = mapped_column(default=False, nullable=False)
 
     role_id: Mapped[int] = mapped_column(ForeignKey('roles.id'), default=1, server_default=text("1"))
     role: Mapped["Role"] = relationship("Role", back_populates="users", lazy="joined")
