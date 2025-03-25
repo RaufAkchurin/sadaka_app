@@ -5,7 +5,7 @@ from app.dependencies.auth_dep import get_current_user, get_current_admin_user
 from app.dependencies.dao_dep import get_session_with_commit
 from app.users.dao import UsersDAO
 from app.users.models import User
-from app.users.schemas import SUserInfo
+from app.users.schemas import SUserInfo, UserUpdateAPI, EmailModel
 
 router = APIRouter()
 
@@ -13,6 +13,23 @@ router = APIRouter()
 async def get_me(user_data: User = Depends(get_current_user)) -> SUserInfo:
     return SUserInfo.model_validate(user_data)
 
+@router.post("/update/")
+async def update_user(user_data: UserUpdateAPI,
+                      session: AsyncSession = Depends(get_session_with_commit),
+                      user: User = Depends(get_current_user)
+                      ) -> SUserInfo:
+    return await UsersDAO(session).update(filters=EmailModel(email=user_data.email),
+                                            values=UserUpdateAPI(
+                                                name=user_data.name,
+                                                picture=user_data.picture,
+                                                city=user_data.city,
+                                                email=user_data.email,
+                                            ))
+
+
+
+
+#For admins only
 
 @router.get("/all_users/")
 async def get_all_users(session: AsyncSession = Depends(get_session_with_commit),

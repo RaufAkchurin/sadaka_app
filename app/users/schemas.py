@@ -13,7 +13,7 @@ class UserBase(EmailModel):
     name: str = Field(min_length=3, max_length=50, description="Имя, от 3 до 50 символов")
 
 class AnonymousUserAddDB(UserBase):
-    anonymous: bool = Field(default=True)
+    is_anonymous: bool = Field(default=True)
 
 
 class SUserEmailRegister(UserBase):
@@ -42,10 +42,22 @@ class RoleModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class CityModel(BaseModel):
+    id: int = Field(description="Идентификатор города")
+    name: str = Field(description="Название города")
+    model_config = ConfigDict(from_attributes=True)
+
+
+class UserUpdateAPI(UserBase):
+    picture: Optional[str]
+    city: CityModel = Field(exclude=True)
+
+
 class SUserInfo(UserBase):
     id: int = Field(description="Идентификатор пользователя")
-    anonymous: bool = Field(description="Анонимный пользователь")
+    is_anonymous: bool = Field(description="Анонимный пользователь")
     picture: Optional[str]
+    city: CityModel = Field(exclude=True)
     role: RoleModel = Field(exclude=True)
 
     @computed_field
@@ -55,6 +67,14 @@ class SUserInfo(UserBase):
     @computed_field
     def role_id(self) -> int:
         return self.role.id
+
+    @computed_field
+    def city_name(self) -> str:
+        return self.city.name
+
+    @computed_field
+    def city_id(self) -> int:
+        return self.city.id
 
 
 

@@ -45,7 +45,7 @@ class TestApi:
 
         users = await user_dao.find_all()
         last_user = users[-1]
-        assert last_user.anonymous == True
+        assert last_user.is_anonymous == True
 
         assert response.cookies.get('user_access_token')
         assert response.cookies.get('user_refresh_token')
@@ -88,7 +88,7 @@ class TestApi:
 
     @pytest.mark.parametrize("is_authorized, status_code, response_message",
      [
-         (True, 200, {'email': 'user1@test.com', 'name': 'user1', 'id': 4, 'role_id': 1, 'role_name': 'user', 'anonymous': False, 'picture': None}),
+         (True, 200, {'email': 'user1@test.com', 'name': 'user1', 'id': 4, 'role_id': 1, 'role_name': 'user', 'is_anonymous': False, 'picture': None}),
          (False, 400, {"detail": "Токен отсутствует в заголовке"}),
      ])
 
