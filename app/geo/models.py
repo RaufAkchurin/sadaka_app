@@ -3,10 +3,14 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.dao.database import Base, str_uniq
 
+# class LanguageEnum(Enum):
+#     RUSSIAN = "Russian"
+#     KAZAKH = "Kazakh"
+
 @dataclass
 class Country(Base):
     name: Mapped[str_uniq]
-    language: Mapped[str_uniq]
+    language: Mapped[str]
     regions: Mapped[list["Region"]] = relationship(back_populates="region")
 
     def __repr__(self):

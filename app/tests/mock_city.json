@@ -1,0 +1,15 @@
+[
+  {
+    "name": "Kazan",
+    "region_id": 1
+  },
+    {
+    "name": "Kama",
+    "region_id": 2
+
+  },
+    {
+    "name": "Chelny",
+    "region_id": 3
+  }
+]

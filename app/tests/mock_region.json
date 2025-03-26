@@ -1,0 +1,18 @@
+[
+  {
+    "name": "Tatarstan",
+    "logo": "Tatarstan",
+    "country_id": 1
+  },
+    {
+    "name": "Bashkortostan",
+    "logo": "Bashkortostan",
+    "country_id": 1
+
+  },
+    {
+    "name": "Dagestan",
+    "logo": "Dagestan",
+    "country_id": 1
+  }
+]

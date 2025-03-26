@@ -5,6 +5,8 @@ import httpx
 import pytest
 from httpx import AsyncClient, ASGITransport
 from sqlalchemy import insert
+
+from app.geo.models import Country, Region, City
 from app.users.dao import UsersDAO
 from app.settings import settings
 from app.dao.database import async_session_maker, engine, Base
@@ -34,12 +36,22 @@ async def prepare_database_core(session):
             await conn.run_sync(Base.metadata.drop_all)
             await conn.run_sync(Base.metadata.create_all)
 
+        country = open_mock_json("country")
+        region = open_mock_json("region")
+        city = open_mock_json("city")
         users = open_mock_json("user")
         roles = open_mock_json("role")
 
         async with async_session_maker() as session:
+            add_country = insert(Country).values(country)
+            add_region = insert(Region).values(region)
+            add_city = insert(City).values(city)
             add_users = insert(User).values(users)
             add_roles = insert(Role).values(roles)
+
+            await session.execute(add_country)
+            await session.execute(add_region)
+            await session.execute(add_city)
             await session.execute(add_users)
             await session.execute(add_roles)
             await session.commit()
