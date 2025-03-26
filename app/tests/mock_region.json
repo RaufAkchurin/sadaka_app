@@ -1,18 +1,14 @@
 [
   {
     "name": "Tatarstan",
-    "logo": "Tatarstan",
-    "country_id": 1
+    "logo": "Tatarstan"
   },
     {
     "name": "Bashkortostan",
-    "logo": "Bashkortostan",
-    "country_id": 1
-
+    "logo": "Bashkortostan"
   },
     {
     "name": "Dagestan",
-    "logo": "Dagestan",
-    "country_id": 1
+    "logo": "Dagestan"
   }
 ]

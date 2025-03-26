@@ -3,13 +3,12 @@
     "name": "Kazan",
     "region_id": 1
   },
-    {
-    "name": "Kama",
+  {
+    "name": "Ufa",
     "region_id": 2
-
   },
-    {
-    "name": "Chelny",
-    "region_id": 3
+  {
+    "name": "Ishim",
+    "region_id": 1
   }
 ]
