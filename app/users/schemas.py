@@ -13,7 +13,7 @@ class UserBase(EmailModel):
     name: str = Field(min_length=3, max_length=50, description="Имя, от 3 до 50 символов")
 
 class AnonymousUserAddDB(UserBase):
-    is_anonymous: bool = Field(default=True)
+    is_anonymous: bool
 
 
 class SUserEmailRegister(UserBase):

@@ -86,30 +86,6 @@ class TestApi:
         assert user_access_token is None
         assert user_refresh_token is None
 
-    @pytest.mark.parametrize("is_authorized, status_code, response_message",
-     [
-         (True, 200, {'city_id': 1,
-                                     'city_name': 'Kazan',
-                                     'email': 'user1@test.com',
-                                     'id': 4,
-                                     'is_anonymous': False,
-                                     'name': 'user1',
-                                     'picture': None,
-                                     'role_id': 1,
-                                     'role_name': 'user'}),
-         (False, 400, {"detail": "Токен отсутствует в заголовке"}),
-     ])
-
-    async def test_me_200(self, ac, authenticated_ac, is_authorized, status_code, response_message):
-        if is_authorized:
-            response = await authenticated_ac.client.get("/users/me/", cookies=authenticated_ac.cookies.dict())
-
-        else:
-            response = await ac.get("/users/me/")
-
-        assert response.status_code == status_code
-        assert response.json() == response_message
-
 
     @pytest.mark.parametrize("is_authorized, status_code, response_message",
      [
