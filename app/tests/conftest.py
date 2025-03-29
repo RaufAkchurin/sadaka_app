@@ -75,7 +75,7 @@ async def session():
     async with async_session_maker() as session:
         yield session
 
-@pytest.fixture(scope="class")
+@pytest.fixture(scope="function")
 async def user_dao(session) -> UsersDAO:
     user_dao = UsersDAO(session)
     return user_dao
@@ -88,13 +88,14 @@ async def ac():
 
 
 @pytest.fixture(scope="class")
-async def authenticated_ac():
+async def auth_ac():
     async with AsyncClient(transport=ASGITransport(fastapi_app),
                            base_url="http://test") as ac:
         await ac.post("/auth/login_by_email/", json={"email": "user1@test.com", "password": "password"})
         assert ac.cookies["user_access_token"]
         yield AuthorizedClientModel(client=ac, cookies=CookiesModel(user_access_token=ac.cookies.get('user_access_token'),
                                                                     user_refresh_token=ac.cookies.get('user_refresh_token')))
+
 
 @pytest.fixture(scope="class")
 async def authenticated_super():

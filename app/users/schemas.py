@@ -42,20 +42,22 @@ class RoleModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class UserUpdateAPI(UserBase):
+    picture: str = Field(description="Аватарка")
+    city_id: int = Field(description="Идентификатор города")
+
+class UserActiveModel(BaseModel):
+    is_active: bool = Field(description="Активный пользователь")
+
 class CityModel(BaseModel):
     id: int = Field(description="Идентификатор города")
     name: str = Field(description="Название города")
     model_config = ConfigDict(from_attributes=True)
 
-
-class UserUpdateAPI(UserBase):
-    picture: Optional[str]
-    city: CityModel = Field(exclude=True)
-
-
 class SUserInfo(UserBase):
     id: int = Field(description="Идентификатор пользователя")
     is_anonymous: bool = Field(description="Анонимный пользователь")
+    is_active: bool = Field(description="Активный пользователь")
     picture: Optional[str]
     city: CityModel = Field(exclude=True)
     role: RoleModel = Field(exclude=True)

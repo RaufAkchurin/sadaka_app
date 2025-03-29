@@ -1,6 +1,6 @@
 import pytest
 from app.users.schemas import EmailModel
-from app.tests.conftest import ac, authenticated_ac, authorize_by
+from app.tests.conftest import ac, auth_ac, authorize_by
 
 
 class TestApi:
@@ -69,8 +69,8 @@ class TestApi:
             assert response.cookies.get('user_refresh_token')
 
 
-    async def test_logout(self, authenticated_ac):
-        client = authenticated_ac.client
+    async def test_logout(self, auth_ac):
+        client = auth_ac.client
 
         user_access_token = client.cookies.get('user_access_token')
         user_refresh_token = client.cookies.get('user_refresh_token')
@@ -92,10 +92,10 @@ class TestApi:
          (True, 200, {"message": "Токены успешно обновлены"}),
          (False, 400, {"detail": "Токен отсутствует в заголовке"}),
      ])
-    async def test_refresh_token(self, ac, authenticated_ac, is_authorized, status_code, response_message):
+    async def test_refresh_token(self, ac, auth_ac, is_authorized, status_code, response_message):
             if is_authorized:
-                client = authenticated_ac.client
-                response = await client.post("/auth/refresh", cookies=authenticated_ac.cookies.dict())
+                client = auth_ac.client
+                response = await client.post("/auth/refresh", cookies=auth_ac.cookies.dict())
 
             else:
                 client = ac

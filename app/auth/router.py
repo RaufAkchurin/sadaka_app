@@ -1,14 +1,13 @@
 from fastapi import APIRouter, Response, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.auth.service_auth import authenticate_user, set_tokens
-from app.dependencies.auth_dep import get_current_user, get_current_admin_user, check_refresh_token
+from app.dependencies.auth_dep import check_refresh_token
 from app.dependencies.dao_dep import get_session_with_commit, get_session_without_commit
 from app.exceptions import UserAlreadyExistsException, IncorrectEmailOrPasswordException
 from app.tests.factory.mimesis import person
 from app.users.dao import UsersDAO
 from app.users.models import User
-from app.users.schemas import SUserEmailRegister, SUserAuth, EmailModel, SUserAddDB, SUserInfo, UserBase, \
-    AnonymousUserAddDB
+from app.users.schemas import SUserEmailRegister, SUserAuth, EmailModel, SUserAddDB, AnonymousUserAddDB
 
 router = APIRouter()
 
@@ -58,7 +57,6 @@ async def login_by_email(
         'ok': True,
         'message': 'Авторизация успешна!'
     }
-
 
 
 @router.post("/logout")

@@ -1,25 +1,26 @@
 import pytest
-
 from app.tests.conftest import authorize_by
 from app.users.schemas import EmailModel
+
 
 class TestUsers:
     @pytest.mark.parametrize("is_authorized, status_code, response_message",
                              [
                                  (True, 200, {'city_id': 1,
-                                              'city_name': 'Kazan',
-                                              'email': 'user1@test.com',
-                                              'id': 4,
-                                              'is_anonymous': False,
-                                              'name': 'user1',
-                                              'picture': None,
-                                              'role_id': 1,
-                                              'role_name': 'user'}),
+                                             'city_name': 'Kazan',
+                                             'email': 'user1@test.com',
+                                             'id': 4,
+                                             'is_active': True,
+                                             'is_anonymous': False,
+                                             'name': 'user1',
+                                             'picture': None,
+                                             'role_id': 1,
+                                             'role_name': 'user'}),
                                  (False, 400, {"detail": "Токен отсутствует в заголовке"}),
                              ])
-    async def test_me_200(self, ac, authenticated_ac, is_authorized, status_code, response_message):
+    async def test_me_200(self, ac, auth_ac, is_authorized, status_code, response_message):
         if is_authorized:
-            response = await authenticated_ac.client.get("/users/me/", cookies=authenticated_ac.cookies.dict())
+            response = await auth_ac.client.get("/users/me/", cookies=auth_ac.cookies.dict())
 
         else:
             response = await ac.get("/users/me/")
@@ -56,17 +57,51 @@ class TestUsers:
             assert response.json() == response_message
 
 
-    async def test_update_user(self, authenticated_ac):
+    @pytest.mark.parametrize("authorized, status_code, response_message",
+     [   #AUTHORIZED USERS
+         (True, 200, {'city_id': 1, 'email': 'updated@example.com', 'name': 'updated', 'picture': 'updated'}),
+         (False, 400, {"detail":"Токен отсутствует в заголовке"}),
+     ])
+    async def test_update_user(self, ac, auth_ac, user_dao, authorized, status_code, response_message):
         new_data = {
-            'body':{
-                    "email": "updated@example.com",
-                    "name": "updated",
-                    "picture": "updated",
-                    "city_id": 2
-        }}
+            "email": "updated@example.com",
+            "name": "updated",
+            "picture": "updated",
+            "city_id": 1
+        }
+        if authorized:
+            response = await auth_ac.client.post(
+                "/users/update/",
+                cookies=auth_ac.cookies.dict(),
+                json=new_data
+            )
 
-        response = await authenticated_ac.client.post("/users/update/",
-                                                      cookies=authenticated_ac.cookies.dict(),
-                                                      data = new_data
-                                                      )
-        assert response.status_code == 200
+        else:
+            response = await ac.post(
+                "/users/update/",
+                json=new_data
+            )
+
+        assert response.status_code == status_code
+        assert response.json() == response_message
+
+
+    async def test_delete_authorized_user(self, ac, auth_ac):
+            me_response_before_deleting = await auth_ac.client.get("/users/me/", cookies=auth_ac.cookies.dict())
+            assert me_response_before_deleting.status_code == 200
+            assert me_response_before_deleting.json()['is_active'] == True
+
+            response = await auth_ac.client.post("/users/delete/", cookies=auth_ac.cookies.dict(),)
+            me_response = await auth_ac.client.get("/users/me/", cookies=auth_ac.cookies.dict())
+
+            assert response.status_code == 200
+            assert response.json() == {'message': 'Вы успешно удалили аккаунт!'}
+
+            assert me_response.status_code == 200
+            assert me_response.json()['is_active'] == False
+
+    async def test_delete_not_authorized_user(self, ac, auth_ac):
+            response = await ac.post("/users/delete/")
+
+            assert response.status_code == 400
+            assert response.json() == {"detail":"Токен отсутствует в заголовке"}

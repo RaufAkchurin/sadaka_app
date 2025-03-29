@@ -1,6 +1,7 @@
 import pytest
 from unittest.mock import patch, MagicMock
 from app.auth.google.service import google_auth_service
+from app.users.schemas import EmailModel, UserActiveModel
 
 
 @pytest.fixture
@@ -93,3 +94,32 @@ class TestGoogleAuthService:
         mock_requests_post.assert_called_once()
         mock_requests_get.assert_called_once()
         assert await user_dao.count() == 6
+
+    async def test_login_after_deleting(self, mock_google_api_responses, session, user_dao):
+        mock_requests_post, mock_requests_get = mock_google_api_responses
+
+        await user_dao.update(
+            filters=EmailModel(email='superadmin@test.com'),
+            values=UserActiveModel(is_active=False)
+        )
+
+        current_user = await user_dao.find_one_or_none(filters=EmailModel(email='superadmin@test.com'))
+        assert current_user.is_active == False
+
+        # Мокаем response от requests.get (для получения данных пользователя)
+        mock_user_info_response = MagicMock()
+        mock_user_info_response.status_code = 200
+        mock_user_info_response.json.return_value = {
+            'name': 'test_user',
+            'email': 'superadmin@test.com',
+            'picture': 'https://www.testpicture.ru/test'
+        }
+        mock_requests_get.return_value = mock_user_info_response
+
+        await google_auth_service(
+            code='4/0AQSTgQERCWY2JwjFlIXv56vTwtVQO6NGdyIZ2J4j4tKAhzkdyAdGAxxJ-8RZIGvIrstTHQ',
+            session=session
+        )
+
+        # Проверяем, что возвращенные данные соответствуют ожиданиям
+        assert current_user.is_active == True
