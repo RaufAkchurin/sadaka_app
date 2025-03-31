@@ -6,6 +6,7 @@ import pytest
 from httpx import AsyncClient, ASGITransport
 from sqlalchemy import insert
 
+from app.dependencies.dao_dep import get_session_with_commit
 from app.geo.models import Country, Region, City
 from app.users.dao import UsersDAO
 from app.settings import settings
@@ -73,7 +74,14 @@ async def prepare_database_manually(session):
 @pytest.fixture(scope="class")
 async def session():
     async with async_session_maker() as session:
-        yield session
+        try:
+            yield session
+            await session.commit()
+        except Exception:
+            await session.rollback()
+            raise
+        finally:
+            await session.close()
 
 @pytest.fixture(scope="function")
 async def user_dao(session) -> UsersDAO:
@@ -109,7 +117,7 @@ async def authenticated_super():
                                                                     user_refresh_token=ac.cookies.get('user_refresh_token')))
 
 
-async def authorize_by(ac: AsyncClient, user: User):
+async def auth_by(ac: AsyncClient, user: User):
     logout_response = await ac.post("/auth/logout/")
     assert logout_response.status_code == 307
 

@@ -1,6 +1,7 @@
 import pytest
-from app.users.schemas import EmailModel
-from app.tests.conftest import ac, auth_ac, authorize_by
+from app.users.schemas import EmailModel, UserActiveModel, SUserAddDB
+from app.tests.conftest import ac, auth_ac, auth_by
+
 
 
 class TestApi:
@@ -11,22 +12,21 @@ class TestApi:
 
 
     @pytest.mark.parametrize("email, name, password, confirm_password, status_code, response_message",
-    [
-        ("user@example.com", "string", "password", "password", 200, {'message': 'Вы успешно зарегистрированы!'}),
-        ("user@example.com", "string", "password", "password", 409, {'detail': 'Пользователь уже существует'}),
-        ("user@example.com",  "string", "password", "password1", 422, None), #password confirm validation
-        ("abcde", "string", "password", "password", 422, None), #email validation
-    ]
+        [
+            ("user@example.com", "string", "password", "password", 200, {'message': 'Вы успешно зарегистрированы!'}),
+            ("user@example.com",  "string", "password", "password1", 422, None), #password confirm validation
+            ("abcde", "string", "password", "password", 422, None), #email validation
+        ]
     )
     async def test_register_by_email(self,user_dao, ac, email, name, password, confirm_password, status_code, response_message):
         if status_code == 200:
             assert await user_dao.count() == 5
 
         user_data = {
-                    "email": email,
-                     "name": name,
-                     "password": password,
-                     "confirm_password": confirm_password
+                        "email": email,
+                         "name": name,
+                         "password": password,
+                         "confirm_password": confirm_password
                      }
         response = await ac.post("/auth/register_by_email/", json=user_data)
         assert response.status_code == status_code
@@ -36,12 +36,47 @@ class TestApi:
         if status_code == 200:
             assert await user_dao.count() == 6
 
-    async def test_login_anonymous(self, ac, user_dao):
+    async def test_register_by_email_after_deleting(self, session, user_dao, ac):
         assert await user_dao.count() == 6
+        user_data = {
+                        "email": "user_after_deleting@test.com",
+                         "name": "string",
+                         "password": "password",
+                         "confirm_password": "password"
+                     }
+
+        #Создаем пользака
+        await ac.post("/auth/register_by_email/", json=user_data)
+        assert await user_dao.count() == 7
+        current_user = await user_dao.find_one_or_none(filters=EmailModel(email="user_after_deleting@test.com"))
+        assert current_user.is_active == True
+
+        # Удаляем и проверяем что он деактивировался
+        authorized_client = await auth_by(ac, current_user)
+        client = authorized_client.client
+        response = await client.post("/users/delete/", cookies=authorized_client.cookies.dict())
+        assert response.status_code == 200
+        me_response = await client.get("/users/me/", cookies=authorized_client.cookies.dict())
+        assert me_response.status_code == 200
+        assert me_response.json()['is_active'] == False
+
+        # На ту же почту регаем занова и проверяем что активировался
+        response_after_deleting = await ac.post("/auth/register_by_email/", json=user_data)
+        assert response_after_deleting.status_code == 200
+        assert response_after_deleting.json() == {'message': 'Вы успешно зарегистрированы!'}
+
+        me_response = await client.get("/users/me/", cookies=authorized_client.cookies.dict())
+        assert me_response.status_code == 200
+        assert me_response.json()['is_active'] == True
+
+
+
+    async def test_login_anonymous(self, ac, user_dao):
+        assert await user_dao.count() == 7
         response = await ac.post("/auth/login_anonymous/")
         assert response.status_code == 200
         assert response.json() == {'message': 'Анонимный пользователь добавлен'}
-        assert await user_dao.count() == 7
+        assert await user_dao.count() == 8
 
         users = await user_dao.find_all()
         last_user = users[-1]
@@ -119,7 +154,7 @@ class TestApi:
             current_user = await user_dao.find_one_or_none(filters=EmailModel(email=email))
             if current_user is None:
                 raise ValueError("User not found")
-            authorized_client = await authorize_by(ac, current_user)
+            authorized_client = await auth_by(ac, current_user)
             client = authorized_client.client
             response = await client.get("/users/all_users/", cookies=authorized_client.cookies.dict())
         else:

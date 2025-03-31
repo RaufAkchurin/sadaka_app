@@ -3,31 +3,28 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.auth.service_auth import authenticate_user, set_tokens
 from app.dependencies.auth_dep import check_refresh_token
 from app.dependencies.dao_dep import get_session_with_commit, get_session_without_commit
-from app.exceptions import UserAlreadyExistsException, IncorrectEmailOrPasswordException
+from app.exceptions import IncorrectEmailOrPasswordException
 from app.tests.factory.mimesis import person
 from app.users.dao import UsersDAO
 from app.users.models import User
-from app.users.schemas import SUserEmailRegister, SUserAuth, EmailModel, SUserAddDB, AnonymousUserAddDB
+from app.users.schemas import SUserEmailRegister, SUserAuth, EmailModel, SUserAddDB, AnonymousUserAddDB, UserUpdateAPI, \
+    UserActiveModel
 
 router = APIRouter()
 
 @router.post("/register_by_email/")
 async def register_by_email(user_data: SUserEmailRegister,
                         session: AsyncSession = Depends(get_session_with_commit)) -> dict:
-    # Проверка существования пользователя
     user_dao = UsersDAO(session)
-
     existing_user = await user_dao.find_one_or_none(filters=EmailModel(email=user_data.email))
     if existing_user:
-        raise UserAlreadyExistsException
+        await UsersDAO(session).update(filters=EmailModel(email=existing_user.email),
+                                       values=UserActiveModel(is_active=True))
+    else:
+        user_data_dict = user_data.model_dump()
+        user_data_dict.pop('confirm_password', None)
 
-    # Подготовка данных для добавления
-    user_data_dict = user_data.model_dump()
-    user_data_dict.pop('confirm_password', None)
-
-    # Добавление пользователя
-    await user_dao.add(values=SUserAddDB(**user_data_dict))
-
+        await user_dao.add(values=SUserAddDB(**user_data_dict, is_active=True))
     return {'message': 'Вы успешно зарегистрированы!'}
 
 

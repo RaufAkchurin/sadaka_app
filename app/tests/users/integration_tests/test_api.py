@@ -1,5 +1,5 @@
 import pytest
-from app.tests.conftest import authorize_by
+from app.tests.conftest import auth_by
 from app.users.schemas import EmailModel
 
 
@@ -44,7 +44,7 @@ class TestUsers:
             current_user = await user_dao.find_one_or_none(filters=EmailModel(email=email))
             if current_user is None:
                 raise ValueError("User not found")
-            authorized_client = await authorize_by(ac, current_user)
+            authorized_client = await auth_by(ac, current_user)
             client = authorized_client.client
             response = await client.get("/users/all_users/", cookies=authorized_client.cookies.dict())
         else:

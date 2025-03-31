@@ -30,6 +30,7 @@ class SUserEmailRegister(UserBase):
 
 class SUserAddDB(UserBase):
     password: str = Field(min_length=5, description="Пароль в формате HASH-строки")
+    is_active: bool = Field(description="Активный пользователь", default=True)
 
 
 class SUserAuth(EmailModel):
