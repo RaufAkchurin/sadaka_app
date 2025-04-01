@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import RedirectResponse, JSONResponse
 from app.auth.service_auth import set_tokens
 from app.auth.google.service import google_auth_service
-from app.client.google import google_client
+from app.client.google_client import google_client
 from app.dependencies.dao_dep import get_session_with_commit
 
 from fastapi import APIRouter

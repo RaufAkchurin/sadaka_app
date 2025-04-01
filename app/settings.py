@@ -21,6 +21,9 @@ class Settings(BaseSettings):
     TEST_POSTGRES_HOST: str
     TEST_POSTGRES_PORT: int
 
+    TEST_SELECTEL_ACCESS: str
+    TEST_SELECTEL_SECRET: str
+
     model_config = SettingsConfigDict(env_file=f"{BASE_DIR}/.env")
 
     @property
