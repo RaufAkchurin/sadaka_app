@@ -2,7 +2,6 @@ import asyncio
 from contextlib import asynccontextmanager
 from aiobotocore.session import get_session
 from botocore.exceptions import ClientError
-from app.settings import settings
 
 
 class S3Client:
@@ -26,20 +25,15 @@ class S3Client:
         async with self.session.create_client("s3", **self.config) as client:
             yield client
 
-    async def upload_file(
-            self,
-            file_path: str,
-    ):
-        object_name = file_path.split("/")[-1]  # /users/artem/cat.jpg
+    async def upload_file(self, contents: bytes, key: str ):
         try:
             async with self.get_client() as client:
-                with open(file_path, "rb") as file:
-                    await client.put_object(
-                        Bucket=self.bucket_name,
-                        Key=object_name,
-                        Body=file,
-                    )
-                print(f"File {object_name} uploaded to {self.bucket_name}")
+                await client.put_object(
+                    Bucket=self.bucket_name,
+                    Key=key,
+                    Body=contents,
+                )
+                print(f"File {key} uploaded to {self.bucket_name}")
         except ClientError as e:
             print(f"Error uploading file: {e}")
 
@@ -63,19 +57,21 @@ class S3Client:
             print(f"Error downloading file: {e}")
 
 
-async def main():
-    s3_client = S3Client(
-        access_key="B04K9FCT8V9DB7HVNSY0",
-        secret_key="xDNCDY9JwQY8EIE9OJb0HJEDvp0qzWsOakS8GXwE",
-        endpoint_url="https://s3.ru1.storage.beget.cloud",  # для Selectel используйте https://s3.storage.selcloud.ru
-        bucket_name="7c5de6ab921c-resourceful-gretch",
-    )
+# async def main():
+#     s3_client = S3Client(
+#         access_key="691a26fb9f03473e95db9fdacc9af1d9",
+#         secret_key="226e51b0eb864925908ac11fc7746504",
+#         endpoint_url="https://s3.ru-7.storage.selcloud.ru",
+#         bucket_name="sadaka",
+#     )
+#
+#     # Проверка, что мы можем загрузить, скачать и удалить файл
+#     # await s3_client.upload_file("test.txt")
+#     await s3_client.upload_file("move.mp4")
+#     # await s3_client.get_file("test.txt", "text_local_file.txt")
+#     # await s3_client.delete_file("test.txt")
+#
+#
+# if __name__ == "__main__":
+#     asyncio.run(main())
 
-    # Проверка, что мы можем загрузить, скачать и удалить файл
-    await s3_client.upload_file("test.txt")
-    await s3_client.get_file("test.txt", "text_local_file.txt")
-    await s3_client.delete_file("test.txt")
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
