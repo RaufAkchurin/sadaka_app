@@ -1,7 +1,6 @@
 import filetype
 from fastapi import APIRouter, Depends
 from ..client.s3_client import S3Client
-from uuid import uuid4
 from fastapi import  HTTPException, UploadFile, status, Response
 
 from ..dependencies.auth_dep import get_current_user
@@ -22,14 +21,14 @@ KB = 1024
 MB = 1024 * KB
 
 SUPPORTED_FILE_TYPES = {
-    'image/png': 'png',
-    'image/jpeg': 'jpg',
-    'application/pdf': 'pdf'
+    'png': 'png',
+    'jpg': 'jpg',
+    'pdf': 'pdf'
 }
 
 @router.post('/upload')
 async def upload(file: UploadFile | None = None,
-                user_data: User = Depends(get_current_user)
+                user_data: User = Depends(get_current_user),
                  ):
     if not file:
         raise FileNotFoundException
@@ -44,14 +43,14 @@ async def upload(file: UploadFile | None = None,
             detail=f'Supported file size is 0 - {max_size_mb} MB'
         )
 
-    kind = filetype.guess(contents)
-    if kind is None or kind.mime not in SUPPORTED_FILE_TYPES:
+    type = file.filename.split(".")[1]
+    if type not in SUPPORTED_FILE_TYPES:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f'Неподдерживаемый тип файла: {kind.mime if kind else "Unknown"}. Поддерживаются только следующие типы {", ".join(SUPPORTED_FILE_TYPES)}'
+            detail=f'Неподдерживаемый тип файла: {type if type else "Unknown"}. Поддерживаются только следующие типы {", ".join(SUPPORTED_FILE_TYPES)}'
         )
 
-    file_name = f'{uuid4()}.{SUPPORTED_FILE_TYPES[kind.mime]}'
+    file_name = f'{file.filename.split(".")[0]}.{SUPPORTED_FILE_TYPES[type]}'
     await s3_client.upload_file(key=file_name, contents=contents)
     return {'file_name': file_name}
 

@@ -3,8 +3,8 @@ from app.tests.conftest import auth_by  # Предполагаю, что эта 
 from uuid import uuid4
 
 
-class TestFileUpload:
 
+class TestFileUpload:
     @pytest.mark.parametrize("is_authorized, status_code, response_message",
                              [
                                  (True, 200, {'file_name': 'test_file.png'}),
@@ -12,7 +12,7 @@ class TestFileUpload:
                              ])
     async def test_upload_file(self, ac, auth_ac, is_authorized, status_code, response_message):
         file_content = b"Test file content"
-        file_name = f"{uuid4()}.png"
+        file_name = f"test_file.png"
 
         if is_authorized:
             response = await auth_ac.client.post(
@@ -35,13 +35,13 @@ class TestFileUpload:
 
     @pytest.mark.parametrize("file_size, is_authorized, status_code, response_message",
                              [
-                                 (2 * 1024 * 1024, True, 400, "Supported file size is 0 - 1 MB"),
+                                 (2 * 1024 * 1024, True, 400, {'detail': 'Supported file size is 0 - 1 MB'}),
                                  (1024, True, 200, {'file_name': 'test_file.png'}),
                                  (2 * 1024 * 1024, False, 400, {"detail": "Токен отсутствует в заголовке"}),
                              ])
     async def test_upload_file_size(self, ac, auth_ac, file_size, is_authorized, status_code, response_message):
         file_content = b"a" * file_size  # Создаем файл с указанным размером
-        file_name = f"{uuid4()}.png"
+        file_name = f"test_file.png"
 
         if is_authorized:
             response = await auth_ac.client.post(
@@ -56,7 +56,7 @@ class TestFileUpload:
             )
 
         assert response.status_code == status_code
-        assert response.json()["detail"] == response_message
+        assert response.json() == response_message
 
 
     @pytest.mark.parametrize("file_type, is_authorized, status_code, response_message",
