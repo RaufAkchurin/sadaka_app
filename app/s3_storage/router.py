@@ -29,7 +29,7 @@ SUPPORTED_FILE_TYPES = {
 
 @router.post('/upload')
 async def upload(file: UploadFile | None = None,
-                # user_data: User = Depends(get_current_user)
+                user_data: User = Depends(get_current_user)
                  ):
     if not file:
         raise FileNotFoundException
@@ -58,7 +58,7 @@ async def upload(file: UploadFile | None = None,
 
 @router.get('/download')
 async def download(file_name: str | None = None,
-                   # user_data: User = Depends(get_current_user)
+                   user_data: User = Depends(get_current_user)
                    ) -> Response:
     if not file_name:
         raise FileNameNotProvidedException
@@ -74,7 +74,7 @@ async def download(file_name: str | None = None,
 
 @router.delete('/delete')
 async def delete(file_name: str | None = None,
-                # user_data: User = Depends(get_current_user)
+                user_data: User = Depends(get_current_user)
                 ) -> dict:
     if not file_name:
         raise FileNameNotProvidedException

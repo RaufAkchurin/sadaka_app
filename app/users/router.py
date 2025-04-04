@@ -13,6 +13,7 @@ router = APIRouter()
 async def get_me(user_data: User = Depends(get_current_user)) -> SUserInfo:
     return SUserInfo.model_validate(user_data)
 
+
 @router.post("/update/")
 async def update_user(user_data: UserUpdateAPI,
                       session: AsyncSession = Depends(get_session_with_commit),
