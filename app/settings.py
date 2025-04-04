@@ -20,12 +20,6 @@ class Settings(BaseSettings):
     S3_BUCKET_NAME: str
     S3_ENDPOINT_URL: str
 
-    TEST_POSTGRES_PASSWORD: str
-    TEST_POSTGRES_USER: str
-    TEST_POSTGRES_DB: str
-    TEST_POSTGRES_HOST: str
-    TEST_POSTGRES_PORT: int
-
 
     model_config = SettingsConfigDict(env_file=f"{BASE_DIR}/.env")
 

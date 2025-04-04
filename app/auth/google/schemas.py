@@ -11,3 +11,4 @@ class GoogleUserData(UserBase):
 class GoogleUserAddDB(UserBase):
     picture: str
     google_access_token : str
+    is_active: bool

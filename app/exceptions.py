@@ -1,11 +1,7 @@
 from fastapi import status, HTTPException
             #АВТОРИЗАЦИЯ
 
-UserAlreadyExistsException = HTTPException(
-    status_code=status.HTTP_409_CONFLICT,
-    detail='Пользователь уже существует'
-)
-
+# Пользователь не найден
 UserNotFoundException = HTTPException(
     status_code=status.HTTP_404_NOT_FOUND,
     detail='Пользователь не найден'
