@@ -45,14 +45,15 @@ class S3Client:
         except ClientError as e:
             print(f"Error deleting file: {e}")
 
-    async def get_file(self, object_name: str, destination_path: str):
+    async def get_file(self, object_name: str):
         try:
             async with self.get_client() as client:
                 response = await client.get_object(Bucket=self.bucket_name, Key=object_name)
                 data = await response["Body"].read()
-                with open(destination_path, "wb") as file:
-                    file.write(data)
-                print(f"File {object_name} downloaded to {destination_path}")
+                # with open(destination_path, "wb") as file:
+                #     file.write(data)
+                print(f"File {object_name} downloaded")
+                return data
         except ClientError as e:
             print(f"Error downloading file: {e}")
 

@@ -9,7 +9,7 @@ from app.auth.router import router as router_auth
 from app.auth.google.router import router as router_google
 from app.client.s3_client import S3Client
 from app.users.router import router as router_users
-from app.media_s3.router import router as router_media_files
+from app.s3_storage.router import router as router_s3_storage
 
 
 @asynccontextmanager
@@ -70,7 +70,7 @@ def register_routers(app: FastAPI) -> None:
     app.include_router(router_auth, prefix='/auth', tags=['Auth'])
     app.include_router(router_google, prefix='/google_oauth', tags=['Google OAuth'])
     app.include_router(router_users, prefix='/users', tags=['Users'])
-    app.include_router(router_media_files, prefix='/media_s3', tags=['Media S3'])
+    app.include_router(router_s3_storage, prefix='/s3_storage', tags=['S3 Storage'])
 
 # Создание экземпляра приложения
 app = create_app()

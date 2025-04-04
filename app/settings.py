@@ -15,6 +15,11 @@ class Settings(BaseSettings):
     GOOGLE_REDIRECT_URI: str = ''
     GOOGLE_TOKEN_URI: str = 'https://accounts.google.com/o/oauth2/token'
 
+    S3_ACCESS_KEY: str
+    S3_SECRET_KEY: str
+    S3_BUCKET_NAME: str
+    S3_ENDPOINT_URL: str
+
     TEST_POSTGRES_PASSWORD: str
     TEST_POSTGRES_USER: str
     TEST_POSTGRES_DB: str
