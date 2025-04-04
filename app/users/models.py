@@ -1,8 +1,10 @@
-from dataclasses import dataclass
 from typing import Optional
-from sqlalchemy import text, ForeignKey, Column, String
+from dataclasses import dataclass
+from sqlalchemy import text, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from app.dao.database import Base, str_uniq, DATABASE_URL
+from app.dao.database import Base, str_uniq
+from app.geo.models import City
+
 
 @dataclass
 class Role(Base):
@@ -12,6 +14,7 @@ class Role(Base):
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.id}, name={self.name})"
 
+
 @dataclass
 class User(Base):
     name: Mapped[str]
@@ -19,10 +22,17 @@ class User(Base):
     password: Mapped[Optional[str]]
     picture: Mapped[Optional[str]]
     google_access_token: Mapped[Optional[str]]
-    anonymous: Mapped[bool] = mapped_column(default=False, nullable=False)
+    is_anonymous: Mapped[bool] = mapped_column(default=False, nullable=False)
+    is_active: Mapped[bool] = mapped_column(default=True, nullable=False)
 
+    # Связь с городом
+    city_id: Mapped[int] = mapped_column(ForeignKey('citys.id'), default=1, server_default=text("1"))
+    city: Mapped["City"] = relationship("City", back_populates="users", lazy="joined")
+
+    # Связь с ролью
     role_id: Mapped[int] = mapped_column(ForeignKey('roles.id'), default=1, server_default=text("1"))
     role: Mapped["Role"] = relationship("Role", back_populates="users", lazy="joined")
 
     def __repr__(self):
-        return f"{self.__class__.__name__}(id={self.id})"
+        return f"{self.__class__.__name__}(id={self.id}, name={self.name})"
+
