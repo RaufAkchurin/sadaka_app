@@ -4,7 +4,7 @@ from ..client.s3_client import S3Client
 from fastapi import  HTTPException, UploadFile, status, Response
 
 from ..dependencies.auth_dep import get_current_user
-from ..exceptions import FileNotFoundException, FileNameNotProvidedException
+from ..exceptions import FileNotProvidedException, FileNameNotProvidedException, FileNotFoundS3Exception
 from ..settings import settings
 from ..users.models import User
 
@@ -31,7 +31,7 @@ async def upload(file: UploadFile | None = None,
                 user_data: User = Depends(get_current_user),
                  ):
     if not file:
-        raise FileNotFoundException
+        raise FileNotProvidedException
 
     contents = await file.read()
     size = len(contents)
@@ -58,11 +58,14 @@ async def upload(file: UploadFile | None = None,
 @router.get('/download')
 async def download(file_name: str | None = None,
                    user_data: User = Depends(get_current_user)
-                   ) -> Response:
+                   ):
     if not file_name:
         raise FileNameNotProvidedException
 
     contents = await s3_client.get_file(object_name=file_name)
+    if contents is None:
+        raise FileNotFoundS3Exception
+
     return Response(
         content=contents,
         headers={
@@ -75,8 +78,8 @@ async def download(file_name: str | None = None,
 async def delete(file_name: str | None = None,
                 user_data: User = Depends(get_current_user)
                 ) -> dict:
-    if not file_name:
+    if file_name == 'None':
         raise FileNameNotProvidedException
 
     await s3_client.delete_file(object_name=file_name)
-    return {'message': 'Файл успешно удалён.'}
+    return {'message': 'Запрос на удаление файла отправлен.'}

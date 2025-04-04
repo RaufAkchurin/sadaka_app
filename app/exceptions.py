@@ -64,12 +64,17 @@ TokenInvalidFormatException = HTTPException(
 
 
                     # Файлы
-FileNotFoundException = HTTPException(
+FileNotProvidedException = HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail='Файл не найден.'
+            detail='Файл не передан.'
         )
 
 FileNameNotProvidedException = HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='Не передано название файла.'
+        )
+
+FileNotFoundS3Exception = HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='Файл не найден в хранилище S3'
         )
