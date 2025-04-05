@@ -1,8 +1,6 @@
-import filetype
 from fastapi import APIRouter, Depends
 from ..client.s3_client import S3Client
 from fastapi import  HTTPException, UploadFile, status, Response
-
 from ..dependencies.auth_dep import get_current_user
 from ..exceptions import FileNotProvidedException, FileNameNotProvidedException, FileNotFoundS3Exception
 from ..settings import settings

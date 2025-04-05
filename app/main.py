@@ -2,12 +2,10 @@ from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 from loguru import logger
 
 from app.auth.router import router as router_auth
 from app.auth.google.router import router as router_google
-from app.client.s3_client import S3Client
 from app.users.router import router as router_users
 from app.s3_storage.router import router as router_s3_storage
 

@@ -1,12 +1,9 @@
-import asyncio
 import json
 import os
 import httpx
 import pytest
 from httpx import AsyncClient, ASGITransport
 from sqlalchemy import insert
-
-from app.dependencies.dao_dep import get_session_with_commit
 from app.geo.models import Country, Region, City
 from app.users.dao import UsersDAO
 from app.settings import settings
@@ -14,14 +11,6 @@ from app.dao.database import async_session_maker, engine, Base
 from app.main import app as fastapi_app
 from app.tests.schemas import AuthorizedClientModel, CookiesModel
 from app.users.models import User, Role
-
-
-@pytest.fixture(scope="class")
-def event_loop(request):
-    """Create an instance of the default event loop for each test case."""
-    loop = asyncio.get_event_loop_policy().new_event_loop()
-    yield loop
-    loop.close()
 
 def open_mock_json(model: str):
     test_dir = os.path.dirname(os.path.dirname(__file__))
