@@ -450,15 +450,6 @@ wheels = [
 ]
 
 [[package]]
-name = "filetype"
-version = "1.2.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/bb/29/745f7d30d47fe0f251d3ad3dc2978a23141917661998763bebb6da007eb1/filetype-1.2.0.tar.gz", hash = "sha256:66b56cd6474bf41d8c54660347d37afcc3f7d1970648de365c102ef77548aadb", size = 998020 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/18/79/1b8fa1bb3568781e84c9200f951c735f3f157429f44be0495da55894d620/filetype-1.2.0-py2.py3-none-any.whl", hash = "sha256:7ce71b6880181241cf7ac8697a2f1eb6a8bd9b429f7ad6d27b8db9ba5f1c2d25", size = 19970 },
-]
-
-[[package]]
 name = "frozenlist"
 version = "1.5.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1137,17 +1128,14 @@ dependencies = [
     { name = "bcrypt" },
     { name = "botocore" },
     { name = "fastapi" },
-    { name = "filetype" },
     { name = "httpx" },
     { name = "mimesis" },
-    { name = "moto" },
     { name = "passlib" },
     { name = "pydantic", extra = ["email"] },
     { name = "pydantic-settings" },
     { name = "python-jose" },
     { name = "python-multipart" },
     { name = "requests" },
-    { name = "sentry-sdk" },
     { name = "sqlalchemy" },
     { name = "uvicorn" },
 ]
@@ -1157,6 +1145,7 @@ dev = [
     { name = "factory-boy" },
     { name = "greenlet" },
     { name = "loguru" },
+    { name = "moto" },
     { name = "polyfactory" },
     { name = "pytest" },
     { name = "pytest-asyncio" },
@@ -1173,17 +1162,14 @@ requires-dist = [
     { name = "bcrypt", specifier = ">=4.3.0" },
     { name = "botocore", specifier = ">=1.37.1" },
     { name = "fastapi", specifier = ">=0.115.11" },
-    { name = "filetype", specifier = ">=1.2.0" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "mimesis", specifier = ">=18.0.0" },
-    { name = "moto", specifier = ">=5.1.2" },
     { name = "passlib", specifier = ">=1.7.4" },
     { name = "pydantic", extras = ["email"], specifier = ">=2.10.6" },
     { name = "pydantic-settings", specifier = ">=2.8.1" },
     { name = "python-jose", specifier = ">=3.4.0" },
     { name = "python-multipart", specifier = ">=0.0.20" },
     { name = "requests", specifier = ">=2.32.3" },
-    { name = "sentry-sdk", specifier = ">=2.22.0" },
     { name = "sqlalchemy", specifier = ">=2.0.39" },
     { name = "uvicorn", specifier = ">=0.34.0" },
 ]
@@ -1193,24 +1179,12 @@ dev = [
     { name = "factory-boy", specifier = ">=3.3.3" },
     { name = "greenlet", specifier = ">=3.1.1" },
     { name = "loguru", specifier = ">=0.7.3" },
+    { name = "moto", specifier = ">=5.1.2" },
     { name = "polyfactory", specifier = ">=2.19.0" },
     { name = "pytest", specifier = ">=8.3.5" },
     { name = "pytest-asyncio", specifier = ">=0.25.3" },
     { name = "pytest-mock", specifier = ">=3.14.0" },
     { name = "ruff", specifier = ">=0.11.0" },
-]
-
-[[package]]
-name = "sentry-sdk"
-version = "2.22.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "certifi" },
-    { name = "urllib3" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/81/b6/662988ecd2345bf6c3a5c306a9a3590852742eff91d0a78a143398b816f3/sentry_sdk-2.22.0.tar.gz", hash = "sha256:b4bf43bb38f547c84b2eadcefbe389b36ef75f3f38253d7a74d6b928c07ae944", size = 303539 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/12/7f/0e4459173e9671ba5f75a48dda2442bcc48a12c79e54e5789381c8c6a9bc/sentry_sdk-2.22.0-py2.py3-none-any.whl", hash = "sha256:3d791d631a6c97aad4da7074081a57073126c69487560c6f8bffcf586461de66", size = 325815 },
 ]
 
 [[package]]
