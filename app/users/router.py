@@ -28,7 +28,7 @@ async def update_user(update_data: UserUpdateAPI,
     return await use_case.execute(user=user, update_data=update_data)
 
 
-@router.delete("/delete/")
+@router.delete("/me/")
 async def update_user(session: AsyncSession = Depends(get_session_with_commit),
                       user: User = Depends(get_current_user)) -> dict:
 

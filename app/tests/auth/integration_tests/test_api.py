@@ -54,7 +54,7 @@ class TestApi:
         # Удаляем и проверяем что он деактивировался
         authorized_client = await auth_by(ac, current_user)
         client = authorized_client.client
-        response = await client.delete("/users/delete/", cookies=authorized_client.cookies.dict())
+        response = await client.delete("/users/me/", cookies=authorized_client.cookies.dict())
         assert response.status_code == 200
         me_response = await client.get("/users/me/", cookies=authorized_client.cookies.dict())
         assert me_response.status_code == 200
