@@ -28,7 +28,7 @@ class TestApi:
                          "password": password,
                          "confirm_password": confirm_password
                      }
-        response = await ac.post("/auth/register_by_email/", json=user_data)
+        response = await ac.post("/auth/register/", json=user_data)
         assert response.status_code == status_code
         if response_message:
             assert response.json() == response_message
@@ -46,7 +46,7 @@ class TestApi:
                      }
 
         #Создаем пользака
-        await ac.post("/auth/register_by_email/", json=user_data)
+        await ac.post("/auth/register/", json=user_data)
         assert await user_dao.count() == 7
         current_user = await user_dao.find_one_or_none(filters=EmailModel(email="user_after_deleting@test.com"))
         assert current_user.is_active == True
@@ -61,7 +61,7 @@ class TestApi:
         assert me_response.json()['is_active'] == False
 
         # На ту же почту регаем занова и проверяем что активировался
-        response_after_deleting = await ac.post("/auth/register_by_email/", json=user_data)
+        response_after_deleting = await ac.post("/auth/register/", json=user_data)
         assert response_after_deleting.status_code == 200
         assert response_after_deleting.json() == {'message': 'Вы успешно зарегистрированы!'}
 
@@ -94,7 +94,7 @@ class TestApi:
       ])
     async def test_login(self, ac, email, password, status_code, response_message):
         user_data = {"email": email, "password": password}
-        response = await ac.post("/auth/login_by_email/", json=user_data)
+        response = await ac.post("/auth/login/", json=user_data)
         assert response.status_code == status_code
         if response_message:
             assert response.json() == response_message

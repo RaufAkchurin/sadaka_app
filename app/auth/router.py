@@ -12,7 +12,7 @@ from app.users.schemas import SUserEmailRegister, SUserAuth, EmailModel, SUserAd
 
 router = APIRouter()
 
-@router.post("/register_by_email/")
+@router.post("/register/")
 async def register_by_email(user_data: SUserEmailRegister,
                         session: AsyncSession = Depends(get_session_with_commit)) -> dict:
     user_dao = UsersDAO(session)
@@ -36,7 +36,7 @@ async def register_and_login_anonymous(response: Response, session: AsyncSession
     return {'message': 'Анонимный пользователь добавлен'}
 
 
-@router.post("/login_by_email/")
+@router.post("/login/")
 async def login_by_email(
         response: Response,
         user_data: SUserAuth,

@@ -66,7 +66,7 @@ def register_routers(app: FastAPI) -> None:
     # Подключение роутеров
     app.include_router(root_router, tags=["root"])
     app.include_router(router_auth, prefix='/auth', tags=['Auth'])
-    app.include_router(router_google, prefix='/google_oauth', tags=['Google OAuth'])
+    app.include_router(router_google, prefix='/google', tags=['Google OAuth'])
     app.include_router(router_users, prefix='/users', tags=['Users'])
     app.include_router(router_s3_storage, prefix='/s3_storage', tags=['S3 Storage'])
 
