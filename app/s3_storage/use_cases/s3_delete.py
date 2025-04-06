@@ -5,7 +5,7 @@ from app.settings import settings
 
 class S3DeleteUseCase:
     def __init__(self):
-        self.s3_client = S3Client(
+        self.s3_client: S3Client = S3Client(
             access_key=settings.S3_ACCESS_KEY,
             secret_key=settings.S3_SECRET_KEY,
             endpoint_url=settings.S3_ENDPOINT_URL,

@@ -103,11 +103,11 @@ class TestS3Storage:
 
         if is_authorized:
             response = await auth_ac.client.get(
-                f"/s3_storage/download?file_name={file_name}",
+                f"/s3_storage/{file_name}",
                 cookies=auth_ac.cookies.dict()
             )
         else:
-            response = await ac.get(f"/s3_storage/download?file_name={file_name}")
+            response = await ac.get(f"/s3_storage/{file_name}")
 
         assert response.status_code == status_code
         if is_authorized:
@@ -123,19 +123,19 @@ class TestS3Storage:
                              ])
     async def test_download_file_not_found(self, ac, auth_ac, is_authorized, file_name, status_code, response_message):
         if is_authorized:
-            response = await auth_ac.client.get(f"/s3_storage/download?file_name={file_name}", cookies=auth_ac.cookies.dict())
+            response = await auth_ac.client.get(f"/s3_storage/{file_name}", cookies=auth_ac.cookies.dict())
         else:
-            response = await ac.get(f"/s3_storage/download?file_name={file_name}")
+            response = await ac.get(f"/s3_storage/{file_name}")
 
         assert response.status_code == status_code
         assert response.json() == response_message
 
     @pytest.mark.parametrize("is_authorized, file_name, status_code, response_message",
                              [
-                                 # (True, "test_file.png", 200, {'message': 'Запрос на удаление файла отправлен.'}),
+                                 (True, "test_file.png", 200, {'message': 'Запрос на удаление файла отправлен.'}),
                                  (True, None, 400, {'detail': 'Не передано название файла.'}),
-                                 # (False, None, 400, {"detail": "Токен отсутствует в заголовке"}),
-                                 # (False, "test_file.png", 400, {"detail": "Токен отсутствует в заголовке"}),
+                                 (False, None, 400, {"detail": "Токен отсутствует в заголовке"}),
+                                 (False, "test_file.png", 400, {"detail": "Токен отсутствует в заголовке"}),
                              ])
     async def test_delete_file(self, ac, auth_ac, is_authorized, file_name, status_code, response_message):
         file_content = b"Test file content"
@@ -150,11 +150,11 @@ class TestS3Storage:
 
         if is_authorized:
             response = await auth_ac.client.delete(
-                f"/s3_storage/delete?file_name={file_name}",
+                f"/s3_storage/{file_name}",
                 cookies=auth_ac.cookies.dict()
             )
         else:
-            response = await ac.delete(f"/s3_storage/delete?file_name={file_name}")
+            response = await ac.delete(f"/s3_storage/{file_name}")
 
         assert response.status_code == status_code
         assert response.json() == response_message
