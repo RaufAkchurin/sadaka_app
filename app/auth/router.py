@@ -56,7 +56,7 @@ async def login_by_email(
     }
 
 
-@router.post("/logout")
+@router.get("/logout")
 async def logout(response: Response):
     response.delete_cookie("user_access_token")
     response.delete_cookie("user_refresh_token")

@@ -70,14 +70,14 @@ class TestUsers:
             "city_id": 1
         }
         if authorized:
-            response = await auth_ac.client.post(
+            response = await auth_ac.client.put(
                 "/users/update/",
                 cookies=auth_ac.cookies.dict(),
                 json=new_data
             )
 
         else:
-            response = await ac.post(
+            response = await ac.put(
                 "/users/update/",
                 json=new_data
             )
@@ -91,7 +91,7 @@ class TestUsers:
             assert me_response_before_deleting.status_code == 200
             assert me_response_before_deleting.json()['is_active'] == True
 
-            response = await auth_ac.client.post("/users/delete/", cookies=auth_ac.cookies.dict(),)
+            response = await auth_ac.client.delete("/users/delete/", cookies=auth_ac.cookies.dict(),)
             me_response = await auth_ac.client.get("/users/me/", cookies=auth_ac.cookies.dict())
 
             assert response.status_code == 200
@@ -101,7 +101,7 @@ class TestUsers:
             assert me_response.json()['is_active'] == False
 
     async def test_delete_not_authorized_user(self, ac, auth_ac):
-            response = await ac.post("/users/delete/")
+            response = await ac.delete("/users/delete/")
 
             assert response.status_code == 400
             assert response.json() == {"detail":"Токен отсутствует в заголовке"}

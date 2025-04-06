@@ -14,7 +14,7 @@ async def get_me(user_data: User = Depends(get_current_user)) -> SUserInfo:
     return SUserInfo.model_validate(user_data)
 
 
-@router.post("/update/")
+@router.put("/update/")
 async def update_user(user_data: UserUpdateAPI,
                       session: AsyncSession = Depends(get_session_with_commit),
                       user: User = Depends(get_current_user)
@@ -35,7 +35,7 @@ async def update_user(user_data: UserUpdateAPI,
         email=updated_user.email,
     )
 
-@router.post("/delete/")
+@router.delete("/delete/")
 async def update_user(session: AsyncSession = Depends(get_session_with_commit),
                       user: User = Depends(get_current_user)) -> dict:
     await UsersDAO(session).update(filters=EmailModel(email=user.email), values=UserActiveModel(is_active=False,))
