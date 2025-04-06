@@ -5,8 +5,10 @@ from app.dependencies.auth_dep import get_current_user, get_current_admin_user
 from app.dependencies.dao_dep import get_session_with_commit
 from app.users.dao import UsersDAO
 from app.users.models import User
-from app.users.schemas import SUserInfo, UserUpdateAPI, EmailModel, UserActiveModel
-from app.users.use_cases.update import UpdateUserUseCase
+from app.users.schemas import SUserInfo, UserUpdateAPI
+from app.users.use_cases.delete_user import DeleteUserUseCase
+from app.users.use_cases.get_all_users import GetAllUsersUseCase
+from app.users.use_cases.update_user import UpdateUserUseCase
 
 router = APIRouter()
 
@@ -29,7 +31,10 @@ async def update_user(update_data: UserUpdateAPI,
 @router.delete("/delete/")
 async def update_user(session: AsyncSession = Depends(get_session_with_commit),
                       user: User = Depends(get_current_user)) -> dict:
-    await UsersDAO(session).update(filters=EmailModel(email=user.email), values=UserActiveModel(is_active=False,))
+
+    dao = UsersDAO(session)
+    use_case = DeleteUserUseCase(dao)
+    await use_case.execute(user=user)
     return {'message': 'Вы успешно удалили аккаунт!'}
 
 
@@ -39,4 +44,6 @@ async def update_user(session: AsyncSession = Depends(get_session_with_commit),
 async def get_all_users(session: AsyncSession = Depends(get_session_with_commit),
                         user_data: User = Depends(get_current_admin_user)
                         ) -> List[SUserInfo]:
-    return await UsersDAO(session).find_all()
+    dao = UsersDAO(session)
+    use_case = GetAllUsersUseCase(dao)
+    return await use_case.execute()
