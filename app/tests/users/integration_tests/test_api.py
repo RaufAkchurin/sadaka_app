@@ -57,28 +57,32 @@ class TestUsers:
             assert response.json() == response_message
 
 
-    @pytest.mark.parametrize("authorized, status_code, response_message",
+    @pytest.mark.parametrize("authorized, valid_city_id, status_code, response_message",
      [   #AUTHORIZED USERS
-         (True, 200, {'city_id': 1, 'email': 'updated@example.com', 'name': 'updated', 'picture': 'updated'}),
-         (False, 400, {"detail":"Токен отсутствует в заголовке"}),
+         (True, True,  200, {'city_id': 1, 'email': 'updated@example.com', 'name': 'updated'}),
+         (True, False, 400, {"detail": "Нет города с данным city_id."}),
+         (False, True, 400, {"detail":"Токен отсутствует в заголовке"}),
      ])
-    async def test_update_user(self, ac, auth_ac, user_dao, authorized, status_code, response_message):
+    async def test_update_user(self, ac, auth_ac, user_dao, authorized, valid_city_id, status_code, response_message):
         new_data = {
             "email": "updated@example.com",
             "name": "updated",
             "picture": "updated",
             "city_id": 1
         }
+        if not valid_city_id:
+            new_data["city_id"] = 99
+
         if authorized:
             response = await auth_ac.client.put(
-                "/users/update",
+                "/users/update_data",
                 cookies=auth_ac.cookies.dict(),
                 json=new_data
             )
 
         else:
             response = await ac.put(
-                "/users/update",
+                "/users/update_data",
                 json=new_data
             )
 
