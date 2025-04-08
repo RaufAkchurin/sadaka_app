@@ -11,14 +11,14 @@ class UserLogoUpdateUseCase:
 
     async def execute(self,
                       user: User,
-                      picture: UploadFile,
-                      ) -> UserLogoUpdateSchema:
+                      picture: UploadFile) -> UserLogoUpdateSchema:
         use_case = UploadFileUseCase()
         s3_path = await use_case.execute(file=picture)
 
         await self.users_dao.update(filters=EmailModel(email=user.email),
                                     values=UserLogoUpdateSchema(
-                                        picture=s3_path)
+                                        picture=s3_path
+                                        )
                                     )
 
         updated_user = await self.users_dao.find_one_or_none_by_id(data_id=user.id)

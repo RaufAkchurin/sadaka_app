@@ -45,7 +45,7 @@ class RoleModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 class UserDataUpdateSchema(UserBase):
-    city_id: int = Field(description="Идентификатор города")
+    city_id: int = Field(description="Идентификатор города", gt=0)
 
 class UserLogoUpdateSchema(BaseModel):
     picture: str = Field(description="Аватарка")

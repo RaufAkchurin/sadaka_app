@@ -1,4 +1,5 @@
 from app.dao.base import BaseDAO
+from app.geo.models import City, Region, Country
 from app.users.models import User, Role
 
 
@@ -7,3 +8,12 @@ class UsersDAO(BaseDAO):
 
 class RoleDAO(BaseDAO):
     model = Role
+
+class CityDAO(BaseDAO):
+    model = City
+
+class RegionDAO(BaseDAO):
+    model = Region
+
+class CountryDAO(BaseDAO):
+    model = Country

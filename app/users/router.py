@@ -37,8 +37,7 @@ async def update_user_data(
     user: User = Depends(get_current_user)
     ) -> UserDataUpdateSchema:
 
-    dao = UsersDAO(session)
-    use_case = UpdateUserUseCase(users_dao=dao)
+    use_case = UpdateUserUseCase(session=session)
     validated_data =await use_case.execute(user=user, update_data=update_data)
     return validated_data
 
