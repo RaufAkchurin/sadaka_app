@@ -20,10 +20,10 @@ class TestUsers:
                              ])
     async def test_me_200(self, ac, auth_ac, is_authorized, status_code, response_message):
         if is_authorized:
-            response = await auth_ac.client.get("/users/me/", cookies=auth_ac.cookies.dict())
+            response = await auth_ac.client.get("/users/me", cookies=auth_ac.cookies.dict())
 
         else:
-            response = await ac.get("/users/me/")
+            response = await ac.get("/users/me")
 
         assert response.status_code == status_code
         assert response.json() == response_message
@@ -46,9 +46,9 @@ class TestUsers:
                 raise ValueError("User not found")
             authorized_client = await auth_by(ac, current_user)
             client = authorized_client.client
-            response = await client.get("/users/all_users/", cookies=authorized_client.cookies.dict())
+            response = await client.get("/users/all_users", cookies=authorized_client.cookies.dict())
         else:
-            response = await ac.get("/users/all_users/")
+            response = await ac.get("/users/all_users")
 
         assert response.status_code == status_code
         if users_count:
@@ -71,14 +71,14 @@ class TestUsers:
         }
         if authorized:
             response = await auth_ac.client.put(
-                "/users/update/",
+                "/users/update",
                 cookies=auth_ac.cookies.dict(),
                 json=new_data
             )
 
         else:
             response = await ac.put(
-                "/users/update/",
+                "/users/update",
                 json=new_data
             )
 
@@ -87,12 +87,12 @@ class TestUsers:
 
 
     async def test_delete_authorized_user(self, ac, auth_ac):
-            me_response_before_deleting = await auth_ac.client.get("/users/me/", cookies=auth_ac.cookies.dict())
+            me_response_before_deleting = await auth_ac.client.get("/users/me", cookies=auth_ac.cookies.dict())
             assert me_response_before_deleting.status_code == 200
             assert me_response_before_deleting.json()['is_active'] == True
 
-            response = await auth_ac.client.delete("/users/me/", cookies=auth_ac.cookies.dict(),)
-            me_response = await auth_ac.client.get("/users/me/", cookies=auth_ac.cookies.dict())
+            response = await auth_ac.client.delete("/users/me", cookies=auth_ac.cookies.dict(),)
+            me_response = await auth_ac.client.get("/users/me", cookies=auth_ac.cookies.dict())
 
             assert response.status_code == 200
             assert response.json() == {'message': 'Вы успешно удалили аккаунт!'}
@@ -101,7 +101,7 @@ class TestUsers:
             assert me_response.json()['is_active'] == False
 
     async def test_delete_not_authorized_user(self, ac, auth_ac):
-            response = await ac.delete("/users/me/")
+            response = await ac.delete("/users/me")
 
             assert response.status_code == 400
             assert response.json() == {"detail":"Токен отсутствует в заголовке"}

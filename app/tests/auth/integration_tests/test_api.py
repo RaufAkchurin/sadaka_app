@@ -5,12 +5,6 @@ from app.tests.conftest import ac, auth_ac, auth_by
 
 
 class TestApi:
-    async def test_root(self, ac):
-        response = await ac.get("/")
-        assert response.status_code == 200
-        assert response.json() == {'message': "ok"}
-
-
     @pytest.mark.parametrize("email, name, password, confirm_password, status_code, response_message",
         [
             ("user@example.com", "string", "password", "password", 200, {'message': 'Вы успешно зарегистрированы!'}),
@@ -54,9 +48,9 @@ class TestApi:
         # Удаляем и проверяем что он деактивировался
         authorized_client = await auth_by(ac, current_user)
         client = authorized_client.client
-        response = await client.delete("/users/me/", cookies=authorized_client.cookies.dict())
+        response = await client.delete("/users/me", cookies=authorized_client.cookies.dict())
         assert response.status_code == 200
-        me_response = await client.get("/users/me/", cookies=authorized_client.cookies.dict())
+        me_response = await client.get("/users/me", cookies=authorized_client.cookies.dict())
         assert me_response.status_code == 200
         assert me_response.json()['is_active'] == False
 
@@ -65,7 +59,7 @@ class TestApi:
         assert response_after_deleting.status_code == 200
         assert response_after_deleting.json() == {'message': 'Вы успешно зарегистрированы!'}
 
-        me_response = await client.get("/users/me/", cookies=authorized_client.cookies.dict())
+        me_response = await client.get("/users/me", cookies=authorized_client.cookies.dict())
         assert me_response.status_code == 200
         assert me_response.json()['is_active'] == True
 
@@ -156,9 +150,9 @@ class TestApi:
                 raise ValueError("User not found")
             authorized_client = await auth_by(ac, current_user)
             client = authorized_client.client
-            response = await client.get("/users/all_users/", cookies=authorized_client.cookies.dict())
+            response = await client.get("/users/all_users", cookies=authorized_client.cookies.dict())
         else:
-            response = await ac.get("/users/all_users/")
+            response = await ac.get("/users/all_users")
 
         assert response.status_code == status_code
         if users_count:

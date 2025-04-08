@@ -44,12 +44,11 @@ class RoleModel(BaseModel):
     name: str = Field(description="Название роли")
     model_config = ConfigDict(from_attributes=True)
 
-class UserUpdateDataSchema(UserBase):
+class UserDataUpdateSchema(UserBase):
     city_id: int = Field(description="Идентификатор города")
 
-class UserUpdateResponseSchema(UserBase):
+class UserLogoUpdateSchema(BaseModel):
     picture: str = Field(description="Аватарка")
-    city_id: int = Field(description="Идентификатор города")
 
 class UserActiveModel(BaseModel):
     is_active: bool = Field(description="Активный пользователь")

@@ -2,11 +2,13 @@ from uuid import uuid4
 
 import pytest
 
+from app.settings import settings
+
 
 class TestS3Storage:
     @pytest.mark.parametrize("is_authorized, status_code, response_message",
                              [
-                                 (True, 200, {'file_name': 'test_file.png'}),
+                                 (True, 200, {'file_name': f'{settings.S3_FILE_BASE_URL}test_file.png'}),
                                  (False, 400, {"detail": "Токен отсутствует в заголовке"}),
                              ])
     async def test_upload_file(self, ac, auth_ac, is_authorized, status_code, response_message):
@@ -35,7 +37,7 @@ class TestS3Storage:
     @pytest.mark.parametrize("file_size, is_authorized, status_code, response_message",
                              [
                                  (2 * 1024 * 1024, True, 400, {'detail': 'Supported file size is 0 - 1 MB'}),
-                                 (           1024, True, 200, {'file_name': 'test_file.png'}),
+                                 (           1024, True, 200, {'file_name': f'{settings.S3_FILE_BASE_URL}test_file.png'}),
                                  (2 * 1024 * 1024, False, 400, {"detail": "Токен отсутствует в заголовке"}),
                              ])
     async def test_upload_file_size(self, ac, auth_ac, file_size, is_authorized, status_code, response_message):
@@ -61,7 +63,7 @@ class TestS3Storage:
     @pytest.mark.parametrize("file_type, is_authorized, status_code, response_message",
                              [
                                  ("exe", True, 400, {'detail': 'Неподдерживаемый тип файла: exe. Поддерживаются только следующие типы png, jpg, pdf'}),
-                                 ("png", True, 200, {'file_name': 'test_file.png'}),
+                                 ("png", True, 200, {'file_name': f'{settings.S3_FILE_BASE_URL}test_file.png'}),
                                  ("exe", False, 400, {"detail": "Токен отсутствует в заголовке"}),
                              ])
     async def test_upload_file_type(self, ac, auth_ac, file_type, is_authorized, status_code, response_message):
@@ -132,10 +134,10 @@ class TestS3Storage:
 
     @pytest.mark.parametrize("is_authorized, file_name, status_code, response_message",
                              [
-                                 (True, "test_file.png", 200, {'message': 'Запрос на удаление файла отправлен.'}),
+                                 (True, f"{settings.S3_FILE_BASE_URL}test_file.png", 200, {'message': 'Запрос на удаление файла отправлен.'}),
                                  (True, None, 400, {'detail': 'Не передано название файла.'}),
                                  (False, None, 400, {"detail": "Токен отсутствует в заголовке"}),
-                                 (False, "test_file.png", 400, {"detail": "Токен отсутствует в заголовке"}),
+                                 (False, f"{settings.S3_FILE_BASE_URL}test_file.png", 400, {"detail": "Токен отсутствует в заголовке"}),
                              ])
     async def test_delete_file(self, ac, auth_ac, is_authorized, file_name, status_code, response_message):
         file_content = b"Test file content"

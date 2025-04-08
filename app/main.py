@@ -57,12 +57,6 @@ def register_routers(app: FastAPI) -> None:
     # Корневой роутер
     root_router = APIRouter()
 
-    @root_router.get("/", tags=["root"])
-    def home_page():
-        return {
-            "message": "ok"
-        }
-
     # Подключение роутеров
     app.include_router(root_router, tags=["root"])
     app.include_router(router_auth, prefix='/auth', tags=['Auth'])
