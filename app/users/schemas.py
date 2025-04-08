@@ -1,4 +1,6 @@
 from typing import Self, Optional
+
+from fastapi import UploadFile
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, model_validator, computed_field, HttpUrl
 
 from app.auth.service_jwt import get_password_hash
@@ -42,8 +44,10 @@ class RoleModel(BaseModel):
     name: str = Field(description="Название роли")
     model_config = ConfigDict(from_attributes=True)
 
+class UserUpdateDataSchema(UserBase):
+    city_id: int = Field(description="Идентификатор города")
 
-class UserUpdateAPI(UserBase):
+class UserUpdateResponseSchema(UserBase):
     picture: str = Field(description="Аватарка")
     city_id: int = Field(description="Идентификатор города")
 

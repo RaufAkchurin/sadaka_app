@@ -7,7 +7,7 @@ from app.exceptions import IncorrectEmailOrPasswordException
 from app.tests.factory.mimesis import person
 from app.users.dao import UsersDAO
 from app.users.models import User
-from app.users.schemas import SUserEmailRegister, SUserAuth, EmailModel, SUserAddDB, AnonymousUserAddDB, UserUpdateAPI, \
+from app.users.schemas import SUserEmailRegister, SUserAuth, EmailModel, SUserAddDB, AnonymousUserAddDB, UserUpdateResponseSchema, \
     UserActiveModel
 
 router = APIRouter()

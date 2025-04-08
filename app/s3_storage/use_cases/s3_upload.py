@@ -17,7 +17,7 @@ class UploadFileUseCase:
         self.max_size_mb = 1
         self.supported_file_types = {'png': 'png', 'jpg': 'jpg', 'pdf': 'pdf'}
 
-    async def execute(self, file: Optional[UploadFile]) -> Optional[str]:
+    async def execute(self, file: UploadFile) -> Optional[str]:
         if not file:
             raise FileNotProvidedException()
 
@@ -44,4 +44,5 @@ class UploadFileUseCase:
         file_name = f'{file.filename.split(".")[0]}.{file_type}'
         await self.s3_client.upload_file(key=file_name, contents=contents)
 
-        return file_name
+
+        return settings.S3_FILE_BASE_URL + file_name
