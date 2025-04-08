@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.geo.use_cases.city.city_id_validation import CityIdValidationUseCase
+from app.geo.validators.city import city_id_validator
 from app.users.dao import UsersDAO
 from app.users.models import User
 from app.users.schemas import UserDataUpdateSchema, EmailModel
@@ -15,10 +15,7 @@ class UpdateUserUseCase:
                       user: User,
                       update_data: UserDataUpdateSchema) -> UserDataUpdateSchema:
 
-        if update_data.city_id is not None:
-            city_id_validation_case = CityIdValidationUseCase(session=self.session)
-            await city_id_validation_case.execute(city_id=update_data.city_id)
-
+        await city_id_validator(city_id=update_data.city_id, session=self.session)
         await self.users_dao.update(filters=EmailModel(email=user.email),
                                        values=UserDataUpdateSchema(
                                            name=update_data.name,
