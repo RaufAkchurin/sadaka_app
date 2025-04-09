@@ -4,7 +4,12 @@ from sqlalchemy import text, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.dao.database import Base, str_uniq
 from app.geo.models import City
+import enum
+from sqlalchemy import Enum as SqlEnum
 
+class LanguageEnum(enum.Enum):
+    RU = "RU"
+    EN = "EN"
 
 @dataclass
 class Role(Base):
@@ -21,7 +26,14 @@ class User(Base):
     email: Mapped[str_uniq]
     password: Mapped[Optional[str]]
     picture: Mapped[Optional[str]]
+
     google_access_token: Mapped[Optional[str]]
+    language: Mapped[LanguageEnum] = mapped_column(
+        SqlEnum(LanguageEnum, name="language_enum"),
+        server_default=LanguageEnum.RU.value,
+        default=LanguageEnum.RU.value,
+        nullable=False
+    )
     is_anonymous: Mapped[bool] = mapped_column(default=False, nullable=False)
     is_active: Mapped[bool] = mapped_column(default=True, nullable=False)
 

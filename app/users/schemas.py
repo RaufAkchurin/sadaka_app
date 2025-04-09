@@ -1,9 +1,8 @@
 from typing import Self, Optional
-
-from fastapi import UploadFile
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, model_validator, computed_field, HttpUrl
 
 from app.auth.service_jwt import get_password_hash
+from app.users.models import LanguageEnum
 
 
 class EmailModel(BaseModel):
@@ -44,8 +43,14 @@ class RoleModel(BaseModel):
     name: str = Field(description="Название роли")
     model_config = ConfigDict(from_attributes=True)
 
-class UserDataUpdateSchema(UserBase):
-    city_id: int = Field(description="Идентификатор города", gt=0)
+class UserDataUpdateSchema(BaseModel):
+    name: Optional[str] = Field(default=None, min_length=3, max_length=50, description="Имя, от 3 до 50 символов")
+    email: Optional[EmailStr] = Field(default=None, description="Электронная почта")
+    city_id: Optional[int]  = Field(default=None, description="Идентификатор города", gt=0)
+    language: Optional[LanguageEnum] = Field(default=None)
+
+    class Config:
+        use_enum_values = True
 
 class UserLogoUpdateSchema(BaseModel):
     picture: str = Field(description="Аватарка")
@@ -65,6 +70,7 @@ class SUserInfo(UserBase):
     picture: Optional[str]
     city: CityModel = Field(exclude=True)
     role: RoleModel = Field(exclude=True)
+    language: str = Field(description="Язык пользователя")
 
     @computed_field
     def role_name(self) -> str:

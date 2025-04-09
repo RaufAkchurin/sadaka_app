@@ -9,16 +9,16 @@ from app.users.schemas import SUserInfo, UserLogoUpdateSchema, UserDataUpdateSch
 from app.users.use_cases.delete_user import DeleteUserUseCase
 from app.users.use_cases.get_all_users import GetAllUsersUseCase
 from app.users.use_cases.update_logo import UserLogoUpdateUseCase
-from app.users.use_cases.update_user import UpdateUserUseCase
+from app.users.use_cases.update_data import UserDataUpdateUseCase
 
-router = APIRouter()
+users_router = APIRouter()
 
-@router.get("/me")
+@users_router.get("/me")
 async def get_me(user_data: User = Depends(get_current_user)) -> SUserInfo:
     return SUserInfo.model_validate(user_data)
 
 
-@router.put("/update_logo")
+@users_router.put("/update_logo")
 async def update_user_logo(
     picture: UploadFile,
     session: AsyncSession = Depends(get_session_with_commit),
@@ -26,23 +26,23 @@ async def update_user_logo(
     ) -> UserLogoUpdateSchema:
 
     dao = UsersDAO(session)
-    use_case = UserLogoUpdateUseCase(dao)
+    use_case = UserLogoUpdateUseCase(users_dao=dao)
     updated_logo_url = await use_case.execute(user=user, picture=picture)
     return updated_logo_url
 
-@router.put("/update_data")
+@users_router.put("/update_data")
 async def update_user_data(
     update_data: UserDataUpdateSchema,
     session: AsyncSession = Depends(get_session_with_commit),
     user: User = Depends(get_current_user)
     ) -> UserDataUpdateSchema:
 
-    use_case = UpdateUserUseCase(session=session)
+    use_case = UserDataUpdateUseCase(session=session)
     validated_data =await use_case.execute(user=user, update_data=update_data)
     return validated_data
 
 
-@router.delete("/me")
+@users_router.delete("/me")
 async def delete_user(session: AsyncSession = Depends(get_session_with_commit),
                       user: User = Depends(get_current_user)) -> dict:
 
@@ -54,7 +54,7 @@ async def delete_user(session: AsyncSession = Depends(get_session_with_commit),
 
 #For admins only
 
-@router.get("/all_users")
+@users_router.get("/all_users")
 async def get_all_users(session: AsyncSession = Depends(get_session_with_commit),
                         user_data: User = Depends(get_current_admin_user)
                         ) -> List[SUserInfo]:

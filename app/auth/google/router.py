@@ -11,17 +11,17 @@ from fastapi import APIRouter
 
 from app.exceptions import FailedGoogleOauthException
 
-router = APIRouter()
+google_router = APIRouter()
 
 
-@router.get('/login/', response_class=RedirectResponse)
+@google_router.get('/login/', response_class=RedirectResponse)
 async def google_login():
     redirect_url = google_client.google_redirect_url
     logger.error(f"Гугл авторизация \n {redirect_url}")
     return RedirectResponse(redirect_url)
 
 
-@router.get('/callback/')
+@google_router.get('/callback/')
 async def google_auth(code: str, response: Response, session: AsyncSession = Depends(get_session_with_commit)):
     google_permitted_user = await google_auth_service(code, session)
     if google_permitted_user:

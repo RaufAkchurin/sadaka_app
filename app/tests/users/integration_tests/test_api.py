@@ -1,3 +1,4 @@
+import httpx
 import pytest
 from app.tests.conftest import auth_by
 from app.users.schemas import EmailModel
@@ -15,10 +16,11 @@ class TestUsers:
                                              'name': 'user1',
                                              'picture': None,
                                              'role_id': 1,
-                                             'role_name': 'user'}),
+                                             'role_name': 'user',
+                                              'language': 'RU',}),
                                  (False, 400, {"detail": "Токен отсутствует в заголовке"}),
                              ])
-    async def test_me_200(self, ac, auth_ac, is_authorized, status_code, response_message):
+    async def test_me_200(self, ac, auth_ac, is_authorized, status_code, response_message) -> None:
         if is_authorized:
             response = await auth_ac.client.get("/users/me", cookies=auth_ac.cookies.dict())
 
@@ -39,7 +41,8 @@ class TestUsers:
          # NOT AUTHORIZED USERS
          (None,                  400, None, {"detail":"Токен отсутствует в заголовке"} ),
      ])
-    async def test_all_users(self, ac, user_dao, email, status_code, users_count, response_message):
+
+    async def test_all_users(self, ac, user_dao, email, status_code, users_count, response_message) -> None:
         if email:
             current_user = await user_dao.find_one_or_none(filters=EmailModel(email=email))
             if current_user is None:
@@ -56,22 +59,51 @@ class TestUsers:
         if response_message:
             assert response.json() == response_message
 
+    @pytest.mark.parametrize("is_authorized, file_name, content, status_code, response_expected",
+                             [
+                                 (True, "file1.png", b"Test file content1", 200, {'picture': 'https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/file1.png'}),
+                                 (True, "file1.png", b"Test file content2", 200, {'picture': 'https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/file1.png'}),
+                                 (False,"file1.png", b"Test file content3", 400, {"detail":"Токен отсутствует в заголовке"}),
+                             ])
+    async def test_update_user_picture(self, ac, auth_ac, user_dao, is_authorized, file_name, content, status_code, response_expected) -> None:
+        if is_authorized:
+            response = await auth_ac.client.put(
+                "/users/update_logo",
+                files={"picture": (file_name, content, "image/png")},
+                cookies=auth_ac.cookies.dict()
+            )
 
-    @pytest.mark.parametrize("authorized, valid_city_id, status_code, response_message",
+            assert response.status_code == status_code
+            assert response.json() == response_expected
+
+            # Проверяем, что по ссылке действительно лежит тот же файл (байтовое сравнение)
+            file_url = response_expected.get("picture")
+            async with httpx.AsyncClient() as client:
+                file_response = await client.get(file_url)
+
+            assert file_response.status_code == 200
+            assert file_response.content == content
+        else:
+            response = await ac.put(
+                "/users/update_logo",
+                files={"picture": (file_name, content, "image/png")})
+
+            assert response.status_code == status_code
+            assert response.json() == response_expected
+
+
+    @pytest.mark.parametrize("authorized, status_code, response_message",
      [   #AUTHORIZED USERS
-         (True, True,  200, {'city_id': 1, 'email': 'updated@example.com', 'name': 'updated'}),
-         (True, False, 400, {"detail": "Нет города с данным city_id."}),
-         (False, True, 400, {"detail":"Токен отсутствует в заголовке"}),
+         (True,  200, {'city_id': 1, 'email': 'updated@example.com', 'name': 'updated', 'language': 'RU',}),
+         (False, 400, {"detail":"Токен отсутствует в заголовке"}),
      ])
-    async def test_update_user(self, ac, auth_ac, user_dao, authorized, valid_city_id, status_code, response_message):
+    async def test_update_user(self, ac, auth_ac, user_dao, authorized, status_code, response_message) -> None:
         new_data = {
             "email": "updated@example.com",
             "name": "updated",
             "picture": "updated",
             "city_id": 1
         }
-        if not valid_city_id:
-            new_data["city_id"] = 99
 
         if authorized:
             response = await auth_ac.client.put(
@@ -89,8 +121,66 @@ class TestUsers:
         assert response.status_code == status_code
         assert response.json() == response_message
 
+    @pytest.mark.parametrize("status_code, response_message",
+                             [
+                                 ( 400, {"detail": "Нет города с данным city_id."}),
+                             ])
+    async def test_update_user_city_id_validation(self, ac, auth_ac, user_dao, status_code, response_message) -> None:
+        data = {"email": "updated@example.com", "name": "updated", "city_id": 99}
+        response = await auth_ac.client.put(
+            "/users/update_data",
+            cookies=auth_ac.cookies.dict(),
+            json=data
+        )
 
-    async def test_delete_authorized_user(self, ac, auth_ac):
+        assert response.status_code == status_code
+        assert response.json() == response_message
+
+
+    @pytest.mark.parametrize("status_code, response_message",
+                             [
+                                 ( 422, {'detail': [{'ctx': {'expected': "'RU' or 'EN'"}, 'input': 'UZ', 'loc': ['body', 'language'], 'msg': "Input should be 'RU' or 'EN'", 'type': 'enum'}]}),
+                             ])
+    async def test_update_user_language_validation(self, ac, auth_ac, user_dao, status_code, response_message) -> None:
+        data = {"language": "UZ"}
+        response = await auth_ac.client.put(
+            "/users/update_data",
+            cookies=auth_ac.cookies.dict(),
+            json=data
+        )
+
+        assert response.status_code == status_code
+        assert response.json() == response_message
+
+    @pytest.mark.parametrize("status_code, input_data, response_message",
+     [   #AUTHORIZED USERS
+        ( 200,
+        {"email": "updated@example.com", "name": "updated", "city_id": 1, 'language': 'EN',},
+        {'email': 'updated@example.com', 'name': 'updated', 'city_id': 1, 'language': 'EN',}),
+
+        (200,
+        {"city_id": 2},
+        {'email': 'updated@example.com', 'name': 'updated', 'city_id': 2, 'language': 'EN', }),
+
+        (200,
+        {"name": "updated1"},
+        {'email': 'updated@example.com', 'name': 'updated1', 'city_id': 2, 'language': 'EN', }),
+
+        (200,
+        {"email": "1updated@example.com"},
+        {'email': "1updated@example.com", 'name': 'updated1', 'city_id': 2, 'language': 'EN', }),
+     ])
+    async def test_update_user_only_single_field(self, ac, auth_ac, user_dao, status_code, input_data, response_message) -> None:
+        response = await auth_ac.client.put(
+            "/users/update_data",
+            cookies=auth_ac.cookies.dict(),
+            json=input_data
+        )
+
+        assert response.status_code == status_code
+        assert response.json() == response_message
+
+    async def test_delete_authorized_user(self, ac, auth_ac) -> None:
             me_response_before_deleting = await auth_ac.client.get("/users/me", cookies=auth_ac.cookies.dict())
             assert me_response_before_deleting.status_code == 200
             assert me_response_before_deleting.json()['is_active'] == True
@@ -104,7 +194,7 @@ class TestUsers:
             assert me_response.status_code == 200
             assert me_response.json()['is_active'] == False
 
-    async def test_delete_not_authorized_user(self, ac, auth_ac):
+    async def test_delete_not_authorized_user(self, ac, auth_ac) -> None:
             response = await ac.delete("/users/me")
 
             assert response.status_code == 400
