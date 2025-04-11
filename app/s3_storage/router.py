@@ -32,7 +32,7 @@ async def download(file_name: str,
         }
     )
 
-@s3_router.delete('/delete/{file_name}')
+@s3_router.delete('/{file_name}')
 async def delete(file_name: str,
                  user_data: User = Depends(get_current_user)) -> dict:
     use_case = S3DeleteUseCase()
