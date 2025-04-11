@@ -18,22 +18,22 @@ class Country(Base):
         return f"{self.__class__.__name__}(id={self.id}, name={self.name})"
 
 
-
 @dataclass
 class Region(Base):
     name: Mapped[str_uniq]
     logo: Mapped[str]
 
     # Внешний ключ для страны
-    country_id: Mapped[int] = mapped_column(ForeignKey('countrys.id'), nullable=True)
-    country: Mapped["Country"] = relationship("Country", back_populates="regions", lazy="joined")
+    country_id: Mapped[int] = mapped_column(ForeignKey("countrys.id"), nullable=True)
+    country: Mapped["Country"] = relationship(
+        "Country", back_populates="regions", lazy="joined"
+    )
 
     # Связь с городами
     citys: Mapped[list["City"]] = relationship("City", back_populates="region")
 
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.id}, name={self.name})"
-
 
 
 @dataclass
@@ -44,9 +44,10 @@ class City(Base):
     users: Mapped[list["User"]] = relationship("User", back_populates="city")
 
     # Внешний ключ для региона
-    region_id: Mapped[int] = mapped_column(ForeignKey('regions.id'), nullable=True)
-    region: Mapped["Region"] = relationship("Region", back_populates="citys", lazy="joined")
+    region_id: Mapped[int] = mapped_column(ForeignKey("regions.id"), nullable=True)
+    region: Mapped["Region"] = relationship(
+        "Region", back_populates="citys", lazy="joined"
+    )
 
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.id}, name={self.name})"
-

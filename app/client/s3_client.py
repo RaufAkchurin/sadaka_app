@@ -6,11 +6,11 @@ from botocore.exceptions import ClientError
 
 class S3Client:
     def __init__(
-            self,
-            access_key: str,
-            secret_key: str,
-            endpoint_url: str,
-            bucket_name: str,
+        self,
+        access_key: str,
+        secret_key: str,
+        endpoint_url: str,
+        bucket_name: str,
     ):
         self.config = {
             "aws_access_key_id": access_key,
@@ -25,7 +25,7 @@ class S3Client:
         async with self.session.create_client("s3", **self.config) as client:
             yield client
 
-    async def upload_file(self, contents: bytes, key: str ):
+    async def upload_file(self, contents: bytes, key: str):
         try:
             async with self.get_client() as client:
                 await client.put_object(
@@ -48,10 +48,11 @@ class S3Client:
     async def get_file(self, object_name: str):
         try:
             async with self.get_client() as client:
-                response = await client.get_object(Bucket=self.bucket_name, Key=object_name)
+                response = await client.get_object(
+                    Bucket=self.bucket_name, Key=object_name
+                )
                 data = await response["Body"].read()
                 print(f"File {object_name} downloaded")
                 return data
         except ClientError as e:
             print(f"Error downloading file: {e}")
-

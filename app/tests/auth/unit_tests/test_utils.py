@@ -11,7 +11,7 @@ from app.users.schemas import EmailModel, SUserAddDB
 
 
 class TestUtils:
-    @pytest.mark.parametrize("user_id", ['123', '456'])
+    @pytest.mark.parametrize("user_id", ["123", "456"])
     async def test_create_token_success(self, user_id):
         # Данные для теста
         data = {"sub": user_id}
@@ -20,8 +20,8 @@ class TestUtils:
         new_tokens = create_tokens(data)
 
         # Проверка, что токены были созданы
-        assert new_tokens.get('access_token')
-        assert new_tokens.get('refresh_token')
+        assert new_tokens.get("access_token")
+        assert new_tokens.get("refresh_token")
 
         now = datetime.datetime.now(datetime.timezone.utc)
 
@@ -30,22 +30,32 @@ class TestUtils:
         refresh_expire = now + datetime.timedelta(days=7)
 
         # Декодируем access_token и проверяем его содержимое
-        decoded_sub = jwt.decode(new_tokens.get('access_token'), settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
-        assert decoded_sub['sub'] == user_id
-        assert decoded_sub['type'] == 'access'
-        assert decoded_sub['exp'] == int(access_expire.timestamp())
+        decoded_sub = jwt.decode(
+            new_tokens.get("access_token"),
+            settings.SECRET_KEY,
+            algorithms=[settings.ALGORITHM],
+        )
+        assert decoded_sub["sub"] == user_id
+        assert decoded_sub["type"] == "access"
+        assert decoded_sub["exp"] == int(access_expire.timestamp())
 
         # Декодируем refresh_token и проверяем его содержимое
-        decoded_refresh = jwt.decode(new_tokens.get('refresh_token'), settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
-        assert decoded_refresh['sub'] == user_id
-        assert decoded_refresh['type'] == 'refresh'
-        assert decoded_refresh['exp'] == int(refresh_expire.timestamp())
+        decoded_refresh = jwt.decode(
+            new_tokens.get("refresh_token"),
+            settings.SECRET_KEY,
+            algorithms=[settings.ALGORITHM],
+        )
+        assert decoded_refresh["sub"] == user_id
+        assert decoded_refresh["type"] == "refresh"
+        assert decoded_refresh["exp"] == int(refresh_expire.timestamp())
 
     async def test_authenticate_user(self, user_dao):
         hash = get_password_hash("12345")
-        user_data_dict = {"email": "test12@test.com",
-                          "name": "test12",
-                          "password": hash}
+        user_data_dict = {
+            "email": "test12@test.com",
+            "name": "test12",
+            "password": hash,
+        }
 
         await user_dao.add(values=SUserAddDB(**user_data_dict, is_active=True))
         user = await user_dao.find_one_or_none(

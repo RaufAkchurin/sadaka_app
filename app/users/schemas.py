@@ -1,7 +1,14 @@
 from typing import Optional, Self
 
-from pydantic import (BaseModel, ConfigDict, EmailStr, Field, HttpUrl,
-                      computed_field, model_validator)
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    EmailStr,
+    Field,
+    HttpUrl,
+    computed_field,
+    model_validator,
+)
 
 from app.auth.service_jwt import get_password_hash
 from app.users.models import LanguageEnum
@@ -13,21 +20,30 @@ class EmailModel(BaseModel):
 
 
 class UserBase(EmailModel):
-    name: str = Field(min_length=3, max_length=50, description="Имя, от 3 до 50 символов")
+    name: str = Field(
+        min_length=3, max_length=50, description="Имя, от 3 до 50 символов"
+    )
+
 
 class AnonymousUserAddDB(UserBase):
     is_anonymous: bool
 
 
 class SUserEmailRegister(UserBase):
-    password: str = Field(min_length=5, max_length=50, description="Пароль, от 5 до 50 знаков")
-    confirm_password: str = Field(min_length=5, max_length=50, description="Повторите пароль")
+    password: str = Field(
+        min_length=5, max_length=50, description="Пароль, от 5 до 50 знаков"
+    )
+    confirm_password: str = Field(
+        min_length=5, max_length=50, description="Повторите пароль"
+    )
 
     @model_validator(mode="after")
     def check_password(self) -> Self:
         if self.password != self.confirm_password:
             raise ValueError("Пароли не совпадают")
-        self.password = get_password_hash(self.password)  # хешируем пароль до сохранения в базе данных
+        self.password = get_password_hash(
+            self.password
+        )  # хешируем пароль до сохранения в базе данных
         return self
 
 
@@ -37,7 +53,9 @@ class SUserAddDB(UserBase):
 
 
 class SUserAuth(EmailModel):
-    password: str = Field(min_length=5, max_length=50, description="Пароль, от 5 до 50 знаков")
+    password: str = Field(
+        min_length=5, max_length=50, description="Пароль, от 5 до 50 знаков"
+    )
 
 
 class RoleModel(BaseModel):
@@ -45,25 +63,37 @@ class RoleModel(BaseModel):
     name: str = Field(description="Название роли")
     model_config = ConfigDict(from_attributes=True)
 
+
 class UserDataUpdateSchema(BaseModel):
-    name: Optional[str] = Field(default=None, min_length=3, max_length=50, description="Имя, от 3 до 50 символов")
+    name: Optional[str] = Field(
+        default=None,
+        min_length=3,
+        max_length=50,
+        description="Имя, от 3 до 50 символов",
+    )
     email: Optional[EmailStr] = Field(default=None, description="Электронная почта")
-    city_id: Optional[int]  = Field(default=None, description="Идентификатор города", gt=0)
+    city_id: Optional[int] = Field(
+        default=None, description="Идентификатор города", gt=0
+    )
     language: Optional[LanguageEnum] = Field(default=None)
 
     class Config:
         use_enum_values = True
 
+
 class UserLogoUpdateSchema(BaseModel):
     picture: str = Field(description="Аватарка")
 
+
 class UserActiveModel(BaseModel):
     is_active: bool = Field(description="Активный пользователь")
+
 
 class CityModel(BaseModel):
     id: int = Field(description="Идентификатор города")
     name: str = Field(description="Название города")
     model_config = ConfigDict(from_attributes=True)
+
 
 class SUserInfo(UserBase):
     id: int = Field(description="Идентификатор пользователя")
@@ -89,6 +119,3 @@ class SUserInfo(UserBase):
     @computed_field
     def city_id(self) -> int:
         return self.city.id
-
-
-

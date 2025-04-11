@@ -16,7 +16,7 @@ class UploadFileUseCase:
             bucket_name=settings.S3_BUCKET_NAME,
         )
         self.max_size_mb: int = 1
-        self.supported_file_types = {'png': 'png', 'jpg': 'jpg', 'pdf': 'pdf'}
+        self.supported_file_types = {"png": "png", "jpg": "jpg", "pdf": "pdf"}
 
     async def execute(self, file: UploadFile) -> Optional[str]:
         if not file:
@@ -29,7 +29,7 @@ class UploadFileUseCase:
         if not 0 < size <= self.max_size_mb * 1024 * 1024:  # 1 MB
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f'Supported file size is 0 - {self.max_size_mb} MB'
+                detail=f"Supported file size is 0 - {self.max_size_mb} MB",
             )
 
         # Проверка типа файла
@@ -38,12 +38,11 @@ class UploadFileUseCase:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f'Неподдерживаемый тип файла: {file_type if file_type else "Unknown"}.'
-                       f' Поддерживаются только следующие типы {", ".join(self.supported_file_types)}'
+                f' Поддерживаются только следующие типы {", ".join(self.supported_file_types)}',
             )
 
         # Генерация имени файла и загрузка в S3
         file_name = f'{file.filename.split(".")[0]}.{file_type}'
         await self.s3_client.upload_file(key=file_name, contents=contents)
-
 
         return settings.S3_FILE_BASE_URL + file_name

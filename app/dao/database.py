@@ -4,10 +4,13 @@ from decimal import Decimal
 from typing import Annotated
 
 from sqlalchemy import TIMESTAMP, Integer, NullPool, func, inspect
-from sqlalchemy.ext.asyncio import (AsyncAttrs, AsyncSession,
-                                    async_sessionmaker, create_async_engine)
-from sqlalchemy.orm import (DeclarativeBase, Mapped, declared_attr,
-                            mapped_column)
+from sqlalchemy.ext.asyncio import (
+    AsyncAttrs,
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
+)
+from sqlalchemy.orm import DeclarativeBase, Mapped, declared_attr, mapped_column
 
 from app.settings import settings
 
@@ -19,7 +22,9 @@ else:
     DATABASE_PARAMS = {}
 
 engine = create_async_engine(url=DATABASE_URL, **DATABASE_PARAMS)
-async_session_maker = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+async_session_maker = async_sessionmaker(
+    engine, class_=AsyncSession, expire_on_commit=False
+)
 str_uniq = Annotated[str, mapped_column(unique=True, nullable=False)]
 
 
@@ -29,14 +34,12 @@ class Base(AsyncAttrs, DeclarativeBase):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP, server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(
-        TIMESTAMP,
-        server_default=func.now(),
-        onupdate=func.now()
+        TIMESTAMP, server_default=func.now(), onupdate=func.now()
     )
 
     @declared_attr
     def __tablename__(cls) -> str:
-        return cls.__name__.lower() + 's'
+        return cls.__name__.lower() + "s"
 
     def to_dict(self, exclude_none: bool = False):
         """
