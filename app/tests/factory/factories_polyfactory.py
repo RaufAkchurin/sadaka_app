@@ -1,5 +1,6 @@
 from faker import Faker
 from polyfactory.factories.sqlalchemy_factory import SQLAlchemyFactory
+
 from app.users.models import Role, User
 
 faker = Faker()

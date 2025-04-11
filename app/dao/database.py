@@ -2,11 +2,14 @@ import uuid
 from datetime import datetime
 from decimal import Decimal
 from typing import Annotated
-from sqlalchemy import func, TIMESTAMP, Integer, inspect, NullPool
-from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase, declared_attr
-from sqlalchemy.ext.asyncio import AsyncAttrs, async_sessionmaker, create_async_engine, AsyncSession
-from app.settings import settings
 
+from sqlalchemy import TIMESTAMP, Integer, NullPool, func, inspect
+from sqlalchemy.ext.asyncio import (AsyncAttrs, AsyncSession,
+                                    async_sessionmaker, create_async_engine)
+from sqlalchemy.orm import (DeclarativeBase, Mapped, declared_attr,
+                            mapped_column)
+
+from app.settings import settings
 
 if settings.MODE == "TEST":
     DATABASE_URL = f"sqlite+aiosqlite:///{settings.BASE_DIR}/data/db_test.sqlite3"

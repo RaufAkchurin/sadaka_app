@@ -1,5 +1,6 @@
 import httpx
 import pytest
+
 from app.tests.conftest import auth_by
 from app.users.schemas import EmailModel
 

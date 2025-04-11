@@ -1,13 +1,14 @@
 import datetime
-import pytest
 
-from app.users.models import User
-from app.users.schemas import EmailModel, SUserAddDB
-from app.auth.service_auth import create_tokens, authenticate_user
+import pytest
 from jose import jwt
 
+from app.auth.service_auth import authenticate_user, create_tokens
 from app.auth.service_jwt import get_password_hash
 from app.settings import settings
+from app.users.models import User
+from app.users.schemas import EmailModel, SUserAddDB
+
 
 class TestUtils:
     @pytest.mark.parametrize("user_id", ['123', '456'])

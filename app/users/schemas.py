@@ -1,5 +1,7 @@
-from typing import Self, Optional
-from pydantic import BaseModel, ConfigDict, EmailStr, Field, model_validator, computed_field, HttpUrl
+from typing import Optional, Self
+
+from pydantic import (BaseModel, ConfigDict, EmailStr, Field, HttpUrl,
+                      computed_field, model_validator)
 
 from app.auth.service_jwt import get_password_hash
 from app.users.models import LanguageEnum

@@ -1,5 +1,7 @@
 from uuid import uuid4
+
 import pytest
+
 from app.settings import settings
 
 

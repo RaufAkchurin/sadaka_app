@@ -1,11 +1,14 @@
-from typing import Optional
+import enum
 from dataclasses import dataclass
-from sqlalchemy import text, ForeignKey
+from typing import Optional
+
+from sqlalchemy import Enum as SqlEnum
+from sqlalchemy import ForeignKey, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from app.dao.database import Base, str_uniq
 from app.geo.models import City
-import enum
-from sqlalchemy import Enum as SqlEnum
+
 
 class LanguageEnum(enum.Enum):
     RU = "RU"

@@ -1,14 +1,15 @@
 from datetime import datetime, timezone
-from fastapi import Request, Depends
-from jose import jwt, JWTError, ExpiredSignatureError
+
+from fastapi import Depends, Request
+from jose import ExpiredSignatureError, JWTError, jwt
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.users.dao import UsersDAO
-from app.settings import settings
 from app.dependencies.dao_dep import get_session_without_commit
-from app.exceptions import (
-    TokenNoFound, NoJwtException, TokenExpiredException, NoUserIdException, ForbiddenException, UserNotFoundException
-)
+from app.exceptions import (ForbiddenException, NoJwtException,
+                            NoUserIdException, TokenExpiredException,
+                            TokenNoFound, UserNotFoundException)
+from app.settings import settings
+from app.users.dao import UsersDAO
 from app.users.models import User
 
 

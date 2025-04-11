@@ -21,7 +21,6 @@ class Settings(BaseSettings):
     S3_ENDPOINT_URL: str
     S3_FILE_BASE_URL: str
 
-
     model_config = SettingsConfigDict(env_file=f"{BASE_DIR}/.env")
 
     @property
@@ -29,12 +28,6 @@ class Settings(BaseSettings):
         return (f"https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={self.GOOGLE_CLIENT_ID}"
                 f"&redirect_uri={self.GOOGLE_REDIRECT_URI}&scope=openid%20profile%20email&access_type=offline")
 
+
 # Получаем параметры для загрузки переменных среды
 settings = Settings()
-
-
-
-
-
-
-

@@ -1,11 +1,10 @@
-from fastapi import APIRouter, Depends
-from .use_cases.s3_delete import S3DeleteUseCase
-from .use_cases.s3_download import S3DownloadFileUseCase
-from .use_cases.s3_upload import UploadFileUseCase
-from fastapi import UploadFile, Response
-from ..dependencies.auth_dep import get_current_user
-from ..users.models import User
+from fastapi import APIRouter, Depends, Response, UploadFile
 
+from app.dependencies.auth_dep import get_current_user
+from app.s3_storage.use_cases.s3_delete import S3DeleteUseCase
+from app.s3_storage.use_cases.s3_download import S3DownloadFileUseCase
+from app.s3_storage.use_cases.s3_upload import UploadFileUseCase
+from app.users.models import User
 
 s3_router = APIRouter()
 

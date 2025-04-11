@@ -1,4 +1,5 @@
-from fastapi import status, HTTPException
+from fastapi import HTTPException, status
+
             #АВТОРИЗАЦИЯ
 
 # Пользователь не найден

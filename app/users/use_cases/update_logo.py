@@ -1,4 +1,5 @@
 from fastapi import UploadFile
+
 from app.s3_storage.use_cases.s3_upload import UploadFileUseCase
 from app.users.dao import UsersDAO
 from app.users.models import User

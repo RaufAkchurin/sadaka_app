@@ -2,6 +2,7 @@ import httpx
 from httpx import AsyncClient
 from pydantic import BaseModel
 
+
 class CookiesModel(BaseModel):
     user_access_token: str = None
     user_refresh_token: str = None

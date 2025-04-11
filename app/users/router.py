@@ -1,15 +1,18 @@
 from typing import List
+
 from fastapi import APIRouter, Depends, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.dependencies.auth_dep import get_current_user, get_current_admin_user
+
+from app.dependencies.auth_dep import get_current_admin_user, get_current_user
 from app.dependencies.dao_dep import get_session_with_commit
 from app.users.dao import UsersDAO
 from app.users.models import User
-from app.users.schemas import SUserInfo, UserLogoUpdateSchema, UserDataUpdateSchema
+from app.users.schemas import (SUserInfo, UserDataUpdateSchema,
+                               UserLogoUpdateSchema)
 from app.users.use_cases.delete_user import DeleteUserUseCase
 from app.users.use_cases.get_all_users import GetAllUsersUseCase
-from app.users.use_cases.update_logo import UserLogoUpdateUseCase
 from app.users.use_cases.update_data import UserDataUpdateUseCase
+from app.users.use_cases.update_logo import UserLogoUpdateUseCase
 
 users_router = APIRouter()
 

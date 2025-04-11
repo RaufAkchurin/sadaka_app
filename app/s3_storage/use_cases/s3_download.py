@@ -1,5 +1,6 @@
 from app.client.s3_client import S3Client
-from app.exceptions import FileNameNotProvidedException, FileNotFoundS3Exception
+from app.exceptions import (FileNameNotProvidedException,
+                            FileNotFoundS3Exception)
 from app.settings import settings
 
 

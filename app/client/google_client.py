@@ -3,6 +3,7 @@ import requests
 from app.auth.google.schemas import GoogleUserData
 from app.settings import settings
 
+
 class GoogleClient:
     def __init__(self):
         self.google_redirect_url = settings.google_redirect_url

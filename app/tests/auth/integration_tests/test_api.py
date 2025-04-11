@@ -1,7 +1,7 @@
 import pytest
-from app.users.schemas import EmailModel
-from app.tests.conftest import ac, auth_ac, auth_by
 
+from app.tests.conftest import ac, auth_ac, auth_by
+from app.users.schemas import EmailModel
 
 
 class TestApi:

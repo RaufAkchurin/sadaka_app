@@ -1,16 +1,19 @@
 import json
 import os
+
 import httpx
 import pytest
-from httpx import AsyncClient, ASGITransport
+from httpx import ASGITransport, AsyncClient
 from sqlalchemy import insert
-from app.geo.models import Country, Region, City
-from app.users.dao import UsersDAO
-from app.settings import settings
-from app.dao.database import async_session_maker, engine, Base
+
+from app.dao.database import Base, async_session_maker, engine
+from app.geo.models import City, Country, Region
 from app.main import app as fastapi_app
+from app.settings import settings
 from app.tests.schemas import AuthorizedClientModel, CookiesModel
-from app.users.models import User, Role
+from app.users.dao import UsersDAO
+from app.users.models import Role, User
+
 
 def open_mock_json(model: str):
     test_dir = os.path.dirname(os.path.dirname(__file__))

@@ -1,6 +1,9 @@
+import os
+import sys
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
-from fastapi import FastAPI, APIRouter
+
+from fastapi import APIRouter, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
@@ -9,6 +12,7 @@ from app.auth.router import auth_router
 from app.s3_storage.router import s3_router
 from app.users.router import users_router
 
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[dict, None]:

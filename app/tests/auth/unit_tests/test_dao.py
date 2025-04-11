@@ -1,5 +1,5 @@
-from app.users.schemas import SUserAddDB, EmailModel, UserBase
 from app.tests.factory.factories_polyfactory import faker
+from app.users.schemas import EmailModel, SUserAddDB, UserBase
 
 
 class TestDAO:

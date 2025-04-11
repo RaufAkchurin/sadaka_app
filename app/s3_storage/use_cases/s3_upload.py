@@ -1,8 +1,11 @@
-from fastapi import HTTPException, UploadFile, status
 from typing import Optional
+
+from fastapi import HTTPException, UploadFile, status
+
 from app.client.s3_client import S3Client
 from app.exceptions import FileNotProvidedException
 from app.settings import settings
+
 
 class UploadFileUseCase:
     def __init__(self):

@@ -1,6 +1,8 @@
 from dataclasses import dataclass
+
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from app.dao.database import Base, str_uniq
 
 

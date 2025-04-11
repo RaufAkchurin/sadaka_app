@@ -1,11 +1,13 @@
 import asyncio
 from logging.config import fileConfig
+
+from alembic import context
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
-from alembic import context
-from app.dao.database import Base, DATABASE_URL
-from app.geo.models import Country, Region, City
+
+from app.dao.database import DATABASE_URL, Base
+from app.geo.models import City, Country, Region
 from app.users.models import Role, User
 
 config = context.config

@@ -1,6 +1,6 @@
 from app.dao.base import BaseDAO
-from app.geo.models import City, Region, Country
-from app.users.models import User, Role
+from app.geo.models import City, Country, Region
+from app.users.models import Role, User
 
 
 class UsersDAO(BaseDAO):

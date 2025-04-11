@@ -1,6 +1,5 @@
-from mimesis import Person
+from mimesis import File, Person
 from mimesis.locales import Locale
-from mimesis import File
 
 audio_file = File()
 

@@ -1,5 +1,7 @@
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock
+
 from app.auth.google.service import google_auth_service
 from app.users.schemas import EmailModel, UserActiveModel
 

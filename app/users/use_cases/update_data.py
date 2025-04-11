@@ -1,8 +1,9 @@
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.geo.validators.city import city_id_validator
 from app.users.dao import UsersDAO
 from app.users.models import User
-from app.users.schemas import UserDataUpdateSchema, EmailModel
+from app.users.schemas import EmailModel, UserDataUpdateSchema
 
 
 class UserDataUpdateUseCase:
