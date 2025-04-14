@@ -1,50 +1,68 @@
 from typing import List
-from fastapi import APIRouter, Depends
+
+from fastapi import APIRouter, Depends, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.dependencies.auth_dep import get_current_user, get_current_admin_user
+
+from app.dependencies.auth_dep import get_current_admin_user, get_current_user
 from app.dependencies.dao_dep import get_session_with_commit
 from app.users.dao import UsersDAO
 from app.users.models import User
-from app.users.schemas import SUserInfo, UserUpdateAPI, EmailModel, UserActiveModel
+from app.users.schemas import SUserInfo, UserDataUpdateSchema, UserLogoUpdateSchema
+from app.users.use_cases.delete_user import DeleteUserUseCase
+from app.users.use_cases.get_all_users import GetAllUsersUseCase
+from app.users.use_cases.update_data import UserDataUpdateUseCase
+from app.users.use_cases.update_logo import UserLogoUpdateUseCase
 
-router = APIRouter()
+users_router = APIRouter()
 
-@router.get("/me/")
+
+@users_router.get("/me")
 async def get_me(user_data: User = Depends(get_current_user)) -> SUserInfo:
     return SUserInfo.model_validate(user_data)
 
-@router.post("/update/")
-async def update_user(user_data: UserUpdateAPI,
-                      session: AsyncSession = Depends(get_session_with_commit),
-                      user: User = Depends(get_current_user)
-                      ) -> UserUpdateAPI:
-    await UsersDAO(session).update(filters=EmailModel(email=user.email),
-                                            values=UserUpdateAPI(
-                                                name=user_data.name,
-                                                picture=user_data.picture,
-                                                city_id=user_data.city_id,
-                                                email=user_data.email,
-                                            ))
 
-    updated_user = await UsersDAO(session).find_one_or_none_by_id(user.id)
-    return UserUpdateAPI(
-        name=updated_user.name,
-        picture=updated_user.picture,
-        city_id=updated_user.city_id,
-        email=updated_user.email,
-    )
-
-@router.post("/delete/")
-async def update_user(session: AsyncSession = Depends(get_session_with_commit),
-                      user: User = Depends(get_current_user)) -> dict:
-    await UsersDAO(session).update(filters=EmailModel(email=user.email), values=UserActiveModel(is_active=False,))
-    return {'message': 'Вы успешно удалили аккаунт!'}
+@users_router.put("/update_logo")
+async def update_user_logo(
+    picture: UploadFile,
+    session: AsyncSession = Depends(get_session_with_commit),
+    user: User = Depends(get_current_user),
+) -> UserLogoUpdateSchema:
+    dao = UsersDAO(session)
+    use_case = UserLogoUpdateUseCase(users_dao=dao)
+    updated_logo_url = await use_case.execute(user=user, picture=picture)
+    return updated_logo_url
 
 
-#For admins only
+@users_router.put("/update_data")
+async def update_user_data(
+    update_data: UserDataUpdateSchema,
+    session: AsyncSession = Depends(get_session_with_commit),
+    user: User = Depends(get_current_user),
+) -> UserDataUpdateSchema:
+    use_case = UserDataUpdateUseCase(session=session)
+    validated_data = await use_case.execute(user=user, update_data=update_data)
+    return validated_data
 
-@router.get("/all_users/")
-async def get_all_users(session: AsyncSession = Depends(get_session_with_commit),
-                        user_data: User = Depends(get_current_admin_user)
-                        ) -> List[SUserInfo]:
-    return await UsersDAO(session).find_all()
+
+@users_router.delete("/me")
+async def delete_user(
+    session: AsyncSession = Depends(get_session_with_commit),
+    user: User = Depends(get_current_user),
+) -> dict:
+    dao = UsersDAO(session)
+    use_case = DeleteUserUseCase(dao)
+    await use_case.execute(user=user)
+    return {"message": "Вы успешно удалили аккаунт!"}
+
+
+# For admins only
+
+
+@users_router.get("/all_users")
+async def get_all_users(
+    session: AsyncSession = Depends(get_session_with_commit),
+    user_data: User = Depends(get_current_admin_user),
+) -> List[SUserInfo]:
+    dao = UsersDAO(session)
+    use_case = GetAllUsersUseCase(dao)
+    return await use_case.execute()

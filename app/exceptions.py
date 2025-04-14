@@ -1,68 +1,53 @@
-from fastapi import status, HTTPException
+from fastapi import HTTPException, status
+
+# АВТОРИЗАЦИЯ
 
 # Пользователь не найден
-UserNotFoundException = HTTPException(
-    status_code=status.HTTP_404_NOT_FOUND,
-    detail='Пользователь не найден'
-)
+UserNotFoundException = HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Пользователь не найден")
 
-# Отсутствует идентификатор пользователя
 UserIdNotFoundException = HTTPException(
     status_code=status.HTTP_404_NOT_FOUND,
-    detail='Отсутствует идентификатор пользователя'
+    detail="Отсутствует идентификатор пользователя",
 )
 
-# Неверная почта или пароль
 IncorrectEmailOrPasswordException = HTTPException(
-    status_code=status.HTTP_400_BAD_REQUEST,
-    detail='Неверная почта или пароль'
+    status_code=status.HTTP_400_BAD_REQUEST, detail="Неверная почта или пароль"
 )
 
-# Неверная почта или пароль
 FailedGoogleOauthException = HTTPException(
     status_code=status.HTTP_400_BAD_REQUEST,
-    detail='Google авторизация не удалась'
-           'Попробуйте позже'
+    detail="Google авторизация не удалась" "Попробуйте позже",
 )
 
-# Токен истек
-TokenExpiredException = HTTPException(
-    status_code=status.HTTP_401_UNAUTHORIZED,
-    detail='Токен истек'
-)
 
-# Некорректный формат токена
+# ТОКЕНЫ
+
+TokenExpiredException = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Токен истек")
+
 InvalidTokenFormatException = HTTPException(
-    status_code=status.HTTP_400_BAD_REQUEST,
-    detail='Некорректный формат токена'
+    status_code=status.HTTP_400_BAD_REQUEST, detail="Некорректный формат токена"
 )
 
 
-# Токен отсутствует в заголовке
-TokenNoFound = HTTPException(
-    status_code=status.HTTP_400_BAD_REQUEST,
-    detail='Токен отсутствует в заголовке'
-)
+TokenNoFound = HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Токен отсутствует в заголовке")
 
-# Невалидный JWT токен
-NoJwtException = HTTPException(
-    status_code=status.HTTP_401_UNAUTHORIZED,
-    detail='Токен не валидный'
-)
+NoJwtException = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Токен не валидный")
 
-# Не найден ID пользователя
-NoUserIdException = HTTPException(
-    status_code=status.HTTP_404_NOT_FOUND,
-    detail='Не найден ID пользователя'
-)
+NoUserIdException = HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Не найден ID пользователя")
 
-# Недостаточно прав
-ForbiddenException = HTTPException(
-    status_code=status.HTTP_403_FORBIDDEN,
-    detail='Недостаточно прав'
-)
+ForbiddenException = HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Недостаточно прав")
 
 TokenInvalidFormatException = HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Неверный формат токена. Ожидается 'Bearer <токен>'"
+    status_code=status.HTTP_400_BAD_REQUEST,
+    detail="Неверный формат токена. Ожидается 'Bearer <токен>'",
 )
+
+
+# Файлы
+FileNotProvidedException = HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Файл не передан.")
+
+FileNameNotProvidedException = HTTPException(
+    status_code=status.HTTP_400_BAD_REQUEST, detail="Не передано название файла."
+)
+
+FileNotFoundS3Exception = HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Файл не найден в хранилище S3")

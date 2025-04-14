@@ -1,7 +1,9 @@
-from typing import Self, Optional
-from pydantic import BaseModel, ConfigDict, EmailStr, Field, model_validator, computed_field, HttpUrl
+from typing import Optional, Self
+
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, computed_field, model_validator
 
 from app.auth.service_jwt import get_password_hash
+from app.users.models import LanguageEnum
 
 
 class EmailModel(BaseModel):
@@ -11,6 +13,7 @@ class EmailModel(BaseModel):
 
 class UserBase(EmailModel):
     name: str = Field(min_length=3, max_length=50, description="Имя, от 3 до 50 символов")
+
 
 class AnonymousUserAddDB(UserBase):
     is_anonymous: bool
@@ -43,17 +46,34 @@ class RoleModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class UserUpdateAPI(UserBase):
+class UserDataUpdateSchema(BaseModel):
+    name: Optional[str] = Field(
+        default=None,
+        min_length=3,
+        max_length=50,
+        description="Имя, от 3 до 50 символов",
+    )
+    email: Optional[EmailStr] = Field(default=None, description="Электронная почта")
+    city_id: Optional[int] = Field(default=None, description="Идентификатор города", gt=0)
+    language: Optional[LanguageEnum] = Field(default=None)
+
+    class Config:
+        use_enum_values = True
+
+
+class UserLogoUpdateSchema(BaseModel):
     picture: str = Field(description="Аватарка")
-    city_id: int = Field(description="Идентификатор города")
+
 
 class UserActiveModel(BaseModel):
     is_active: bool = Field(description="Активный пользователь")
+
 
 class CityModel(BaseModel):
     id: int = Field(description="Идентификатор города")
     name: str = Field(description="Название города")
     model_config = ConfigDict(from_attributes=True)
+
 
 class SUserInfo(UserBase):
     id: int = Field(description="Идентификатор пользователя")
@@ -62,6 +82,7 @@ class SUserInfo(UserBase):
     picture: Optional[str]
     city: CityModel = Field(exclude=True)
     role: RoleModel = Field(exclude=True)
+    language: str = Field(description="Язык пользователя")
 
     @computed_field
     def role_name(self) -> str:
@@ -78,6 +99,3 @@ class SUserInfo(UserBase):
     @computed_field
     def city_id(self) -> int:
         return self.city.id
-
-
-

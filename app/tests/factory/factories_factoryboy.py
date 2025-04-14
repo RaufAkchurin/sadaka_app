@@ -1,8 +1,8 @@
 import factory
 from factory.alchemy import SQLAlchemyModelFactory
 from sqlalchemy.orm import Session
+
 from app.users.models import Role, User
-from app.tests.conftest import session
 
 
 class BaseFactory(SQLAlchemyModelFactory):
@@ -16,9 +16,11 @@ class BaseFactory(SQLAlchemyModelFactory):
         # Устанавливаем сессию для всех фабрик.
         cls._meta.sqlalchemy_session = session
 
+
 class RoleFactory(BaseFactory):
     class Meta:
         model = Role
+
     id = factory.LazyFunction(int)
     name = factory.Faker("word")
 

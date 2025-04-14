@@ -2,11 +2,12 @@ import uuid
 from datetime import datetime
 from decimal import Decimal
 from typing import Annotated
-from sqlalchemy import func, TIMESTAMP, Integer, inspect, NullPool
-from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase, declared_attr
-from sqlalchemy.ext.asyncio import AsyncAttrs, async_sessionmaker, create_async_engine, AsyncSession
-from app.settings import settings
 
+from sqlalchemy import TIMESTAMP, Integer, NullPool, func, inspect
+from sqlalchemy.ext.asyncio import AsyncAttrs, AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.orm import DeclarativeBase, Mapped, declared_attr, mapped_column
+
+from app.settings import settings
 
 if settings.MODE == "TEST":
     DATABASE_URL = f"sqlite+aiosqlite:///{settings.BASE_DIR}/data/db_test.sqlite3"
@@ -25,15 +26,11 @@ class Base(AsyncAttrs, DeclarativeBase):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP, server_default=func.now())
-    updated_at: Mapped[datetime] = mapped_column(
-        TIMESTAMP,
-        server_default=func.now(),
-        onupdate=func.now()
-    )
+    updated_at: Mapped[datetime] = mapped_column(TIMESTAMP, server_default=func.now(), onupdate=func.now())
 
     @declared_attr
     def __tablename__(cls) -> str:
-        return cls.__name__.lower() + 's'
+        return cls.__name__.lower() + "s"
 
     def to_dict(self, exclude_none: bool = False):
         """

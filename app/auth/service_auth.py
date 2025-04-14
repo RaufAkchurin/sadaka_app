@@ -1,6 +1,8 @@
-from jose import jwt
 from datetime import datetime, timedelta, timezone
+
 from fastapi.responses import Response
+from jose import jwt
+
 from app.auth.service_jwt import verify_password
 from app.settings import settings
 
@@ -10,24 +12,16 @@ def create_tokens(data: dict) -> dict:
     now = datetime.now(timezone.utc)
 
     # AccessToken - 30 минут
-    access_expire = now + timedelta(minutes=60)
+    access_expire = now + timedelta(days=1)
     access_payload = data.copy()
     access_payload.update({"exp": int(access_expire.timestamp()), "type": "access"})
-    access_token = jwt.encode(
-        access_payload,
-        settings.SECRET_KEY,
-        algorithm=settings.ALGORITHM
-    )
+    access_token = jwt.encode(access_payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
     # RefreshToken - 7 дней
     refresh_expire = now + timedelta(days=7)
     refresh_payload = data.copy()
     refresh_payload.update({"exp": int(refresh_expire.timestamp()), "type": "refresh"})
-    refresh_token = jwt.encode(
-        refresh_payload,
-        settings.SECRET_KEY,
-        algorithm=settings.ALGORITHM
-    )
+    refresh_token = jwt.encode(refresh_payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
     return {"access_token": access_token, "refresh_token": refresh_token}
 
 
@@ -39,16 +33,16 @@ async def authenticate_user(user, password):
 
 def set_tokens(response: Response, user_id: int):
     new_tokens = create_tokens(data={"sub": str(user_id)})
-    access_token = new_tokens.get('access_token')
+    access_token = new_tokens.get("access_token")
     refresh_token = new_tokens.get("refresh_token")
-    secure = settings.MODE in ['PROD', 'TEST']
+    secure = settings.MODE in ["PROD", "TEST"]
 
     response.set_cookie(
         key="user_access_token",
         value=access_token,
         httponly=True,
         secure=secure,
-        samesite="lax"
+        samesite="lax",
     )
 
     response.set_cookie(
@@ -56,5 +50,5 @@ def set_tokens(response: Response, user_id: int):
         value=refresh_token,
         httponly=True,
         secure=secure,
-        samesite="lax"
+        samesite="lax",
     )

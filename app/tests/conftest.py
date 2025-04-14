@@ -1,27 +1,19 @@
-import asyncio
 import json
 import os
+
 import httpx
 import pytest
-from httpx import AsyncClient, ASGITransport
+from httpx import ASGITransport, AsyncClient
 from sqlalchemy import insert
 
-from app.dependencies.dao_dep import get_session_with_commit
-from app.geo.models import Country, Region, City
-from app.users.dao import UsersDAO
-from app.settings import settings
-from app.dao.database import async_session_maker, engine, Base
+from app.dao.database import Base, async_session_maker, engine
+from app.geo.models import City, Country, Region
 from app.main import app as fastapi_app
+from app.settings import settings
 from app.tests.schemas import AuthorizedClientModel, CookiesModel
-from app.users.models import User, Role
+from app.users.dao import UsersDAO
+from app.users.models import Role, User
 
-
-@pytest.fixture(scope="class")
-def event_loop(request):
-    """Create an instance of the default event loop for each test case."""
-    loop = asyncio.get_event_loop_policy().new_event_loop()
-    yield loop
-    loop.close()
 
 def open_mock_json(model: str):
     test_dir = os.path.dirname(os.path.dirname(__file__))
@@ -56,17 +48,19 @@ async def prepare_database_core(session):
             await session.execute(add_users)
             await session.execute(add_roles)
             await session.commit()
-    except:
+    except:  # noqa E722
         session.rollback()
         raise
     finally:
         session.close()
 
-@pytest.fixture(scope='class', autouse=True)
+
+@pytest.fixture(scope="class", autouse=True)
 async def prepare_database(session):
     await prepare_database_core(session)
 
-@pytest.fixture(scope='class')
+
+@pytest.fixture(scope="class")
 async def prepare_database_manually(session):
     await prepare_database_core(session)
 
@@ -83,46 +77,63 @@ async def session():
         finally:
             await session.close()
 
+
 @pytest.fixture(scope="function")
 async def user_dao(session) -> UsersDAO:
     user_dao = UsersDAO(session)
     return user_dao
 
+
 @pytest.fixture(scope="class")
 async def ac():
-    async with AsyncClient(transport=ASGITransport(fastapi_app),
-                           base_url="http://test/") as async_client:
+    async with AsyncClient(transport=ASGITransport(fastapi_app), base_url="http://test/") as async_client:
         yield async_client
 
 
 @pytest.fixture(scope="class")
 async def auth_ac():
-    async with AsyncClient(transport=ASGITransport(fastapi_app),
-                           base_url="http://test") as ac:
-        await ac.post("/auth/login_by_email/", json={"email": "user1@test.com", "password": "password"})
+    async with AsyncClient(transport=ASGITransport(fastapi_app), base_url="http://test") as ac:
+        await ac.post("/auth/login/", json={"email": "user1@test.com", "password": "password"})
         assert ac.cookies["user_access_token"]
-        yield AuthorizedClientModel(client=ac, cookies=CookiesModel(user_access_token=ac.cookies.get('user_access_token'),
-                                                                    user_refresh_token=ac.cookies.get('user_refresh_token')))
+        yield AuthorizedClientModel(
+            client=ac,
+            cookies=CookiesModel(
+                user_access_token=ac.cookies.get("user_access_token"),
+                user_refresh_token=ac.cookies.get("user_refresh_token"),
+            ),
+        )
 
 
 @pytest.fixture(scope="class")
 async def authenticated_super():
-    async with AsyncClient(transport=ASGITransport(fastapi_app),
-                           base_url="http://test") as ac:
-        response = await ac.post("/auth/login_by_email/", json={"email": "superadmin@test.com", "password": "password"})
+    async with AsyncClient(transport=ASGITransport(fastapi_app), base_url="http://test") as ac:
+        response = await ac.post(
+            "/auth/login/",
+            json={"email": "superadmin@test.com", "password": "password"},
+        )
         assert response.status_code == 200
         assert ac.cookies["user_access_token"]
 
-        yield AuthorizedClientModel(client=ac, cookies=CookiesModel(user_access_token=ac.cookies.get('user_access_token'),
-                                                                    user_refresh_token=ac.cookies.get('user_refresh_token')))
+        yield AuthorizedClientModel(
+            client=ac,
+            cookies=CookiesModel(
+                user_access_token=ac.cookies.get("user_access_token"),
+                user_refresh_token=ac.cookies.get("user_refresh_token"),
+            ),
+        )
 
 
 async def auth_by(ac: AsyncClient, user: User):
     logout_response = await ac.post("/auth/logout/")
     assert logout_response.status_code == 307
 
-    login_response = await ac.post("/auth/login_by_email/", json={"email": user.email, "password": "password"})
+    login_response = await ac.post("/auth/login/", json={"email": user.email, "password": "password"})
     assert login_response.status_code == 200
     assert isinstance(ac.cookies, httpx.Cookies)
-    return AuthorizedClientModel(client=ac, cookies=CookiesModel(user_access_token=ac.cookies.get('user_access_token'),
-                                                                 user_refresh_token=ac.cookies.get('user_refresh_token')))
+    return AuthorizedClientModel(
+        client=ac,
+        cookies=CookiesModel(
+            user_access_token=ac.cookies.get("user_access_token"),
+            user_refresh_token=ac.cookies.get("user_refresh_token"),
+        ),
+    )

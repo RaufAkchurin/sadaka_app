@@ -1,10 +1,14 @@
-from typing import List, TypeVar, Generic, Type
-from pydantic import BaseModel
-from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.future import select
-from sqlalchemy import update as sqlalchemy_update, delete as sqlalchemy_delete, func
+from typing import Generic, List, Type, TypeVar
+
 from loguru import logger
+from pydantic import BaseModel
+from sqlalchemy import delete as sqlalchemy_delete
+from sqlalchemy import func
+from sqlalchemy import update as sqlalchemy_update
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+
 from .database import Base
 
 T = TypeVar("T", bound=Base)
@@ -86,8 +90,7 @@ class BaseDAO(Generic[T]):
     async def update(self, filters: BaseModel, values: BaseModel):
         filter_dict = filters.model_dump(exclude_unset=True)
         values_dict = values.model_dump(exclude_unset=True)
-        logger.info(
-            f"Обновление записей {self.model.__name__} по фильтру: {filter_dict} с параметрами: {values_dict}")
+        logger.info(f"Обновление записей {self.model.__name__} по фильтру: {filter_dict} с параметрами: {values_dict}")
         try:
             query = (
                 sqlalchemy_update(self.model)
@@ -138,15 +141,11 @@ class BaseDAO(Generic[T]):
             updated_count = 0
             for record in records:
                 record_dict = record.model_dump(exclude_unset=True)
-                if 'id' not in record_dict:
+                if "id" not in record_dict:
                     continue
 
-                update_data = {k: v for k, v in record_dict.items() if k != 'id'}
-                stmt = (
-                    sqlalchemy_update(self.model)
-                    .filter_by(id=record_dict['id'])
-                    .values(**update_data)
-                )
+                update_data = {k: v for k, v in record_dict.items() if k != "id"}
+                stmt = sqlalchemy_update(self.model).filter_by(id=record_dict["id"]).values(**update_data)
                 result = await self._session.execute(stmt)
                 updated_count += result.rowcount
 
