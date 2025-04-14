@@ -8,15 +8,7 @@ from app.exceptions import IncorrectEmailOrPasswordException
 from app.tests.factory.mimesis import person
 from app.users.dao import UsersDAO
 from app.users.models import User
-from app.users.schemas import (
-    AnonymousUserAddDB,
-    EmailModel,
-    SUserAddDB,
-    SUserAuth,
-    SUserEmailRegister,
-    UserActiveModel,
-    UserDataUpdateSchema,
-)
+from app.users.schemas import AnonymousUserAddDB, EmailModel, SUserAddDB, SUserAuth, SUserEmailRegister, UserActiveModel
 
 auth_router = APIRouter()
 
@@ -27,9 +19,7 @@ async def register_by_email(
     session: AsyncSession = Depends(get_session_with_commit),
 ) -> dict:
     user_dao = UsersDAO(session)
-    existing_user = await user_dao.find_one_or_none(
-        filters=EmailModel(email=user_data.email)
-    )
+    existing_user = await user_dao.find_one_or_none(filters=EmailModel(email=user_data.email))
     if existing_user:
         await UsersDAO(session).update(
             filters=EmailModel(email=existing_user.email),
@@ -48,11 +38,7 @@ async def register_and_login_anonymous(
     response: Response, session: AsyncSession = Depends(get_session_with_commit)
 ) -> dict:
     user_dao = UsersDAO(session)
-    user = await user_dao.add(
-        values=AnonymousUserAddDB(
-            email=person.email(), name=person.name(), is_anonymous=True
-        )
-    )
+    user = await user_dao.add(values=AnonymousUserAddDB(email=person.email(), name=person.name(), is_anonymous=True))
     set_tokens(response, user.id)
     return {"message": "Анонимный пользователь добавлен"}
 
@@ -80,8 +66,6 @@ async def logout(response: Response):
 
 
 @auth_router.post("/refresh")
-async def process_refresh_token(
-    response: Response, user: User = Depends(check_refresh_token)
-):
+async def process_refresh_token(response: Response, user: User = Depends(check_refresh_token)):
     set_tokens(response, user.id)
     return {"message": "Токены успешно обновлены"}

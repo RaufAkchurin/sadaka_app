@@ -1,6 +1,6 @@
 import pytest
+from tests.conftest import auth_by
 
-from app.tests.conftest import ac, auth_ac, auth_by
 from app.users.schemas import EmailModel
 
 
@@ -67,36 +67,26 @@ class TestApi:
         # Создаем пользака
         await ac.post("/auth/register/", json=user_data)
         assert await user_dao.count() == 7
-        current_user = await user_dao.find_one_or_none(
-            filters=EmailModel(email="user_after_deleting@test.com")
-        )
-        assert current_user.is_active == True
+        current_user = await user_dao.find_one_or_none(filters=EmailModel(email="user_after_deleting@test.com"))
+        assert current_user.is_active
 
         # Удаляем и проверяем что он деактивировался
         authorized_client = await auth_by(ac, current_user)
         client = authorized_client.client
-        response = await client.delete(
-            "/users/me", cookies=authorized_client.cookies.dict()
-        )
+        response = await client.delete("/users/me", cookies=authorized_client.cookies.dict())
         assert response.status_code == 200
-        me_response = await client.get(
-            "/users/me", cookies=authorized_client.cookies.dict()
-        )
+        me_response = await client.get("/users/me", cookies=authorized_client.cookies.dict())
         assert me_response.status_code == 200
-        assert me_response.json()["is_active"] == False
+        assert not me_response.json()["is_active"]
 
         # На ту же почту регаем занова и проверяем что активировался
         response_after_deleting = await ac.post("/auth/register/", json=user_data)
         assert response_after_deleting.status_code == 200
-        assert response_after_deleting.json() == {
-            "message": "Вы успешно зарегистрированы!"
-        }
+        assert response_after_deleting.json() == {"message": "Вы успешно зарегистрированы!"}
 
-        me_response = await client.get(
-            "/users/me", cookies=authorized_client.cookies.dict()
-        )
+        me_response = await client.get("/users/me", cookies=authorized_client.cookies.dict())
         assert me_response.status_code == 200
-        assert me_response.json()["is_active"] == True
+        assert me_response.json()["is_active"]
 
     async def test_login_anonymous(self, ac, user_dao):
         assert await user_dao.count() == 7
@@ -107,7 +97,7 @@ class TestApi:
 
         users = await user_dao.find_all()
         last_user = users[-1]
-        assert last_user.is_anonymous == True
+        assert last_user.is_anonymous
 
         assert response.cookies.get("user_access_token")
         assert response.cookies.get("user_refresh_token")
@@ -164,14 +154,10 @@ class TestApi:
             (False, 400, {"detail": "Токен отсутствует в заголовке"}),
         ],
     )
-    async def test_refresh_token(
-        self, ac, auth_ac, is_authorized, status_code, response_message
-    ):
+    async def test_refresh_token(self, ac, auth_ac, is_authorized, status_code, response_message):
         if is_authorized:
             client = auth_ac.client
-            response = await client.post(
-                "/auth/refresh", cookies=auth_ac.cookies.dict()
-            )
+            response = await client.post("/auth/refresh", cookies=auth_ac.cookies.dict())
 
         else:
             client = ac
@@ -192,20 +178,14 @@ class TestApi:
             (None, 400, None, {"detail": "Токен отсутствует в заголовке"}),
         ],
     )
-    async def test_all_users(
-        self, ac, user_dao, email, status_code, users_count, response_message
-    ):
+    async def test_all_users(self, ac, user_dao, email, status_code, users_count, response_message):
         if email:
-            current_user = await user_dao.find_one_or_none(
-                filters=EmailModel(email=email)
-            )
+            current_user = await user_dao.find_one_or_none(filters=EmailModel(email=email))
             if current_user is None:
                 raise ValueError("User not found")
             authorized_client = await auth_by(ac, current_user)
             client = authorized_client.client
-            response = await client.get(
-                "/users/all_users", cookies=authorized_client.cookies.dict()
-            )
+            response = await client.get("/users/all_users", cookies=authorized_client.cookies.dict())
         else:
             response = await ac.get("/users/all_users")
 

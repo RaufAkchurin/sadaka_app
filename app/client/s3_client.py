@@ -48,9 +48,7 @@ class S3Client:
     async def get_file(self, object_name: str):
         try:
             async with self.get_client() as client:
-                response = await client.get_object(
-                    Bucket=self.bucket_name, Key=object_name
-                )
+                response = await client.get_object(Bucket=self.bucket_name, Key=object_name)
                 data = await response["Body"].read()
                 print(f"File {object_name} downloaded")
                 return data

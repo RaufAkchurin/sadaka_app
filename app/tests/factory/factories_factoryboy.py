@@ -2,7 +2,6 @@ import factory
 from factory.alchemy import SQLAlchemyModelFactory
 from sqlalchemy.orm import Session
 
-from app.tests.conftest import session
 from app.users.models import Role, User
 
 
@@ -10,9 +9,7 @@ class BaseFactory(SQLAlchemyModelFactory):
     # Базовый класс для всех фабрик, которые работают с SQLAlchemy.
     # Прокидываем сессию в Meta и создаем общую логику для всех фабрик.
     class Meta:
-        sqlalchemy_session_persistence = (
-            "commit"  # Настройка для сохранения объектов в БД
-        )
+        sqlalchemy_session_persistence = "commit"  # Настройка для сохранения объектов в БД
 
     @classmethod
     def set_session(cls, session: Session):

@@ -25,9 +25,7 @@ class Region(Base):
 
     # Внешний ключ для страны
     country_id: Mapped[int] = mapped_column(ForeignKey("countrys.id"), nullable=True)
-    country: Mapped["Country"] = relationship(
-        "Country", back_populates="regions", lazy="joined"
-    )
+    country: Mapped["Country"] = relationship("Country", back_populates="regions", lazy="joined")
 
     # Связь с городами
     citys: Mapped[list["City"]] = relationship("City", back_populates="region")
@@ -41,13 +39,11 @@ class City(Base):
     name: Mapped[str_uniq]
 
     # Связь с пользователями
-    users: Mapped[list["User"]] = relationship("User", back_populates="city")
+    users: Mapped[list["User"]] = relationship("User", back_populates="city")  # noqa F821
 
     # Внешний ключ для региона
     region_id: Mapped[int] = mapped_column(ForeignKey("regions.id"), nullable=True)
-    region: Mapped["Region"] = relationship(
-        "Region", back_populates="citys", lazy="joined"
-    )
+    region: Mapped["Region"] = relationship("Region", back_populates="citys", lazy="joined")
 
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.id}, name={self.name})"

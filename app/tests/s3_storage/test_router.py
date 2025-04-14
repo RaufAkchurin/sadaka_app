@@ -13,11 +13,9 @@ class TestS3Storage:
             (False, 400, {"detail": "Токен отсутствует в заголовке"}),
         ],
     )
-    async def test_upload_file(
-        self, ac, auth_ac, is_authorized, status_code, response_message
-    ):
+    async def test_upload_file(self, ac, auth_ac, is_authorized, status_code, response_message):
         file_content = b"Test file content"
-        file_name = f"test_file.png"
+        file_name = "test_file.png"
 
         if is_authorized:
             response = await auth_ac.client.post(
@@ -50,11 +48,9 @@ class TestS3Storage:
             (2 * 1024 * 1024, False, 400, {"detail": "Токен отсутствует в заголовке"}),
         ],
     )
-    async def test_upload_file_size(
-        self, ac, auth_ac, file_size, is_authorized, status_code, response_message
-    ):
+    async def test_upload_file_size(self, ac, auth_ac, file_size, is_authorized, status_code, response_message):
         file_content = b"a" * file_size  # Создаем файл с указанным размером
-        file_name = f"test_file.png"
+        file_name = "test_file.png"
 
         if is_authorized:
             response = await auth_ac.client.post(
@@ -78,9 +74,7 @@ class TestS3Storage:
                 "exe",
                 True,
                 400,
-                {
-                    "detail": "Неподдерживаемый тип файла: exe. Поддерживаются только следующие типы png, jpg, pdf"
-                },
+                {"detail": "Неподдерживаемый тип файла: exe. Поддерживаются только следующие типы png, jpg, pdf"},
             ),
             (
                 "png",
@@ -91,9 +85,7 @@ class TestS3Storage:
             ("exe", False, 400, {"detail": "Токен отсутствует в заголовке"}),
         ],
     )
-    async def test_upload_file_type(
-        self, ac, auth_ac, file_type, is_authorized, status_code, response_message
-    ):
+    async def test_upload_file_type(self, ac, auth_ac, file_type, is_authorized, status_code, response_message):
         invalid_file_content = b"Invalid file content"
         file_name = f"test_file.{file_type}"
 
@@ -131,9 +123,7 @@ class TestS3Storage:
             (False, 400, {"detail": "Токен отсутствует в заголовке"}),
         ],
     )
-    async def test_download_file(
-        self, ac, auth_ac, is_authorized, status_code, response_message
-    ):
+    async def test_download_file(self, ac, auth_ac, is_authorized, status_code, response_message):
         file_name = "test_file.png"
         file_content = b"Test file content"
 
@@ -145,9 +135,7 @@ class TestS3Storage:
         )
 
         if is_authorized:
-            response = await auth_ac.client.get(
-                f"/s3_storage/{file_name}", cookies=auth_ac.cookies.dict()
-            )
+            response = await auth_ac.client.get(f"/s3_storage/{file_name}", cookies=auth_ac.cookies.dict())
         else:
             response = await ac.get(f"/s3_storage/{file_name}")
 
@@ -164,13 +152,9 @@ class TestS3Storage:
             (False, f"{uuid4()}.png", 400, {"detail": "Токен отсутствует в заголовке"}),
         ],
     )
-    async def test_download_file_not_found(
-        self, ac, auth_ac, is_authorized, file_name, status_code, response_message
-    ):
+    async def test_download_file_not_found(self, ac, auth_ac, is_authorized, file_name, status_code, response_message):
         if is_authorized:
-            response = await auth_ac.client.get(
-                f"/s3_storage/{file_name}", cookies=auth_ac.cookies.dict()
-            )
+            response = await auth_ac.client.get(f"/s3_storage/{file_name}", cookies=auth_ac.cookies.dict())
         else:
             response = await ac.get(f"/s3_storage/{file_name}")
 
@@ -196,9 +180,7 @@ class TestS3Storage:
             (False, None, 400, {"detail": "Токен отсутствует в заголовке"}),
         ],
     )
-    async def test_delete_file(
-        self, ac, auth_ac, is_authorized, file_name, status_code, response_message
-    ):
+    async def test_delete_file(self, ac, auth_ac, is_authorized, file_name, status_code, response_message):
         file_content = b"Test file content"
 
         # Сначала загрузим файл
@@ -210,9 +192,7 @@ class TestS3Storage:
             )
 
         if is_authorized:
-            delete_response = await auth_ac.client.delete(
-                f"/s3_storage/{file_name}", cookies=auth_ac.cookies.dict()
-            )
+            delete_response = await auth_ac.client.delete(f"/s3_storage/{file_name}", cookies=auth_ac.cookies.dict())
         else:
             delete_response = await ac.delete(f"/s3_storage/{file_name}")
 

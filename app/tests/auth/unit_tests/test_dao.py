@@ -44,14 +44,10 @@ class TestDAO:
         }
 
         await user_dao.add(values=SUserAddDB(**user_data_dict))
-        user = await user_dao.find_one_or_none(
-            filters=EmailModel(email="2test@test.com")
-        )
+        user = await user_dao.find_one_or_none(filters=EmailModel(email="2test@test.com"))
         assert user.name == "test4"
 
-        user = await user_dao.find_one_or_none(
-            filters=EmailModel(email="nonexistent@test.com")
-        )
+        user = await user_dao.find_one_or_none(filters=EmailModel(email="nonexistent@test.com"))
         assert user is None
 
     async def test_find_all(self, user_dao):
@@ -62,15 +58,13 @@ class TestDAO:
         users = [
             {
                 "email": faker.email(domain="test.com"),
-                "name": f"name",
+                "name": "name",
                 "password": "8654567",
             }
             for i in range(10)
         ]
 
-        new_users = await user_dao.add_many(
-            [SUserAddDB(**user_data) for user_data in users]
-        )
+        new_users = await user_dao.add_many([SUserAddDB(**user_data) for user_data in users])
         assert len(new_users) == 10
 
     async def test_update(self, user_dao):

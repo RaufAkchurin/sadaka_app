@@ -1,4 +1,3 @@
-import httpx
 from httpx import AsyncClient
 from pydantic import BaseModel
 

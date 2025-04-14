@@ -3,9 +3,7 @@ from fastapi import HTTPException, status
 # АВТОРИЗАЦИЯ
 
 # Пользователь не найден
-UserNotFoundException = HTTPException(
-    status_code=status.HTTP_404_NOT_FOUND, detail="Пользователь не найден"
-)
+UserNotFoundException = HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Пользователь не найден")
 
 UserIdNotFoundException = HTTPException(
     status_code=status.HTTP_404_NOT_FOUND,
@@ -24,30 +22,20 @@ FailedGoogleOauthException = HTTPException(
 
 # ТОКЕНЫ
 
-TokenExpiredException = HTTPException(
-    status_code=status.HTTP_401_UNAUTHORIZED, detail="Токен истек"
-)
+TokenExpiredException = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Токен истек")
 
 InvalidTokenFormatException = HTTPException(
     status_code=status.HTTP_400_BAD_REQUEST, detail="Некорректный формат токена"
 )
 
 
-TokenNoFound = HTTPException(
-    status_code=status.HTTP_400_BAD_REQUEST, detail="Токен отсутствует в заголовке"
-)
+TokenNoFound = HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Токен отсутствует в заголовке")
 
-NoJwtException = HTTPException(
-    status_code=status.HTTP_401_UNAUTHORIZED, detail="Токен не валидный"
-)
+NoJwtException = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Токен не валидный")
 
-NoUserIdException = HTTPException(
-    status_code=status.HTTP_404_NOT_FOUND, detail="Не найден ID пользователя"
-)
+NoUserIdException = HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Не найден ID пользователя")
 
-ForbiddenException = HTTPException(
-    status_code=status.HTTP_403_FORBIDDEN, detail="Недостаточно прав"
-)
+ForbiddenException = HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Недостаточно прав")
 
 TokenInvalidFormatException = HTTPException(
     status_code=status.HTTP_400_BAD_REQUEST,
@@ -56,14 +44,10 @@ TokenInvalidFormatException = HTTPException(
 
 
 # Файлы
-FileNotProvidedException = HTTPException(
-    status_code=status.HTTP_400_BAD_REQUEST, detail="Файл не передан."
-)
+FileNotProvidedException = HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Файл не передан.")
 
 FileNameNotProvidedException = HTTPException(
     status_code=status.HTTP_400_BAD_REQUEST, detail="Не передано название файла."
 )
 
-FileNotFoundS3Exception = HTTPException(
-    status_code=status.HTTP_404_NOT_FOUND, detail="Файл не найден в хранилище S3"
-)
+FileNotFoundS3Exception = HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Файл не найден в хранилище S3")

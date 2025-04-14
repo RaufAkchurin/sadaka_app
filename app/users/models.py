@@ -42,15 +42,11 @@ class User(Base):
     is_active: Mapped[bool] = mapped_column(default=True, nullable=False)
 
     # Связь с городом
-    city_id: Mapped[int] = mapped_column(
-        ForeignKey("citys.id"), default=1, server_default=text("1")
-    )
+    city_id: Mapped[int] = mapped_column(ForeignKey("citys.id"), default=1, server_default=text("1"))
     city: Mapped["City"] = relationship("City", back_populates="users", lazy="joined")
 
     # Связь с ролью
-    role_id: Mapped[int] = mapped_column(
-        ForeignKey("roles.id"), default=1, server_default=text("1")
-    )
+    role_id: Mapped[int] = mapped_column(ForeignKey("roles.id"), default=1, server_default=text("1"))
     role: Mapped["Role"] = relationship("Role", back_populates="users", lazy="joined")
 
     def __repr__(self):

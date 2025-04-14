@@ -40,9 +40,7 @@ async def check_refresh_token(
 ) -> User:
     """Проверяем refresh_token и возвращаем пользователя."""
     try:
-        payload = jwt.decode(
-            token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
-        )
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
         user_id = payload.get("sub")
         if not user_id:
             raise NoJwtException
@@ -63,9 +61,7 @@ async def get_current_user(
     """Проверяем access_token и возвращаем пользователя."""
     try:
         # Декодируем токен
-        payload = jwt.decode(
-            token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
-        )
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
     except ExpiredSignatureError:
         raise TokenExpiredException
     except JWTError:

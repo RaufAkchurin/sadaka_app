@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/pre-commit/mirrors-isort
-    rev: v5.10.1  # ✅ актуальная стабильная версия, точно существует
+    rev: v5.10.1
     hooks:
       - id: isort
 
@@ -13,3 +13,4 @@ repos:
     rev: 7.0.0
     hooks:
       - id: flake8
+        exclude: ^app/migration/versions/

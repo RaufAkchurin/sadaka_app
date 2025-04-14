@@ -29,13 +29,9 @@ class TestUsers:
             (False, 400, {"detail": "Токен отсутствует в заголовке"}),
         ],
     )
-    async def test_me_200(
-        self, ac, auth_ac, is_authorized, status_code, response_message
-    ) -> None:
+    async def test_me_200(self, ac, auth_ac, is_authorized, status_code, response_message) -> None:
         if is_authorized:
-            response = await auth_ac.client.get(
-                "/users/me", cookies=auth_ac.cookies.dict()
-            )
+            response = await auth_ac.client.get("/users/me", cookies=auth_ac.cookies.dict())
 
         else:
             response = await ac.get("/users/me")
@@ -55,20 +51,14 @@ class TestUsers:
             (None, 400, None, {"detail": "Токен отсутствует в заголовке"}),
         ],
     )
-    async def test_all_users(
-        self, ac, user_dao, email, status_code, users_count, response_message
-    ) -> None:
+    async def test_all_users(self, ac, user_dao, email, status_code, users_count, response_message) -> None:
         if email:
-            current_user = await user_dao.find_one_or_none(
-                filters=EmailModel(email=email)
-            )
+            current_user = await user_dao.find_one_or_none(filters=EmailModel(email=email))
             if current_user is None:
                 raise ValueError("User not found")
             authorized_client = await auth_by(ac, current_user)
             client = authorized_client.client
-            response = await client.get(
-                "/users/all_users", cookies=authorized_client.cookies.dict()
-            )
+            response = await client.get("/users/all_users", cookies=authorized_client.cookies.dict())
         else:
             response = await ac.get("/users/all_users")
 
@@ -86,18 +76,14 @@ class TestUsers:
                 "file1.png",
                 b"Test file content1",
                 200,
-                {
-                    "picture": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/file1.png"
-                },
+                {"picture": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/file1.png"},
             ),
             (
                 True,
                 "file1.png",
                 b"Test file content2",
                 200,
-                {
-                    "picture": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/file1.png"
-                },
+                {"picture": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/file1.png"},
             ),
             (
                 False,
@@ -161,9 +147,7 @@ class TestUsers:
             (False, 400, {"detail": "Токен отсутствует в заголовке"}),
         ],
     )
-    async def test_update_user(
-        self, ac, auth_ac, user_dao, authorized, status_code, response_message
-    ) -> None:
+    async def test_update_user(self, ac, auth_ac, user_dao, authorized, status_code, response_message) -> None:
         new_data = {
             "email": "updated@example.com",
             "name": "updated",
@@ -172,9 +156,7 @@ class TestUsers:
         }
 
         if authorized:
-            response = await auth_ac.client.put(
-                "/users/update_data", cookies=auth_ac.cookies.dict(), json=new_data
-            )
+            response = await auth_ac.client.put("/users/update_data", cookies=auth_ac.cookies.dict(), json=new_data)
 
         else:
             response = await ac.put("/users/update_data", json=new_data)
@@ -188,13 +170,9 @@ class TestUsers:
             (400, {"detail": "Нет города с данным city_id."}),
         ],
     )
-    async def test_update_user_city_id_validation(
-        self, ac, auth_ac, user_dao, status_code, response_message
-    ) -> None:
+    async def test_update_user_city_id_validation(self, ac, auth_ac, user_dao, status_code, response_message) -> None:
         data = {"email": "updated@example.com", "name": "updated", "city_id": 99}
-        response = await auth_ac.client.put(
-            "/users/update_data", cookies=auth_ac.cookies.dict(), json=data
-        )
+        response = await auth_ac.client.put("/users/update_data", cookies=auth_ac.cookies.dict(), json=data)
 
         assert response.status_code == status_code
         assert response.json() == response_message
@@ -218,13 +196,9 @@ class TestUsers:
             ),
         ],
     )
-    async def test_update_user_language_validation(
-        self, ac, auth_ac, user_dao, status_code, response_message
-    ) -> None:
+    async def test_update_user_language_validation(self, ac, auth_ac, user_dao, status_code, response_message) -> None:
         data = {"language": "UZ"}
-        response = await auth_ac.client.put(
-            "/users/update_data", cookies=auth_ac.cookies.dict(), json=data
-        )
+        response = await auth_ac.client.put("/users/update_data", cookies=auth_ac.cookies.dict(), json=data)
 
         assert response.status_code == status_code
         assert response.json() == response_message
@@ -282,33 +256,27 @@ class TestUsers:
     async def test_update_user_only_single_field(
         self, ac, auth_ac, user_dao, status_code, input_data, response_message
     ) -> None:
-        response = await auth_ac.client.put(
-            "/users/update_data", cookies=auth_ac.cookies.dict(), json=input_data
-        )
+        response = await auth_ac.client.put("/users/update_data", cookies=auth_ac.cookies.dict(), json=input_data)
 
         assert response.status_code == status_code
         assert response.json() == response_message
 
     async def test_delete_authorized_user(self, ac, auth_ac) -> None:
-        me_response_before_deleting = await auth_ac.client.get(
-            "/users/me", cookies=auth_ac.cookies.dict()
-        )
+        me_response_before_deleting = await auth_ac.client.get("/users/me", cookies=auth_ac.cookies.dict())
         assert me_response_before_deleting.status_code == 200
-        assert me_response_before_deleting.json()["is_active"] == True
+        assert me_response_before_deleting.json()["is_active"]
 
         response = await auth_ac.client.delete(
             "/users/me",
             cookies=auth_ac.cookies.dict(),
         )
-        me_response = await auth_ac.client.get(
-            "/users/me", cookies=auth_ac.cookies.dict()
-        )
+        me_response = await auth_ac.client.get("/users/me", cookies=auth_ac.cookies.dict())
 
         assert response.status_code == 200
         assert response.json() == {"message": "Вы успешно удалили аккаунт!"}
 
         assert me_response.status_code == 200
-        assert me_response.json()["is_active"] == False
+        assert not me_response.json()["is_active"]
 
     async def test_delete_not_authorized_user(self, ac, auth_ac) -> None:
         response = await ac.delete("/users/me")

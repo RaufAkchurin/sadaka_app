@@ -48,7 +48,7 @@ async def prepare_database_core(session):
             await session.execute(add_users)
             await session.execute(add_roles)
             await session.commit()
-    except:
+    except:  # noqa E722
         session.rollback()
         raise
     finally:
@@ -86,20 +86,14 @@ async def user_dao(session) -> UsersDAO:
 
 @pytest.fixture(scope="class")
 async def ac():
-    async with AsyncClient(
-        transport=ASGITransport(fastapi_app), base_url="http://test/"
-    ) as async_client:
+    async with AsyncClient(transport=ASGITransport(fastapi_app), base_url="http://test/") as async_client:
         yield async_client
 
 
 @pytest.fixture(scope="class")
 async def auth_ac():
-    async with AsyncClient(
-        transport=ASGITransport(fastapi_app), base_url="http://test"
-    ) as ac:
-        await ac.post(
-            "/auth/login/", json={"email": "user1@test.com", "password": "password"}
-        )
+    async with AsyncClient(transport=ASGITransport(fastapi_app), base_url="http://test") as ac:
+        await ac.post("/auth/login/", json={"email": "user1@test.com", "password": "password"})
         assert ac.cookies["user_access_token"]
         yield AuthorizedClientModel(
             client=ac,
@@ -112,9 +106,7 @@ async def auth_ac():
 
 @pytest.fixture(scope="class")
 async def authenticated_super():
-    async with AsyncClient(
-        transport=ASGITransport(fastapi_app), base_url="http://test"
-    ) as ac:
+    async with AsyncClient(transport=ASGITransport(fastapi_app), base_url="http://test") as ac:
         response = await ac.post(
             "/auth/login/",
             json={"email": "superadmin@test.com", "password": "password"},
@@ -135,9 +127,7 @@ async def auth_by(ac: AsyncClient, user: User):
     logout_response = await ac.post("/auth/logout/")
     assert logout_response.status_code == 307
 
-    login_response = await ac.post(
-        "/auth/login/", json={"email": user.email, "password": "password"}
-    )
+    login_response = await ac.post("/auth/login/", json={"email": user.email, "password": "password"})
     assert login_response.status_code == 200
     assert isinstance(ac.cookies, httpx.Cookies)
     return AuthorizedClientModel(

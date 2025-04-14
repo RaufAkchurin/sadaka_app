@@ -20,9 +20,7 @@ async def google_auth_service(code: str, session: AsyncSession) -> UserBase:
     if not user:
         authorized_user = await user_dao.add(values=update_data)
     else:
-        await user_dao.update(
-            filters=EmailModel(email=user_data.email), values=update_data
-        )
+        await user_dao.update(filters=EmailModel(email=user_data.email), values=update_data)
         authorized_user = user
 
     return authorized_user

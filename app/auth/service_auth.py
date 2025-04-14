@@ -15,26 +15,18 @@ def create_tokens(data: dict) -> dict:
     access_expire = now + timedelta(days=1)
     access_payload = data.copy()
     access_payload.update({"exp": int(access_expire.timestamp()), "type": "access"})
-    access_token = jwt.encode(
-        access_payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM
-    )
+    access_token = jwt.encode(access_payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
     # RefreshToken - 7 дней
     refresh_expire = now + timedelta(days=7)
     refresh_payload = data.copy()
     refresh_payload.update({"exp": int(refresh_expire.timestamp()), "type": "refresh"})
-    refresh_token = jwt.encode(
-        refresh_payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM
-    )
+    refresh_token = jwt.encode(refresh_payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
     return {"access_token": access_token, "refresh_token": refresh_token}
 
 
 async def authenticate_user(user, password):
-    if (
-        not user
-        or verify_password(plain_password=password, hashed_password=user.password)
-        is False
-    ):
+    if not user or verify_password(plain_password=password, hashed_password=user.password) is False:
         return None
     return user
 

@@ -7,8 +7,8 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from app.dao.database import DATABASE_URL, Base
-from app.geo.models import City, Country, Region
-from app.users.models import Role, User
+from app.geo.models import City, Country, Region  # noqa: F401
+from app.users.models import Role, User  # noqa: F401
 
 config = context.config
 config.set_main_option("sqlalchemy.url", DATABASE_URL)

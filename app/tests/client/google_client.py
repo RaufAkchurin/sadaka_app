@@ -94,9 +94,7 @@ class TestGoogleAuthService:
         mock_requests_get.assert_called_once()
         assert await user_dao.count() == 6
 
-    async def test_login_after_deleting(
-        self, mock_google_api_responses, session, user_dao
-    ):
+    async def test_login_after_deleting(self, mock_google_api_responses, session, user_dao):
         mock_requests_post, mock_requests_get = mock_google_api_responses
 
         await user_dao.update(
@@ -104,10 +102,8 @@ class TestGoogleAuthService:
             values=UserActiveModel(is_active=False),
         )
 
-        current_user = await user_dao.find_one_or_none(
-            filters=EmailModel(email="superadmin@test.com")
-        )
-        assert current_user.is_active == False
+        current_user = await user_dao.find_one_or_none(filters=EmailModel(email="superadmin@test.com"))
+        assert not current_user.is_active
 
         # Мокаем response от requests.get (для получения данных пользователя)
         mock_user_info_response = MagicMock()
@@ -125,4 +121,4 @@ class TestGoogleAuthService:
         )
 
         # Проверяем, что возвращенные данные соответствуют ожиданиям
-        assert current_user.is_active == True
+        assert current_user.is_active

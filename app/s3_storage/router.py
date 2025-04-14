@@ -10,18 +10,14 @@ s3_router = APIRouter()
 
 
 @s3_router.post("/upload")
-async def upload(
-    file: UploadFile | None = None, user_data: User = Depends(get_current_user)
-) -> dict:
+async def upload(file: UploadFile | None = None, user_data: User = Depends(get_current_user)) -> dict:
     use_case = UploadFileUseCase()
     file_name = await use_case.execute(file=file)
     return {"file_name": file_name}
 
 
 @s3_router.get("/{file_name}")
-async def download(
-    file_name: str, user_data: User = Depends(get_current_user)
-) -> Response:
+async def download(file_name: str, user_data: User = Depends(get_current_user)) -> Response:
     use_case = S3DownloadFileUseCase()
     contents = await use_case.execute(file_name)
 

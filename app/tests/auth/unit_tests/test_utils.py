@@ -58,9 +58,7 @@ class TestUtils:
         }
 
         await user_dao.add(values=SUserAddDB(**user_data_dict, is_active=True))
-        user = await user_dao.find_one_or_none(
-            filters=EmailModel(email="test12@test.com")
-        )
+        user = await user_dao.find_one_or_none(filters=EmailModel(email="test12@test.com"))
 
         authenticated = await authenticate_user(user=user, password="12345")
         assert isinstance(authenticated, User)
