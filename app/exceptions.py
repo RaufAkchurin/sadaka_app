@@ -44,7 +44,9 @@ TokenInvalidFormatException = HTTPException(
 
 
 # Файлы
-FileNotProvidedException = HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Файл не передан.")
+FileNotProvidedException = HTTPException(
+    status_code=status.HTTP_400_BAD_REQUEST, detail="Файл не передан.+++++++++++++++++++++"
+)
 
 FileNameNotProvidedException = HTTPException(
     status_code=status.HTTP_400_BAD_REQUEST, detail="Не передано название файла."
