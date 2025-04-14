@@ -1,5 +1,3 @@
-from typing import Optional
-
 from fastapi import HTTPException, UploadFile, status
 
 from app.client.s3_client import S3Client
@@ -18,7 +16,7 @@ class UploadFileUseCase:
         self.max_size_mb: int = 1
         self.supported_file_types = {"png": "png", "jpg": "jpg", "pdf": "pdf"}
 
-    async def __call__(self, file: UploadFile) -> Optional[str]:
+    async def __call__(self, file: UploadFile) -> str | None:
         if not file:
             raise FileNotProvidedException()
 
