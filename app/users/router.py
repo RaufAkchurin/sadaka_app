@@ -29,7 +29,7 @@ async def update_user_logo(
 ) -> UserLogoUpdateSchema:
     dao = UsersDAO(session)
     use_case = UserLogoUpdateUseCase(users_dao=dao)
-    updated_logo_url = await use_case.execute(user=user, picture=picture)
+    updated_logo_url = await use_case(user=user, picture=picture)
     return updated_logo_url
 
 
@@ -40,7 +40,7 @@ async def update_user_data(
     user: User = Depends(get_current_user),
 ) -> UserDataUpdateSchema:
     use_case = UserDataUpdateUseCase(session=session)
-    validated_data = await use_case.execute(user=user, update_data=update_data)
+    validated_data = await use_case(user=user, update_data=update_data)
     return validated_data
 
 
@@ -51,7 +51,7 @@ async def delete_user(
 ) -> dict:
     dao = UsersDAO(session)
     use_case = DeleteUserUseCase(dao)
-    await use_case.execute(user=user)
+    await use_case(user=user)
     return {"message": "Вы успешно удалили аккаунт!"}
 
 
@@ -65,4 +65,4 @@ async def get_all_users(
 ) -> List[SUserInfo]:
     dao = UsersDAO(session)
     use_case = GetAllUsersUseCase(dao)
-    return await use_case.execute()
+    return await use_case()

@@ -18,7 +18,7 @@ class UploadFileUseCase:
         self.max_size_mb: int = 1
         self.supported_file_types = {"png": "png", "jpg": "jpg", "pdf": "pdf"}
 
-    async def execute(self, file: UploadFile) -> Optional[str]:
+    async def __call__(self, file: UploadFile) -> Optional[str]:
         if not file:
             raise FileNotProvidedException()
 
