@@ -1,5 +1,3 @@
-from typing import Optional
-
 from fastapi import HTTPException, UploadFile, status
 
 from app.client.s3_client import S3Client
@@ -18,15 +16,14 @@ class UploadFileUseCase:
         self.max_size_mb: int = 1
         self.supported_file_types = {"png": "png", "jpg": "jpg", "pdf": "pdf"}
 
-    async def execute(self, file: UploadFile) -> Optional[str]:
+    async def __call__(self, file: UploadFile) -> str | None:
         if not file:
             raise FileNotProvidedException()
 
         contents = await file.read()
-        size = len(contents)
 
         # Проверка размера файла
-        if not 0 < size <= self.max_size_mb * 1024 * 1024:  # 1 MB
+        if not 0 < len(contents) <= self.max_size_mb * 1024 * 1024:  # 1 MB
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"Supported file size is 0 - {self.max_size_mb} MB",

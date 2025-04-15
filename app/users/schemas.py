@@ -1,4 +1,4 @@
-from typing import Optional, Self
+from typing import Self
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, computed_field, model_validator
 
@@ -47,15 +47,15 @@ class RoleModel(BaseModel):
 
 
 class UserDataUpdateSchema(BaseModel):
-    name: Optional[str] = Field(
+    name: str | None = Field(
         default=None,
         min_length=3,
         max_length=50,
         description="Имя, от 3 до 50 символов",
     )
-    email: Optional[EmailStr] = Field(default=None, description="Электронная почта")
-    city_id: Optional[int] = Field(default=None, description="Идентификатор города", gt=0)
-    language: Optional[LanguageEnum] = Field(default=None)
+    email: EmailStr | None = Field(default=None, description="Электронная почта")
+    city_id: int | None = Field(default=None, description="Идентификатор города", gt=0)
+    language: LanguageEnum | None = Field(default=None)
 
     class Config:
         use_enum_values = True
@@ -79,7 +79,7 @@ class SUserInfo(UserBase):
     id: int = Field(description="Идентификатор пользователя")
     is_anonymous: bool = Field(description="Анонимный пользователь")
     is_active: bool = Field(description="Активный пользователь")
-    picture: Optional[str]
+    picture: str | None
     city: CityModel = Field(exclude=True)
     role: RoleModel = Field(exclude=True)
     language: str = Field(description="Язык пользователя")

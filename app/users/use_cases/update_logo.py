@@ -10,9 +10,9 @@ class UserLogoUpdateUseCase:
     def __init__(self, users_dao: UsersDAO):
         self.users_dao = users_dao
 
-    async def execute(self, user: User, picture: UploadFile) -> UserLogoUpdateSchema:
+    async def __call__(self, user: User, picture: UploadFile) -> UserLogoUpdateSchema:
         use_case = UploadFileUseCase()
-        s3_path = await use_case.execute(file=picture)
+        s3_path = await use_case(file=picture)
 
         await self.users_dao.update(
             filters=EmailModel(email=user.email),

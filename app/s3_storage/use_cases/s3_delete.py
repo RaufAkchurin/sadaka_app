@@ -12,7 +12,7 @@ class S3DeleteUseCase:
             bucket_name=settings.S3_BUCKET_NAME,
         )
 
-    async def execute(self, file_name: str) -> None:
+    async def __call__(self, file_name: str) -> None:
         if file_name == "None":
             raise FileNameNotProvidedException
         await self.s3_client.delete_file(object_name=file_name)

@@ -11,7 +11,7 @@ class UserDataUpdateUseCase:
         self.session = session
         self.users_dao = UsersDAO(session=session)
 
-    async def execute(self, user: User, update_data: UserDataUpdateSchema) -> UserDataUpdateSchema:
+    async def __call__(self, user: User, update_data: UserDataUpdateSchema) -> UserDataUpdateSchema:
         if hasattr(update_data, "city_id") and update_data.city_id:
             await city_id_validator(city_id=update_data.city_id, session=self.session)
 

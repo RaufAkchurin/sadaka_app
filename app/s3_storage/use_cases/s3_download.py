@@ -12,10 +12,13 @@ class S3DownloadFileUseCase:
             bucket_name=settings.S3_BUCKET_NAME,
         )
 
-    async def execute(self, file_name: str) -> bytes:
+    async def __call__(self, file_name: str) -> bytes:
         if not file_name:
             raise FileNameNotProvidedException
+
         contents = await self.s3_client.get_file(object_name=file_name)
+
         if contents is None:
             raise FileNotFoundS3Exception
+
         return contents

@@ -7,7 +7,7 @@ class DeleteUserUseCase:
     def __init__(self, users_dao: UsersDAO):
         self.users_dao = users_dao
 
-    async def execute(self, user: User):
+    async def __call__(self, user: User):
         await self.users_dao.update(
             filters=EmailModel(email=user.email),
             values=UserActiveModel(

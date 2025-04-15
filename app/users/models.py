@@ -1,6 +1,5 @@
 import enum
 from dataclasses import dataclass
-from typing import Optional
 
 from sqlalchemy import Enum as SqlEnum
 from sqlalchemy import ForeignKey, text
@@ -28,10 +27,10 @@ class Role(Base):
 class User(Base):
     name: Mapped[str]
     email: Mapped[str_uniq]
-    password: Mapped[Optional[str]]
-    picture: Mapped[Optional[str]]
+    password: Mapped[str | None]
+    picture: Mapped[str | None]
 
-    google_access_token: Mapped[Optional[str]]
+    google_access_token: Mapped[str | None]
     language: Mapped[LanguageEnum] = mapped_column(
         SqlEnum(LanguageEnum, name="language_enum"),
         server_default=LanguageEnum.RU.value,
