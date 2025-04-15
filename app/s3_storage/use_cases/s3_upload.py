@@ -21,10 +21,9 @@ class UploadFileUseCase:
             raise FileNotProvidedException()
 
         contents = await file.read()
-        size = len(contents)
 
         # Проверка размера файла
-        if not 0 < size <= self.max_size_mb * 1024 * 1024:  # 1 MB
+        if not 0 < len(contents) <= self.max_size_mb * 1024 * 1024:  # 1 MB
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"Supported file size is 0 - {self.max_size_mb} MB",
