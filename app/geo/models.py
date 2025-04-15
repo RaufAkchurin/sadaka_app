@@ -18,10 +18,14 @@ class Country(Base):
         return f"{self.__class__.__name__}(id={self.id}, name={self.name})"
 
 
+class Found:
+    pass
+
+
 @dataclass
 class Region(Base):
     name: Mapped[str_uniq]
-    logo: Mapped[str]
+    picture: Mapped[str]
 
     # Внешний ключ для страны
     country_id: Mapped[int] = mapped_column(ForeignKey("countrys.id"), nullable=True)
@@ -29,6 +33,9 @@ class Region(Base):
 
     # Связь с городами
     citys: Mapped[list["City"]] = relationship("City", back_populates="region")
+
+    # связь с фондами
+    funds: Mapped[list["Found"]] = relationship("Found", back_populates="region")
 
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.id}, name={self.name})"
