@@ -2,7 +2,6 @@ from dataclasses import dataclass
 
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-
 from app.dao.database import Base, str_uniq
 
 
@@ -33,9 +32,6 @@ class Region(Base):
 
     # Связь с городами
     citys: Mapped[list["City"]] = relationship("City", back_populates="region")
-
-    # связь с фондами
-    funds: Mapped[list["Found"]] = relationship("Found", back_populates="region")
 
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.id}, name={self.name})"
