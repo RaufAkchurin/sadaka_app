@@ -1,13 +1,8 @@
-from __future__ import annotations
-from typing import TYPE_CHECKING
-if TYPE_CHECKING:
-    from app.fund.models import Fund
-else:
-    Fund = "Fund"
-
 from dataclasses import dataclass
+
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from app.dao.database import Base, str_uniq
 
 

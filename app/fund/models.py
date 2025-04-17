@@ -1,17 +1,11 @@
-from __future__ import annotations
-from typing import TYPE_CHECKING
-if TYPE_CHECKING:
-    from app.geo.models import Region
-else:
-    Region = "Region"
+from dataclasses import dataclass
 
 from sqlalchemy import ForeignKey, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from dataclasses import dataclass
 
 from app.dao.database import Base
-# from app.documents.models import Document
 
+# from app.documents.models import Document
 
 
 @dataclass
