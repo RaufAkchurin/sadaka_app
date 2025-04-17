@@ -1,14 +1,14 @@
 [
   {
     "name": "Tatarstan",
-    "logo": "Tatarstan"
+    "picture": "Tatarstan"
   },
     {
     "name": "Bashkortostan",
-    "logo": "Bashkortostan"
+    "picture": "Bashkortostan"
   },
     {
     "name": "Dagestan",
-    "logo": "Dagestan"
+    "picture": "Dagestan"
   }
 ]

@@ -1,5 +1,11 @@
-from dataclasses import dataclass
+from __future__ import annotations
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from app.fund.models import Fund
+else:
+    Fund = "Fund"
 
+from dataclasses import dataclass
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.dao.database import Base, str_uniq
@@ -17,10 +23,6 @@ class Country(Base):
         return f"{self.__class__.__name__}(id={self.id}, name={self.name})"
 
 
-class Found:
-    pass
-
-
 @dataclass
 class Region(Base):
     name: Mapped[str_uniq]
@@ -32,6 +34,7 @@ class Region(Base):
 
     # Связь с городами
     citys: Mapped[list["City"]] = relationship("City", back_populates="region")
+    funds: Mapped[list["Fund"]] = relationship("Fund", back_populates="region")
 
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.id}, name={self.name})"
