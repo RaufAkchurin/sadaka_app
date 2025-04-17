@@ -29,7 +29,7 @@ class Region(Base):
 
     # Связь с городами
     citys: Mapped[list["City"]] = relationship("City", back_populates="region")
-    funds: Mapped[list["Fund"]] = relationship("Fund", back_populates="region")
+    funds: Mapped[list["Fund"]] = relationship("Fund", back_populates="region") # imported in __init__.py
 
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.id}, name={self.name})"

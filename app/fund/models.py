@@ -16,7 +16,7 @@ class Fund(Base):
 
     # region:
     region_id: Mapped[int] = mapped_column(ForeignKey("regions.id"), default=1, server_default=text("1"))
-    region: Mapped["Region"] = relationship("Region", back_populates="funds", lazy="joined")
+    region: Mapped["Region"] = relationship("Region", back_populates="funds", lazy="joined")  # imported in __init__.py
 
     # documents:
     # document_id: Mapped[int] = mapped_column(ForeignKey("documents.id"))
