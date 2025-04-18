@@ -1,15 +1,22 @@
 from dataclasses import dataclass
 
+from sqlalchemy import Enum as SqlEnum
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.dao.database import Base, str_uniq
+from app.users.enums import LanguageEnum
 
 
 @dataclass
 class Country(Base):
     name: Mapped[str_uniq]
-    language: Mapped[str]
+    language: Mapped[LanguageEnum] = mapped_column(
+        SqlEnum(LanguageEnum, name="language_enum"),
+        server_default=LanguageEnum.RU.value,
+        default=LanguageEnum.RU.value,
+        nullable=False,
+    )
 
     # Связь с регионами
     regions: Mapped[list["Region"]] = relationship("Region", back_populates="country")
@@ -24,12 +31,12 @@ class Region(Base):
     picture: Mapped[str]
 
     # Внешний ключ для страны
-    country_id: Mapped[int] = mapped_column(ForeignKey("countrys.id"), nullable=True)
+    country_id: Mapped[int] = mapped_column(ForeignKey("countrys.id"), nullable=False)
     country: Mapped["Country"] = relationship("Country", back_populates="regions", lazy="joined")
 
     # Связь с городами
     citys: Mapped[list["City"]] = relationship("City", back_populates="region")
-    funds: Mapped[list["Fund"]] = relationship("Fund", back_populates="region") # imported in __init__.py
+    funds: Mapped[list["Fund"]] = relationship("Fund", back_populates="region")  # imported in __init__.py
 
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.id}, name={self.name})"
@@ -43,7 +50,7 @@ class City(Base):
     users: Mapped[list["User"]] = relationship("User", back_populates="city")  # noqa F821
 
     # Внешний ключ для региона
-    region_id: Mapped[int] = mapped_column(ForeignKey("regions.id"), nullable=True)
+    region_id: Mapped[int] = mapped_column(ForeignKey("regions.id"), nullable=False)
     region: Mapped["Region"] = relationship("Region", back_populates="citys", lazy="joined")
 
     def __repr__(self):

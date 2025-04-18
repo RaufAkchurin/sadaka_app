@@ -1,4 +1,3 @@
-import enum
 from dataclasses import dataclass
 
 from sqlalchemy import Enum as SqlEnum
@@ -7,11 +6,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.dao.database import Base, str_uniq
 from app.geo.models import City
-
-
-class LanguageEnum(enum.Enum):
-    RU = "RU"
-    EN = "EN"
+from app.users.enums import LanguageEnum
 
 
 @dataclass

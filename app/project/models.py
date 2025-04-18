@@ -17,10 +17,13 @@ class Project(Base):
     region_id: Mapped[int] = mapped_column(ForeignKey("regions.id"), default=1, server_default=text("1"))
     region: Mapped["Region"] = relationship("Region", back_populates="regions", lazy="joined")
 
-    # # documents:
-    # document_id: Mapped[int] = mapped_column(ForeignKey("documents.id"))
-    # document: Mapped["Document"] = relationship("Document", back_populates="documents", lazy="joined")
-    #
+    # documents:
+    # documents: Mapped[list["Document"]] = relationship(
+    #     "Document",
+    #     back_populates="project",
+    #     cascade="all, delete-orphan"
+    # )
+
     # # reports:
     # report_id: Mapped[int] = mapped_column(ForeignKey("reports.id"))
     # report: Mapped["Report"] = relationship("Report", back_populates="reports", lazy="joined")

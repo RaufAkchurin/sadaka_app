@@ -4,8 +4,7 @@ from sqlalchemy import ForeignKey, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.dao.database import Base
-
-# from app.documents.models import Document
+from app.documents.models import Document
 
 
 @dataclass
@@ -19,8 +18,7 @@ class Fund(Base):
     region: Mapped["Region"] = relationship("Region", back_populates="funds", lazy="joined")  # imported in __init__.py
 
     # documents:
-    # document_id: Mapped[int] = mapped_column(ForeignKey("documents.id"))
-    # document: Mapped["Document"] = relationship("Document", back_populates="documents", lazy="joined")
+    documents: Mapped[list["Document"]] = relationship("Document", back_populates="fund", cascade="all, delete-orphan")
 
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.id}, name={self.name})"
