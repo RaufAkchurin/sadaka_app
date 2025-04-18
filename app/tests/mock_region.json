@@ -1,17 +1,17 @@
 [
   {
     "name": "Tatarstan",
-    "picture": "Tatarstan",
+    "picture_url": "Tatarstan",
     "country_id": 1
   },
     {
     "name": "Bashkortostan",
-    "picture": "Bashkortostan",
+    "picture_url": "Bashkortostan",
     "country_id": 1
   },
     {
     "name": "Dagestan",
-    "picture": "Dagestan",
+    "picture_url": "Dagestan",
     "country_id": 1
   }
 ]

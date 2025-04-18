@@ -1,6 +1,6 @@
 import pytest
-from tests.conftest import auth_by
 
+from app.tests.conftest import auth_by
 from app.users.schemas import EmailModel
 
 
@@ -9,7 +9,7 @@ class TestApi:
         "email, name, password, confirm_password, status_code, response_message",
         [
             (
-                "user@example.com",
+                "user@rain.com",
                 "string",
                 "password",
                 "password",
@@ -17,7 +17,7 @@ class TestApi:
                 {"message": "Вы успешно зарегистрированы!"},
             ),
             (
-                "user@example.com",
+                "user@rain.com",
                 "string",
                 "password",
                 "password1",

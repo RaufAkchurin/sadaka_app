@@ -5,17 +5,14 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
 
 from app.dao.database import Base
-
-
-class FileTypeEnum(enum.Enum):
-    PDF = "PDF"
+from app.utils.validators import validate_link_url
 
 
 @dataclass
 class Document(Base):
     name: Mapped[str]
     size: Mapped[int]
-    link: Mapped[str]
+    url: Mapped[str]
 
     fund_id: Mapped[int | None] = mapped_column(ForeignKey("funds.id"), nullable=True)
     fund: Mapped["Fund"] = relationship("Fund", back_populates="documents")
@@ -39,6 +36,10 @@ class Document(Base):
             raise ValueError("Document must be related to only one model (not multiple).")
 
         return value
+
+    @validates("url")
+    def validate_link(self, key: str, value: str) -> str:
+        return validate_link_url(value)
 
 
 # class Report(Base):

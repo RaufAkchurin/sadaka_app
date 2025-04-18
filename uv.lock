@@ -1079,7 +1079,9 @@ dependencies = [
     { name = "requests" },
     { name = "sqladmin" },
     { name = "sqlalchemy" },
+    { name = "tld" },
     { name = "uvicorn" },
+    { name = "validators" },
 ]
 
 [package.dev-dependencies]
@@ -1116,7 +1118,9 @@ requires-dist = [
     { name = "requests", specifier = ">=2.32.3" },
     { name = "sqladmin", specifier = ">=0.20.1" },
     { name = "sqlalchemy", specifier = ">=2.0.39" },
+    { name = "tld", specifier = ">=0.13" },
     { name = "uvicorn", specifier = ">=0.34.0" },
+    { name = "validators", specifier = ">=0.34.0" },
 ]
 
 [package.metadata.requires-dev]
@@ -1207,6 +1211,15 @@ wheels = [
 ]
 
 [[package]]
+name = "tld"
+version = "0.13"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/19/2b/678082222bc1d2823ea8384c6806085b85226ff73885c703fe0c7143ef64/tld-0.13.tar.gz", hash = "sha256:93dde5e1c04bdf1844976eae440706379d21f4ab235b73c05d7483e074fb5629", size = 446824 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ea/75/779ddeaf4d847ba0021ad99d1b615a853f2a5762bd5d118273c7f7673c38/tld-0.13-py2.py3-none-any.whl", hash = "sha256:f75b2be080f767ed17c2338a339eaa4fab5792586319ca819119da252f9f3749", size = 263789 },
+]
+
+[[package]]
 name = "typing-extensions"
 version = "4.12.2"
 source = { registry = "https://pypi.org/simple" }
@@ -1244,6 +1257,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/4b/4d/938bd85e5bf2edeec766267a5015ad969730bb91e31b44021dfe8b22df6c/uvicorn-0.34.0.tar.gz", hash = "sha256:404051050cd7e905de2c9a7e61790943440b3416f49cb409f965d9dcd0fa73e9", size = 76568 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/61/14/33a3a1352cfa71812a3a21e8c9bfb83f60b0011f5e36f2b1399d51928209/uvicorn-0.34.0-py3-none-any.whl", hash = "sha256:023dc038422502fa28a09c7a30bf2b6991512da7dcdb8fd35fe57cfc154126f4", size = 62315 },
+]
+
+[[package]]
+name = "validators"
+version = "0.34.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/64/07/91582d69320f6f6daaf2d8072608a4ad8884683d4840e7e4f3a9dbdcc639/validators-0.34.0.tar.gz", hash = "sha256:647fe407b45af9a74d245b943b18e6a816acf4926974278f6dd617778e1e781f", size = 70955 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/6e/78/36828a4d857b25896f9774c875714ba4e9b3bc8a92d2debe3f4df3a83d4f/validators-0.34.0-py3-none-any.whl", hash = "sha256:c804b476e3e6d3786fa07a30073a4ef694e617805eb1946ceee3fe5a9b8b1321", size = 43536 },
 ]
 
 [[package]]

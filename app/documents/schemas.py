@@ -2,7 +2,7 @@ from typing import Any, Optional
 
 from pydantic import BaseModel, model_validator
 
-from app.documents.models import FileTypeEnum
+from app.documents.enums import FileTypeEnum
 
 
 class DocumentCreate(BaseModel):

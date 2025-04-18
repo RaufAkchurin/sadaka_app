@@ -1,8 +1,8 @@
 """Initial migration
 
-Revision ID: 41de64a2ad05
+Revision ID: 6b1a5fa5e627
 Revises: 
-Create Date: 2025-04-18 08:57:08.087279
+Create Date: 2025-04-18 10:52:02.653124
 
 """
 from typing import Sequence, Union
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = "41de64a2ad05"
+revision: str = "6b1a5fa5e627"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -41,7 +41,7 @@ def upgrade() -> None:
     op.create_table(
         "regions",
         sa.Column("name", sa.String(), nullable=False),
-        sa.Column("picture", sa.String(), nullable=False),
+        sa.Column("picture_url", sa.String(), nullable=False),
         sa.Column("country_id", sa.Integer(), nullable=False),
         sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
         sa.Column("created_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
@@ -71,7 +71,7 @@ def upgrade() -> None:
         "funds",
         sa.Column("name", sa.String(), nullable=False),
         sa.Column("description", sa.String(), nullable=True),
-        sa.Column("picture", sa.String(), nullable=True),
+        sa.Column("picture_url", sa.String(), nullable=False),
         sa.Column("region_id", sa.Integer(), server_default=sa.text("1"), nullable=False),
         sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
         sa.Column("created_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
@@ -86,7 +86,7 @@ def upgrade() -> None:
         "documents",
         sa.Column("name", sa.String(), nullable=False),
         sa.Column("size", sa.Integer(), nullable=False),
-        sa.Column("link", sa.String(), nullable=False),
+        sa.Column("url", sa.String(), nullable=False),
         sa.Column("fund_id", sa.Integer(), nullable=True),
         sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
         sa.Column("created_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
@@ -100,13 +100,13 @@ def upgrade() -> None:
     op.create_table(
         "users",
         sa.Column("name", sa.String(), nullable=False),
-        sa.Column("email", sa.String(), nullable=False),
         sa.Column("password", sa.String(), nullable=True),
-        sa.Column("picture", sa.String(), nullable=True),
+        sa.Column("picture_url", sa.String(), nullable=True),
         sa.Column("google_access_token", sa.String(), nullable=True),
         sa.Column("language", sa.Enum("RU", "EN", name="language_enum"), server_default="RU", nullable=False),
         sa.Column("is_anonymous", sa.Boolean(), nullable=False),
         sa.Column("is_active", sa.Boolean(), nullable=False),
+        sa.Column("email", sa.String(), nullable=False),
         sa.Column("city_id", sa.Integer(), server_default=sa.text("1"), nullable=False),
         sa.Column("role_id", sa.Integer(), server_default=sa.text("1"), nullable=False),
         sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),

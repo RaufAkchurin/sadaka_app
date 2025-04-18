@@ -2,10 +2,11 @@ from dataclasses import dataclass
 
 from sqlalchemy import Enum as SqlEnum
 from sqlalchemy import ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
 
 from app.dao.database import Base, str_uniq
 from app.users.enums import LanguageEnum
+from app.utils.validators import validate_link_url
 
 
 @dataclass
@@ -28,7 +29,7 @@ class Country(Base):
 @dataclass
 class Region(Base):
     name: Mapped[str_uniq]
-    picture: Mapped[str]
+    picture_url: Mapped[str]
 
     # Внешний ключ для страны
     country_id: Mapped[int] = mapped_column(ForeignKey("countrys.id"), nullable=False)
@@ -40,6 +41,10 @@ class Region(Base):
 
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.id}, name={self.name})"
+
+    @validates("picture_url")
+    def validate_link(self, key: str, value: str) -> str:
+        return validate_link_url(value)
 
 
 @dataclass
