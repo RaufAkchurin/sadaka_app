@@ -25,8 +25,8 @@ class Document(Base):
     project_id: Mapped[int | None] = mapped_column(ForeignKey("projects.id"), nullable=True)
     project: Mapped["Project"] = relationship("Project", back_populates="documents")
 
-    stage_id: Mapped[int | None] = mapped_column(ForeignKey("stages.id"), nullable=True)
-    stage: Mapped["Stage"] = relationship("Stage", back_populates="documents")
+    # stage_id: Mapped[int | None] = mapped_column(ForeignKey("stages.id"), nullable=True)
+    # stage: Mapped["Stage"] = relationship("Stage", back_populates="documents")
 
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.id}, name={self.name})"

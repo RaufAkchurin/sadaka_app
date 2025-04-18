@@ -38,4 +38,4 @@ class Stage(Base):
     goal: Mapped[int]
 
     # documents:
-    reports: Mapped[list["Document"]] = relationship("Document", back_populates="stage", cascade="all, delete-orphan")
+    # reports: Mapped[list["Document"]] = relationship("Document", back_populates="stage", cascade="all, delete-orphan")
