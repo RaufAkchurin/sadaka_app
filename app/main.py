@@ -6,12 +6,10 @@ from typing import AsyncGenerator
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
-from sqladmin import Admin
 
-from admin.views import CityAdmin, CountryAdmin, DocumentAdmin, FundAdmin, RegionAdmin, RoleAdmin, UserAdmin
+from admin.register import create_admin_panel
 from app.auth.google.router import google_router
 from app.auth.router import auth_router
-from app.dao.database import engine
 from app.s3_storage.router import s3_router
 from app.users.router import users_router
 
@@ -23,18 +21,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[dict, None]:
     """Управление жизненным циклом приложения."""
     logger.info("Инициализация приложения...")
 
-    # AdminPanel things
-    admin = Admin(app, engine)
-
-    admin.add_view(CountryAdmin)
-    admin.add_view(RegionAdmin)
-    admin.add_view(CityAdmin)
-
-    admin.add_view(RoleAdmin)
-    admin.add_view(UserAdmin)
-
-    admin.add_view(FundAdmin)
-    admin.add_view(DocumentAdmin)
+    create_admin_panel(app)
 
     yield
     logger.info("Завершение работы приложения...")

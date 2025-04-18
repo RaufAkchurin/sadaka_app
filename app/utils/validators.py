@@ -1,3 +1,4 @@
+import phonenumbers
 import validators
 from tld import get_tld
 
@@ -17,3 +18,14 @@ def validate_link_url(value: str) -> str:
         raise ValueError("Ссылка содержит недопустимый или несуществующий домен")
 
     return value
+
+
+def validate_phone(value: str) -> str:
+    try:
+        parsed = phonenumbers.parse(value, None)  # автоопределение страны по +XXX
+        if not phonenumbers.is_valid_number(parsed):
+            raise ValueError("Неверный формат номера телефона")
+    except phonenumbers.NumberParseException:
+        raise ValueError("Номер телефона только в формате +7xxxxxxxxxx")
+
+    return phonenumbers.format_number(parsed, phonenumbers.PhoneNumberFormat.E164)
