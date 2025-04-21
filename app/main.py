@@ -7,6 +7,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
+from admin.register import create_admin_panel
 from app.auth.google.router import google_router
 from app.auth.router import auth_router
 from app.s3_storage.router import s3_router
@@ -19,6 +20,9 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 async def lifespan(app: FastAPI) -> AsyncGenerator[dict, None]:
     """Управление жизненным циклом приложения."""
     logger.info("Инициализация приложения...")
+
+    create_admin_panel(app)
+
     yield
     logger.info("Завершение работы приложения...")
 

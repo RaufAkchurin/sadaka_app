@@ -20,7 +20,7 @@ class TestUsers:
                     "is_active": True,
                     "is_anonymous": False,
                     "name": "user1",
-                    "picture": None,
+                    "picture_url": None,
                     "role_id": 1,
                     "role_name": "user",
                     "language": "RU",
@@ -76,14 +76,14 @@ class TestUsers:
                 "file1.png",
                 b"Test file content1",
                 200,
-                {"picture": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/file1.png"},
+                {"picture_url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/file1.png"},
             ),
             (
                 True,
                 "file1.png",
                 b"Test file content2",
                 200,
-                {"picture": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/file1.png"},
+                {"picture_url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/file1.png"},
             ),
             (
                 False,
@@ -116,7 +116,7 @@ class TestUsers:
             assert response.json() == response_expected
 
             # Проверяем, что по ссылке действительно лежит тот же файл (байтовое сравнение)
-            file_url = response_expected.get("picture")
+            file_url = response_expected.get("picture_url")
             async with httpx.AsyncClient() as client:
                 file_response = await client.get(file_url)
 

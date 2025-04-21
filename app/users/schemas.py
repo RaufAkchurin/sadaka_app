@@ -1,6 +1,6 @@
 from typing import Self
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field, computed_field, model_validator
+from pydantic import AnyHttpUrl, BaseModel, ConfigDict, EmailStr, Field, computed_field, model_validator
 
 from app.auth.service_jwt import get_password_hash
 from app.users.models import LanguageEnum
@@ -62,7 +62,7 @@ class UserDataUpdateSchema(BaseModel):
 
 
 class UserLogoUpdateSchema(BaseModel):
-    picture: str = Field(description="Аватарка")
+    picture_url: str = Field(description="Аватарка")
 
 
 class UserActiveModel(BaseModel):
@@ -79,7 +79,7 @@ class SUserInfo(UserBase):
     id: int = Field(description="Идентификатор пользователя")
     is_anonymous: bool = Field(description="Анонимный пользователь")
     is_active: bool = Field(description="Активный пользователь")
-    picture: str | None
+    picture_url: AnyHttpUrl | None = Field(description="Ссылка на картинку")
     city: CityModel = Field(exclude=True)
     role: RoleModel = Field(exclude=True)
     language: str = Field(description="Язык пользователя")
