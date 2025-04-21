@@ -1,6 +1,6 @@
 import enum
 
 
-class StageStatusEnum(enum.Enum):
+class AbstractStatusEnum(enum.Enum):
     ACTIVE = "active"
     FINISHED = "finished"
