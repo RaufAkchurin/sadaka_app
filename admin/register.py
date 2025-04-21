@@ -6,6 +6,7 @@ from admin.views import (
     CountryAdmin,
     DocumentAdmin,
     FundAdmin,
+    PaymentAdmin,
     ProjectAdmin,
     RegionAdmin,
     RoleAdmin,
@@ -29,3 +30,5 @@ def create_admin_panel(app: FastAPI):
     admin.add_view(ProjectAdmin)
     admin.add_view(StageAdmin)
     admin.add_view(DocumentAdmin)
+
+    admin.add_view(PaymentAdmin)

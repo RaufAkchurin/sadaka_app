@@ -7,6 +7,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
 
 from app.dao.database import Base, str_uniq
 from app.geo.models import City
+from app.payments.models import Payment
 from app.users.enums import LanguageEnum
 from app.utils.validators import validate_link_url
 
@@ -27,16 +28,17 @@ class User(Base):
     picture_url: Mapped[str | None]
 
     google_access_token: Mapped[str | None]
+    email: Mapped[str] = mapped_column(unique=True, nullable=False)
     language: Mapped[LanguageEnum] = mapped_column(
         SqlEnum(LanguageEnum, name="language_enum"),
         server_default=LanguageEnum.RU.value,
         default=LanguageEnum.RU.value,
         nullable=False,
     )
+
+    # Flags
     is_anonymous: Mapped[bool] = mapped_column(default=False, nullable=False)
     is_active: Mapped[bool] = mapped_column(default=True, nullable=False)
-
-    email: Mapped[str] = mapped_column(unique=True, nullable=False)
 
     # Связь с городом
     city_id: Mapped[int] = mapped_column(ForeignKey("citys.id"), default=1, server_default=text("1"))
@@ -45,6 +47,9 @@ class User(Base):
     # Связь с ролью
     role_id: Mapped[int] = mapped_column(ForeignKey("roles.id"), default=1, server_default=text("1"))
     role: Mapped["Role"] = relationship("Role", back_populates="users", lazy="joined")
+
+    # RELATIONS
+    payments: Mapped[list["Payment"]] = relationship(back_populates="user")
 
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.id}, name={self.name})"

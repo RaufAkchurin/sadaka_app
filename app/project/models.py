@@ -21,13 +21,15 @@ class Project(Base):
     funds: Mapped["Fund"] = relationship("Fund", back_populates="projects", lazy="joined")
 
     # documents:
-    documents: Mapped[list["Document"]] = relationship(
+    documents: Mapped[list["Document"]] = relationship(  # noqa: F821
         "Document", back_populates="project", cascade="all, delete-orphan"
     )
 
     # stages:
-    stages: Mapped[list["Stage"]] = relationship(
-        "Stage", back_populates="project", cascade="all, delete-orphan"
+    stages: Mapped[list["Stage"]] = relationship("Stage", back_populates="project", cascade="all, delete-orphan")
+
+    payments: Mapped[list["Payment"]] = relationship(  # noqa: F821
+        "Payment", back_populates="project", cascade="all, delete-orphan"
     )
 
     def __repr__(self):
@@ -47,8 +49,16 @@ class Stage(Base):
     goal: Mapped[int]
 
     # project:
-    project_id: Mapped[int | None] = mapped_column(ForeignKey("projects.id"), nullable=True)
+    project_id: Mapped[int] = mapped_column(ForeignKey("projects.id"), nullable=False)
     project: Mapped["Project"] = relationship("Project", back_populates="stages")
 
     # documents:
-    reports: Mapped[list["Document"]] = relationship("Document", back_populates="stage", cascade="all, delete-orphan")
+    reports: Mapped[list["Document"]] = relationship(  # noqa: F821
+        "Document", back_populates="stage", cascade="all, delete-orphan"
+    )
+    # payments:
+    payments: Mapped[list["Payment"]] = relationship(  # noqa: F821
+        "Payment", back_populates="stage", cascade="all, delete-orphan"
+    )
+
+    # TODO Add validation as active stage only one for project!
