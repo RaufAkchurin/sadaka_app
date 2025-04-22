@@ -2,8 +2,33 @@
   {
     "id": 1,
     "name": "proj1 stage1",
-    "status": "ACTIVE",
+    "description": "description1",
+    "status": "FINISHED",
     "goal": 1000,
     "project_id": 1
+  },
+    {
+    "id": 2,
+    "name": "proj1 stage2",
+    "description": "description2",
+    "status": "ACTIVE",
+    "goal": 2000,
+    "project_id": 1
+  },
+    {
+    "id": 3,
+    "name": "proj2 stage1",
+    "description": "description3",
+    "status": "FINISHED",
+    "goal": 3000,
+    "project_id": 2
+  },
+      {
+    "id": 4,
+    "description": "description4",
+    "name": "proj2 stage2",
+    "status": "ACTIVE",
+    "goal": 4000,
+    "project_id": 2
   }
 ]

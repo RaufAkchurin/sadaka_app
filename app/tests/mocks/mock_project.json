@@ -2,19 +2,19 @@
   {
     "id": 1,
     "name": "project1",
-    "status": "active",
+    "status": "FINISHED",
     "fund_id": 1
   },
     {
     "id": 2,
     "name": "project2",
-    "status": "active",
+    "status": "ACTIVE",
     "fund_id": 2
   },
     {
     "id": 3,
     "name": "project3",
-    "status": "active",
+    "status": "ACTIVE",
     "fund_id": 3
   }
 ]

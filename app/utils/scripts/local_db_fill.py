@@ -5,8 +5,10 @@ import os
 from sqlalchemy import insert
 
 from app.dao.database import Base, async_session_maker, engine
+from app.documents.models import Document
 from app.fund.models import Fund
 from app.geo.models import City, Country, Region
+from app.payments.models import Payment
 from app.project.models import Project, Stage
 from app.users.models import Role, User
 
@@ -35,6 +37,9 @@ async def prepare_database_core(session):
         projects = open_mock_json("project")
         stages = open_mock_json("stage")
 
+        documents = open_mock_json("document")
+        payments = open_mock_json("payment")
+
         async with async_session_maker() as session:
             add_country = insert(Country).values(country)
             add_region = insert(Region).values(region)
@@ -47,6 +52,9 @@ async def prepare_database_core(session):
             add_projects = insert(Project).values(projects)
             add_stages = insert(Stage).values(stages)
 
+            add_documents = insert(Document).values(documents)
+            add_payments = insert(Payment).values(payments)
+
             await session.execute(add_country)
             await session.execute(add_region)
             await session.execute(add_city)
@@ -57,6 +65,9 @@ async def prepare_database_core(session):
             await session.execute(add_funds)
             await session.execute(add_projects)
             await session.execute(add_stages)
+
+            await session.execute(add_documents)
+            await session.execute(add_payments)
 
             await session.commit()
     except:  # noqa E722

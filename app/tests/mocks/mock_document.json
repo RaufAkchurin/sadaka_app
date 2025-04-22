@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "name": "pdoc1",
+    "size": "doc for project 1",
+    "url": "https://url.ya.ru/file1",
+    "project_id": 1,
+    "fund_id": null,
+    "stage_id": null
+  },
+    {
+    "id": 2,
+    "name": "pdoc2",
+    "size": "doc for project 1",
+    "url": "https://url.ya.ru/file2",
+    "project_id": 1,
+    "fund_id": null,
+    "stage_id": null
+  },
+    {
+    "id": 3,
+    "name": "rdoc1",
+    "size": "rep for stage 1",
+    "url": "https://url.ya.ru/file3",
+    "project_id": null,
+    "fund_id": null,
+    "stage_id": 1
+  },
+    {
+    "id": 4,
+    "name": "rdoc2",
+    "size": "rep for stage 2",
+    "url": "https://url.ya.ru/file4",
+    "project_id": null,
+    "fund_id": null,
+    "stage_id": 2
+  }
+]
