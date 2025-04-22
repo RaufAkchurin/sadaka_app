@@ -26,7 +26,9 @@ class Project(Base):
     )
 
     # stages:
-    stages: Mapped[list["Stage"]] = relationship("Stage", back_populates="project", cascade="all, delete-orphan")
+    stages: Mapped[list["Stage"]] = relationship(  # noqa: F821
+        "Stage", back_populates="project", cascade="all, delete-orphan"
+    )
 
     payments: Mapped[list["Payment"]] = relationship(  # noqa: F821
         "Payment", back_populates="project", cascade="all, delete-orphan"

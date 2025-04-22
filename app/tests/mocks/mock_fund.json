@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "name": "fund1",
+    "description": "desc1",
+    "picture_url": "https://picture1.ru",
+    "hot_line": "+79176542281",
+    "address": "address1"
+  },
+    {
+    "id": 2,
+    "name": "fund2",
+    "description": "desc2",
+    "picture_url": "https://picture2.ru",
+    "hot_line": "+79176542282",
+    "address": "address2"
+  },
+      {
+    "id": 3,
+    "name": "fund3",
+    "description": "desc3",
+    "picture_url": "https://picture3.ru",
+    "hot_line": "+79176542283",
+    "address": "address3"
+  }
+]

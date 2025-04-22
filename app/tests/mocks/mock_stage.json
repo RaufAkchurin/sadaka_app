@@ -1,0 +1,9 @@
+[
+  {
+    "id": 1,
+    "name": "proj1 stage1",
+    "status": "ACTIVE",
+    "goal": 1000,
+    "project_id": 1
+  }
+]
