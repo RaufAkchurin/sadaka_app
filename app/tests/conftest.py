@@ -1,73 +1,19 @@
-import json
-import os
-
 import httpx
 import pytest
 from httpx import ASGITransport, AsyncClient
-from sqlalchemy import insert
 
-from app.dao.database import Base, async_session_maker, engine
-from app.fund.models import Fund
-from app.geo.models import City, Country, Region
+from app.dao.database import async_session_maker
 from app.main import app as fastapi_app
 from app.settings import settings
 from app.tests.schemas import AuthorizedClientModel, CookiesModel
 from app.users.dao import UsersDAO
-from app.users.models import Role, User
-
-
-def open_mock_json(model: str):
-    test_dir = os.path.dirname(os.path.dirname(__file__))
-    file_path = os.path.join(test_dir, f"tests/mocks/mock_{model}.json")
-    with open(file_path, "r") as file:
-        return json.load(file)
-
-
-async def prepare_database_core(session):
-    try:
-        assert settings.MODE == "TEST"
-        async with engine.begin() as conn:
-            await conn.run_sync(Base.metadata.drop_all)
-            await conn.run_sync(Base.metadata.create_all)
-
-        country = open_mock_json("country")
-        region = open_mock_json("region")
-        city = open_mock_json("city")
-
-        users = open_mock_json("user")
-        roles = open_mock_json("role")
-
-        funds = open_mock_json("fund")
-
-        async with async_session_maker() as session:
-            add_country = insert(Country).values(country)
-            add_region = insert(Region).values(region)
-            add_city = insert(City).values(city)
-
-            add_users = insert(User).values(users)
-            add_roles = insert(Role).values(roles)
-
-            add_funds = insert(Fund).values(funds)
-
-            await session.execute(add_country)
-            await session.execute(add_region)
-            await session.execute(add_city)
-
-            await session.execute(add_users)
-            await session.execute(add_roles)
-
-            await session.execute(add_funds)
-
-            await session.commit()
-    except:  # noqa E722
-        session.rollback()
-        raise
-    finally:
-        session.close()
+from app.users.models import User
+from app.utils.scripts.local_db_fill import prepare_database_core
 
 
 @pytest.fixture(scope="class", autouse=True)
 async def prepare_database(session):
+    assert settings.MODE == "TEST"
     await prepare_database_core(session)
 
 
