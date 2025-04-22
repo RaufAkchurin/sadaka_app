@@ -20,4 +20,4 @@ class Payment(Base):
     stage: Mapped["Stage"] = relationship("Stage", back_populates="payments", lazy="joined")  # noqa: F821
 
     def __repr__(self):
-        return f"{self.__class__.__name__}(id={self.id}, user={self.user.name}, amount={self.amount})"
+        return f"{self.__class__.__name__}(id={self.id}, project={self.project_id}, amount={self.amount})"

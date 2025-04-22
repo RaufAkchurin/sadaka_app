@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "amount": "1000",
+    "user_id": "us1 pr1 st1",
+    "project_id": 1,
+    "stage_id": 1
+  },
+    {
+    "id": 2,
+    "amount": "1000",
+    "user_id": "us1 pr1 st1",
+    "project_id": 1,
+    "stage_id": 1
+  },
+    {
+    "id": 3,
+    "amount": "1000",
+    "user_id": "us1 pr1 st2",
+    "project_id": 1,
+    "stage_id": 2
+  },
+    {
+    "id": 4,
+    "amount": "1000",
+    "user_id": "us1 pr1 st2",
+    "project_id": 1,
+    "stage_id": 2
+  }
+]

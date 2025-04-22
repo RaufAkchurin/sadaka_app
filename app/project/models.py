@@ -26,7 +26,9 @@ class Project(Base):
     )
 
     # stages:
-    stages: Mapped[list["Stage"]] = relationship("Stage", back_populates="project", cascade="all, delete-orphan")
+    stages: Mapped[list["Stage"]] = relationship(  # noqa: F821
+        "Stage", back_populates="project", cascade="all, delete-orphan"
+    )
 
     payments: Mapped[list["Payment"]] = relationship(  # noqa: F821
         "Payment", back_populates="project", cascade="all, delete-orphan"
@@ -42,11 +44,12 @@ class Project(Base):
 
 class Stage(Base):
     name: Mapped[str]
+    description: Mapped[str]
+    goal: Mapped[int]
     status: Mapped[AbstractStatusEnum] = mapped_column(
         SqlEnum(AbstractStatusEnum, name="stage_status_enum"),
         nullable=False,
     )
-    goal: Mapped[int]
 
     # project:
     project_id: Mapped[int] = mapped_column(ForeignKey("projects.id"), nullable=False)
@@ -62,3 +65,5 @@ class Stage(Base):
     )
 
     # TODO Add validation as active stage only one for project!
+    # TODO Add validation if finished need report!!!
+    # TODO calculated field who get % of progress
