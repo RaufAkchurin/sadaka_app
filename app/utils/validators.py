@@ -1,13 +1,24 @@
+from urllib.parse import quote, urlsplit, urlunsplit
+
 import phonenumbers
 import validators
 from tld import get_tld
+
+
+def normalize_url_with_rus_symbols(value: str) -> str:
+    parts = urlsplit(value)
+    safe_path = quote(parts.path)
+    safe_url = urlunsplit((parts.scheme, parts.netloc, safe_path, parts.query, parts.fragment))
+    return safe_url
 
 
 def validate_link_url(value: str) -> str:
     if not value.startswith("https://"):
         raise ValueError("Ссылка должна начинаться с https://")
 
-    if not validators.url(value):
+    encoded_value = normalize_url_with_rus_symbols(value)
+
+    if not validators.url(encoded_value):
         raise ValueError("Ссылка должна быть валидным URL")
 
     try:
