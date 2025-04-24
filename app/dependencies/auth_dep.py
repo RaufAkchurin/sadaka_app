@@ -14,7 +14,7 @@ from app.exceptions import (
     UserNotFoundException,
 )
 from app.settings import settings
-from app.users.dao import UsersDAO
+from app.users.dao import UserDAO
 from app.users.models import User
 
 
@@ -45,7 +45,7 @@ async def check_refresh_token(
         if not user_id:
             raise NoJwtException
 
-        user = await UsersDAO(session).find_one_or_none_by_id(data_id=int(user_id))
+        user = await UserDAO(session).find_one_or_none_by_id(data_id=int(user_id))
         if not user:
             raise NoJwtException
 
@@ -77,7 +77,7 @@ async def get_current_user(
     if not user_id:
         raise NoUserIdException
 
-    user = await UsersDAO(session).find_one_or_none_by_id(data_id=int(user_id))
+    user = await UserDAO(session).find_one_or_none_by_id(data_id=int(user_id))
     if not user:
         raise UserNotFoundException
     return user

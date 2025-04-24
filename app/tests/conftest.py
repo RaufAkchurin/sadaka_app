@@ -6,7 +6,7 @@ from app.dao.database import async_session_maker
 from app.main import app as fastapi_app
 from app.settings import settings
 from app.tests.schemas import AuthorizedClientModel, CookiesModel
-from app.users.dao import UsersDAO
+from app.users.dao import UserDAO
 from app.users.models import User
 from app.utils.scripts.local_db_fill import prepare_database_core
 
@@ -36,8 +36,8 @@ async def session():
 
 
 @pytest.fixture(scope="function")
-async def user_dao(session) -> UsersDAO:
-    user_dao = UsersDAO(session)
+async def user_dao(session) -> UserDAO:
+    user_dao = UserDAO(session)
     return user_dao
 
 

@@ -25,7 +25,6 @@ class Role(Base):
 class User(Base):
     name: Mapped[str]
     password: Mapped[str | None]
-    picture_url: Mapped[str | None]
 
     google_access_token: Mapped[str | None]
     email: Mapped[str] = mapped_column(unique=True, nullable=False)
@@ -35,10 +34,11 @@ class User(Base):
         default=LanguageEnum.RU.value,
         nullable=False,
     )
-
-    # Flags
     is_anonymous: Mapped[bool] = mapped_column(default=False, nullable=False)
     is_active: Mapped[bool] = mapped_column(default=True, nullable=False)
+
+    picture_id: Mapped[int | None] = mapped_column(ForeignKey("files.id"), nullable=True, unique=True, default=None)
+    picture: Mapped["File | None"] = relationship("File", back_populates="user_picture", lazy="joined")
 
     # Связь с городом
     city_id: Mapped[int] = mapped_column(ForeignKey("citys.id"), default=1, server_default=text("1"))
@@ -53,10 +53,6 @@ class User(Base):
 
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.id}, name={self.name})"
-
-    @validates("picture_url")
-    def validate_link(self, key: str, value: str) -> str:
-        return validate_link_url(value)
 
     @validates("email")
     def validate_email_field(self, key, value):

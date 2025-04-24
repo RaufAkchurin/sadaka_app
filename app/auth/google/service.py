@@ -2,13 +2,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.google.schemas import GoogleUserAddDB
 from app.client.google_client import google_client
-from app.users.dao import UsersDAO
+from app.users.dao import UserDAO
 from app.users.schemas import EmailModel, UserBase
 
 
 async def google_auth_service(code: str, session: AsyncSession) -> UserBase:
     user_data = google_client.get_google_user_info(code)
-    user_dao = UsersDAO(session)
+    user_dao = UserDAO(session)
     user = await user_dao.find_one_or_none(filters=EmailModel(email=user_data.email))
     update_data = GoogleUserAddDB(
         name=user_data.name,

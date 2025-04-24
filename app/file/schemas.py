@@ -2,10 +2,10 @@ from typing import Any, Optional
 
 from pydantic import BaseModel, model_validator
 
-from app.documents.enums import FileTypeEnum
+from app.file.enums import FileTypeEnum
 
 
-class DocumentCreate(BaseModel):
+class FileCreate(BaseModel):
     # TODO CHECK IT BEFORE USING !!!!
     name: str
     file_type: FileTypeEnum

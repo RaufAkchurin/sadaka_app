@@ -1,13 +1,13 @@
 from fastapi import UploadFile
 
 from app.s3_storage.use_cases.s3_upload import UploadFileUseCase
-from app.users.dao import UsersDAO
+from app.users.dao import UserDAO
 from app.users.models import User
 from app.users.schemas import EmailModel, UserLogoUpdateSchema
 
 
 class UserLogoUpdateUseCase:
-    def __init__(self, users_dao: UsersDAO):
+    def __init__(self, users_dao: UserDAO):
         self.users_dao = users_dao
 
     async def __call__(self, user: User, picture: UploadFile) -> UserLogoUpdateSchema:

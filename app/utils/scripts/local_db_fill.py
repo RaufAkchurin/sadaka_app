@@ -7,7 +7,7 @@ from sqlalchemy import insert
 from app.dao.database import Base, async_session_maker, engine
 
 # Мапа: имя модели в JSON → (модель SQLAlchemy, имя файла без расширения)
-from app.documents.models import Document
+from app.file.models import File
 from app.fund.models import Fund
 from app.geo.models import City, Country, Region
 from app.payments.models import Payment
@@ -24,7 +24,7 @@ MODELS_MAP = {
     "fund": Fund,
     "project": Project,
     "stage": Stage,
-    "document": Document,
+    "file": File,
     "payment": Payment,
 }
 

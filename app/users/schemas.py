@@ -3,6 +3,7 @@ from typing import Self
 from pydantic import AnyHttpUrl, BaseModel, ConfigDict, EmailStr, Field, computed_field, model_validator
 
 from app.auth.service_jwt import get_password_hash
+from app.file.models import File
 from app.users.models import LanguageEnum
 
 
@@ -62,7 +63,7 @@ class UserDataUpdateSchema(BaseModel):
 
 
 class UserLogoUpdateSchema(BaseModel):
-    picture_url: str = Field(description="Аватарка")
+    picture_id: int = Field(description="Картинка пользователя")
 
 
 class UserActiveModel(BaseModel):

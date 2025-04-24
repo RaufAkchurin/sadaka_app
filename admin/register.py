@@ -4,7 +4,7 @@ from sqladmin import Admin
 from admin.views.all import (
     CityAdmin,
     CountryAdmin,
-    DocumentAdmin,
+    FileAdmin,
     FundAdmin,
     PaymentAdmin,
     ProjectAdmin,
@@ -29,6 +29,6 @@ def create_admin_panel(app: FastAPI):
     admin.add_view(FundAdmin)
     admin.add_view(ProjectAdmin)
     admin.add_view(StageAdmin)
-    admin.add_view(DocumentAdmin)
+    admin.add_view(FileAdmin)
 
     admin.add_view(PaymentAdmin)

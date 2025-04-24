@@ -1,5 +1,5 @@
 from admin.views.base import BaseAdminView, CreateWithPictureAdmin
-from app.documents.models import Document
+from app.file.models import File
 from app.fund import City, Country, Region
 from app.fund.models import Fund
 from app.payments.models import Payment
@@ -58,10 +58,10 @@ class StageAdmin(BaseAdminView, model=Stage):
     name_plural = "Этапы"
 
 
-class DocumentAdmin(BaseAdminView, model=Document):
+class FileAdmin(BaseAdminView, model=File):
     icon = "fa-solid fa-file-alt"
-    name = "Документ"
-    name_plural = "Документы"
+    name = "Файл"
+    name_plural = "Файлы"
 
 
 ############### ПЛАТЕЖИ ############### # noqa E266

@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.dependencies.auth_dep import get_current_admin_user, get_current_user
 from app.dependencies.dao_dep import get_session_with_commit
-from app.users.dao import UsersDAO
+from app.users.dao import UserDAO
 from app.users.models import User
 from app.users.schemas import SUserInfo, UserDataUpdateSchema, UserLogoUpdateSchema
 from app.users.use_cases.delete_user import DeleteUserUseCase
@@ -27,7 +27,7 @@ async def update_user_logo(
     session: AsyncSession = Depends(get_session_with_commit),
     user: User = Depends(get_current_user),
 ) -> UserLogoUpdateSchema:
-    dao = UsersDAO(session)
+    dao = UserDAO(session)
     use_case = UserLogoUpdateUseCase(users_dao=dao)
     updated_logo_url = await use_case(user=user, picture=picture)
     return updated_logo_url
@@ -49,7 +49,7 @@ async def delete_user(
     session: AsyncSession = Depends(get_session_with_commit),
     user: User = Depends(get_current_user),
 ) -> dict:
-    dao = UsersDAO(session)
+    dao = UserDAO(session)
     use_case = DeleteUserUseCase(dao)
     await use_case(user=user)
     return {"message": "Вы успешно удалили аккаунт!"}
@@ -63,6 +63,6 @@ async def get_all_users(
     session: AsyncSession = Depends(get_session_with_commit),
     user_data: User = Depends(get_current_admin_user),
 ) -> List[SUserInfo]:
-    dao = UsersDAO(session)
+    dao = UserDAO(session)
     use_case = GetAllUsersUseCase(dao)
     return await use_case()
