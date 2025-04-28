@@ -32,10 +32,6 @@ class Fund(Base):
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.id}, name={self.name})"
 
-    # @validates("picture_url")
-    # def validate_link(self, key: str, value: str) -> str:
-    #     return validate_link_url(value)
-
     @validates("hot_line")
     def validate_hot_line(self, key: str, value: str):
         return validate_phone(value)

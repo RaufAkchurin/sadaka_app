@@ -20,7 +20,8 @@ class File(Base):
 
     mime: Mapped[MimeEnum] = mapped_column(SqlEnum(MimeEnum, name="file_mime_enum"), nullable=False)
 
-    user_picture: Mapped["User"] = relationship("User", back_populates="picture", uselist=False)
+    user_picture: Mapped["User"] = relationship(
+        "User", back_populates="picture", cascade="all, delete-orphan", uselist=False)
 
     # OneToMany
     fund_id: Mapped[int | None] = mapped_column(ForeignKey("funds.id"), nullable=True)

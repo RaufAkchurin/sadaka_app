@@ -1,0 +1,148 @@
+[
+  {
+    "id": 1,
+    "name": "Док1 для Проекта 1",
+    "size": "123",
+    "url": "https://url.ya.ru/file1",
+    "type": "DOCUMENT",
+    "mime": "PDF",
+    "project_id": 1,
+    "fund_id": null,
+    "stage_id": null
+  },
+    {
+    "id": 2,
+    "name": "Док2 для Проекта 1",
+    "size": "123",
+    "url": "https://url.ya.ru/file2",
+    "type": "DOCUMENT",
+    "mime": "PDF",
+    "project_id": 1,
+    "fund_id": null,
+    "stage_id": null
+  },
+    {
+    "id": 3,
+    "name": "Док1 для Проекта 2",
+    "size": "123",
+    "url": "https://url.ya.ru/file1",
+    "type": "DOCUMENT",
+    "mime": "PDF",
+    "project_id": 2,
+    "fund_id": null,
+    "stage_id": null
+  },
+    {
+    "id": 4,
+    "name": "Док2 для Проекта 2",
+    "size": "123",
+    "url": "https://url.ya.ru/file2",
+    "type": "DOCUMENT",
+    "mime": "PDF",
+    "project_id": 2,
+    "fund_id": null,
+    "stage_id": null
+  },
+    {
+    "id": 5,
+    "name": "Реп1 для Стадии 1",
+    "size": "123",
+    "url": "https://url.ya.ru/file1",
+    "type": "REPORT",
+    "mime": "PDF",
+    "project_id": null,
+    "fund_id": null,
+    "stage_id": 1
+  },
+  {
+    "id": 6,
+    "name": "Реп2 для Стадии 1",
+    "size": "123",
+    "url": "https://url.ya.ru/file1",
+    "type": "REPORT",
+    "mime": "PDF",
+    "project_id": null,
+    "fund_id": null,
+    "stage_id": 1
+  },
+  {
+    "id": 7,
+    "name": "Реп1 для Стадии 2",
+    "size": "123",
+    "url": "https://url.ya.ru/file1",
+    "type": "REPORT",
+    "mime": "PDF",
+    "project_id": null,
+    "fund_id": null,
+    "stage_id": 2
+  },
+  {
+    "id": 8,
+    "name": "Реп2 для Стадии 2",
+    "size": "123",
+    "url": "https://url.ya.ru/file1",
+    "type": "REPORT",
+    "mime": "PDF",
+    "project_id": null,
+    "fund_id": null,
+    "stage_id": 2
+  },
+
+
+  {
+    "id": 9,
+    "name": "Картинка 1 для Юзера 1",
+    "size": "123",
+    "url": "https://url.ya.ru/file1",
+    "type": "PICTURE",
+    "mime": "JPEG",
+    "project_id": null,
+    "fund_id": null,
+    "stage_id": null
+  },
+  {
+    "id": 10,
+    "name": "Картинка 1 для Юзера 2",
+    "size": "123",
+    "url": "https://url.ya.ru/file1",
+    "type": "PICTURE",
+    "mime": "JPEG",
+    "project_id": null,
+    "fund_id": null,
+    "stage_id": null
+  },
+  {
+    "id": 11,
+    "name": "Картинка 1 для Юзера 3",
+    "size": "123",
+    "url": "https://url.ya.ru/file1",
+    "type": "PICTURE",
+    "mime": "JPEG",
+    "project_id": null,
+    "fund_id": null,
+    "stage_id": null
+  },
+  {
+    "id": 12,
+    "name": "Картинка 1 для Юзера 4",
+    "size": "123",
+    "url": "https://url.ya.ru/file1",
+    "type": "PICTURE",
+    "mime": "JPEG",
+    "project_id": null,
+    "fund_id": null,
+    "stage_id": null
+  },
+  {
+    "id": 13,
+    "name": "Картинка 1 для Юзера 5",
+    "size": "123",
+    "url": "https://url.ya.ru/file1",
+    "type": "PICTURE",
+    "mime": "JPEG",
+    "project_id": null,
+    "fund_id": null,
+    "stage_id": null
+  }
+]
+
