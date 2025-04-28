@@ -1,8 +1,7 @@
 from dataclasses import dataclass
 
-from sqlalchemy import Column
 from sqlalchemy import Enum as SqlEnum
-from sqlalchemy import ForeignKey, Integer
+from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
 
 from app.dao.database import Base
@@ -20,18 +19,19 @@ class File(Base):
 
     mime: Mapped[MimeEnum] = mapped_column(SqlEnum(MimeEnum, name="file_mime_enum"), nullable=False)
 
-    user_picture: Mapped["User"] = relationship(
-        "User", back_populates="picture", cascade="all, delete-orphan", uselist=False)
+    user_picture: Mapped["User"] = relationship(  # noqa F821
+        "User", back_populates="picture", cascade="all, delete-orphan", uselist=False
+    )
 
     # OneToMany
     fund_id: Mapped[int | None] = mapped_column(ForeignKey("funds.id"), nullable=True)
-    fund: Mapped["Fund"] = relationship("Fund", back_populates="documents")
+    fund: Mapped["Fund"] = relationship("Fund", back_populates="documents")  # noqa F821
 
     project_id: Mapped[int | None] = mapped_column(ForeignKey("projects.id"), nullable=True)
-    project: Mapped["Project"] = relationship("Project", back_populates="documents")
+    project: Mapped["Project"] = relationship("Project", back_populates="documents")  # noqa F821
 
     stage_id: Mapped[int | None] = mapped_column(ForeignKey("stages.id"), nullable=True)
-    stage: Mapped["Stage"] = relationship("Stage", back_populates="reports")
+    stage: Mapped["Stage"] = relationship("Stage", back_populates="reports")  # noqa F821
 
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.id}, name={self.name})"

@@ -4,15 +4,15 @@ from app.fund.models import Fund
 from app.geo.models import City, Country, Region
 from app.payments.models import Payment
 from app.project.models import Project, Stage
-from app.users.models import Role, User
+from app.users.models import User
 
 
 class UserDAO(BaseDAO):
     model = User
 
 
-class RoleDAO(BaseDAO):
-    model = Role
+# class RoleDAO(BaseDAO):
+#     model = Role
 
 
 class CountryDAO(BaseDAO):

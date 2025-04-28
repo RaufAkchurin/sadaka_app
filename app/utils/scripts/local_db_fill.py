@@ -13,14 +13,14 @@ from app.geo.models import City, Country, Region
 from app.payments.models import Payment
 from app.project.models import Project, Stage
 from app.settings import settings
-from app.users.models import Role, User
+from app.users.models import User
 
 MODELS_MAP = {
     "country": Country,
     "region": Region,
     "city": City,
     "user": User,
-    "role": Role,
+    # "role": Role,
     "fund": Fund,
     "project": Project,
     "stage": Stage,

@@ -7,14 +7,7 @@ class UserAdmin(CreateWithPictureAdmin, model=User):
     name = "Пользователь"
 
     icon = "fa-solid fa-user"
-    column_list = [
-        User.id,
-        User.name,
-        User.email,
-        User.language,
-        User.city_id,
-        User.role_id,
-    ]
+    column_list = [User.id, User.name, User.email, User.language, User.city_id]
     column_searchable_list = [User.name, User.email]
     column_sortable_list = [User.id, User.name, User.email]
     column_labels = {

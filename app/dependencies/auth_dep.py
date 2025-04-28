@@ -87,6 +87,6 @@ async def get_current_admin_user(
     current_user: User = Depends(get_current_user),
 ) -> User:
     """Проверяем права пользователя как администратора."""
-    if current_user.role.id in [3, 4]:
+    if current_user.role.value in ["superuser", "fund_admin"]:
         return current_user
     raise ForbiddenException

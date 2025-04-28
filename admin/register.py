@@ -9,7 +9,6 @@ from admin.views.all import (
     PaymentAdmin,
     ProjectAdmin,
     RegionAdmin,
-    RoleAdmin,
     StageAdmin,
 )
 from admin.views.user import UserAdmin
@@ -23,7 +22,6 @@ def create_admin_panel(app: FastAPI):
     admin.add_view(RegionAdmin)
     admin.add_view(CityAdmin)
 
-    admin.add_view(RoleAdmin)
     admin.add_view(UserAdmin)
 
     admin.add_view(FundAdmin)

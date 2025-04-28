@@ -4,7 +4,7 @@
     "email": "superadmin@test.com",
     "name": "superadmin",
     "password": "$2b$12$rm7Bu.bjhNHKU25th37EFO6tpnvjz5EiB2s7QyJX/BKx9aOsIwEKm",
-    "role_id": 4,
+    "role": "SUPERUSER",
     "picture_id": 9
   },
     {
@@ -12,7 +12,7 @@
     "email": "admin@test.com",
     "name": "admin",
     "password": "$2b$12$rm7Bu.bjhNHKU25th37EFO6tpnvjz5EiB2s7QyJX/BKx9aOsIwEKm",
-    "role_id": 3,
+    "role": "SUPERUSER",
     "picture_id": 10
   },
     {
@@ -20,7 +20,6 @@
     "email": "moderator@test.com",
     "name": "moderator",
     "password": "$2b$12$rm7Bu.bjhNHKU25th37EFO6tpnvjz5EiB2s7QyJX/BKx9aOsIwEKm",
-    "role_id": 2,
     "picture_id": 11
   },
   {

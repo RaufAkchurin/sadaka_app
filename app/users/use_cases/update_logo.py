@@ -16,7 +16,7 @@ class UserLogoUpdateUseCase:
 
         await self.users_dao.update(
             filters=EmailModel(email=user.email),
-            values=UserLogoUpdateSchema(picture_url=s3_path),
+            values=UserLogoUpdateSchema(url=s3_path),
         )
 
         updated_user = await self.users_dao.find_one_or_none_by_id(data_id=user.id)

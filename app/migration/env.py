@@ -11,7 +11,7 @@ from app.file.models import File  # noqa: F401
 from app.fund.models import Fund  # noqa: F401
 from app.geo.models import City, Country, Region  # noqa: F401
 from app.project.models import Project, Stage  # noqa: F401
-from app.users.models import Role, User  # noqa: F401
+from app.users.models import User  # noqa: F401
 
 config = context.config
 config.set_main_option("sqlalchemy.url", DATABASE_URL)
