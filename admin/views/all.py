@@ -5,15 +5,6 @@ from app.fund.models import Fund
 from app.payments.models import Payment
 from app.project.models import Project, Stage
 
-############### ПОЛЬЗОВАТЕЛИ ###############  # noqa E266
-
-
-# class RoleAdmin(BaseAdminView, model=Role):
-#     icon = "fa-solid fa-user-tag"
-#     name = "Роль"
-#     name_plural = "Роли"
-
-
 ############### ГЕОГРАФИЯ ############### # noqa E266
 
 

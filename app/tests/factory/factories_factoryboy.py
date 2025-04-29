@@ -33,4 +33,3 @@ class UserFactory(BaseFactory):
     last_name = factory.Faker("last_name")
     email = factory.Faker("email")
     password = factory.Faker("password")
-    # role = factory.SubFactory(RoleFactory)  # Ссылка на RoleFactory для создания роли

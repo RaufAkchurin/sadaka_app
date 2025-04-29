@@ -40,12 +40,6 @@ class SUserAuth(EmailModel):
     password: str = Field(min_length=5, max_length=50, description="Пароль, от 5 до 50 знаков")
 
 
-# class RoleModel(BaseModel):
-#     id: int = Field(description="Идентификатор роли")
-#     name: str = Field(description="Название роли")
-#     model_config = ConfigDict(from_attributes=True)
-
-
 class UserDataUpdateSchema(BaseModel):
     name: str | None = Field(
         default=None,

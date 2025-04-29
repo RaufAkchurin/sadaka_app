@@ -17,5 +17,4 @@ class UserFactory(SQLAlchemyFactory):
     __model__ = User
     __set_relationships__ = True
 
-    # role = RoleFactory
     email = faker.email(domain="test.com")

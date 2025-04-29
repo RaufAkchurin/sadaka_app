@@ -10,14 +10,6 @@ from app.geo.models import City
 from app.payments.models import Payment
 from app.users.enums import LanguageEnum, RoleEnum
 
-# @dataclass
-# class Role(Base):
-#     name: Mapped[str_uniq]
-#     users: Mapped[list["User"]] = relationship(back_populates="role")
-#
-#     def __repr__(self):
-#         return f"{self.__class__.__name__}(id={self.id}, name={self.name})"
-
 
 @dataclass
 class User(Base):
@@ -50,10 +42,6 @@ class User(Base):
     # Связь с городом
     city_id: Mapped[int] = mapped_column(ForeignKey("citys.id"), default=1, server_default=text("1"))
     city: Mapped["City"] = relationship("City", back_populates="users", lazy="joined")
-
-    # Связь с ролью
-    # role_id: Mapped[int] = mapped_column(ForeignKey("roles.id"), default=1, server_default=text("1"))
-    # role: Mapped["Role"] = relationship("Role", back_populates="users", lazy="joined")
 
     # RELATIONS
     payments: Mapped[list["Payment"]] = relationship(back_populates="user")

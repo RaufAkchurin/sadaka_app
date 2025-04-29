@@ -10,7 +10,7 @@ class FileCreate(BaseModel):
     name: str
     file_type: FileTypeEnum
     size: int
-    link: str
+    url: str
 
     project_id: Optional[int] = None
     fund_id: Optional[int] = None

@@ -14,6 +14,7 @@ class UserLogoUpdateUseCase:
         use_case = UploadFileUseCase()
         s3_path = await use_case(file=picture)
 
+        # TODO Add creating File instance with adding url into it with another data
         await self.users_dao.update(
             filters=EmailModel(email=user.email),
             values=UserLogoUpdateSchema(url=s3_path),

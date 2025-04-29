@@ -2,11 +2,10 @@ from dataclasses import dataclass
 
 from sqlalchemy import Enum as SqlEnum
 from sqlalchemy import ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.dao.database import Base, str_uniq
 from app.users.enums import LanguageEnum
-from app.utils.validators import validate_link_url
 
 
 @dataclass
@@ -37,7 +36,7 @@ class Region(Base):
 
     # Связь с городами
     citys: Mapped[list["City"]] = relationship("City", back_populates="region")
-    funds: Mapped[list["Fund"]] = relationship("Fund", back_populates="region")  # imported in __init__.py
+    funds: Mapped[list["Fund"]] = relationship("Fund", back_populates="region")  # imported in __init__.py # noqa F821
 
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.id}, name={self.name})"

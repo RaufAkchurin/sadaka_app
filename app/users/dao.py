@@ -11,10 +11,6 @@ class UserDAO(BaseDAO):
     model = User
 
 
-# class RoleDAO(BaseDAO):
-#     model = Role
-
-
 class CountryDAO(BaseDAO):
     model = Country
 

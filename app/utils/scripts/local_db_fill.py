@@ -20,7 +20,6 @@ MODELS_MAP = {
     "region": Region,
     "city": City,
     "user": User,
-    # "role": Role,
     "fund": Fund,
     "project": Project,
     "stage": Stage,

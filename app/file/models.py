@@ -14,11 +14,10 @@ class File(Base):
     name: Mapped[str]
     size: Mapped[int]
     url: Mapped[str]
-
     type: Mapped[FileTypeEnum] = mapped_column(SqlEnum(FileTypeEnum, name="file_type_enum"), nullable=False)
-
     mime: Mapped[MimeEnum] = mapped_column(SqlEnum(MimeEnum, name="file_mime_enum"), nullable=False)
 
+    # OneToOne
     user_picture: Mapped["User"] = relationship(  # noqa F821
         "User", back_populates="picture", cascade="all, delete-orphan", uselist=False
     )
@@ -36,19 +35,22 @@ class File(Base):
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.id}, name={self.name})"
 
-    @validates("fund_id", "project_id", "stage_id")
+    @validates("fund_id", "project_id", "stage_id", "user_picture")
     def validate_single_target(self, key, value):
+        user_picture = 1 if key == "user_picture" else self.user_picture
         fund_id = value if key == "fund_id" else self.fund_id
         project_id = value if key == "project_id" else self.project_id
         stage_id = value if key == "stage_id" else self.stage_id
 
-        ids = [fund_id, project_id, stage_id]
+        ids = [fund_id, project_id, stage_id, user_picture]
         num_set = sum(bool(i) for i in ids)
 
         if num_set == 0:
             raise ValueError("File must be related to at least one model (project or fund).")
         if num_set > 1:
-            raise ValueError("File must be related to only one model (project or fund) not multiple.")
+            raise ValueError(
+                "File must be related to only one model (project or fund or stage or user_picture) not multiple."
+            )
 
         return value
 
