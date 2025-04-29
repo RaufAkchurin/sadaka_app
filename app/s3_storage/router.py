@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, Response, UploadFile
 from app.dependencies.auth_dep import get_current_user
 from app.s3_storage.use_cases.s3_delete import S3DeleteUseCase
 from app.s3_storage.use_cases.s3_download import S3DownloadFileUseCase
-from app.s3_storage.use_cases.s3_upload import UploadFileUseCase
+from app.s3_storage.use_cases.s3_upload import UploadAnyFileToS3UseCase
 from app.users.models import User
 
 s3_router = APIRouter()
@@ -11,9 +11,9 @@ s3_router = APIRouter()
 
 @s3_router.post("/upload")
 async def upload(file: UploadFile | None = None, user_data: User = Depends(get_current_user)) -> dict:
-    use_case = UploadFileUseCase()
-    file_name = await use_case(file=file)
-    return {"file_name": file_name}
+    use_case = UploadAnyFileToS3UseCase()
+    file_data = await use_case(file=file)
+    return {"file_data": file_data}
 
 
 @s3_router.get("/{file_name}")

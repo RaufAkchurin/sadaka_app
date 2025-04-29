@@ -56,6 +56,7 @@ class UserDataUpdateSchema(BaseModel):
 
 
 class UserLogoUpdateSchema(BaseModel):
+    # TODO меняем на инстанс Файла
     picture_id: int = Field(description="Картинка пользователя")
 
 
