@@ -5,9 +5,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.dependencies.auth_dep import get_current_admin_user, get_current_user
 from app.dependencies.dao_dep import get_session_with_commit
+from app.file.schemas import UploadedFileDataSchema
 from app.users.dao import UserDAO
 from app.users.models import User
-from app.users.schemas import SUserInfo, UserDataUpdateSchema, UserLogoUpdateSchema
+from app.users.schemas import SUserInfo, UserDataUpdateSchema
 from app.users.use_cases.delete_user import DeleteUserUseCase
 from app.users.use_cases.get_all_users import GetAllUsersUseCase
 from app.users.use_cases.update_data import UserDataUpdateUseCase
@@ -26,9 +27,8 @@ async def update_user_logo(
     picture: UploadFile,
     session: AsyncSession = Depends(get_session_with_commit),
     user: User = Depends(get_current_user),
-) -> UserLogoUpdateSchema:
-    dao = UserDAO(session)
-    use_case = UserLogoUpdateUseCase(users_dao=dao)
+) -> UploadedFileDataSchema:
+    use_case = UserLogoUpdateUseCase(session=session)
     updated_logo_url = await use_case(user=user, picture=picture)
     return updated_logo_url
 
@@ -56,8 +56,6 @@ async def delete_user(
 
 
 # For admins only
-
-
 @users_router.get("/all_users")
 async def get_all_users(
     session: AsyncSession = Depends(get_session_with_commit),
