@@ -1,9 +1,14 @@
 from typing import Self
 
-from pydantic import AnyHttpUrl, BaseModel, ConfigDict, EmailStr, Field, computed_field, model_validator
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, computed_field, model_validator
 
 from app.auth.service_jwt import get_password_hash
 from app.users.models import LanguageEnum
+
+
+class IdModel(BaseModel):
+    id: int = Field(description="Электронная почта")
+    model_config = ConfigDict(from_attributes=True)
 
 
 class EmailModel(BaseModel):
@@ -40,12 +45,6 @@ class SUserAuth(EmailModel):
     password: str = Field(min_length=5, max_length=50, description="Пароль, от 5 до 50 знаков")
 
 
-class RoleModel(BaseModel):
-    id: int = Field(description="Идентификатор роли")
-    name: str = Field(description="Название роли")
-    model_config = ConfigDict(from_attributes=True)
-
-
 class UserDataUpdateSchema(BaseModel):
     name: str | None = Field(
         default=None,
@@ -62,7 +61,7 @@ class UserDataUpdateSchema(BaseModel):
 
 
 class UserLogoUpdateSchema(BaseModel):
-    picture_url: str = Field(description="Аватарка")
+    picture_id: int = Field(description="Картинка пользователя")
 
 
 class UserActiveModel(BaseModel):
@@ -79,18 +78,8 @@ class SUserInfo(UserBase):
     id: int = Field(description="Идентификатор пользователя")
     is_anonymous: bool = Field(description="Анонимный пользователь")
     is_active: bool = Field(description="Активный пользователь")
-    picture_url: AnyHttpUrl | None = Field(description="Ссылка на картинку")
     city: CityModel = Field(exclude=True)
-    role: RoleModel = Field(exclude=True)
     language: str = Field(description="Язык пользователя")
-
-    @computed_field
-    def role_name(self) -> str:
-        return self.role.name
-
-    @computed_field
-    def role_id(self) -> int:
-        return self.role.id
 
     @computed_field
     def city_name(self) -> str:

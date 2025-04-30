@@ -6,7 +6,7 @@ from app.dependencies.auth_dep import check_refresh_token
 from app.dependencies.dao_dep import get_session_with_commit, get_session_without_commit
 from app.exceptions import IncorrectEmailOrPasswordException
 from app.tests.factory.mimesis import person
-from app.users.dao import UsersDAO
+from app.users.dao import UserDAO
 from app.users.models import User
 from app.users.schemas import AnonymousUserAddDB, EmailModel, SUserAddDB, SUserAuth, SUserEmailRegister, UserActiveModel
 
@@ -18,10 +18,10 @@ async def register_by_email(
     user_data: SUserEmailRegister,
     session: AsyncSession = Depends(get_session_with_commit),
 ) -> dict:
-    user_dao = UsersDAO(session)
+    user_dao = UserDAO(session)
     existing_user = await user_dao.find_one_or_none(filters=EmailModel(email=user_data.email))
     if existing_user:
-        await UsersDAO(session).update(
+        await UserDAO(session).update(
             filters=EmailModel(email=existing_user.email),
             values=UserActiveModel(is_active=True),
         )
@@ -37,7 +37,7 @@ async def register_by_email(
 async def register_and_login_anonymous(
     response: Response, session: AsyncSession = Depends(get_session_with_commit)
 ) -> dict:
-    user_dao = UsersDAO(session)
+    user_dao = UserDAO(session)
     user = await user_dao.add(values=AnonymousUserAddDB(email=person.email(), name=person.name(), is_anonymous=True))
     set_tokens(response, user.id)
     return {"message": "Анонимный пользователь добавлен"}
@@ -49,7 +49,7 @@ async def login_by_email(
     user_data: SUserAuth,
     session: AsyncSession = Depends(get_session_without_commit),
 ) -> dict:
-    users_dao = UsersDAO(session)
+    users_dao = UserDAO(session)
     user = await users_dao.find_one_or_none(filters=EmailModel(email=user_data.email))
 
     if not (user and await authenticate_user(user=user, password=user_data.password)):

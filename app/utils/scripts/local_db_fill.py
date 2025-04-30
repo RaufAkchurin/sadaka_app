@@ -7,24 +7,23 @@ from sqlalchemy import insert
 from app.dao.database import Base, async_session_maker, engine
 
 # Мапа: имя модели в JSON → (модель SQLAlchemy, имя файла без расширения)
-from app.documents.models import Document
+from app.file.models import File
 from app.fund.models import Fund
 from app.geo.models import City, Country, Region
 from app.payments.models import Payment
 from app.project.models import Project, Stage
 from app.settings import settings
-from app.users.models import Role, User
+from app.users.models import User
 
 MODELS_MAP = {
     "country": Country,
     "region": Region,
     "city": City,
     "user": User,
-    "role": Role,
     "fund": Fund,
     "project": Project,
     "stage": Stage,
-    "document": Document,
+    "file": File,
     "payment": Payment,
 }
 

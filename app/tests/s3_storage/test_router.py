@@ -9,7 +9,19 @@ class TestS3Storage:
     @pytest.mark.parametrize(
         "is_authorized, status_code, response_message",
         [
-            (True, 200, {"file_name": f"{settings.S3_FILE_BASE_URL}test_file.png"}),
+            (
+                True,
+                200,
+                {
+                    "file_data": {
+                        "mime": "PNG",
+                        "name": "test_file",
+                        "size": 17,
+                        "type": "PICTURE",
+                        "url": f"{settings.S3_FILE_BASE_URL}test_file.png",
+                    }
+                },
+            ),
             (False, 400, {"detail": "Токен отсутствует в заголовке"}),
         ],
     )
@@ -38,12 +50,20 @@ class TestS3Storage:
     @pytest.mark.parametrize(
         "file_size, is_authorized, status_code, response_message",
         [
-            (2 * 1024 * 1024, True, 400, {"detail": "Supported file size is 0 - 1 MB"}),
+            (3 * 1024 * 1024, True, 400, {"detail": "Supported file size is 0 - 2 MB"}),
             (
                 1024,
                 True,
                 200,
-                {"file_name": f"{settings.S3_FILE_BASE_URL}test_file.png"},
+                {
+                    "file_data": {
+                        "mime": "PNG",
+                        "name": "test_file",
+                        "size": 1024,
+                        "type": "PICTURE",
+                        "url": f"{settings.S3_FILE_BASE_URL}test_file.png",
+                    }
+                },
             ),
             (2 * 1024 * 1024, False, 400, {"detail": "Токен отсутствует в заголовке"}),
         ],
@@ -74,13 +94,21 @@ class TestS3Storage:
                 "exe",
                 True,
                 400,
-                {"detail": "Неподдерживаемый тип файла: exe. Поддерживаются только следующие типы png, jpg, pdf"},
+                {"detail": "Неподдерживаемый тип файла: exe. Поддерживаются только следующие типы png, jpg, jpeg, pdf"},
             ),
             (
                 "png",
                 True,
                 200,
-                {"file_name": f"{settings.S3_FILE_BASE_URL}test_file.png"},
+                {
+                    "file_data": {
+                        "mime": "PNG",
+                        "name": "test_file",
+                        "size": 20,
+                        "type": "PICTURE",
+                        "url": f"{settings.S3_FILE_BASE_URL}test_file.png",
+                    }
+                },
             ),
             ("exe", False, 400, {"detail": "Токен отсутствует в заголовке"}),
         ],

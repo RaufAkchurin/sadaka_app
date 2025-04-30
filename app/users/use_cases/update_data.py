@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.geo.validators.city import city_id_validator
-from app.users.dao import UsersDAO
+from app.users.dao import UserDAO
 from app.users.models import User
 from app.users.schemas import EmailModel, UserDataUpdateSchema
 
@@ -9,7 +9,7 @@ from app.users.schemas import EmailModel, UserDataUpdateSchema
 class UserDataUpdateUseCase:
     def __init__(self, session: AsyncSession):
         self.session = session
-        self.users_dao = UsersDAO(session=session)
+        self.users_dao = UserDAO(session=session)
 
     async def __call__(self, user: User, update_data: UserDataUpdateSchema) -> UserDataUpdateSchema:
         if hasattr(update_data, "city_id") and update_data.city_id:

@@ -2,19 +2,16 @@
   {
     "id": 1,
     "name": "Tatarstan",
-    "picture_url": "Tatarstan",
     "country_id": 1
   },
     {
     "id": 2,
     "name": "Bashkortostan",
-    "picture_url": "Bashkortostan",
     "country_id": 1
   },
     {
     "id": 3,
     "name": "Aktobe obl",
-    "picture_url": "Aktobe obl",
     "country_id": 2
   }
 ]

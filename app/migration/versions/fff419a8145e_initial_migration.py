@@ -1,8 +1,8 @@
 """Initial migration
 
-Revision ID: d07065fdd326
+Revision ID: fff419a8145e
 Revises: 
-Create Date: 2025-04-22 08:58:11.171723
+Create Date: 2025-04-28 15:11:21.056789
 
 """
 from typing import Sequence, Union
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = "d07065fdd326"
+revision: str = "fff419a8145e"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -30,18 +30,8 @@ def upgrade() -> None:
         sa.UniqueConstraint("name"),
     )
     op.create_table(
-        "roles",
-        sa.Column("name", sa.String(), nullable=False),
-        sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
-        sa.Column("created_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
-        sa.Column("updated_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
-        sa.PrimaryKeyConstraint("id"),
-        sa.UniqueConstraint("name"),
-    )
-    op.create_table(
         "regions",
         sa.Column("name", sa.String(), nullable=False),
-        sa.Column("picture_url", sa.String(), nullable=False),
         sa.Column("country_id", sa.Integer(), nullable=False),
         sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
         sa.Column("created_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
@@ -71,7 +61,6 @@ def upgrade() -> None:
         "funds",
         sa.Column("name", sa.String(), nullable=False),
         sa.Column("description", sa.String(), nullable=True),
-        sa.Column("picture_url", sa.String(), nullable=False),
         sa.Column("hot_line", sa.String(), nullable=False),
         sa.Column("address", sa.String(), nullable=False),
         sa.Column("region_id", sa.Integer(), server_default=sa.text("1"), nullable=False),
@@ -89,7 +78,6 @@ def upgrade() -> None:
         sa.Column("name", sa.String(), nullable=False),
         sa.Column("status", sa.Enum("ACTIVE", "FINISHED", name="project_status_enum"), nullable=False),
         sa.Column("description", sa.String(), nullable=True),
-        sa.Column("picture_url", sa.String(), nullable=True),
         sa.Column("fund_id", sa.Integer(), nullable=False),
         sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
         sa.Column("created_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
@@ -101,37 +89,11 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_table(
-        "users",
-        sa.Column("name", sa.String(), nullable=False),
-        sa.Column("password", sa.String(), nullable=True),
-        sa.Column("picture_url", sa.String(), nullable=True),
-        sa.Column("google_access_token", sa.String(), nullable=True),
-        sa.Column("email", sa.String(), nullable=False),
-        sa.Column("language", sa.Enum("RU", "EN", name="language_enum"), server_default="RU", nullable=False),
-        sa.Column("is_anonymous", sa.Boolean(), nullable=False),
-        sa.Column("is_active", sa.Boolean(), nullable=False),
-        sa.Column("city_id", sa.Integer(), server_default=sa.text("1"), nullable=False),
-        sa.Column("role_id", sa.Integer(), server_default=sa.text("1"), nullable=False),
-        sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
-        sa.Column("created_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
-        sa.Column("updated_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
-        sa.ForeignKeyConstraint(
-            ["city_id"],
-            ["citys.id"],
-        ),
-        sa.ForeignKeyConstraint(
-            ["role_id"],
-            ["roles.id"],
-        ),
-        sa.PrimaryKeyConstraint("id"),
-        sa.UniqueConstraint("email"),
-    )
-    op.create_table(
         "stages",
         sa.Column("name", sa.String(), nullable=False),
-        sa.Column("status", sa.Enum("ACTIVE", "FINISHED", name="stage_status_enum"), nullable=False),
         sa.Column("description", sa.String(), nullable=False),
         sa.Column("goal", sa.Integer(), nullable=False),
+        sa.Column("status", sa.Enum("ACTIVE", "FINISHED", name="stage_status_enum"), nullable=False),
         sa.Column("project_id", sa.Integer(), nullable=False),
         sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
         sa.Column("created_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
@@ -143,10 +105,12 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_table(
-        "documents",
+        "files",
         sa.Column("name", sa.String(), nullable=False),
         sa.Column("size", sa.Integer(), nullable=False),
         sa.Column("url", sa.String(), nullable=False),
+        sa.Column("type", sa.Enum("DOCUMENT", "REPORT", "PICTURE", name="file_type_enum"), nullable=False),
+        sa.Column("mime", sa.Enum("PDF", "PNG", "JPEG", name="file_mime_enum"), nullable=False),
         sa.Column("fund_id", sa.Integer(), nullable=True),
         sa.Column("project_id", sa.Integer(), nullable=True),
         sa.Column("stage_id", sa.Integer(), nullable=True),
@@ -166,6 +130,38 @@ def upgrade() -> None:
             ["stages.id"],
         ),
         sa.PrimaryKeyConstraint("id"),
+    )
+    op.create_table(
+        "users",
+        sa.Column("name", sa.String(), nullable=False),
+        sa.Column("password", sa.String(), nullable=True),
+        sa.Column("google_access_token", sa.String(), nullable=True),
+        sa.Column("email", sa.String(), nullable=False),
+        sa.Column("language", sa.Enum("RU", "EN", name="language_enum"), server_default="RU", nullable=False),
+        sa.Column(
+            "role",
+            sa.Enum("SUPERUSER", "FUND_ADMIN", "PROJECT_ADMIN", "USER", name="role_enum"),
+            server_default="user",
+            nullable=False,
+        ),
+        sa.Column("is_anonymous", sa.Boolean(), nullable=False),
+        sa.Column("is_active", sa.Boolean(), nullable=False),
+        sa.Column("picture_id", sa.Integer(), nullable=True),
+        sa.Column("city_id", sa.Integer(), server_default=sa.text("1"), nullable=False),
+        sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
+        sa.Column("created_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
+        sa.Column("updated_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
+        sa.ForeignKeyConstraint(
+            ["city_id"],
+            ["citys.id"],
+        ),
+        sa.ForeignKeyConstraint(
+            ["picture_id"],
+            ["files.id"],
+        ),
+        sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint("email"),
+        sa.UniqueConstraint("picture_id"),
     )
     op.create_table(
         "payments",
@@ -196,13 +192,12 @@ def upgrade() -> None:
 def downgrade() -> None:
     # ### commands auto generated by Alembic - please adjust! ###
     op.drop_table("payments")
-    op.drop_table("documents")
-    op.drop_table("stages")
     op.drop_table("users")
+    op.drop_table("files")
+    op.drop_table("stages")
     op.drop_table("projects")
     op.drop_table("funds")
     op.drop_table("citys")
     op.drop_table("regions")
-    op.drop_table("roles")
     op.drop_table("countrys")
     # ### end Alembic commands ###

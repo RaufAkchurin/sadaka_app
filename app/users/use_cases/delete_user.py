@@ -1,10 +1,10 @@
-from app.users.dao import UsersDAO
+from app.users.dao import UserDAO
 from app.users.models import User
 from app.users.schemas import EmailModel, UserActiveModel
 
 
 class DeleteUserUseCase:
-    def __init__(self, users_dao: UsersDAO):
+    def __init__(self, users_dao: UserDAO):
         self.users_dao = users_dao
 
     async def __call__(self, user: User):

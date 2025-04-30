@@ -3,7 +3,7 @@ from markupsafe import Markup
 from sqladmin import ModelView
 from wtforms import FileField
 
-from app.s3_storage.use_cases.s3_upload import UploadFileUseCase
+from app.s3_storage.use_cases.s3_upload import UploadAnyFileToS3UseCase
 
 
 class BaseAdminView(ModelView):
@@ -13,7 +13,7 @@ class BaseAdminView(ModelView):
 
 class CreateWithPictureAdmin(BaseAdminView):
     column_list = ["id", "name", "picture_url"]
-    form_excluded_columns = ["created_at", "updated_at"]
+    form_excluded_columns = ["created_at", "updated_at", "url"]
 
     async def scaffold_form(self, form_rules=None):
         form_class = await super().scaffold_form()
@@ -25,15 +25,15 @@ class CreateWithPictureAdmin(BaseAdminView):
         file: UploadFile = form.get("picture_file")
 
         if file and file.filename:
-            use_case = UploadFileUseCase()
-            s3_path = await use_case(file=file)
-            data["picture_url"] = s3_path
+            use_case = UploadAnyFileToS3UseCase()
+            s3_file = await use_case(file=file)
+            data["url"] = s3_file.url
 
         return await super().insert_model(request, data)
 
     @staticmethod
     def _picture_preview(model, name):
-        url = getattr(model, "picture_url", None)
+        url = getattr(model, "url", None)
         if url:
             return Markup(f'<img src="{url}" width="100" height="100" style="object-fit:cover;border-radius:40px;" />')
         return "—"

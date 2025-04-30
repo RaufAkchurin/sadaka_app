@@ -2,7 +2,7 @@ import factory
 from factory.alchemy import SQLAlchemyModelFactory
 from sqlalchemy.orm import Session
 
-from app.users.models import Role, User
+from app.users.models import User
 
 
 class BaseFactory(SQLAlchemyModelFactory):
@@ -17,12 +17,12 @@ class BaseFactory(SQLAlchemyModelFactory):
         cls._meta.sqlalchemy_session = session
 
 
-class RoleFactory(BaseFactory):
-    class Meta:
-        model = Role
-
-    id = factory.LazyFunction(int)
-    name = factory.Faker("word")
+# class RoleFactory(BaseFactory):
+#     class Meta:
+#         model = Role
+#
+#     id = factory.LazyFunction(int)
+#     name = factory.Faker("word")
 
 
 class UserFactory(BaseFactory):
@@ -33,4 +33,3 @@ class UserFactory(BaseFactory):
     last_name = factory.Faker("last_name")
     email = factory.Faker("email")
     password = factory.Faker("password")
-    role = factory.SubFactory(RoleFactory)  # Ссылка на RoleFactory для создания роли

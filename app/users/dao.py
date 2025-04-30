@@ -1,14 +1,18 @@
 from app.dao.base import BaseDAO
+from app.file.models import File
+from app.fund.models import Fund
 from app.geo.models import City, Country, Region
-from app.users.models import Role, User
+from app.payments.models import Payment
+from app.project.models import Project, Stage
+from app.users.models import User
 
 
-class UsersDAO(BaseDAO):
+class UserDAO(BaseDAO):
     model = User
 
 
-class RoleDAO(BaseDAO):
-    model = Role
+class CountryDAO(BaseDAO):
+    model = Country
 
 
 class CityDAO(BaseDAO):
@@ -19,5 +23,21 @@ class RegionDAO(BaseDAO):
     model = Region
 
 
-class CountryDAO(BaseDAO):
-    model = Country
+class FundDAO(BaseDAO):
+    model = Fund
+
+
+class ProjectDAO(BaseDAO):
+    model = Project
+
+
+class StageDAO(BaseDAO):
+    model = Stage
+
+
+class FileDAO(BaseDAO):
+    model = File
+
+
+class PaymentDAO(BaseDAO):
+    model = Payment

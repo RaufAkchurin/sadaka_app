@@ -14,7 +14,7 @@ from app.exceptions import (
     UserNotFoundException,
 )
 from app.settings import settings
-from app.users.dao import UsersDAO
+from app.users.dao import UserDAO
 from app.users.models import User
 
 
@@ -45,7 +45,7 @@ async def check_refresh_token(
         if not user_id:
             raise NoJwtException
 
-        user = await UsersDAO(session).find_one_or_none_by_id(data_id=int(user_id))
+        user = await UserDAO(session).find_one_or_none_by_id(data_id=int(user_id))
         if not user:
             raise NoJwtException
 
@@ -77,7 +77,7 @@ async def get_current_user(
     if not user_id:
         raise NoUserIdException
 
-    user = await UsersDAO(session).find_one_or_none_by_id(data_id=int(user_id))
+    user = await UserDAO(session).find_one_or_none_by_id(data_id=int(user_id))
     if not user:
         raise UserNotFoundException
     return user
@@ -87,6 +87,6 @@ async def get_current_admin_user(
     current_user: User = Depends(get_current_user),
 ) -> User:
     """Проверяем права пользователя как администратора."""
-    if current_user.role.id in [3, 4]:
+    if current_user.role.value in ["superuser", "fund_admin"]:
         return current_user
     raise ForbiddenException
