@@ -16,12 +16,3 @@ class DeleteFileWithContentUseCase:
         file_instance: File = await self.file_dao.find_one_or_none_by_id(file_id)
         await self.file_dao.delete(filters=IdModel(id=file_id))
         await self.s3_deleter(file_instance.get_fullname)
-
-        # return UploadedFileDataSchema(
-        #     id=file_instance.id,
-        #     name=s3_uploaded_file_data.name,
-        #     size=s3_uploaded_file_data.size,
-        #     url=s3_uploaded_file_data.url,
-        #     type=s3_uploaded_file_data.type,
-        #     mime=s3_uploaded_file_data.mime,
-        # )

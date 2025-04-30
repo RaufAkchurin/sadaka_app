@@ -73,14 +73,28 @@ class TestUsers:
                 "file1.png",
                 b"Test file content1",
                 200,
-                {"picture_url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/file1.png"},
+                {
+                    "id": 14,
+                    "mime": "PNG",
+                    "name": "file1",
+                    "size": 18,
+                    "type": "PICTURE",
+                    "url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/file1.png",
+                },
             ),
             (
                 True,
-                "file1.png",
+                "file2.png",
                 b"Test file content2",
                 200,
-                {"picture_url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/file1.png"},
+                {
+                    "id": 15,
+                    "mime": "PNG",
+                    "name": "file2",
+                    "size": 18,
+                    "type": "PICTURE",
+                    "url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/file2.png",
+                },
             ),
             (
                 False,
@@ -91,6 +105,7 @@ class TestUsers:
             ),
         ],
     )
+    # TODO add test for checking the old picture deleted from S3 if it possible
     async def test_update_user_picture(
         self,
         ac,
@@ -113,7 +128,7 @@ class TestUsers:
             assert response.json() == response_expected
 
             # Проверяем, что по ссылке действительно лежит тот же файл (байтовое сравнение)
-            file_url = response_expected.get("picture_url")
+            file_url = response_expected.get("url")
             async with httpx.AsyncClient() as client:
                 file_response = await client.get(file_url)
 
