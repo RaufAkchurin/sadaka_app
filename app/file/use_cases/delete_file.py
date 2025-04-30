@@ -7,6 +7,7 @@ from app.users.schemas import IdModel
 
 
 class DeleteFileWithContentUseCase:
+
     def __init__(self, session: AsyncSession):
         self.session = session
         self.file_dao = FileDAO(session=session)

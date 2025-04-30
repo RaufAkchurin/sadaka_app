@@ -23,6 +23,7 @@ async def get_me(user_data: User = Depends(get_current_user)) -> SUserInfo:
 
 
 @users_router.put("/update_logo")
+
 async def update_user_logo(
     picture: UploadFile,
     session: AsyncSession = Depends(get_session_with_commit),

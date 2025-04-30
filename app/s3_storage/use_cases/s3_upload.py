@@ -8,6 +8,7 @@ from app.settings import settings
 
 
 class UploadAnyFileToS3UseCase:
+
     def __init__(self):
         self.s3_client: S3Client = S3Client(
             access_key=settings.S3_ACCESS_KEY,

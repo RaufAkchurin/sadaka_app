@@ -7,6 +7,7 @@ from app.users.dao import FileDAO
 
 
 class CreateFileWithContentUseCase:
+
     def __init__(self, session: AsyncSession, uploader: AbstractUploadFileToS3UseCase):
         self.session = session
         self.file_dao = FileDAO(session=session)

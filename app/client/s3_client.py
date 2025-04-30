@@ -5,6 +5,7 @@ from botocore.exceptions import ClientError
 
 
 class S3Client:
+
     def __init__(
         self,
         access_key: str,

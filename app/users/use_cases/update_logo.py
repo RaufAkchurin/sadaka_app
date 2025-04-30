@@ -12,6 +12,7 @@ from app.users.schemas import EmailModel, UserLogoUpdateSchema
 
 
 class UserLogoUpdateUseCase:
+
     def __init__(self, session: AsyncSession):
         self.session = session
         self.users_dao = UserDAO(session=session)
