@@ -6,7 +6,7 @@ from app.file.schemas import UploadedFileDataSchema
 from app.users.dao import FileDAO
 
 
-class CreateFileWithPictureUseCase:
+class CreateFileWithContentUseCase:
     def __init__(self, session: AsyncSession, uploader: AbstractUploadFileToS3UseCase):
         self.session = session
         self.file_dao = FileDAO(session=session)

@@ -6,6 +6,11 @@ from app.auth.service_jwt import get_password_hash
 from app.users.models import LanguageEnum
 
 
+class IdModel(BaseModel):
+    id: int = Field(description="Электронная почта")
+    model_config = ConfigDict(from_attributes=True)
+
+
 class EmailModel(BaseModel):
     email: EmailStr = Field(description="Электронная почта")
     model_config = ConfigDict(from_attributes=True)

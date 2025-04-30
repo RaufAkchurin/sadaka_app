@@ -57,3 +57,7 @@ class File(Base):
     @validates("url")
     def validate_link(self, key: str, value: str) -> str:
         return validate_link_url(value)
+
+    @property
+    def get_fullname(self):
+        return self.name + "." + self.mime.value.lower()
