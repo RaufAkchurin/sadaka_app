@@ -143,6 +143,39 @@
     "project_id": null,
     "fund_id": null,
     "stage_id": null
+  },
+  {
+    "id": 14,
+    "name": "Картинка 1 для Региона 1",
+    "size": "123",
+    "url": "https://url.ya.ru/file1",
+    "type": "PICTURE",
+    "mime": "JPEG",
+    "project_id": null,
+    "fund_id": null,
+    "stage_id": null
+  },
+  {
+    "id": 15,
+    "name": "Картинка 1 для Региона 2",
+    "size": "123",
+    "url": "https://url.ya.ru/file1",
+    "type": "PICTURE",
+    "mime": "JPEG",
+    "project_id": null,
+    "fund_id": null,
+    "stage_id": null
+  },
+  {
+    "id": 16,
+    "name": "Картинка 1 для Региона 3",
+    "size": "123",
+    "url": "https://url.ya.ru/file1",
+    "type": "PICTURE",
+    "mime": "JPEG",
+    "project_id": null,
+    "fund_id": null,
+    "stage_id": null
   }
 ]
 

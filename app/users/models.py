@@ -37,7 +37,13 @@ class User(Base):
     is_active: Mapped[bool] = mapped_column(default=True, nullable=False)
 
     picture_id: Mapped[int | None] = mapped_column(ForeignKey("files.id"), nullable=True, unique=True, default=None)
-    picture: Mapped["File | None"] = relationship("File", back_populates="user_picture", lazy="joined")  # noqa F821
+    picture: Mapped["File | None"] = relationship(  # noqa F821
+        "File",  # noqa F821
+        back_populates="user_picture",
+        lazy="joined",
+        cascade="all, delete-orphan",
+        single_parent=True,
+    )
 
     # Связь с городом
     city_id: Mapped[int] = mapped_column(ForeignKey("citys.id"), default=1, server_default=text("1"))

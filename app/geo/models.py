@@ -28,7 +28,17 @@ class Country(Base):
 @dataclass
 class Region(Base):
     name: Mapped[str_uniq]
-    # picture_url: Mapped[str]
+
+    picture_id: Mapped[int | None] = mapped_column(
+        ForeignKey("files.id", ondelete="SET NULL"), nullable=True, unique=True
+    )  # noqa F821
+    picture: Mapped["File | None"] = relationship(  # noqa F821
+        "File",
+        back_populates="region",
+        lazy="joined",
+        cascade="all, delete-orphan",
+        single_parent=True,
+    )
 
     # Внешний ключ для страны
     country_id: Mapped[int] = mapped_column(ForeignKey("countrys.id"), nullable=False)
