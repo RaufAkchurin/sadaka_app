@@ -3,8 +3,10 @@ from contextlib import asynccontextmanager
 from aiobotocore.session import get_session
 from botocore.exceptions import ClientError
 
+from app.client.interfaces import S3ClientUseCaseProtocol
 
-class S3Client:
+
+class S3ClientImpl(S3ClientUseCaseProtocol):
     def __init__(
         self,
         access_key: str,

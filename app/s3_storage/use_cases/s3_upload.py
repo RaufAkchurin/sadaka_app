@@ -1,22 +1,16 @@
 from fastapi import HTTPException, UploadFile, status
 
-from app.client.s3_client import S3Client
+from app.client.interfaces import S3ClientUseCaseProtocol
 from app.exceptions import FileNotProvidedException
 from app.file.enums import FileTypeEnum, MimeEnum
 from app.s3_storage.schemas import S3UploadedFileSchema
 from app.settings import settings
 
 
-class UploadAnyFileToS3UseCase:
-    def __init__(self):
-        self.s3_client: S3Client = S3Client(
-            access_key=settings.S3_ACCESS_KEY,
-            secret_key=settings.S3_SECRET_KEY,
-            endpoint_url=settings.S3_ENDPOINT_URL,
-            bucket_name=settings.S3_BUCKET_NAME,
-        )
+class UploadAnyFileToS3Impl:
+    def __init__(self, s3_client: S3ClientUseCaseProtocol):
+        self.s3_client = s3_client
         self.max_size_mb: int = 2
-
         # Маппинг расширений -> (MimeEnum, FileTypeEnum)
         self.supported_file_types = {
             "png": (MimeEnum.PNG, FileTypeEnum.PICTURE),
