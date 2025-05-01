@@ -7,7 +7,7 @@ from app.s3_storage.schemas import S3UploadedFileSchema
 from app.settings import settings
 
 
-class UploadAnyFileToS3Impl:
+class S3UploadUseCaseImpl:
     def __init__(self, s3_client: S3ClientUseCaseProtocol):
         self.s3_client = s3_client
         self.max_size_mb: int = 2

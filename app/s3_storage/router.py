@@ -3,9 +3,9 @@ from fastapi import APIRouter, Depends, Response, UploadFile
 from app.client.interfaces import S3ClientUseCaseProtocol
 from app.dependencies.auth_dep import get_current_user
 from app.dependencies.s3 import get_s3_client
-from app.s3_storage.use_cases.s3_delete import S3DeleteUseCase
-from app.s3_storage.use_cases.s3_download import S3DownloadImpl
-from app.s3_storage.use_cases.s3_upload import UploadAnyFileToS3Impl
+from app.s3_storage.use_cases.s3_delete import S3DeleteUseCaseImpl
+from app.s3_storage.use_cases.s3_download import S3DownloadUseCaseImpl
+from app.s3_storage.use_cases.s3_upload import S3UploadUseCaseImpl
 from app.users.models import User
 
 s3_router = APIRouter()
@@ -17,7 +17,7 @@ async def upload(
     user_data: User = Depends(get_current_user),
     s3_client: S3ClientUseCaseProtocol = Depends(get_s3_client),
 ) -> dict:
-    use_case = UploadAnyFileToS3Impl(s3_client=s3_client)
+    use_case = S3UploadUseCaseImpl(s3_client=s3_client)
     file_data = await use_case(file=file)
 
     return {"file_data": file_data}
@@ -29,7 +29,7 @@ async def download(
     user_data: User = Depends(get_current_user),
     s3_client: S3ClientUseCaseProtocol = Depends(get_s3_client),
 ) -> Response:
-    use_case = S3DownloadImpl(s3_client=s3_client)
+    use_case = S3DownloadUseCaseImpl(s3_client=s3_client)
     contents = await use_case(file_name)
 
     return Response(
@@ -44,7 +44,7 @@ async def delete(
     user_data: User = Depends(get_current_user),
     s3_client: S3ClientUseCaseProtocol = Depends(get_s3_client),
 ) -> dict:
-    use_case = S3DeleteUseCase(s3_client=s3_client)
+    use_case = S3DeleteUseCaseImpl(s3_client=s3_client)
     await use_case(file_name)
 
     return {"message": "Запрос на удаление файла отправлен."}

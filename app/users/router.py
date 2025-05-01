@@ -14,7 +14,7 @@ from app.users.schemas import SUserInfo, UserDataUpdateSchema
 from app.users.use_cases.delete_user import DeleteUserUseCase
 from app.users.use_cases.get_all_users import GetAllUsersUseCase
 from app.users.use_cases.update_data import UserDataUpdateUseCase
-from app.users.use_cases.update_logo import UserLogoUpdateImpl
+from app.users.use_cases.update_logo import UserLogoUpdateUseCaseImpl
 
 users_router = APIRouter()
 
@@ -31,7 +31,7 @@ async def update_user_logo(
     user: User = Depends(get_current_user),
     s3_client: S3ClientUseCaseProtocol = Depends(get_s3_client),
 ) -> UploadedFileDataSchema:
-    use_case = UserLogoUpdateImpl(session=session, s3_client=s3_client)
+    use_case = UserLogoUpdateUseCaseImpl(session=session, s3_client=s3_client)
     updated_logo_url = await use_case(user=user, picture=picture)
 
     return updated_logo_url

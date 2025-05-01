@@ -6,7 +6,7 @@ from app.file.use_cases.interfaces import S3UploadUseCaseProtocol
 from app.users.dao import FileDAO
 
 
-class FileCreateWithContentImpl:
+class FileCreateWithContentUseCaseImpl:
     def __init__(self, session: AsyncSession, uploader: S3UploadUseCaseProtocol):
         self.session = session
         self.uploader = uploader

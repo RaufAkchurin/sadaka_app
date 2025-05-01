@@ -2,7 +2,7 @@ from app.client.interfaces import S3ClientUseCaseProtocol
 from app.exceptions import FileNameNotProvidedException
 
 
-class S3DeleteUseCase:
+class S3DeleteUseCaseImpl:
     def __init__(self, s3_client: S3ClientUseCaseProtocol):
         self.s3_client = s3_client
 

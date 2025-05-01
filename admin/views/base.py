@@ -3,7 +3,7 @@ from markupsafe import Markup
 from sqladmin import ModelView
 from wtforms import FileField
 
-from app.s3_storage.use_cases.s3_upload import UploadAnyFileToS3Impl
+from app.s3_storage.use_cases.s3_upload import S3UploadUseCaseImpl
 
 
 class BaseAdminView(ModelView):
@@ -25,7 +25,7 @@ class CreateWithPictureAdmin(BaseAdminView):
         file: UploadFile = form.get("picture_file")
 
         if file and file.filename:
-            use_case = UploadAnyFileToS3Impl()
+            use_case = S3UploadUseCaseImpl()
             s3_file = await use_case(file=file)
             data["url"] = s3_file.url
 
