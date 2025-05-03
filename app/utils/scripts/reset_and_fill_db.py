@@ -21,8 +21,11 @@ def remove_all_migrations():
 
 def remove_database():
     if DB_FILE.exists():
-        DB_FILE.unlink()
-        print(f"✅ База данных удалена: {DB_FILE}")
+        try:
+            subprocess.run(["rm", str(DB_FILE)], check=True)
+            print(f"✅ База данных удалена через rm: {DB_FILE}")
+        except subprocess.CalledProcessError as e:
+            print(f"❌ Ошибка при удалении базы через rm: {e}")
     else:
         print(f"⚠️ Файл базы данных не найден: {DB_FILE}")
 

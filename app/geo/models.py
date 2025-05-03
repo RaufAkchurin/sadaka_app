@@ -30,8 +30,11 @@ class Region(Base):
     name: Mapped[str_uniq]
 
     picture_id: Mapped[int | None] = mapped_column(
-        ForeignKey("files.id", ondelete="SET NULL"), nullable=True, unique=True
-    )  # noqa F821
+        ForeignKey("files.id", ondelete="SET NULL", use_alter=True, name="fk_region_picture_id"),  # noqa F821
+        nullable=True,
+        unique=True,
+    )
+
     picture: Mapped["File | None"] = relationship(  # noqa F821
         "File",
         back_populates="region",

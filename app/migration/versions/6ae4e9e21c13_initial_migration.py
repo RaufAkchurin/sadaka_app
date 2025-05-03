@@ -1,8 +1,8 @@
 """Initial migration
 
-Revision ID: fff419a8145e
+Revision ID: 6ae4e9e21c13
 Revises: 
-Create Date: 2025-04-28 15:11:21.056789
+Create Date: 2025-05-03 10:39:09.427104
 
 """
 from typing import Sequence, Union
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = "fff419a8145e"
+revision: str = "6ae4e9e21c13"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -32,6 +32,7 @@ def upgrade() -> None:
     op.create_table(
         "regions",
         sa.Column("name", sa.String(), nullable=False),
+        sa.Column("picture_id", sa.Integer(), nullable=True),
         sa.Column("country_id", sa.Integer(), nullable=False),
         sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
         sa.Column("created_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
@@ -40,8 +41,12 @@ def upgrade() -> None:
             ["country_id"],
             ["countrys.id"],
         ),
+        sa.ForeignKeyConstraint(
+            ["picture_id"], ["files.id"], name="fk_region_picture_id", ondelete="SET NULL", use_alter=True
+        ),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("name"),
+        sa.UniqueConstraint("picture_id"),
     )
     op.create_table(
         "citys",
@@ -139,10 +144,7 @@ def upgrade() -> None:
         sa.Column("email", sa.String(), nullable=False),
         sa.Column("language", sa.Enum("RU", "EN", name="language_enum"), server_default="RU", nullable=False),
         sa.Column(
-            "role",
-            sa.Enum("SUPERUSER", "FUND_ADMIN", "PROJECT_ADMIN", "USER", name="role_enum"),
-            server_default="user",
-            nullable=False,
+            "role", sa.Enum("SUPERUSER", "FUND_ADMIN", "USER", name="role_enum"), server_default="user", nullable=False
         ),
         sa.Column("is_anonymous", sa.Boolean(), nullable=False),
         sa.Column("is_active", sa.Boolean(), nullable=False),

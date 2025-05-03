@@ -27,13 +27,13 @@
     "email": "user1@test.com",
     "name": "user1",
     "password": "$2b$12$rm7Bu.bjhNHKU25th37EFO6tpnvjz5EiB2s7QyJX/BKx9aOsIwEKm",
-    "picture_id": null
+    "picture_id": 12
   },
   {
     "id": 5,
     "email": "user2@test.com",
     "name": "user2",
     "password": "$2b$12$rm7Bu.bjhNHKU25th37EFO6tpnvjz5EiB2s7QyJX/BKx9aOsIwEKm",
-    "picture_id": null
+    "picture_id": 13
   }
 ]
