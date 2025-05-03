@@ -49,6 +49,9 @@ class StageAdmin(BaseAdminView, model=Stage):
 
 
 class FileAdmin(CreateWithPictureAdmin, model=File):
+    # TODO у файла поля отображаются только заполненные все сотальные скрывать
+    # TODO тк привязка напрмиер только к юзеру а все остальное ненужно видеть в таком случае
+
     icon = "fa-solid fa-file-alt"
     name = "Файл"
     name_plural = "Файлы"

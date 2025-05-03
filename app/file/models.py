@@ -46,15 +46,16 @@ class File(Base):
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.id}, name={self.name})"
 
-    @validates("fund_id", "project_id", "stage_id", "user_picture")
+    @validates("fund_id", "project_id", "stage_id", "user_picture", "project_document_id", "project_picture_id")
     def validate_single_target(self, key, value):
         user_picture = 1 if key == "user_picture" else self.user_picture
         region = 1 if key == "region" else self.region
         fund_id = value if key == "fund_id" else self.fund_id
-        project_id = value if key == "project_id" else self.project_id
+        project_document_id = value if key == "project_document_id" else self.project_document_id
+        project_picture_id = value if key == "project_picture_id" else self.project_picture_id
         stage_id = value if key == "stage_id" else self.stage_id
 
-        ids = [fund_id, project_id, stage_id, user_picture, region]
+        ids = [fund_id, project_document_id, project_picture_id, stage_id, user_picture, region]
         num_set = sum(bool(i) for i in ids)
 
         if num_set == 0:
