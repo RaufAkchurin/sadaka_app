@@ -23,13 +23,15 @@ class Project(Base):
         "File",
         back_populates="project_document",
         cascade="all, delete-orphan",
+        foreign_keys="[File.project_document_id]",
     )
 
-    # documents:
+    # pictures:
     pictures: Mapped[list["File"]] = relationship(  # noqa: F821
         "File",
         back_populates="project_picture",
         cascade="all, delete-orphan",
+        foreign_keys="[File.project_picture_id]",
     )
 
     # stages:

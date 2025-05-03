@@ -31,10 +31,14 @@ class File(Base):
     fund: Mapped["Fund"] = relationship("Fund", back_populates="documents")  # noqa F821
 
     project_document_id: Mapped[int | None] = mapped_column(ForeignKey("projects.id"), nullable=True)
-    project_document: Mapped["Project"] = relationship("Project", back_populates="documents")  # noqa F821
+    project_document: Mapped["Project"] = relationship(  # noqa F821
+        "Project", back_populates="documents", foreign_keys="[File.project_document_id]"
+    )
 
     project_picture_id: Mapped[int | None] = mapped_column(ForeignKey("projects.id"), nullable=True)
-    project_picture: Mapped["Project"] = relationship("Project", back_populates="pictures")  # noqa F821
+    project_picture: Mapped["Project"] = relationship(  # noqa F821
+        "Project", back_populates="pictures", foreign_keys="[File.project_picture_id]"
+    )
 
     stage_id: Mapped[int | None] = mapped_column(ForeignKey("stages.id"), nullable=True)
     stage: Mapped["Stage"] = relationship("Stage", back_populates="reports")  # noqa F821
