@@ -1,8 +1,8 @@
 """Initial migration
 
-Revision ID: f4179588ceba
+Revision ID: a0eafc272ddf
 Revises: 
-Create Date: 2025-05-03 16:37:30.140074
+Create Date: 2025-05-03 18:51:45.365265
 
 """
 from typing import Sequence, Union
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = "f4179588ceba"
+revision: str = "a0eafc272ddf"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -116,7 +116,7 @@ def upgrade() -> None:
         sa.Column("url", sa.String(), nullable=False),
         sa.Column("type", sa.Enum("DOCUMENT", "REPORT", "PICTURE", name="file_type_enum"), nullable=False),
         sa.Column("mime", sa.Enum("PDF", "PNG", "JPEG", name="file_mime_enum"), nullable=False),
-        sa.Column("fund_id", sa.Integer(), nullable=True),
+        sa.Column("fund_document_id", sa.Integer(), nullable=True),
         sa.Column("project_document_id", sa.Integer(), nullable=True),
         sa.Column("project_picture_id", sa.Integer(), nullable=True),
         sa.Column("stage_id", sa.Integer(), nullable=True),
@@ -124,7 +124,7 @@ def upgrade() -> None:
         sa.Column("created_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
         sa.Column("updated_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
         sa.ForeignKeyConstraint(
-            ["fund_id"],
+            ["fund_document_id"],
             ["funds.id"],
         ),
         sa.ForeignKeyConstraint(

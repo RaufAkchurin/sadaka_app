@@ -26,7 +26,7 @@ class Fund(Base):
 
     # file:
     documents: Mapped[list["File"]] = relationship(  # noqa F821
-        "File", back_populates="fund", cascade="all, delete-orphan"
+        "File", back_populates="fund_document", cascade="all, delete-orphan"
     )
     # projects:
     projects: Mapped[list["Project"]] = relationship(  # noqa F821

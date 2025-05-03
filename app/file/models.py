@@ -27,8 +27,8 @@ class File(Base):
     )
 
     # OneToMany
-    fund_id: Mapped[int | None] = mapped_column(ForeignKey("funds.id"), nullable=True)
-    fund: Mapped["Fund"] = relationship("Fund", back_populates="documents")  # noqa F821
+    fund_document_id: Mapped[int | None] = mapped_column(ForeignKey("funds.id"), nullable=True)
+    fund_document: Mapped["Fund"] = relationship("Fund", back_populates="documents")  # noqa F821
 
     project_document_id: Mapped[int | None] = mapped_column(ForeignKey("projects.id"), nullable=True)
     project_document: Mapped["Project"] = relationship(  # noqa F821
