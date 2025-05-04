@@ -3,8 +3,10 @@ from typing import List
 from fastapi import APIRouter, Depends, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.client.interfaces import S3ClientUseCaseProtocol
 from app.dependencies.auth_dep import get_current_admin_user, get_current_user
 from app.dependencies.dao_dep import get_session_with_commit
+from app.dependencies.s3 import get_s3_client
 from app.file.schemas import UploadedFileDataSchema
 from app.users.dao import UserDAO
 from app.users.models import User
@@ -12,7 +14,7 @@ from app.users.schemas import SUserInfo, UserDataUpdateSchema
 from app.users.use_cases.delete_user import DeleteUserUseCase
 from app.users.use_cases.get_all_users import GetAllUsersUseCase
 from app.users.use_cases.update_data import UserDataUpdateUseCase
-from app.users.use_cases.update_logo import UserLogoUpdateUseCase
+from app.users.use_cases.update_logo import UserLogoUpdateUseCaseImpl
 
 users_router = APIRouter()
 
@@ -27,9 +29,11 @@ async def update_user_logo(
     picture: UploadFile,
     session: AsyncSession = Depends(get_session_with_commit),
     user: User = Depends(get_current_user),
+    s3_client: S3ClientUseCaseProtocol = Depends(get_s3_client),
 ) -> UploadedFileDataSchema:
-    use_case = UserLogoUpdateUseCase(session=session)
+    use_case = UserLogoUpdateUseCaseImpl(session=session, s3_client=s3_client)
     updated_logo_url = await use_case(user=user, picture=picture)
+
     return updated_logo_url
 
 
@@ -41,6 +45,7 @@ async def update_user_data(
 ) -> UserDataUpdateSchema:
     use_case = UserDataUpdateUseCase(session=session)
     validated_data = await use_case(user=user, update_data=update_data)
+
     return validated_data
 
 
@@ -52,6 +57,7 @@ async def delete_user(
     dao = UserDAO(session)
     use_case = DeleteUserUseCase(dao)
     await use_case(user=user)
+
     return {"message": "Вы успешно удалили аккаунт!"}
 
 
@@ -63,4 +69,6 @@ async def get_all_users(
 ) -> List[SUserInfo]:
     dao = UserDAO(session)
     use_case = GetAllUsersUseCase(dao)
-    return await use_case()
+    users = await use_case()
+
+    return users
