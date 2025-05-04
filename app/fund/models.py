@@ -12,7 +12,6 @@ class Fund(Base):
     # core:
     name: Mapped[str]
     description: Mapped[str | None]
-    # picture_url: Mapped[str]
 
     # contacts:
     hot_line: Mapped[str]
@@ -24,10 +23,25 @@ class Fund(Base):
         "Region", back_populates="funds", lazy="joined"
     )  # imported in __init__.py
 
+    picture_id: Mapped[int | None] = mapped_column(ForeignKey("files.id"), nullable=True, unique=True)
+
+    picture: Mapped["File | None"] = relationship(  # noqa F821
+        "File",  # noqa F821
+        back_populates="fund_picture",
+        foreign_keys=[picture_id],
+        cascade="all, delete-orphan",
+        single_parent=True,
+        lazy="joined",
+    )
+
     # file:
     documents: Mapped[list["File"]] = relationship(  # noqa F821
-        "File", back_populates="fund", cascade="all, delete-orphan"
+        "File",
+        back_populates="fund_document",
+        cascade="all, delete-orphan",
+        foreign_keys="[File.fund_document_id]",
     )
+
     # projects:
     projects: Mapped[list["Project"]] = relationship(  # noqa F821
         "Project", back_populates="funds", cascade="all, delete-orphan"

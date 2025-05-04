@@ -18,11 +18,20 @@ class Project(Base):
     fund_id: Mapped[int] = mapped_column(ForeignKey("funds.id"), nullable=False)
     funds: Mapped["Fund"] = relationship("Fund", back_populates="projects", lazy="joined")
 
-    # file:
+    # documents:
     documents: Mapped[list["File"]] = relationship(  # noqa: F821
         "File",
-        back_populates="project",
+        back_populates="project_document",
         cascade="all, delete-orphan",
+        foreign_keys="[File.project_document_id]",
+    )
+
+    # pictures:
+    pictures: Mapped[list["File"]] = relationship(  # noqa: F821
+        "File",
+        back_populates="project_picture",
+        cascade="all, delete-orphan",
+        foreign_keys="[File.project_picture_id]",
     )
 
     # stages:
