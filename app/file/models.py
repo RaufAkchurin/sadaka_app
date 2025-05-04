@@ -26,9 +26,17 @@ class File(Base):
         "Region", back_populates="picture", uselist=False, passive_deletes=True
     )
 
+    fund_picture: Mapped["Fund"] = relationship(  # noqa F821
+        "Fund", back_populates="picture", foreign_keys="[Fund.picture_id]", uselist=False, passive_deletes=True
+    )
+
     # OneToMany
     fund_document_id: Mapped[int | None] = mapped_column(ForeignKey("funds.id"), nullable=True)
-    fund_document: Mapped["Fund"] = relationship("Fund", back_populates="documents")  # noqa F821
+    fund_document: Mapped["Fund"] = relationship(  # noqa F821
+        "Fund",
+        back_populates="documents",
+        foreign_keys=[fund_document_id],
+    )
 
     project_document_id: Mapped[int | None] = mapped_column(ForeignKey("projects.id"), nullable=True)
     project_document: Mapped["Project"] = relationship(  # noqa F821
@@ -46,16 +54,18 @@ class File(Base):
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.id}, name={self.name})"
 
-    @validates("fund_id", "project_id", "stage_id", "user_picture", "project_document_id", "project_picture_id")
+    @validates(
+        "fund_document_id", "project_id", "stage_id", "user_picture", "project_document_id", "project_picture_id"
+    )
     def validate_single_target(self, key, value):
         user_picture = 1 if key == "user_picture" else self.user_picture
         region = 1 if key == "region" else self.region
-        fund_id = value if key == "fund_id" else self.fund_id
+        fund_document_id = value if key == "fund_document_id" else self.fund_document_id
         project_document_id = value if key == "project_document_id" else self.project_document_id
         project_picture_id = value if key == "project_picture_id" else self.project_picture_id
         stage_id = value if key == "stage_id" else self.stage_id
 
-        ids = [fund_id, project_document_id, project_picture_id, stage_id, user_picture, region]
+        ids = [fund_document_id, project_document_id, project_picture_id, stage_id, user_picture, region]
         num_set = sum(bool(i) for i in ids)
 
         if num_set == 0:
