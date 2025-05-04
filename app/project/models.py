@@ -18,29 +18,28 @@ class Project(Base):
     fund_id: Mapped[int] = mapped_column(ForeignKey("funds.id"), nullable=False)
     funds: Mapped["Fund"] = relationship("Fund", back_populates="projects", lazy="joined")
 
-    # documents:
     documents: Mapped[list["File"]] = relationship(  # noqa: F821
         "File",
         back_populates="project_document",
         cascade="all, delete-orphan",
         foreign_keys="[File.project_document_id]",
+        lazy="joined",
     )
 
-    # pictures:
     pictures: Mapped[list["File"]] = relationship(  # noqa: F821
         "File",
         back_populates="project_picture",
         cascade="all, delete-orphan",
         foreign_keys="[File.project_picture_id]",
+        lazy="joined",
     )
 
-    # stages:
     stages: Mapped[list["Stage"]] = relationship(  # noqa: F821
-        "Stage", back_populates="project", cascade="all, delete-orphan"
+        "Stage", back_populates="project", cascade="all, delete-orphan", lazy="joined"
     )
 
     payments: Mapped[list["Payment"]] = relationship(  # noqa: F821
-        "Payment", back_populates="project", cascade="all, delete-orphan"
+        "Payment", back_populates="project", cascade="all, delete-orphan", lazy="joined"
     )
 
     def __repr__(self):

@@ -54,7 +54,7 @@ class BaseDAO(Generic[T]):
         try:
             query = select(self.model).filter_by(**filter_dict)
             result = await self._session.execute(query)
-            records = result.scalars().all()
+            records = result.unique().scalars().all()
             logger.info(f"Найдено {len(records)} записей.")
             return records
         except SQLAlchemyError as e:
