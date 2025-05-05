@@ -8,11 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
 from admin.register import create_admin_panel
-from app.auth.google.router import google_router
-from app.auth.router import auth_router
 from app.project.router import projects_router
-from app.s3_storage.router import s3_router
-from app.users.router import users_router
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
@@ -57,10 +53,10 @@ def create_app() -> FastAPI:
 
 
 def register_routers(app: FastAPI) -> None:
-    app.include_router(auth_router, prefix="/auth", tags=["Auth"])
-    app.include_router(google_router, prefix="/google", tags=["Google OAuth"])
-    app.include_router(s3_router, prefix="/s3_storage", tags=["S3 Storage"])
-    app.include_router(users_router, prefix="/users", tags=["Users"])
+    # app.include_router(auth_router, prefix="/auth", tags=["Auth"])
+    # app.include_router(google_router, prefix="/google", tags=["Google OAuth"])
+    # app.include_router(s3_router, prefix="/s3_storage", tags=["S3 Storage"])
+    # app.include_router(users_router, prefix="/users", tags=["Users"])
     app.include_router(projects_router, prefix="/projects", tags=["Projects"])
 
 

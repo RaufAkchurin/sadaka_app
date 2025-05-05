@@ -14,6 +14,7 @@ class Project(Base):
         nullable=False,
     )
     description: Mapped[str | None]
+    goal: Mapped[int]
 
     fund_id: Mapped[int] = mapped_column(ForeignKey("funds.id"), nullable=False)
     funds: Mapped["Fund"] = relationship("Fund", back_populates="projects", lazy="joined")
@@ -73,6 +74,9 @@ class Stage(Base):
     payments: Mapped[list["Payment"]] = relationship(  # noqa: F821
         "Payment", back_populates="stage", cascade="all, delete-orphan"
     )
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}(id={self.project_id}, name={self.status.value})"
 
     # TODO Add validation as active stage only one for project!
     # TODO Add validation if finished need report!!!
