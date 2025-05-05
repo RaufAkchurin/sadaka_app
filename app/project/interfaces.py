@@ -4,7 +4,5 @@ from app.project.schemas import ProjectListAPISchema
 
 
 class ProjectListUseCaseProtocol(Protocol):
-    async def __call__(
-        self,
-    ) -> list[ProjectListAPISchema]:
+    async def __call__(self ) -> list[ProjectListAPISchema]:
         ...
