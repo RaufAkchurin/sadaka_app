@@ -6,19 +6,22 @@ from app.project.enums import AbstractStatusEnum
 СПИСОК СБОРОВ
 # id
 # название сбора
+# -необходимая сумма
 # название фонда (ДОБАВИТЬ)
+
+
+
                     # этап АКТУАЛЬНЫЙ
 # -номер этапа
-# -необходимая сумма
+
 
                     # платежи
 # -собрали
 # - количество спонсоров уникальных
 # - процент закрытия от этапа
-#
 # -кнопка помочь
 #
-# в будущем                   
+# в будущем
         Платежи
 -собрали через тебя
         # ЛАЙКИ
@@ -36,11 +39,26 @@ class StatusFilter(BaseModel):
     status: AbstractStatusEnum
 
 
+class FundShortSchema(BaseModel):
+    id: int
+    name: str
+    model_config = ConfigDict(from_attributes=True)
+
+
+class StagesShortSchema(BaseModel):
+    number: int
+    name: str
+    status: AbstractStatusEnum
+    model_config = ConfigDict(from_attributes=True)
+
+
 class ProjectListAPISchema(BaseModel):
     id: int
     name: str
     status: AbstractStatusEnum
     goal: int
+    fund: FundShortSchema
+    stages: list[StagesShortSchema]
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -52,12 +70,6 @@ class FileSchema(BaseModel):
     type: str
     mime: str
 
-    model_config = ConfigDict(from_attributes=True)
-
-
-class FundShortSchema(BaseModel):
-    id: int
-    name: str
     model_config = ConfigDict(from_attributes=True)
 
 

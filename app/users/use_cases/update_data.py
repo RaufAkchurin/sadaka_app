@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.geo.validators.city import city_id_validator
+from app.geo.validators import city_id_validator
 from app.users.dao import UserDAO
 from app.users.models import User
 from app.users.schemas import EmailModel, UserDataUpdateSchema

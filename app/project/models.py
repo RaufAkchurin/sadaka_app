@@ -1,5 +1,5 @@
 from sqlalchemy import Enum as SqlEnum
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, Integer, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
 
 from app.dao.database import Base
@@ -17,7 +17,7 @@ class Project(Base):
     goal: Mapped[int]
 
     fund_id: Mapped[int] = mapped_column(ForeignKey("funds.id"), nullable=False)
-    funds: Mapped["Fund"] = relationship("Fund", back_populates="projects", lazy="joined")
+    fund: Mapped["Fund"] = relationship("Fund", back_populates="projects", lazy="joined")
 
     documents: Mapped[list["File"]] = relationship(  # noqa: F821
         "File",
@@ -54,8 +54,9 @@ class Project(Base):
 
 
 class Stage(Base):
+    __table_args__ = (UniqueConstraint("project_id", "number", name="unique_stage_number_per_project"),)
+    number: Mapped[int] = mapped_column(Integer, nullable=False)
     name: Mapped[str]
-    description: Mapped[str]
     goal: Mapped[int]
     status: Mapped[AbstractStatusEnum] = mapped_column(
         SqlEnum(AbstractStatusEnum, name="stage_status_enum"),
@@ -64,7 +65,7 @@ class Stage(Base):
 
     # project:
     project_id: Mapped[int] = mapped_column(ForeignKey("projects.id"), nullable=False)
-    project: Mapped["Project"] = relationship("Project", back_populates="stages")
+    project: Mapped["Project"] = relationship("Project", back_populates="stages", lazy="joined")
 
     # file:
     reports: Mapped[list["File"]] = relationship(  # noqa: F821
@@ -77,6 +78,12 @@ class Stage(Base):
 
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.project_id}, name={self.status.value})"
+
+    @validates("number")
+    def validate_number(self, key, number):
+        if not 1 <= number <= 5:
+            raise ValueError("Stage number must be between 1 and 5.")
+        return number
 
     # TODO Add validation as active stage only one for project!
     # TODO Add validation if finished need report!!!

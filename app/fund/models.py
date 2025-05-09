@@ -24,7 +24,6 @@ class Fund(Base):
     )  # imported in __init__.py
 
     picture_id: Mapped[int | None] = mapped_column(ForeignKey("files.id"), nullable=True, unique=True)
-
     picture: Mapped["File | None"] = relationship(  # noqa F821
         "File",  # noqa F821
         back_populates="fund_picture",
@@ -44,7 +43,7 @@ class Fund(Base):
 
     # projects:
     projects: Mapped[list["Project"]] = relationship(  # noqa F821
-        "Project", back_populates="funds", cascade="all, delete-orphan"
+        "Project", back_populates="fund", cascade="all, delete-orphan"
     )  # imported in __init__.py
 
     def __repr__(self):
