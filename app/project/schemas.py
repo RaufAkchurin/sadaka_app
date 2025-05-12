@@ -8,20 +8,15 @@ from app.project.enums import AbstractStatusEnum
 # название сбора
 # -необходимая сумма
 # название фонда (ДОБАВИТЬ)
-
-
-
-                    # этап АКТУАЛЬНЫЙ
-# -номер этапа
-
-
+# этапы (нам нужен последний актуальный по идее только)
                     # платежи
 # -собрали
 # - количество спонсоров уникальных
 # - процент закрытия от этапа
-# -кнопка помочь
+# - кнопка помочь
+                    # этап АКТУАЛЬНЫЙ
 #
-# в будущем
+# В БУДУЩЕМ---------------------------------
         Платежи
 -собрали через тебя
         # ЛАЙКИ
@@ -34,9 +29,22 @@ from app.project.enums import AbstractStatusEnum
 # -вк количество
 """
 
+"""
+СБОРЫ ДЕТАЛЬНО
+"""
+
 
 class StatusFilter(BaseModel):
     status: AbstractStatusEnum
+
+
+class FileUrlSchema(BaseModel):
+    url: str
+
+
+class RegionShortSchema(BaseModel):
+    name: str
+    picture: FileUrlSchema
 
 
 class FundShortSchema(BaseModel):
@@ -52,36 +60,34 @@ class StagesShortSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class StagesPaymentsSchema(StagesShortSchema):
+    ...
+
+
+class StagesReportSchema(StagesPaymentsSchema):
+    ...
+
+
+class ProjectPaymentsInfoSchema(BaseModel):
+    total_collected: int
+    unique_sponsors: int
+    collected_percentage: int = 0
+
+
 class ProjectListAPISchema(BaseModel):
     id: int
-    name: str
     status: AbstractStatusEnum
+    name: str
     goal: int
     fund: FundShortSchema
+    payments_total: ProjectPaymentsInfoSchema
+    active_stage: StagesShortSchema | None = None
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class ProjectDetailsAPISchema(ProjectListAPISchema):
+    region_picture_url: str | None = None
+    region_name: str | None = None
+    description: str | None = "Описание отсутствует"
     stages: list[StagesShortSchema]
-
-    model_config = ConfigDict(from_attributes=True)
-
-
-class FileSchema(BaseModel):
-    id: int
-    name: str
-    url: str
-    type: str
-    mime: str
-
-    model_config = ConfigDict(from_attributes=True)
-
-
-# class ProjectDetailAPISchema(BaseModel):
-#     id: int
-#     name: str
-#     status: AbstractStatusEnum
-#     description: Optional[str]
-#
-#     # funds: List[FundShortSchema] = []
-#     documents: List[FileSchema] = []
-#     pictures: List[FileSchema] = []
-#     stages: List[StageSchema] = []
-#
-#     model_config = ConfigDict(from_attributes=True)

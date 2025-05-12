@@ -3,6 +3,7 @@
     "id": 1,
     "name": "project1",
     "status": "FINISHED",
+    "description": "desc1",
     "fund_id": 1,
     "goal": 10000
   },
@@ -10,6 +11,7 @@
     "id": 2,
     "name": "project2",
     "status": "ACTIVE",
+    "description": "desc2",
     "fund_id": 2,
     "goal": 20000
   },
@@ -17,6 +19,7 @@
     "id": 3,
     "name": "project3",
     "status": "ACTIVE",
+    "description": "desc3",
     "fund_id": 3,
     "goal": 30000
   }

@@ -13,6 +13,8 @@ class Project(Base):
         SqlEnum(AbstractStatusEnum, name="project_status_enum"),
         nullable=False,
     )
+
+    # TODO add chars max value
     description: Mapped[str | None]
     goal: Mapped[int]
 
@@ -51,6 +53,17 @@ class Project(Base):
         if len(self.documents) >= 5:
             raise ValueError("You can't have more than 5 documents.")
         return document
+
+    # TODO can we remove region fields from model if need?
+    @property
+    def region_picture_url(self) -> str | None:
+        if self.fund and self.fund.region and self.fund.region.picture:
+            return self.fund.region.picture.url
+
+    @property
+    def region_name(self) -> str | None:
+        if self.fund and self.fund.region and self.fund.region.name:
+            return self.fund.region.name
 
 
 class Stage(Base):
