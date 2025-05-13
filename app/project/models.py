@@ -8,6 +8,7 @@ from app.project.enums import AbstractStatusEnum
 
 
 class Project(Base):
+    # TODO имей ввиду что нигде нет проверки на наличие картинок у проекта, валидации не работают
     name: Mapped[str]
     status: Mapped[AbstractStatusEnum] = mapped_column(
         SqlEnum(AbstractStatusEnum, name="project_status_enum"),
@@ -54,17 +55,6 @@ class Project(Base):
             raise ValueError("You can't have more than 5 documents.")
         return document
 
-    # TODO can we remove region fields from model if need?
-    @property
-    def region_picture_url(self) -> str | None:
-        if self.fund and self.fund.region and self.fund.region.picture:
-            return self.fund.region.picture.url
-
-    @property
-    def region_name(self) -> str | None:
-        if self.fund and self.fund.region and self.fund.region.name:
-            return self.fund.region.name
-
 
 class Stage(Base):
     __table_args__ = (UniqueConstraint("project_id", "number", name="unique_stage_number_per_project"),)
@@ -82,11 +72,11 @@ class Stage(Base):
 
     # file:
     reports: Mapped[list["File"]] = relationship(  # noqa: F821
-        "File", back_populates="stage", cascade="all, delete-orphan"
+        "File", back_populates="stage", cascade="all, delete-orphan", lazy="joined"
     )
     # payments:
     payments: Mapped[list["Payment"]] = relationship(  # noqa: F821
-        "Payment", back_populates="stage", cascade="all, delete-orphan"
+        "Payment", back_populates="stage", cascade="all, delete-orphan", lazy="joined"
     )
 
     def __repr__(self):

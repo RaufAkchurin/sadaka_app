@@ -1,5 +1,6 @@
 from pydantic import BaseModel, ConfigDict
 
+from app.file.enums import FileTypeEnum, MimeEnum
 from app.project.enums import AbstractStatusEnum
 
 """
@@ -38,13 +39,15 @@ class StatusFilter(BaseModel):
     status: AbstractStatusEnum
 
 
-class FileUrlSchema(BaseModel):
-    url: str
-
-
-class RegionShortSchema(BaseModel):
+class FileBaseSchema(BaseModel):
+    id: int
     name: str
-    picture: FileUrlSchema
+    size: int
+    url: str
+    type: FileTypeEnum
+    mime: MimeEnum
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class FundShortSchema(BaseModel):
@@ -55,17 +58,15 @@ class FundShortSchema(BaseModel):
 
 class StagesShortSchema(BaseModel):
     number: int
-    name: str
     status: AbstractStatusEnum
     model_config = ConfigDict(from_attributes=True)
 
 
-class StagesPaymentsSchema(StagesShortSchema):
-    ...
-
-
-class StagesReportSchema(StagesPaymentsSchema):
-    ...
+class StagePaymentsSchema(StagesShortSchema):
+    name: str
+    goal: int
+    collected: int
+    reports: list[FileBaseSchema]
 
 
 class ProjectPaymentsInfoSchema(BaseModel):
@@ -77,17 +78,23 @@ class ProjectPaymentsInfoSchema(BaseModel):
 class ProjectListAPISchema(BaseModel):
     id: int
     status: AbstractStatusEnum
+    pictures: list[str]
+    fund: FundShortSchema
+    active_stage_number: int | None = None
     name: str
     goal: int
-    fund: FundShortSchema
     payments_total: ProjectPaymentsInfoSchema
-    active_stage: StagesShortSchema | None = None
 
     model_config = ConfigDict(from_attributes=True)
 
 
+class RegionInfoSchema(BaseModel):
+    name: str
+    picture_url: str
+
+
 class ProjectDetailsAPISchema(ProjectListAPISchema):
-    region_picture_url: str | None = None
-    region_name: str | None = None
+    region: RegionInfoSchema
     description: str | None = "Описание отсутствует"
-    stages: list[StagesShortSchema]
+    stages: list[StagePaymentsSchema]
+    documents: list[FileBaseSchema]

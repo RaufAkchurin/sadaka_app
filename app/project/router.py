@@ -51,8 +51,7 @@ async def get_project_detail_by_id(
     if project is not None:
         use_case = ProjectPaymentUseCaseImpl()
         updated_project = use_case(project)
-
         return ProjectDetailsAPISchema.model_validate(updated_project)
 
     else:
-        raise ProjectNotFoundException()
+        raise ProjectNotFoundException

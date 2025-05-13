@@ -1,8 +1,10 @@
 from typing import List
 
+from sqlalchemy.orm import Mapped
+
 from app.payments.models import Payment
 from app.project.models import Project, Stage
-from app.project.schemas import ProjectPaymentsInfoSchema
+from app.project.schemas import ProjectPaymentsInfoSchema, RegionInfoSchema
 
 # TODO add PROTOCOL
 # TODO add RETURN CORRECT TYPE to __call__
@@ -13,11 +15,13 @@ class ProjectPaymentUseCaseImpl:
         self.project = project
         payments = project.payments
 
+        pictures_urls = self.get_picture_urls_field()
         unique_sponsors = self.get_unique_sponsors_count(payments)
         total_collected = self.get_total_amount_collected(payments)
         collected_percentage = self.get_collected_percentage(project, total_collected)
-        active_stage = self.get_active_stage()
-        # stages = self.get_stages_related_info()
+        active_stage_number = self.get_active_stage_number()
+        region = self.get_region()
+        stages = self.get_stage_collected_field()
 
         payments_total = {
             "total_collected": total_collected,
@@ -25,9 +29,20 @@ class ProjectPaymentUseCaseImpl:
             "collected_percentage": collected_percentage,
         }
 
-        project.active_stage = active_stage
+        project.pictures_urls = pictures_urls
+        project.active_stage_number = active_stage_number
         project.payments_total = ProjectPaymentsInfoSchema.model_validate(payments_total)
+        project.region = region
+        project.stages = stages
+
         return project
+
+    def get_picture_urls_field(self) -> List[str]:
+        pictures = self.project.pictures
+        urls_list = []
+        for picture in pictures:
+            urls_list.append(picture.url)
+        return urls_list
 
     @staticmethod
     def get_total_amount_collected(payments: List[Payment]) -> int:
@@ -44,19 +59,36 @@ class ProjectPaymentUseCaseImpl:
             unique_sponsors.add(payment.user_id)
         return len(unique_sponsors)
 
-    def get_active_stage(self) -> Stage | None:
+    def get_active_stage_number(self) -> Mapped[int] | None:
         stages = self.project.stages
         active_stage = None
         for stage in stages:
             if stage.status.value == "active":
                 active_stage = stage
                 break
-        return active_stage
+        if active_stage is None:
+            return None
+        return active_stage.number
 
-    # @staticmethod
-    # def get_stages_related_info(self):
-    #
-    #
-    #     # -необходимо
-    #     # -собрали
-    #     # -отчет
+    def get_region(self) -> RegionInfoSchema:
+        project = self.project
+        region_name = ""
+        region_picture_url = ""
+
+        if project.fund and project.fund.region and project.fund.region.picture:
+            region_picture_url = project.fund.region.picture.url
+
+        if project.fund and project.fund.region and project.fund.region.name:
+            region_name = project.fund.region.name
+
+        # Создаем объект RegionInfoSchema
+        region_info = RegionInfoSchema.model_validate({"name": region_name, "picture_url": region_picture_url})
+
+        return region_info
+
+    def get_stage_collected_field(self) -> list[Stage]:
+        stages = self.project.stages
+        for stage in stages:
+            collected: int = sum(payment.amount for payment in stage.payments)
+            stage.collected = collected
+        return stages

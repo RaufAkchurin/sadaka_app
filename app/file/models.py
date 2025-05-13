@@ -44,6 +44,7 @@ class File(Base):
     )
 
     project_picture_id: Mapped[int | None] = mapped_column(ForeignKey("projects.id"), nullable=True)
+
     project_picture: Mapped["Project"] = relationship(  # noqa F821
         "Project", back_populates="pictures", foreign_keys="[File.project_picture_id]"
     )
