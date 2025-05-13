@@ -39,6 +39,11 @@ class StatusFilter(BaseModel):
     status: AbstractStatusEnum
 
 
+class RegionInfoSchema(BaseModel):
+    name: str
+    picture_url: str
+
+
 class FileBaseSchema(BaseModel):
     id: int
     name: str
@@ -56,13 +61,13 @@ class FundShortSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class StagesShortSchema(BaseModel):
+class StageShortSchema(BaseModel):
     number: int
     status: AbstractStatusEnum
     model_config = ConfigDict(from_attributes=True)
 
 
-class StagePaymentsSchema(StagesShortSchema):
+class StagePaymentsSchema(StageShortSchema):
     name: str
     goal: int
     collected: int
@@ -78,7 +83,7 @@ class ProjectPaymentsInfoSchema(BaseModel):
 class ProjectListAPISchema(BaseModel):
     id: int
     status: AbstractStatusEnum
-    pictures: list[str]
+    pictures_list: list[str]
     fund: FundShortSchema
     active_stage_number: int | None = None
     name: str
@@ -86,11 +91,6 @@ class ProjectListAPISchema(BaseModel):
     payments_total: ProjectPaymentsInfoSchema
 
     model_config = ConfigDict(from_attributes=True)
-
-
-class RegionInfoSchema(BaseModel):
-    name: str
-    picture_url: str
 
 
 class ProjectDetailsAPISchema(ProjectListAPISchema):

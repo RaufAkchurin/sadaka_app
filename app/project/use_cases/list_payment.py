@@ -15,13 +15,13 @@ class ProjectPaymentUseCaseImpl:
         self.project = project
         payments = project.payments
 
-        pictures_urls = self.get_picture_urls_field()
         unique_sponsors = self.get_unique_sponsors_count(payments)
         total_collected = self.get_total_amount_collected(payments)
         collected_percentage = self.get_collected_percentage(project, total_collected)
         active_stage_number = self.get_active_stage_number()
         region = self.get_region()
         stages = self.get_stage_collected_field()
+        pictures_list = self.get_picture_urls_field()
 
         payments_total = {
             "total_collected": total_collected,
@@ -29,16 +29,17 @@ class ProjectPaymentUseCaseImpl:
             "collected_percentage": collected_percentage,
         }
 
-        project.pictures_urls = pictures_urls
         project.active_stage_number = active_stage_number
         project.payments_total = ProjectPaymentsInfoSchema.model_validate(payments_total)
         project.region = region
         project.stages = stages
+        project.pictures_list = pictures_list
 
         return project
 
-    def get_picture_urls_field(self) -> List[str]:
-        pictures = self.project.pictures
+    def get_picture_urls_field(self) -> list[str]:
+        # TODO переделать под КАРТИНКИ, а доки это для заглушки сделано
+        pictures = self.project.documents
         urls_list = []
         for picture in pictures:
             urls_list.append(picture.url)
