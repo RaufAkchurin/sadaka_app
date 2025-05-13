@@ -93,7 +93,7 @@ class ProjectListAPISchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class ProjectDetailsAPISchema(ProjectListAPISchema):
+class ProjectDetailAPISchema(ProjectListAPISchema):
     region: RegionInfoSchema
     description: str | None = "Описание отсутствует"
     stages: list[StagePaymentsSchema]

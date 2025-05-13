@@ -10,7 +10,8 @@ from app.project.schemas import ProjectPaymentsInfoSchema, RegionInfoSchema
 # TODO add RETURN CORRECT TYPE to __call__
 
 
-class ProjectPaymentUseCaseImpl:
+class ProjectForListUseCaseImpl:
+    # TODO переделать под КАРТИНКИ, а доки это для заглушки сделано
     def __call__(self, project: Project) -> Project:
         self.project = project
         payments = project.payments
