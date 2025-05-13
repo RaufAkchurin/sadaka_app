@@ -1,16 +1,16 @@
 from fastapi import UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.file.interfaces import AbstractUploadFileToS3UseCase
 from app.file.schemas import UploadedFileDataSchema
+from app.file.use_cases.interfaces import S3UploadUseCaseProtocol
 from app.users.dao import FileDAO
 
 
-class CreateFileWithContentUseCase:
-    def __init__(self, session: AsyncSession, uploader: AbstractUploadFileToS3UseCase):
+class FileCreateWithContentUseCaseImpl:
+    def __init__(self, session: AsyncSession, uploader: S3UploadUseCaseProtocol):
         self.session = session
-        self.file_dao = FileDAO(session=session)
         self.uploader = uploader
+        self.file_dao = FileDAO(session=session)
 
     async def __call__(self, picture: UploadFile) -> UploadedFileDataSchema | None:
         try:
