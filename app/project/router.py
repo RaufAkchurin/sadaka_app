@@ -12,15 +12,6 @@ from app.users.models import User
 
 projects_router = APIRouter()
 
-"""
-Тест кейсы
--создать проект и чтобы у него были все Зконченные стадии проверять сколько в респонсе
--есть и законченные и активные
--есть только активные ???
-2 - осздать различные платежи и првоерять ответы
-кейс - отсутствуют этапы вообще
-"""
-
 
 @projects_router.get("/all/{status_of_project}", response_model=list[ProjectForListAPISchema])
 async def get_projects_list(
@@ -39,7 +30,6 @@ async def get_projects_list(
     return serialized_projects
 
 
-# TODO проверить несущ айди
 # TODO В БД к проекту не привязываются картинки в отличие от документов
 # TODO переделать pictures_list под КАРТИНКИ, а доки это для заглушки сделано
 @projects_router.get("/detail/{project_id}", response_model=ProjectDetailAPISchema)
