@@ -2,6 +2,8 @@ from typing import List
 
 from sqlalchemy.orm import Mapped
 
+from app.file.models import File
+from app.geo import Fund
 from app.payments.models import Payment
 from app.project.models import Project, Stage
 from app.project.schemas import ProjectPaymentsInfoSchema, RegionInfoSchema
@@ -23,6 +25,7 @@ class ProjectForListUseCaseImpl:
         region = self.get_region()
         stages = self.get_stage_collected_field()
         pictures_list = self.get_picture_urls_field()
+        fund = self.get_fund_picture_url()
 
         payments_total = {
             "total_collected": total_collected,
@@ -35,16 +38,11 @@ class ProjectForListUseCaseImpl:
         project.region = region
         project.stages = stages
         project.pictures_list = pictures_list
+        project.fund = fund
 
         return project
 
-    def get_picture_urls_field(self) -> list[str]:
-        # TODO переделать под КАРТИНКИ, а доки это для заглушки сделано
-        pictures = self.project.documents
-        urls_list = []
-        for picture in pictures:
-            urls_list.append(picture.url)
-        return urls_list
+    # PAYMENTS TOTAL
 
     @staticmethod
     def get_total_amount_collected(payments: List[Payment]) -> int:
@@ -60,6 +58,26 @@ class ProjectForListUseCaseImpl:
         for payment in payments:
             unique_sponsors.add(payment.user_id)
         return len(unique_sponsors)
+
+    # OTHERS
+
+    def get_fund_picture_url(self) -> Fund:
+        fund = self.project.fund
+        fund.picture_url = None
+
+        if isinstance(fund.picture, File):
+            picture_url = self.project.fund.picture.url
+            fund.picture_url = picture_url
+
+        return fund
+
+    def get_picture_urls_field(self) -> list[str]:
+        # TODO переделать под КАРТИНКИ, а доки это для заглушки сделано
+        pictures = self.project.documents
+        urls_list = []
+        for picture in pictures:
+            urls_list.append(picture.url)
+        return urls_list
 
     def get_active_stage_number(self) -> Mapped[int] | None:
         stages = self.project.stages
@@ -83,7 +101,6 @@ class ProjectForListUseCaseImpl:
         if project.fund and project.fund.region and project.fund.region.name:
             region_name = project.fund.region.name
 
-        # Создаем объект RegionInfoSchema
         region_info = RegionInfoSchema.model_validate({"name": region_name, "picture_url": region_picture_url})
 
         return region_info

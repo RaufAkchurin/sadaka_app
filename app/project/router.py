@@ -5,7 +5,7 @@ from app.dependencies.auth_dep import get_current_user
 from app.dependencies.dao_dep import get_session_with_commit
 from app.exceptions import ProjectNotFoundException
 from app.project.enums import AbstractStatusEnum
-from app.project.schemas import ProjectDetailAPISchema, ProjectListAPISchema, StatusFilter
+from app.project.schemas import ProjectDetailAPISchema, ProjectForListAPISchema, StatusFilter
 from app.project.use_cases.list_payment import ProjectForListUseCaseImpl
 from app.users.dao import ProjectDAO
 from app.users.models import User
@@ -22,19 +22,19 @@ projects_router = APIRouter()
 """
 
 
-@projects_router.get("/all/{status_of_project}", response_model=list[ProjectListAPISchema])
+@projects_router.get("/all/{status_of_project}", response_model=list[ProjectForListAPISchema])
 async def get_projects_list(
     status_of_project: AbstractStatusEnum,
     user_data: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session_with_commit),
-) -> list[ProjectListAPISchema]:
+) -> list[ProjectForListAPISchema]:
     filtered_projects = await ProjectDAO(session=session).find_all(filters=StatusFilter(status=status_of_project))
 
     serialized_projects = []
     for project in filtered_projects:
         use_case = ProjectForListUseCaseImpl()
         updated_project = use_case(project)
-        serialized_projects.append(ProjectListAPISchema.model_validate(updated_project))
+        serialized_projects.append(ProjectForListAPISchema.model_validate(updated_project))
 
     return serialized_projects
 

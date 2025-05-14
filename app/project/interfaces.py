@@ -1,8 +1,8 @@
 from typing import Protocol
 
-from app.project.schemas import ProjectListAPISchema
+from app.project.schemas import ProjectForListAPISchema
 
 
-class ProjectListUseCaseProtocol(Protocol):
-    async def __call__(self ) -> list[ProjectListAPISchema]:
+class ProjectForListUseCaseProtocol(Protocol):
+    async def __call__(self) -> ProjectForListAPISchema:
         ...

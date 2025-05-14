@@ -58,6 +58,7 @@ class FileBaseSchema(BaseModel):
 class FundShortSchema(BaseModel):
     id: int
     name: str
+    picture_url: str | None
     model_config = ConfigDict(from_attributes=True)
 
 
@@ -80,7 +81,7 @@ class ProjectPaymentsInfoSchema(BaseModel):
     collected_percentage: int = 0
 
 
-class ProjectListAPISchema(BaseModel):
+class ProjectForListAPISchema(BaseModel):
     id: int
     status: AbstractStatusEnum
     pictures_list: list[str]
@@ -93,7 +94,7 @@ class ProjectListAPISchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class ProjectDetailAPISchema(ProjectListAPISchema):
+class ProjectDetailAPISchema(ProjectForListAPISchema):
     region: RegionInfoSchema
     description: str | None = "Описание отсутствует"
     stages: list[StagePaymentsSchema]
