@@ -75,12 +75,6 @@ class StagePaymentsSchema(StageShortSchema):
     reports: list[FileBaseSchema]
 
 
-class ProjectPaymentsInfoSchema(BaseModel):
-    total_collected: int
-    unique_sponsors: int
-    collected_percentage: int = 0
-
-
 class ProjectForListAPISchema(BaseModel):
     id: int
     status: AbstractStatusEnum
@@ -89,7 +83,9 @@ class ProjectForListAPISchema(BaseModel):
     active_stage_number: int | None = None
     name: str
     goal: int
-    payments_total: ProjectPaymentsInfoSchema
+    total_collected: int
+    unique_sponsors: int
+    collected_percentage: int = 0
 
     model_config = ConfigDict(from_attributes=True)
 

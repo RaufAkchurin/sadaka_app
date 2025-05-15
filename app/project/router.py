@@ -6,7 +6,6 @@ from app.dependencies.dao_dep import get_session_with_commit
 from app.exceptions import ProjectNotFoundException
 from app.project.enums import AbstractStatusEnum
 from app.project.schemas import ProjectDetailAPISchema, ProjectForListAPISchema, StatusFilter
-from app.project.use_cases.list_payment import ProjectForListUseCaseImpl
 from app.users.dao import ProjectDAO
 from app.users.models import User
 
@@ -23,9 +22,7 @@ async def get_projects_list(
 
     serialized_projects = []
     for project in filtered_projects:
-        use_case = ProjectForListUseCaseImpl()
-        updated_project = use_case(project)
-        serialized_projects.append(ProjectForListAPISchema.model_validate(updated_project))
+        serialized_projects.append(ProjectForListAPISchema.model_validate(project))
 
     return serialized_projects
 
@@ -41,9 +38,7 @@ async def get_project_detail_by_id(
     project = await ProjectDAO(session=session).find_one_or_none_by_id(data_id=project_id)
 
     if project is not None:
-        use_case = ProjectForListUseCaseImpl()
-        updated_project = use_case(project)
-        return ProjectDetailAPISchema.model_validate(updated_project)
+        return ProjectDetailAPISchema.model_validate(project)
 
     else:
         raise ProjectNotFoundException
