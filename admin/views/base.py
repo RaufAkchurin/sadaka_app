@@ -3,6 +3,7 @@ from markupsafe import Markup
 from sqladmin import ModelView
 from wtforms import FileField
 
+from app.dependencies.s3 import get_s3_client
 from app.s3_storage.use_cases.s3_upload import S3UploadUseCaseImpl
 
 
@@ -15,6 +16,10 @@ class CreateWithPictureAdmin(BaseAdminView):
     column_list = ["id", "name", "picture_url"]
     form_excluded_columns = ["created_at", "updated_at", "url"]
 
+    def __init__(self):
+        super().__init__()
+        self.s3_client = get_s3_client()
+
     async def scaffold_form(self, form_rules=None):
         form_class = await super().scaffold_form()
         form_class.picture_file = FileField("Загрузить картинку")
@@ -25,7 +30,7 @@ class CreateWithPictureAdmin(BaseAdminView):
         file: UploadFile = form.get("picture_file")
 
         if file and file.filename:
-            use_case = S3UploadUseCaseImpl()
+            use_case = S3UploadUseCaseImpl(s3_client=self.s3_client)
             s3_file = await use_case(file=file)
             data["url"] = s3_file.url
 
