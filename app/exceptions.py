@@ -51,3 +51,7 @@ FileNameNotProvidedException = HTTPException(
 )
 
 FileNotFoundS3Exception = HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Файл не найден в хранилище S3")
+
+
+# Проекты
+ProjectNotFoundException = HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Проект не найден")

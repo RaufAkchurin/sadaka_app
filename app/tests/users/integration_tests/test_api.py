@@ -74,7 +74,7 @@ class TestUsers:
                 b"Test file content1",
                 200,
                 {
-                    "id": 14,
+                    "id": 29,
                     "mime": "PNG",
                     "name": "file1",
                     "size": 18,
@@ -88,7 +88,7 @@ class TestUsers:
                 b"Test file content2",
                 200,
                 {
-                    "id": 15,
+                    "id": 30,
                     "mime": "PNG",
                     "name": "file2",
                     "size": 18,

@@ -1,8 +1,8 @@
 from fastapi import UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.file.interfaces import S3UploadUseCaseProtocol
 from app.file.schemas import UploadedFileDataSchema
-from app.file.use_cases.interfaces import S3UploadUseCaseProtocol
 from app.users.dao import FileDAO
 
 

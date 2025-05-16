@@ -4,6 +4,7 @@ from sqlalchemy import ForeignKey, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
 
 from app.dao.database import Base
+from app.file.models import File
 from app.utils.validators import validate_phone
 
 
@@ -24,7 +25,6 @@ class Fund(Base):
     )  # imported in __init__.py
 
     picture_id: Mapped[int | None] = mapped_column(ForeignKey("files.id"), nullable=True, unique=True)
-
     picture: Mapped["File | None"] = relationship(  # noqa F821
         "File",  # noqa F821
         back_populates="fund_picture",
@@ -44,7 +44,7 @@ class Fund(Base):
 
     # projects:
     projects: Mapped[list["Project"]] = relationship(  # noqa F821
-        "Project", back_populates="funds", cascade="all, delete-orphan"
+        "Project", back_populates="fund", cascade="all, delete-orphan"
     )  # imported in __init__.py
 
     def __repr__(self):
@@ -53,3 +53,12 @@ class Fund(Base):
     @validates("hot_line")
     def validate_hot_line(self, key: str, value: str):
         return validate_phone(value)
+
+    @property
+    def picture_url(self) -> str:
+        picture_url = None
+
+        if isinstance(self.picture, File):
+            picture_url = self.picture.url
+
+        return picture_url
