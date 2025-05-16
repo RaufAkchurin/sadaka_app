@@ -27,8 +27,6 @@ async def get_projects_list(
     return serialized_projects
 
 
-# TODO В БД к проекту не привязываются картинки в отличие от документов
-# TODO переделать pictures_list под КАРТИНКИ, а доки это для заглушки сделано
 @projects_router.get("/detail/{project_id}", response_model=ProjectDetailAPISchema)
 async def get_project_detail_by_id(
     project_id: int,

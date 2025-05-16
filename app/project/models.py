@@ -85,8 +85,7 @@ class Project(Base):
 
     @property
     def pictures_list(self) -> list[str]:
-        # TODO переделать под КАРТИНКИ, а доки это для заглушки сделано
-        pictures = self.documents
+        pictures = self.pictures
         urls_list = []
         for picture in pictures:
             urls_list.append(picture.url)
