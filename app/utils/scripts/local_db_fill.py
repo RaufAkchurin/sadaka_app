@@ -4,16 +4,16 @@ import os
 
 from sqlalchemy import insert
 
-from app.dao.v1.database import Base, async_session_maker, engine
+from app.dao.database import Base, async_session_maker, engine
 
 # Мапа: имя модели в JSON → (модель SQLAlchemy, имя файла без расширения)
-from app.file.v1.models import File
-from app.fund.v1.models import Fund
-from app.geo.v1.models import City, Country, Region
-from app.payments.v1.models import Payment
-from app.project.v1.models import Project, Stage
+from app.file.models import File
+from app.fund.models import Fund
+from app.geo.models import City, Country, Region
+from app.payments.models import Payment
+from app.project.models import Project, Stage
 from app.settings import settings
-from app.users.v1.models import User
+from app.users.models import User
 
 MODELS_MAP = {
     "country": Country,
@@ -30,7 +30,7 @@ MODELS_MAP = {
 
 def open_mock_json(model_name: str):
     test_dir = os.path.dirname(os.path.dirname(__file__))
-    file_path = os.path.join(test_dir, f"../tests/v1/mocks/mock_{model_name}.json")
+    file_path = os.path.join(test_dir, f"../tests/mocks/mock_{model_name}.json")
     with open(file_path, "r", encoding="utf-8") as file:
         return json.load(file)
 

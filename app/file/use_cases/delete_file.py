@@ -1,11 +1,11 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.client.v1.interfaces import S3ClientUseCaseProtocol
-from app.file.v1.models import File
+from app.client.interfaces import S3ClientUseCaseProtocol
+from app.file.models import File
+from app.s3_storage.interfaces import S3DeleteUseCaseProtocol
 from app.s3_storage.use_cases.s3_delete import S3DeleteUseCaseImpl
-from app.s3_storage.v1.interfaces import S3DeleteUseCaseProtocol
-from app.users.v1.dao import FileDAO
-from app.users.v1.schemas import IdModel
+from app.users.dao import FileDAO
+from app.users.schemas import IdModel
 
 
 class FileDeleteWithContentUseCaseImpl:

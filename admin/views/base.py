@@ -3,7 +3,7 @@ from markupsafe import Markup
 from sqladmin import ModelView
 from wtforms import FileField
 
-from app.dependencies.v1.s3 import get_s3_client
+from app.dependencies.s3 import get_s3_client
 from app.s3_storage.use_cases.s3_upload import S3UploadUseCaseImpl
 
 

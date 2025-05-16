@@ -1,4 +1,4 @@
-from app.client.v1.interfaces import S3ClientUseCaseProtocol
+from app.client.interfaces import S3ClientUseCaseProtocol
 from app.exceptions import FileNameNotProvidedException
 
 

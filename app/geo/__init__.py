@@ -1,4 +1,4 @@
-from app.fund.v1.models import Fund
+from app.fund.models import Fund
 
 Fund = Fund
 
