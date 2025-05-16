@@ -1,9 +1,9 @@
 from fastapi import HTTPException, UploadFile, status
 
-from app.client.interfaces import S3ClientUseCaseProtocol
+from app.client.v1.interfaces import S3ClientUseCaseProtocol
 from app.exceptions import FileNotProvidedException
-from app.file.enums import FileTypeEnum, MimeEnum
-from app.s3_storage.schemas import S3UploadedFileSchema
+from app.file.v1.enums import FileTypeEnum, MimeEnum
+from app.s3_storage.v1.schemas import S3UploadedFileSchema
 from app.settings import settings
 
 
