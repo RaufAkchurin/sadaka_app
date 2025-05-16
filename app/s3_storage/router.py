@@ -8,10 +8,10 @@ from app.s3_storage.use_cases.s3_download import S3DownloadUseCaseImpl
 from app.s3_storage.use_cases.s3_upload import S3UploadUseCaseImpl
 from app.users.models import User
 
-s3_router = APIRouter()
+v1_s3_router = APIRouter()
 
 
-@s3_router.post("/upload")
+@v1_s3_router.post("/upload")
 async def upload(
     file: UploadFile | None = None,
     user_data: User = Depends(get_current_user),
@@ -23,7 +23,7 @@ async def upload(
     return {"file_data": file_data}
 
 
-@s3_router.get("/{file_name}")
+@v1_s3_router.get("/{file_name}")
 async def download(
     file_name: str,
     user_data: User = Depends(get_current_user),
@@ -38,7 +38,7 @@ async def download(
     )
 
 
-@s3_router.delete("/{file_name}")
+@v1_s3_router.delete("/{file_name}")
 async def delete(
     file_name: str,
     user_data: User = Depends(get_current_user),

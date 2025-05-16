@@ -9,10 +9,10 @@ from app.project.schemas import ProjectDetailAPISchema, ProjectForListAPISchema,
 from app.users.dao import ProjectDAO
 from app.users.models import User
 
-projects_router = APIRouter()
+v1_projects_router = APIRouter()
 
 
-@projects_router.get("/all/{status_of_project}", response_model=list[ProjectForListAPISchema])
+@v1_projects_router.get("/all/{status_of_project}", response_model=list[ProjectForListAPISchema])
 async def get_projects_list(
     status_of_project: AbstractStatusEnum,
     user_data: User = Depends(get_current_user),
@@ -27,7 +27,7 @@ async def get_projects_list(
     return serialized_projects
 
 
-@projects_router.get("/detail/{project_id}", response_model=ProjectDetailAPISchema)
+@v1_projects_router.get("/detail/{project_id}", response_model=ProjectDetailAPISchema)
 async def get_project_detail_by_id(
     project_id: int,
     user_data: User = Depends(get_current_user),

@@ -10,10 +10,11 @@ from app.users.dao import UserDAO
 from app.users.models import User
 from app.users.schemas import AnonymousUserAddDB, EmailModel, SUserAddDB, SUserAuth, SUserEmailRegister, UserActiveModel
 
-auth_router = APIRouter()
+v1_auth_router = APIRouter(tags=["Auth v1"])
+v2_auth_router = APIRouter(tags=["Auth v2"])
 
 
-@auth_router.post("/register/")
+@v1_auth_router.post("/register/")
 async def register_by_email(
     user_data: SUserEmailRegister,
     session: AsyncSession = Depends(get_session_with_commit),
@@ -33,7 +34,7 @@ async def register_by_email(
     return {"message": "Вы успешно зарегистрированы!"}
 
 
-@auth_router.post("/login_anonymous/")
+@v1_auth_router.post("/login_anonymous/")
 async def register_and_login_anonymous(
     response: Response, session: AsyncSession = Depends(get_session_with_commit)
 ) -> dict:
@@ -43,7 +44,7 @@ async def register_and_login_anonymous(
     return {"message": "Анонимный пользователь добавлен"}
 
 
-@auth_router.post("/login/")
+@v1_auth_router.post("/login/")
 async def login_by_email(
     response: Response,
     user_data: SUserAuth,
@@ -58,14 +59,20 @@ async def login_by_email(
     return {"ok": True, "message": "Авторизация успешна!"}
 
 
-@auth_router.get("/logout")
+@v1_auth_router.get("/logout")
 async def logout(response: Response):
     response.delete_cookie("user_access_token")
     response.delete_cookie("user_refresh_token")
     return {"message": "Пользователь успешно вышел из системы"}
 
 
-@auth_router.post("/refresh")
+@v1_auth_router.post("/refresh")
 async def process_refresh_token(response: Response, user: User = Depends(check_refresh_token)):
+    set_tokens(response, user.id)
+    return {"message": "Токены успешно обновлены"}
+
+
+@v2_auth_router.post("/versioning_for_example")
+async def versioning_for_example(response: Response, user: User = Depends(check_refresh_token)):
     set_tokens(response, user.id)
     return {"message": "Токены успешно обновлены"}

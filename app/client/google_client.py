@@ -1,6 +1,6 @@
 import requests
 
-from app.auth.google.schemas import GoogleUserData
+from app.auth_google.schemas import GoogleUserData
 from app.settings import settings
 
 

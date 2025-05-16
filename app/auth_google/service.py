@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.auth.google.schemas import GoogleUserAddDB
+from app.auth_google.schemas import GoogleUserAddDB
 from app.client.google_client import google_client
 from app.users.dao import UserDAO
 from app.users.schemas import EmailModel, UserBase

@@ -16,15 +16,15 @@ from app.users.use_cases.get_all_users import GetAllUsersUseCase
 from app.users.use_cases.update_data import UserDataUpdateUseCase
 from app.users.use_cases.update_logo import UserLogoUpdateUseCaseImpl
 
-users_router = APIRouter()
+v1_users_router = APIRouter()
 
 
-@users_router.get("/me")
+@v1_users_router.get("/me")
 async def get_me(user_data: User = Depends(get_current_user)) -> SUserInfo:
     return SUserInfo.model_validate(user_data)
 
 
-@users_router.put("/update_logo")
+@v1_users_router.put("/update_logo")
 async def update_user_logo(
     picture: UploadFile,
     session: AsyncSession = Depends(get_session_with_commit),
@@ -37,7 +37,7 @@ async def update_user_logo(
     return updated_logo_url
 
 
-@users_router.put("/update_data")
+@v1_users_router.put("/update_data")
 async def update_user_data(
     update_data: UserDataUpdateSchema,
     session: AsyncSession = Depends(get_session_with_commit),
@@ -49,7 +49,7 @@ async def update_user_data(
     return validated_data
 
 
-@users_router.delete("/me")
+@v1_users_router.delete("/me")
 async def delete_user(
     session: AsyncSession = Depends(get_session_with_commit),
     user: User = Depends(get_current_user),
@@ -62,7 +62,7 @@ async def delete_user(
 
 
 # For admins only
-@users_router.get("/all_users")
+@v1_users_router.get("/all_users")
 async def get_all_users(
     session: AsyncSession = Depends(get_session_with_commit),
     user_data: User = Depends(get_current_admin_user),
