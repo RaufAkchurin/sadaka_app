@@ -7,11 +7,11 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from app.models.file import File  # noqa: F401
+from app.models.fund import Fund  # noqa: F401
+from app.models.geo import City, Country, Region  # noqa: F401
+from app.models.project import Project, Stage  # noqa: F401
 from app.models.user import User  # noqa: F401
 from app.v1.dao.database import DATABASE_URL, Base
-from app.v1.fund import Fund  # noqa: F401
-from app.v1.geo import City, Country, Region  # noqa: F401
-from app.v1.project import Project, Stage  # noqa: F401
 
 config = context.config
 config.set_main_option("sqlalchemy.url", DATABASE_URL)

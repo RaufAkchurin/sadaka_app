@@ -40,11 +40,15 @@ class Fund(Base):
         back_populates="fund_document",
         cascade="all, delete-orphan",
         foreign_keys="[File.fund_document_id]",
+        lazy="joined",
     )
 
     # projects:
     projects: Mapped[list["Project"]] = relationship(  # noqa F821
-        "Project", back_populates="fund", cascade="all, delete-orphan"
+        "Project",
+        back_populates="fund",
+        cascade="all, delete-orphan",
+        lazy="joined",
     )  # imported in __init__.py
 
     def __repr__(self):
@@ -62,3 +66,17 @@ class Fund(Base):
             picture_url = self.picture.url
 
         return picture_url
+
+    @property
+    def region_name(self) -> str:
+        return self.region.name
+
+    @property
+    def projects_count(self) -> int:
+        return len(self.projects)
+
+    @property
+    def total_collected(self) -> int:
+        projects = self.projects
+        total_collected = sum([project.total_collected for project in projects])
+        return total_collected
