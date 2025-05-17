@@ -55,9 +55,9 @@ class TestUsers:
                 raise ValueError("User not found")
             authorized_client = await auth_by(ac, current_user)
             client = authorized_client.client
-            response = await client.get("/app/v1/users/all_users", cookies=authorized_client.cookies.dict())
+            response = await client.get("/app/v1/users/all", cookies=authorized_client.cookies.dict())
         else:
-            response = await ac.get("/app/v1/users/all_users")
+            response = await ac.get("/app/v1/users/all")
 
         assert response.status_code == status_code
         if users_count:

@@ -62,7 +62,7 @@ async def delete_user(
 
 
 # For admins only
-@v1_users_router.get("/all_users")
+@v1_users_router.get("/all")
 async def get_all_users(
     session: AsyncSession = Depends(get_session_with_commit),
     user_data: User = Depends(get_current_admin_user),
