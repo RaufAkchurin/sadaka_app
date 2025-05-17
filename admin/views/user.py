@@ -1,5 +1,5 @@
 from admin.views.base import CreateWithPictureAdmin
-from app.users.models import User
+from app.models.user import User
 
 
 class UserAdmin(CreateWithPictureAdmin, model=User):

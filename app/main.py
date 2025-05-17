@@ -8,11 +8,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
 from admin.register import create_admin_panel
-from app.auth.router import v1_auth_router, v2_auth_router
-from app.auth_google.router import v1_google_router
-from app.project.router import v1_projects_router
-from app.s3_storage.router import v1_s3_router
-from app.users.router import v1_users_router
+from app.v1.auth.router import v1_auth_router, v2_auth_router
+from app.v1.auth_google.router import v1_google_router
+from app.v1.project.router import v1_projects_router
+from app.v1.s3_storage.router import v1_s3_router
+from app.v1.users.router import v1_users_router
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 

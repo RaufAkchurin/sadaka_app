@@ -1,9 +1,9 @@
 from admin.views.base import BaseAdminView, CreateWithPictureAdmin
-from app.file.models import File
-from app.fund import City, Country, Region
-from app.fund.models import Fund
-from app.payments.models import Payment
-from app.project.models import Project, Stage
+from app.models.file import File
+from app.models.fund import Fund
+from app.models.geo import City, Country, Region
+from app.models.payments import Payment
+from app.models.project import Project, Stage
 
 ############### ГЕОГРАФИЯ ############### # noqa E266
 
