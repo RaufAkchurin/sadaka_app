@@ -1,11 +1,11 @@
 class TestProjectDetail:
     async def test_400_authorization(self, ac) -> None:
-        response = await ac.get("/projects/detail/1")
+        response = await ac.get("/app/v1/projects/detail/1")
         assert response.status_code == 400
         assert response.json() == {"detail": "Токен отсутствует в заголовке"}
 
     async def test_id_validate(self, auth_ac) -> None:
-        response = await auth_ac.client.get("/projects/detail/hob", cookies=auth_ac.cookies.dict())
+        response = await auth_ac.client.get("/app/v1/projects/detail/hob", cookies=auth_ac.cookies.dict())
         assert response.status_code == 422
         assert response.json() == {
             "detail": [
@@ -19,11 +19,11 @@ class TestProjectDetail:
         }
 
     async def test_id_not_exist(self, auth_ac) -> None:
-        response = await auth_ac.client.get("/projects/detail/99", cookies=auth_ac.cookies.dict())
+        response = await auth_ac.client.get("/app/v1/projects/detail/99", cookies=auth_ac.cookies.dict())
         assert response.status_code == 404
 
     async def test_list_active(self, auth_ac) -> None:
-        response = await auth_ac.client.get("/projects/detail/1", cookies=auth_ac.cookies.dict())
+        response = await auth_ac.client.get("/app/v1/projects/detail/1", cookies=auth_ac.cookies.dict())
         assert response.status_code == 200
 
         assert response.json() == {

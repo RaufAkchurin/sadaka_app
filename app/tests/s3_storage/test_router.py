@@ -31,13 +31,13 @@ class TestS3Storage:
 
         if is_authorized:
             response = await auth_ac.client.post(
-                "/s3_storage/upload",
+                "/app/v1/s3_storage/upload",
                 files={"file": (file_name, file_content, "image/png")},
                 cookies=auth_ac.cookies.dict(),
             )
         else:
             response = await ac.post(
-                "/s3_storage/upload",
+                "/app/v1/s3_storage/upload",
                 files={"file": (file_name, file_content, "image/png")},
             )
 
@@ -74,13 +74,13 @@ class TestS3Storage:
 
         if is_authorized:
             response = await auth_ac.client.post(
-                "/s3_storage/upload",
+                "/app/v1/s3_storage/upload",
                 files={"file": (file_name, file_content, "image/png")},
                 cookies=auth_ac.cookies.dict(),
             )
         else:
             response = await ac.post(
-                "/s3_storage/upload",
+                "/app/v1/s3_storage/upload",
                 files={"file": (file_name, file_content, "image/png")},
             )
 
@@ -119,7 +119,7 @@ class TestS3Storage:
 
         if is_authorized:
             response = await auth_ac.client.post(
-                "/s3_storage/upload",
+                "/app/v1/s3_storage/upload",
                 files={
                     "file": (
                         file_name,
@@ -131,7 +131,7 @@ class TestS3Storage:
             )
         else:
             response = await ac.post(
-                "/s3_storage/upload",
+                "/app/v1/s3_storage/upload",
                 files={
                     "file": (
                         file_name,
@@ -157,15 +157,15 @@ class TestS3Storage:
 
         # Сначала загрузим файл
         await auth_ac.client.post(
-            "/s3_storage/upload",
+            "/app/v1/s3_storage/upload",
             files={"file": (file_name, file_content, "image/png")},
             cookies=auth_ac.cookies.dict(),
         )
 
         if is_authorized:
-            response = await auth_ac.client.get(f"/s3_storage/{file_name}", cookies=auth_ac.cookies.dict())
+            response = await auth_ac.client.get(f"/app/v1/s3_storage/{file_name}", cookies=auth_ac.cookies.dict())
         else:
-            response = await ac.get(f"/s3_storage/{file_name}")
+            response = await ac.get(f"/app/v1/s3_storage/{file_name}")
 
         assert response.status_code == status_code
         if is_authorized:
@@ -182,9 +182,9 @@ class TestS3Storage:
     )
     async def test_download_file_not_found(self, ac, auth_ac, is_authorized, file_name, status_code, response_message):
         if is_authorized:
-            response = await auth_ac.client.get(f"/s3_storage/{file_name}", cookies=auth_ac.cookies.dict())
+            response = await auth_ac.client.get(f"/app/v1/s3_storage/{file_name}", cookies=auth_ac.cookies.dict())
         else:
-            response = await ac.get(f"/s3_storage/{file_name}")
+            response = await ac.get(f"/app/v1/s3_storage/{file_name}")
 
         assert response.status_code == status_code
         assert response.json() == response_message
@@ -214,15 +214,17 @@ class TestS3Storage:
         # Сначала загрузим файл
         if is_authorized:
             await auth_ac.client.post(
-                "/s3_storage/upload",
+                "/app/v1/s3_storage/upload",
                 files={"file": (file_name, file_content, "image/png")},
                 cookies=auth_ac.cookies.dict(),
             )
 
         if is_authorized:
-            delete_response = await auth_ac.client.delete(f"/s3_storage/{file_name}", cookies=auth_ac.cookies.dict())
+            delete_response = await auth_ac.client.delete(
+                f"/app/v1/s3_storage/{file_name}", cookies=auth_ac.cookies.dict()
+            )
         else:
-            delete_response = await ac.delete(f"/s3_storage/{file_name}")
+            delete_response = await ac.delete(f"/app/v1/s3_storage/{file_name}")
 
         assert delete_response.status_code == status_code
         assert delete_response.json() == response_message

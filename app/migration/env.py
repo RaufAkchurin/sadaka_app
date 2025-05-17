@@ -6,12 +6,12 @@ from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
-from app.dao.database import DATABASE_URL, Base
-from app.file.models import File  # noqa: F401
-from app.fund.models import Fund  # noqa: F401
-from app.geo.models import City, Country, Region  # noqa: F401
-from app.project.models import Project, Stage  # noqa: F401
-from app.users.models import User  # noqa: F401
+from app.models.file import File  # noqa: F401
+from app.models.user import User  # noqa: F401
+from app.v1.dao.database import DATABASE_URL, Base
+from app.v1.fund import Fund  # noqa: F401
+from app.v1.geo import City, Country, Region  # noqa: F401
+from app.v1.project import Project, Stage  # noqa: F401
 
 config = context.config
 config.set_main_option("sqlalchemy.url", DATABASE_URL)

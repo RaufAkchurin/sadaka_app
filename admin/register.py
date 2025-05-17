@@ -12,7 +12,7 @@ from admin.views.all import (
     StageAdmin,
 )
 from admin.views.user import UserAdmin
-from app.dao.database import engine
+from app.v1.dao.database import engine
 
 
 def create_admin_panel(app: FastAPI):

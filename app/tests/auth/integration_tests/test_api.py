@@ -1,7 +1,7 @@
 import pytest
 
 from app.tests.conftest import auth_by
-from app.users.schemas import EmailModel
+from app.v1.users.schemas import EmailModel
 
 
 class TestApi:
@@ -47,7 +47,7 @@ class TestApi:
             "password": password,
             "confirm_password": confirm_password,
         }
-        response = await ac.post("/auth/register/", json=user_data)
+        response = await ac.post("/app/v1/auth/register/", json=user_data)
         assert response.status_code == status_code
         if response_message:
             assert response.json() == response_message
@@ -65,7 +65,7 @@ class TestApi:
         }
 
         # Создаем пользака
-        await ac.post("/auth/register/", json=user_data)
+        await ac.post("/app/v1/auth/register/", json=user_data)
         assert await user_dao.count() == 7
         current_user = await user_dao.find_one_or_none(filters=EmailModel(email="user_after_deleting@test.com"))
         assert current_user.is_active
@@ -73,24 +73,24 @@ class TestApi:
         # Удаляем и проверяем что он деактивировался
         authorized_client = await auth_by(ac, current_user)
         client = authorized_client.client
-        response = await client.delete("/users/me", cookies=authorized_client.cookies.dict())
+        response = await client.delete("/app/v1/users/me", cookies=authorized_client.cookies.dict())
         assert response.status_code == 200
-        me_response = await client.get("/users/me", cookies=authorized_client.cookies.dict())
+        me_response = await client.get("/app/v1/users/me", cookies=authorized_client.cookies.dict())
         assert me_response.status_code == 200
         assert not me_response.json()["is_active"]
 
         # На ту же почту регаем занова и проверяем что активировался
-        response_after_deleting = await ac.post("/auth/register/", json=user_data)
+        response_after_deleting = await ac.post("/app/v1/auth/register/", json=user_data)
         assert response_after_deleting.status_code == 200
         assert response_after_deleting.json() == {"message": "Вы успешно зарегистрированы!"}
 
-        me_response = await client.get("/users/me", cookies=authorized_client.cookies.dict())
+        me_response = await client.get("/app/v1/users/me", cookies=authorized_client.cookies.dict())
         assert me_response.status_code == 200
         assert me_response.json()["is_active"]
 
     async def test_login_anonymous(self, ac, user_dao):
         assert await user_dao.count() == 7
-        response = await ac.post("/auth/login_anonymous/")
+        response = await ac.post("/app/v1/auth/login_anonymous/")
         assert response.status_code == 200
         assert response.json() == {"message": "Анонимный пользователь добавлен"}
         assert await user_dao.count() == 8
@@ -121,7 +121,7 @@ class TestApi:
     )
     async def test_login(self, ac, email, password, status_code, response_message):
         user_data = {"email": email, "password": password}
-        response = await ac.post("/auth/login/", json=user_data)
+        response = await ac.post("/app/v1/auth/login/", json=user_data)
         assert response.status_code == status_code
         if response_message:
             assert response.json() == response_message
@@ -138,7 +138,7 @@ class TestApi:
         assert user_access_token is not None
         assert user_refresh_token is not None
 
-        response = await client.get("/auth/logout")
+        response = await client.get("/app/v1/auth/logout")
         assert response.status_code == 200
         assert response.json() == {"message": "Пользователь успешно вышел из системы"}
 
@@ -157,11 +157,11 @@ class TestApi:
     async def test_refresh_token(self, ac, auth_ac, is_authorized, status_code, response_message):
         if is_authorized:
             client = auth_ac.client
-            response = await client.post("/auth/refresh", cookies=auth_ac.cookies.dict())
+            response = await client.post("/app/v1/auth/refresh", cookies=auth_ac.cookies.dict())
 
         else:
             client = ac
-            response = await client.post("/auth/refresh")
+            response = await client.post("/app/v1/auth/refresh")
 
         assert response.status_code == status_code
         assert response.json() == response_message
@@ -185,9 +185,9 @@ class TestApi:
                 raise ValueError("User not found")
             authorized_client = await auth_by(ac, current_user)
             client = authorized_client.client
-            response = await client.get("/users/all_users", cookies=authorized_client.cookies.dict())
+            response = await client.get("/app/v1/users/all_users", cookies=authorized_client.cookies.dict())
         else:
-            response = await ac.get("/users/all_users")
+            response = await ac.get("/app/v1/users/all_users")
 
         assert response.status_code == status_code
         if users_count:

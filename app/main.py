@@ -8,11 +8,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
 from admin.register import create_admin_panel
-from app.auth.google.router import google_router
-from app.auth.router import auth_router
-from app.project.router import projects_router
-from app.s3_storage.router import s3_router
-from app.users.router import users_router
+from app.v1.auth.router import v1_auth_router, v2_auth_router
+from app.v1.auth_google.router import v1_google_router
+from app.v1.project.router import v1_projects_router
+from app.v1.s3_storage.router import v1_s3_router
+from app.v1.users.router import v1_users_router
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
@@ -57,11 +57,12 @@ def create_app() -> FastAPI:
 
 
 def register_routers(app: FastAPI) -> None:
-    app.include_router(auth_router, prefix="/auth", tags=["Auth"])
-    app.include_router(google_router, prefix="/google", tags=["Google OAuth"])
-    app.include_router(s3_router, prefix="/s3_storage", tags=["S3 Storage"])
-    app.include_router(users_router, prefix="/users", tags=["Users"])
-    app.include_router(projects_router, prefix="/projects", tags=["Projects"])
+    app.include_router(v1_auth_router, prefix="/app/v1/auth", tags=["Auth v1"])
+    app.include_router(v2_auth_router, prefix="/app/v2/auth", tags=["Auth v2"])
+    app.include_router(v1_google_router, prefix="/app/v1/google", tags=["Google OAuth"])
+    app.include_router(v1_s3_router, prefix="/app/v1/s3_storage", tags=["S3 Storage"])
+    app.include_router(v1_users_router, prefix="/app/v1/users", tags=["Users"])
+    app.include_router(v1_projects_router, prefix="/app/v1/projects", tags=["Projects"])
 
 
 # Создание экземпляра приложения

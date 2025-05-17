@@ -1,11 +1,11 @@
 class TestProjectList:
     async def test_400_authorization(self, ac) -> None:
-        response = await ac.get("/projects/all/active")
+        response = await ac.get("/app/v1/projects/all/active")
         assert response.status_code == 400
         assert response.json() == {"detail": "Токен отсутствует в заголовке"}
 
     async def test_list_active(self, auth_ac) -> None:
-        response = await auth_ac.client.get("/projects/all/active", cookies=auth_ac.cookies.dict())
+        response = await auth_ac.client.get("/app/v1/projects/all/active", cookies=auth_ac.cookies.dict())
         assert response.status_code == 200
 
         assert response.json() == [
@@ -36,7 +36,7 @@ class TestProjectList:
         ]
 
     async def test_list_finished(self, auth_ac) -> None:
-        response = await auth_ac.client.get("/projects/all/finished", cookies=auth_ac.cookies.dict())
+        response = await auth_ac.client.get("/app/v1/projects/all/finished", cookies=auth_ac.cookies.dict())
 
         assert response.status_code == 200
         assert response.json() == [
