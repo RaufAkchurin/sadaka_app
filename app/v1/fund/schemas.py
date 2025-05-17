@@ -9,15 +9,15 @@
 -горячая линия тел
 -адрес
 -документы
-
-ДУМАТЬ
 -сборы активные
 -сборы завершенные
+
+ДУМАТЬ
 -отчёты
 """
 from pydantic import BaseModel, ConfigDict
 
-from app.v1.project.schemas import FileBaseSchema
+from app.v1.project.schemas import FileBaseSchema, ProjectForListAPISchema
 
 
 class FundDetailAPISchema(BaseModel):
@@ -30,5 +30,6 @@ class FundDetailAPISchema(BaseModel):
     hot_line: str
     address: str
     documents: list[FileBaseSchema]
+    projects: list[ProjectForListAPISchema]
 
     model_config = ConfigDict(from_attributes=True)

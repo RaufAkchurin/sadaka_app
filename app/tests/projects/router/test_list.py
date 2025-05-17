@@ -51,7 +51,19 @@ class TestProjectList:
                 "status": "finished",
                 "total_collected": 2000,
                 "unique_sponsors": 1,
-            }
+            },
+            {
+                "active_stage_number": None,
+                "collected_percentage": 0,
+                "fund": {"id": 1, "name": "fund1", "picture_url": None},
+                "goal": 40000,
+                "id": 4,
+                "name": "project4",
+                "pictures_list": [],
+                "status": "finished",
+                "total_collected": 0,
+                "unique_sponsors": 0,
+            },
         ]
 
 
