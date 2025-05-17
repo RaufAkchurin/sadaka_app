@@ -55,3 +55,6 @@ FileNotFoundS3Exception = HTTPException(status_code=status.HTTP_404_NOT_FOUND, d
 
 # Проекты
 ProjectNotFoundException = HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Проект не найден")
+
+# Фонды
+FundNotFoundException = HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Фонд не найден")

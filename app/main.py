@@ -10,6 +10,7 @@ from loguru import logger
 from admin.register import create_admin_panel
 from app.v1.auth.router import v1_auth_router, v2_auth_router
 from app.v1.auth_google.router import v1_google_router
+from app.v1.fund.router import v1_funds_router
 from app.v1.project.router import v1_projects_router
 from app.v1.s3_storage.router import v1_s3_router
 from app.v1.users.router import v1_users_router
@@ -63,6 +64,7 @@ def register_routers(app: FastAPI) -> None:
     app.include_router(v1_s3_router, prefix="/app/v1/s3_storage", tags=["S3 Storage"])
     app.include_router(v1_users_router, prefix="/app/v1/users", tags=["Users"])
     app.include_router(v1_projects_router, prefix="/app/v1/projects", tags=["Projects"])
+    app.include_router(v1_funds_router, prefix="/app/v1/funds", tags=["Funds"])
 
 
 # Создание экземпляра приложения

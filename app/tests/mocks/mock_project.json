@@ -22,5 +22,13 @@
     "description": "desc3",
     "fund_id": 3,
     "goal": 30000
+  },
+    {
+    "id": 4,
+    "name": "project4",
+    "status": "FINISHED",
+    "description": "desc3",
+    "fund_id": 1,
+    "goal": 40000
   }
 ]
