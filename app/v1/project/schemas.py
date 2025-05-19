@@ -36,7 +36,7 @@ from app.v1.project.enums import AbstractStatusEnum
 
 
 class StatusFilter(BaseModel):
-    status: AbstractStatusEnum
+    status: AbstractStatusEnum | None = None
 
 
 class FundIdFilter(StatusFilter):
