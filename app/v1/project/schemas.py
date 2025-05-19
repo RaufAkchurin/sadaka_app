@@ -39,6 +39,10 @@ class StatusFilter(BaseModel):
     status: AbstractStatusEnum
 
 
+class FundIdFilter(StatusFilter):
+    fund_id: int
+
+
 class RegionInfoSchema(BaseModel):
     name: str
     picture_url: str
