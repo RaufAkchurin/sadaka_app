@@ -1,10 +1,10 @@
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, Depends, HTTPException, Response
 from loguru import logger
 from sqlalchemy.ext.asyncio import AsyncSession
-from starlette.responses import RedirectResponse
 
 from app.exceptions import FailedGoogleOauthException
 from app.v1.auth.service_auth import set_tokens
+from app.v1.auth_google.schemas import GoogleRedirectUrl
 from app.v1.auth_google.service import google_auth_service
 from app.v1.client.google_client import google_client
 from app.v1.dependencies.dao_dep import get_session_with_commit
@@ -12,11 +12,16 @@ from app.v1.dependencies.dao_dep import get_session_with_commit
 v1_google_router = APIRouter()
 
 
-@v1_google_router.get("/login/", response_class=RedirectResponse)
+@v1_google_router.get("/login/", response_model=GoogleRedirectUrl)
 async def google_login():
-    redirect_url = google_client.google_redirect_url
-    logger.error(f"Гугл авторизация \n {redirect_url}")
-    return RedirectResponse(redirect_url)
+    try:
+        redirect_url = google_client.google_redirect_url
+        logger.error(f"Гугл авторизация \n {redirect_url}")
+        return GoogleRedirectUrl(redirect_url=redirect_url)
+
+    except Exception as e:
+        logger.error(f"Error during Google authorization: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error during authorization")
 
 
 @v1_google_router.get("/callback/")
@@ -28,6 +33,6 @@ async def google_auth(
     google_permitted_user = await google_auth_service(code, session)
     if google_permitted_user:
         set_tokens(response, google_permitted_user.id)
-        return RedirectResponse(url="http://localhost:8000/v1/users/me", headers=response.headers)
+        return Response(status_code=200, content="Thanks to logging in sadaka app via Google")
     else:
         raise FailedGoogleOauthException

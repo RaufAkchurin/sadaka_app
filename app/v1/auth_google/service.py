@@ -14,7 +14,6 @@ async def google_auth_service(code: str, session: AsyncSession) -> UserBase:
         name=user_data.name,
         email=user_data.email,
         google_access_token=user_data.google_access_token,
-        picture=str(user_data.picture),
         is_active=True,
     )
     if not user:
