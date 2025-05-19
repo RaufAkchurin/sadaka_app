@@ -1,4 +1,4 @@
-from pydantic import HttpUrl
+from pydantic import BaseModel, HttpUrl
 
 from app.v1.users.schemas import UserBase
 
@@ -9,6 +9,10 @@ class GoogleUserData(UserBase):
 
 
 class GoogleUserAddDB(UserBase):
-    picture: str
+    # picture: str  # if you need picture you can create file instance with photo then add it to user profile
     google_access_token: str
     is_active: bool
+
+
+class GoogleRedirectUrl(BaseModel):
+    redirect_url: str
