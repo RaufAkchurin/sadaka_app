@@ -85,3 +85,7 @@ class File(Base):
     @property
     def get_fullname(self):
         return self.name + "." + self.mime.value.lower()
+
+    @property
+    def picture_url(self) -> str | None:
+        return self.url

@@ -59,13 +59,8 @@ class Fund(Base):
         return validate_phone(value)
 
     @property
-    def picture_url(self) -> str:
-        picture_url = None
-
-        if isinstance(self.picture, File):
-            picture_url = self.picture.url
-
-        return picture_url
+    def picture_url(self) -> str | None:
+        return self.picture.url if self.picture else None
 
     @property
     def region_name(self) -> str:

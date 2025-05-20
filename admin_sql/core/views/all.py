@@ -14,7 +14,7 @@ class CityAdmin(BaseAdminView, model=City):
     name_plural = "Города"
 
 
-class RegionAdmin(BaseAdminView, model=Region):
+class RegionAdmin(CreateWithPictureAdmin, model=Region):
     icon = "fa-solid fa-map"
     name = "Регион"
     name_plural = "Регионы"
@@ -29,7 +29,7 @@ class CountryAdmin(BaseAdminView, model=Country):
 ############### ФОНДЫ И ПРОЕКТЫ ############### # noqa E266
 
 
-class FundAdmin(BaseAdminView, model=Fund):
+class FundAdmin(CreateWithPictureAdmin, model=Fund):
     icon = "fa-solid fa-hand-holding-heart"
     name = "Фонд"
     name_plural = "Фонды"
@@ -49,8 +49,8 @@ class StageAdmin(BaseAdminView, model=Stage):
 
 
 class FileAdmin(CreateWithPictureAdmin, model=File):
-    # TODO у файла поля отображаются только заполненные все сотальные скрывать
-    # TODO тк привязка напрмиер только к юзеру а все остальное ненужно видеть в таком случае
+    # TODO у файла поля отображаются только заполненные все остальные скрывать
+    # TODO тк привязка например только к юзеру а все остальное ненужно видеть в таком случае (мечта)
 
     icon = "fa-solid fa-file-alt"
     name = "Файл"

@@ -38,9 +38,9 @@ class CreateWithPictureAdmin(BaseAdminView):
 
     @staticmethod
     def _picture_preview(model, name):
-        url = getattr(model, "url", None)
+        url = getattr(model, "picture_url", None)
         if url:
-            return Markup(f'<img src="{url}" width="100" height="100" style="object-fit:cover;border-radius:40px;" />')
+            return Markup(f'<img src="{url}" width="50" height="50" style="object-fit:cover;border-radius:40px;" />')
         return "—"
 
     column_formatters = {
