@@ -14,10 +14,6 @@ from app.v1.users.dao import ProjectDAO
 v1_projects_router = APIRouter()
 
 
-# TODO for tests add with status all
-# TODO for tests for fund_id
-
-
 @v1_projects_router.get("/all/{status_of_project}", response_model=PaginationResponseSchema[ProjectForListAPISchema])
 async def get_projects_list(
     status_of_project: AbstractStatusEnum,
