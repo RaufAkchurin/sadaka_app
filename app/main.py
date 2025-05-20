@@ -60,11 +60,11 @@ def create_app() -> FastAPI:
 def register_routers(app: FastAPI) -> None:
     app.include_router(v1_auth_router, prefix="/app/v1/auth", tags=["Auth v1"])
     app.include_router(v2_auth_router, prefix="/app/v2/auth", tags=["Auth v2"])
-    app.include_router(v1_google_router, prefix="/app/v1/google", tags=["Google OAuth"])
-    app.include_router(v1_s3_router, prefix="/app/v1/s3_storage", tags=["S3 Storage"])
-    app.include_router(v1_users_router, prefix="/app/v1/users", tags=["Users"])
-    app.include_router(v1_projects_router, prefix="/app/v1/projects", tags=["Projects"])
-    app.include_router(v1_funds_router, prefix="/app/v1/funds", tags=["Funds"])
+    app.include_router(v1_google_router, prefix="/app/v1/google", tags=["Google OAuth v1"])
+    app.include_router(v1_s3_router, prefix="/app/v1/s3_storage", tags=["S3 Storage v1"])
+    app.include_router(v1_users_router, prefix="/app/v1/users", tags=["Users v1"])
+    app.include_router(v1_projects_router, prefix="/app/v1/projects", tags=["Projects v1"])
+    app.include_router(v1_funds_router, prefix="/app/v1/funds", tags=["Funds v1"])
 
 
 # Создание экземпляра приложения

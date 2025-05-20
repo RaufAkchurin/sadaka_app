@@ -9,7 +9,7 @@ T = TypeVar("T")
 
 class PaginationParams(BaseModel):
     page: conint(gt=0) = Query(1, description="Page number")
-    limit: conint(gt=0) = Query(2, description="Number of items per page")
+    limit: conint(gt=0) = Query(5, description="Number of items per page")
 
 
 class PaginationResponseStateSchema(BaseModel):

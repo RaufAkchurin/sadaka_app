@@ -34,12 +34,106 @@ class TestProjectList:
                     "total_collected": 2000,
                     "unique_sponsors": 1,
                 },
+                {
+                    "active_stage_number": None,
+                    "collected_percentage": 0,
+                    "fund": {"id": 1, "name": "fund1", "picture_url": None},
+                    "goal": 40000,
+                    "id": 4,
+                    "name": "project4",
+                    "pictures_list": [],
+                    "status": "active",
+                    "total_collected": 0,
+                    "unique_sponsors": 0,
+                },
             ],
-            "state": {"page": 1, "size": 2, "total_items": 2, "total_pages": 1},
+            "state": {"page": 1, "size": 5, "total_items": 3, "total_pages": 1},
         }
 
     async def test_list_finished(self, auth_ac) -> None:
         response = await auth_ac.client.get("/app/v1/projects/all/finished", cookies=auth_ac.cookies.dict())
+
+        assert response.status_code == 200
+        assert response.json() == {
+            "items": [
+                {
+                    "active_stage_number": 2,
+                    "collected_percentage": 20,
+                    "fund": {"id": 1, "name": "fund1", "picture_url": None},
+                    "goal": 10000,
+                    "id": 1,
+                    "name": "project1",
+                    "pictures_list": [],
+                    "status": "finished",
+                    "total_collected": 2000,
+                    "unique_sponsors": 1,
+                }
+            ],
+            "state": {"page": 1, "size": 5, "total_items": 1, "total_pages": 1},
+        }
+
+    async def test_list_all(self, auth_ac) -> None:
+        response = await auth_ac.client.get("/app/v1/projects/all/all", cookies=auth_ac.cookies.dict())
+
+        assert response.status_code == 200
+        assert response.json() == {
+            "items": [
+                {
+                    "active_stage_number": 2,
+                    "collected_percentage": 20,
+                    "fund": {"id": 1, "name": "fund1", "picture_url": None},
+                    "goal": 10000,
+                    "id": 1,
+                    "name": "project1",
+                    "pictures_list": [],
+                    "status": "finished",
+                    "total_collected": 2000,
+                    "unique_sponsors": 1,
+                },
+                {
+                    "active_stage_number": 2,
+                    "collected_percentage": 10,
+                    "fund": {"id": 2, "name": "fund2", "picture_url": None},
+                    "goal": 20000,
+                    "id": 2,
+                    "name": "project2",
+                    "pictures_list": [],
+                    "status": "active",
+                    "total_collected": 2000,
+                    "unique_sponsors": 1,
+                },
+                {
+                    "active_stage_number": None,
+                    "collected_percentage": 6,
+                    "fund": {"id": 3, "name": "fund3", "picture_url": None},
+                    "goal": 30000,
+                    "id": 3,
+                    "name": "project3",
+                    "pictures_list": [],
+                    "status": "active",
+                    "total_collected": 2000,
+                    "unique_sponsors": 1,
+                },
+                {
+                    "active_stage_number": None,
+                    "collected_percentage": 0,
+                    "fund": {"id": 1, "name": "fund1", "picture_url": None},
+                    "goal": 40000,
+                    "id": 4,
+                    "name": "project4",
+                    "pictures_list": [],
+                    "status": "active",
+                    "total_collected": 0,
+                    "unique_sponsors": 0,
+                },
+            ],
+            "state": {"page": 1, "size": 5, "total_items": 4, "total_pages": 1},
+        }
+
+    async def test_list_by_fund_id(self, auth_ac) -> None:
+        response = await auth_ac.client.get(
+            "/app/v1/projects/all/all", cookies=auth_ac.cookies.dict(), params={"fund_id": 1}
+        )
 
         assert response.status_code == 200
         assert response.json() == {
@@ -64,12 +158,36 @@ class TestProjectList:
                     "id": 4,
                     "name": "project4",
                     "pictures_list": [],
-                    "status": "finished",
+                    "status": "active",
                     "total_collected": 0,
                     "unique_sponsors": 0,
                 },
             ],
-            "state": {"page": 1, "size": 2, "total_items": 2, "total_pages": 1},
+            "state": {"page": 1, "size": 5, "total_items": 2, "total_pages": 1},
+        }
+
+    async def test_list_active_and_fund_id(self, auth_ac) -> None:
+        response = await auth_ac.client.get(
+            "/app/v1/projects/all/active", cookies=auth_ac.cookies.dict(), params={"fund_id": 1}
+        )
+
+        assert response.status_code == 200
+        assert response.json() == {
+            "items": [
+                {
+                    "active_stage_number": None,
+                    "collected_percentage": 0,
+                    "fund": {"id": 1, "name": "fund1", "picture_url": None},
+                    "goal": 40000,
+                    "id": 4,
+                    "name": "project4",
+                    "pictures_list": [],
+                    "status": "active",
+                    "total_collected": 0,
+                    "unique_sponsors": 0,
+                }
+            ],
+            "state": {"page": 1, "size": 5, "total_items": 1, "total_pages": 1},
         }
 
 
