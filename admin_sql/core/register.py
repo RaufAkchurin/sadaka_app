@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from sqladmin import Admin
 
-from admin.views.all import (
+from admin_sql.core.views.all import (
     CityAdmin,
     CountryAdmin,
     FileAdmin,
@@ -11,7 +11,7 @@ from admin.views.all import (
     RegionAdmin,
     StageAdmin,
 )
-from admin.views.user import UserAdmin
+from admin_sql.core.views.user import UserAdmin
 from app.v1.dao.database import engine
 
 

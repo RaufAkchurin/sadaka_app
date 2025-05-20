@@ -1,4 +1,4 @@
-from admin.views.base import BaseAdminView, CreateWithPictureAdmin
+from admin_sql.core.views.base import BaseAdminView, CreateWithPictureAdmin
 from app.models.file import File
 from app.models.fund import Fund
 from app.models.geo import City, Country, Region

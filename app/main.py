@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
-from admin.register import create_admin_panel
+from admin_sql.core.register import create_admin_panel
 from app.v1.auth.router import v1_auth_router, v2_auth_router
 from app.v1.auth_google.router import v1_google_router
 from app.v1.fund.router import v1_funds_router
