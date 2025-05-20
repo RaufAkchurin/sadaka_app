@@ -26,7 +26,7 @@
     {
     "id": 4,
     "name": "project4",
-    "status": "FINISHED",
+    "status": "ACTIVE",
     "description": "desc3",
     "fund_id": 1,
     "goal": 40000

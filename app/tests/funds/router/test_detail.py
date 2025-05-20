@@ -71,7 +71,7 @@ class TestFundDetail:
                     "id": 4,
                     "name": "project4",
                     "pictures_list": [],
-                    "status": "finished",
+                    "status": "active",
                     "total_collected": 0,
                     "unique_sponsors": 0,
                 },
