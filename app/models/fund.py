@@ -57,6 +57,7 @@ class Fund(Base):
     def validate_hot_line(self, key: str, value: str):
         return validate_phone(value)
 
+    @property
     def picture_url(self) -> str | None:
         return self.picture.url if self.picture else None
 
