@@ -1,4 +1,4 @@
-from admin.views.base import CreateWithPictureAdmin
+from app.admin.views.base import CreateWithPictureAdmin
 from app.models.user import User
 
 
