@@ -1,21 +1,13 @@
+from exceptions import IncorrectEmailOrPasswordException
 from fastapi import APIRouter, Depends, Response
+from models.user import User
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from app.exceptions import IncorrectEmailOrPasswordException
-from app.models.user import User
-from app.tests.factory.mimesis import person
-from app.v1.auth.service_auth import authenticate_user, set_tokens
-from app.v1.dependencies.auth_dep import check_refresh_token
-from app.v1.dependencies.dao_dep import get_session_with_commit, get_session_without_commit
-from app.v1.users.dao import UserDAO
-from app.v1.users.schemas import (
-    AnonymousUserAddDB,
-    EmailModel,
-    SUserAddDB,
-    SUserAuth,
-    SUserEmailRegister,
-    UserActiveModel,
-)
+from tests.factory.mimesis import person
+from v1.auth.service_auth import authenticate_user, set_tokens
+from v1.dependencies.auth_dep import check_refresh_token
+from v1.dependencies.dao_dep import get_session_with_commit, get_session_without_commit
+from v1.users.dao import UserDAO
+from v1.users.schemas import AnonymousUserAddDB, EmailModel, SUserAddDB, SUserAuth, SUserEmailRegister, UserActiveModel
 
 v1_auth_router = APIRouter(tags=["Auth v1"])
 v2_auth_router = APIRouter(tags=["Auth v2"])

@@ -1,6 +1,6 @@
-from app.models.user import User
-from app.v1.users.dao import UserDAO
-from app.v1.users.schemas import EmailModel, UserActiveModel
+from models.user import User
+from v1.users.dao import UserDAO
+from v1.users.schemas import EmailModel, UserActiveModel
 
 
 class DeleteUserUseCase:

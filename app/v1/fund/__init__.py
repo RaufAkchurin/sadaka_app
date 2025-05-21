@@ -1,5 +1,5 @@
 # geo/__init__.py
-from app.models.geo import City, Country, Region
+from models.geo import City, Country, Region
 
 Region = Region
 Country = Country

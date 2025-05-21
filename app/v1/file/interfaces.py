@@ -1,9 +1,8 @@
 from typing import Protocol
 
 from fastapi import UploadFile
-
-from app.models.file import File
-from app.v1.s3_storage.schemas import S3UploadedFileSchema
+from models.file import File
+from v1.s3_storage.schemas import S3UploadedFileSchema
 
 
 class S3DeleteUseCaseProtocol(Protocol):

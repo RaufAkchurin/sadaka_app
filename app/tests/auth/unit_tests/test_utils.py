@@ -2,12 +2,11 @@ import datetime
 
 import pytest
 from jose import jwt
-
-from app.models.user import User
-from app.settings import settings
-from app.v1.auth.service_auth import authenticate_user, create_tokens
-from app.v1.auth.service_jwt import get_password_hash
-from app.v1.users.schemas import EmailModel, SUserAddDB
+from models.user import User
+from settings import settings
+from v1.auth.service_auth import authenticate_user, create_tokens
+from v1.auth.service_jwt import get_password_hash
+from v1.users.schemas import EmailModel, SUserAddDB
 
 
 class TestUtils:

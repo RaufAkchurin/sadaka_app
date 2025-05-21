@@ -1,10 +1,9 @@
 from fastapi import Request, UploadFile
 from markupsafe import Markup
 from sqladmin import ModelView
+from v1.dependencies.s3 import get_s3_client
+from v1.s3_storage.use_cases.s3_upload import S3UploadUseCaseImpl
 from wtforms import FileField
-
-from app.v1.dependencies.s3 import get_s3_client
-from app.v1.s3_storage.use_cases.s3_upload import S3UploadUseCaseImpl
 
 
 class BaseAdminView(ModelView):

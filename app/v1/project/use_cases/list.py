@@ -1,5 +1,5 @@
-from app.v1.project.schemas import FundIdFilter, ProjectForListAPISchema, StatusFilter
-from app.v1.users.dao import ProjectDAO
+from v1.project.schemas import FundIdFilter, ProjectForListAPISchema, StatusFilter
+from v1.users.dao import ProjectDAO
 
 
 class ProjectListUseCase:

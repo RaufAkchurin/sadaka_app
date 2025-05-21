@@ -1,7 +1,4 @@
-from fastapi import FastAPI
-from sqladmin import Admin
-
-from app.admin.views.all import (
+from admin.views.all import (
     CityAdmin,
     CountryAdmin,
     FileAdmin,
@@ -11,8 +8,10 @@ from app.admin.views.all import (
     RegionAdmin,
     StageAdmin,
 )
-from app.admin.views.user import UserAdmin
-from app.v1.dao.database import engine
+from admin.views.user import UserAdmin
+from fastapi import FastAPI
+from sqladmin import Admin
+from v1.dao.database import engine
 
 
 def create_admin_panel(app: FastAPI):

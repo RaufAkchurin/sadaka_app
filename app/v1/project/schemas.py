@@ -1,7 +1,6 @@
 from pydantic import BaseModel, ConfigDict
-
-from app.v1.file.enums import FileTypeEnum, MimeEnum
-from app.v1.project.enums import AbstractStatusEnum
+from v1.file.enums import FileTypeEnum, MimeEnum
+from v1.project.enums import AbstractStatusEnum
 
 
 class StatusFilter(BaseModel):

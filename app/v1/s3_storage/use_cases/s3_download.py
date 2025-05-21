@@ -1,5 +1,5 @@
-from app.exceptions import FileNameNotProvidedException, FileNotFoundS3Exception
-from app.v1.client.interfaces import S3ClientUseCaseProtocol
+from exceptions import FileNameNotProvidedException, FileNotFoundS3Exception
+from v1.client.interfaces import S3ClientUseCaseProtocol
 
 
 class S3DownloadUseCaseImpl:

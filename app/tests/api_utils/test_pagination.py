@@ -1,6 +1,5 @@
 import pytest
-
-from app.v1.api_utils.pagination import Pagination
+from v1.api_utils.pagination import Pagination
 
 
 class TestPagination:

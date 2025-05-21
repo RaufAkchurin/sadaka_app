@@ -1,15 +1,14 @@
+from exceptions import ProjectNotFoundException
 from fastapi import APIRouter, Depends, Query
+from models.user import User
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from app.exceptions import ProjectNotFoundException
-from app.models.user import User
-from app.v1.api_utils.pagination import Pagination, PaginationParams, PaginationResponseSchema
-from app.v1.dependencies.auth_dep import get_current_user
-from app.v1.dependencies.dao_dep import get_session_with_commit
-from app.v1.project.enums import AbstractStatusEnum
-from app.v1.project.schemas import ProjectDetailAPISchema, ProjectForListAPISchema
-from app.v1.project.use_cases.list import ProjectListUseCase
-from app.v1.users.dao import ProjectDAO
+from v1.api_utils.pagination import Pagination, PaginationParams, PaginationResponseSchema
+from v1.dependencies.auth_dep import get_current_user
+from v1.dependencies.dao_dep import get_session_with_commit
+from v1.project.enums import AbstractStatusEnum
+from v1.project.schemas import ProjectDetailAPISchema, ProjectForListAPISchema
+from v1.project.use_cases.list import ProjectListUseCase
+from v1.users.dao import ProjectDAO
 
 v1_projects_router = APIRouter()
 

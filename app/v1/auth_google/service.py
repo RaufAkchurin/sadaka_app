@@ -1,9 +1,8 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from app.v1.auth_google.schemas import GoogleUserAddDB
-from app.v1.client.google_client import google_client
-from app.v1.users.dao import UserDAO
-from app.v1.users.schemas import EmailModel, UserBase
+from v1.auth_google.schemas import GoogleUserAddDB
+from v1.client.google_client import google_client
+from v1.users.dao import UserDAO
+from v1.users.schemas import EmailModel, UserBase
 
 
 async def google_auth_service(code: str, session: AsyncSession) -> UserBase:

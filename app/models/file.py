@@ -3,10 +3,9 @@ from dataclasses import dataclass
 from sqlalchemy import Enum as SqlEnum
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
-
-from app.v1.api_utils.validators import validate_link_url
-from app.v1.dao.database import Base
-from app.v1.file.enums import FileTypeEnum, MimeEnum
+from v1.api_utils.validators import validate_link_url
+from v1.dao.database import Base
+from v1.file.enums import FileTypeEnum, MimeEnum
 
 
 @dataclass

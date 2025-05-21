@@ -1,5 +1,5 @@
-from app.exceptions import FileNameNotProvidedException
-from app.v1.client.interfaces import S3ClientUseCaseProtocol
+from exceptions import FileNameNotProvidedException
+from v1.client.interfaces import S3ClientUseCaseProtocol
 
 
 class S3DeleteUseCaseImpl:

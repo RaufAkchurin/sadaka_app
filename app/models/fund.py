@@ -1,11 +1,10 @@
 from dataclasses import dataclass
 
+from models.file import File
 from sqlalchemy import ForeignKey, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
-
-from app.models.file import File
-from app.v1.api_utils.validators import validate_phone
-from app.v1.dao.database import Base
+from v1.api_utils.validators import validate_phone
+from v1.dao.database import Base
 
 
 @dataclass

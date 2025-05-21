@@ -1,10 +1,6 @@
 from datetime import datetime, timezone
 
-from fastapi import Depends, Request
-from jose import ExpiredSignatureError, JWTError, jwt
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from app.exceptions import (
+from exceptions import (
     ForbiddenException,
     NoJwtException,
     NoUserIdException,
@@ -12,10 +8,13 @@ from app.exceptions import (
     TokenNoFound,
     UserNotFoundException,
 )
-from app.models.user import User
-from app.settings import settings
-from app.v1.dependencies.dao_dep import get_session_without_commit
-from app.v1.users.dao import UserDAO
+from fastapi import Depends, Request
+from jose import ExpiredSignatureError, JWTError, jwt
+from models.user import User
+from settings import settings
+from sqlalchemy.ext.asyncio import AsyncSession
+from v1.dependencies.dao_dep import get_session_without_commit
+from v1.users.dao import UserDAO
 
 
 def get_access_token(request: Request) -> str:

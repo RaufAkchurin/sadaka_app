@@ -1,6 +1,6 @@
-from app.settings import settings
-from app.v1.client.interfaces import S3ClientUseCaseProtocol
-from app.v1.client.s3_client import S3ClientImpl
+from settings import settings
+from v1.client.interfaces import S3ClientUseCaseProtocol
+from v1.client.s3_client import S3ClientImpl
 
 
 def get_s3_client() -> S3ClientUseCaseProtocol:

@@ -1,9 +1,8 @@
 from typing import Self
 
+from models.user import LanguageEnum
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, computed_field, model_validator
-
-from app.models.user import LanguageEnum
-from app.v1.auth.service_jwt import get_password_hash
+from v1.auth.service_jwt import get_password_hash
 
 
 class IdModel(BaseModel):

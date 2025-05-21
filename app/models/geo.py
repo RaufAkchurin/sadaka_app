@@ -3,9 +3,8 @@ from dataclasses import dataclass
 from sqlalchemy import Enum as SqlEnum
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-
-from app.v1.dao.database import Base, str_uniq
-from app.v1.users.enums import LanguageEnum
+from v1.dao.database import Base, str_uniq
+from v1.users.enums import LanguageEnum
 
 
 @dataclass

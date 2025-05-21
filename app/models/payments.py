@@ -2,8 +2,7 @@ from dataclasses import dataclass
 
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-
-from app.v1.dao.database import Base
+from v1.dao.database import Base
 
 
 @dataclass

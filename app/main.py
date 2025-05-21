@@ -3,17 +3,16 @@ import sys
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
+from admin.register import create_admin_panel
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
-
-from app.admin.register import create_admin_panel
-from app.v1.auth.router import v1_auth_router, v2_auth_router
-from app.v1.auth_google.router import v1_google_router
-from app.v1.fund.router import v1_funds_router
-from app.v1.project.router import v1_projects_router
-from app.v1.s3_storage.router import v1_s3_router
-from app.v1.users.router import v1_users_router
+from v1.auth.router import v1_auth_router, v2_auth_router
+from v1.auth_google.router import v1_google_router
+from v1.fund.router import v1_funds_router
+from v1.project.router import v1_projects_router
+from v1.s3_storage.router import v1_s3_router
+from v1.users.router import v1_users_router
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 

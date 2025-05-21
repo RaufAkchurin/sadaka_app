@@ -1,14 +1,13 @@
 from dataclasses import dataclass
 
 from email_validator import EmailNotValidError, validate_email
+from models.geo import City
+from models.payments import Payment
 from sqlalchemy import Enum as SqlEnum
 from sqlalchemy import ForeignKey, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
-
-from app.models.geo import City
-from app.models.payments import Payment
-from app.v1.dao.database import Base
-from app.v1.users.enums import LanguageEnum, RoleEnum
+from v1.dao.database import Base
+from v1.users.enums import LanguageEnum, RoleEnum
 
 
 @dataclass

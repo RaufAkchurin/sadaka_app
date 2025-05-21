@@ -1,6 +1,5 @@
 from pydantic import BaseModel, HttpUrl
-
-from app.v1.users.schemas import UserBase
+from v1.users.schemas import UserBase
 
 
 class GoogleUserData(UserBase):
