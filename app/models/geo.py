@@ -53,6 +53,10 @@ class Region(Base):
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.id}, name={self.name})"
 
+    @property
+    def picture_url(self) -> str | None:
+        return self.picture.url if self.picture else None
+
 
 @dataclass
 class City(Base):
