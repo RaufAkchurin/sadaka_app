@@ -14,7 +14,7 @@ class CityAdmin(BaseAdminView, model=City):
     name_plural = "Города"
 
 
-class RegionAdmin(BaseAdminView, model=Region):
+class RegionAdmin(CreateWithPictureAdmin, model=Region):
     icon = "fa-solid fa-map"
     name = "Регион"
     name_plural = "Регионы"
@@ -29,7 +29,7 @@ class CountryAdmin(BaseAdminView, model=Country):
 ############### ФОНДЫ И ПРОЕКТЫ ############### # noqa E266
 
 
-class FundAdmin(BaseAdminView, model=Fund):
+class FundAdmin(CreateWithPictureAdmin, model=Fund):
     icon = "fa-solid fa-hand-holding-heart"
     name = "Фонд"
     name_plural = "Фонды"
