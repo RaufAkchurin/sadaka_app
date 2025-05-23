@@ -21,6 +21,9 @@ class Settings(BaseSettings):
     S3_ENDPOINT_URL: str
     S3_FILE_BASE_URL: str
 
+    YOOKASSA_TEST_SECRET_KEY: str
+    YOOKASSA_TEST_SHOP_ID: int
+
     model_config = SettingsConfigDict(env_file=f"{BASE_DIR}/.env")
 
     @property
