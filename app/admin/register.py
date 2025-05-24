@@ -1,4 +1,4 @@
-from admin.views.all import (
+from admin.views.all import (  # PaymentAdmin,
     CityAdmin,
     CountryAdmin,
     FileAdmin,
@@ -14,7 +14,7 @@ from sqladmin import Admin
 from v1.dao.database import engine
 
 
-def create_admin_panel(app: FastAPI):
+def Create_admin_panel(app: FastAPI):
     admin = Admin(app, engine)
 
     admin.add_view(CountryAdmin)
