@@ -12,7 +12,6 @@ class PaymentSchema(BaseModel):
     amount: float | None = 0
     income_amount: float | None = 0
     test: bool = True
-    confirmation_url: str
     description: str | None = ""
     status: PaymentStatusEnum = PaymentStatusEnum.PENDING
     user_id: int
@@ -29,7 +28,6 @@ class Payment(Base):
     amount: Mapped[float | None] = mapped_column(default=None)
     income_amount: Mapped[float | None] = mapped_column(default=None)
     test: Mapped[bool] = mapped_column(default=False)
-    confirmation_url: Mapped[str | None] = mapped_column(default=None)
     description: Mapped[str | None] = mapped_column(default=None)
 
     # With default values
