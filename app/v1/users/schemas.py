@@ -1,7 +1,7 @@
 from typing import Self
 
 from models.user import LanguageEnum
-from pydantic import BaseModel, ConfigDict, EmailStr, Field, computed_field, model_validator
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, model_validator
 from v1.auth.service_jwt import get_password_hash
 
 
@@ -70,6 +70,7 @@ class UserActiveModel(BaseModel):
 class CityModel(BaseModel):
     id: int = Field(description="Идентификатор города")
     name: str = Field(description="Название города")
+
     model_config = ConfigDict(from_attributes=True)
 
 
@@ -77,13 +78,6 @@ class SUserInfo(UserBase):
     id: int = Field(description="Идентификатор пользователя")
     is_anonymous: bool = Field(description="Анонимный пользователь")
     is_active: bool = Field(description="Активный пользователь")
-    city: CityModel = Field(exclude=True)
+    city: CityModel = Field(description="Город пользователя")
     language: str = Field(description="Язык пользователя")
-
-    @computed_field
-    def city_name(self) -> str:
-        return self.city.name
-
-    @computed_field
-    def city_id(self) -> int:
-        return self.city.id
+    picture_url: str | None = None
