@@ -63,5 +63,5 @@ class User(Base):
             raise ValueError(f"Невалидный email: {e}")
 
     @property
-    def picture_url(self) -> str | None:
+    def picture_url(self):
         return self.picture.url if self.picture else None

@@ -1,8 +1,8 @@
 """Initial migration
 
-Revision ID: 0e4484ccf5d2
+Revision ID: 4ee3259d2356
 Revises: 
-Create Date: 2025-05-17 17:58:51.837870
+Create Date: 2025-05-26 11:22:19.639301
 
 """
 from typing import Sequence, Union
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = "0e4484ccf5d2"
+revision: str = "4ee3259d2356"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -86,7 +86,7 @@ def upgrade() -> None:
     op.create_table(
         "projects",
         sa.Column("name", sa.String(), nullable=False),
-        sa.Column("status", sa.Enum("ACTIVE", "FINISHED", name="project_status_enum"), nullable=False),
+        sa.Column("status", sa.Enum("ACTIVE", "FINISHED", "ALL", name="project_status_enum"), nullable=False),
         sa.Column("description", sa.String(), nullable=True),
         sa.Column("goal", sa.Integer(), nullable=False),
         sa.Column("fund_id", sa.Integer(), nullable=False),
@@ -104,7 +104,7 @@ def upgrade() -> None:
         sa.Column("number", sa.Integer(), nullable=False),
         sa.Column("name", sa.String(), nullable=False),
         sa.Column("goal", sa.Integer(), nullable=False),
-        sa.Column("status", sa.Enum("ACTIVE", "FINISHED", name="stage_status_enum"), nullable=False),
+        sa.Column("status", sa.Enum("ACTIVE", "FINISHED", "ALL", name="stage_status_enum"), nullable=False),
         sa.Column("project_id", sa.Integer(), nullable=False),
         sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
         sa.Column("created_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),

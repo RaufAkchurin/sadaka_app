@@ -13,7 +13,7 @@ class FundIdFilter(StatusFilter):
 
 class RegionInfoSchema(BaseModel):
     name: str
-    picture_url: str
+    picture_url: str | None = None
 
 
 class FileBaseSchema(BaseModel):
@@ -30,7 +30,7 @@ class FileBaseSchema(BaseModel):
 class FundShortSchema(BaseModel):
     id: int
     name: str
-    picture_url: str | None
+    picture_url: str | None = None
     model_config = ConfigDict(from_attributes=True)
 
 
