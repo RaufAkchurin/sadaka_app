@@ -1,25 +1,10 @@
 from dataclasses import dataclass
 
-from pydantic import BaseModel
 from sqlalchemy import Enum as SqlEnum
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from v1.dao.database import Base
 from v1.payment.enums import PaymentStatusEnum
-
-
-class PaymentSchema(BaseModel):
-    amount: float | None = 0
-    income_amount: float | None = 0
-    test: bool = True
-    description: str | None = ""
-    status: PaymentStatusEnum = PaymentStatusEnum.PENDING
-    user_id: int
-    project_id: int
-    stage_id: int
-
-    class Config:
-        use_enum_values = True
 
 
 @dataclass
