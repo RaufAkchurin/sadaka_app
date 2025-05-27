@@ -13,7 +13,6 @@ class Payment(Base):
     amount: Mapped[float | None] = mapped_column(default=None)
     income_amount: Mapped[float | None] = mapped_column(default=None)
     test: Mapped[bool] = mapped_column(default=False)
-    description: Mapped[str | None] = mapped_column(default=None)
 
     # With default values
     status: Mapped[PaymentStatusEnum] = mapped_column(

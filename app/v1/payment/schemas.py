@@ -5,10 +5,6 @@ from pydantic_core import Url
 from v1.payment.enums import PaymentStatusEnum
 
 
-class PaymentUrlSchema(BaseModel):
-    redirect_url: Url
-
-
 class PaymentCreateSchema(BaseModel):
     amount: float | None = 0
     income_amount: float | None = 0
@@ -26,42 +22,52 @@ class PaymentStatusUpdateSchema(BaseModel):
     status: PaymentStatusEnum = PaymentStatusEnum.PENDING
 
 
-class PaymentIdFilter(BaseModel):
+class YooPaymentUrlSchema(BaseModel):
+    redirect_url: Url
+
+
+class YooPaymentIdFilter(BaseModel):
     id: int
 
 
-class Amount(BaseModel):
+class YooAmount(BaseModel):
     currency: str
     value: str
 
 
-class ThreeDSecure(BaseModel):
+class YooThreeDSecure(BaseModel):
     applied: bool
     challenge_completed: bool
     method_completed: bool
 
 
-class AuthorizationDetails(BaseModel):
+class YooAuthorizationDetails(BaseModel):
     auth_code: str
     rrn: str
-    three_d_secure: ThreeDSecure
+    three_d_secure: YooThreeDSecure
 
 
-class Metadata(BaseModel):
+class YooMetadataInputSchema(BaseModel):
+    payment_id: str
+    project_id: str
+    user_id: str
+
+
+class YooMetadataCallbackSchema(BaseModel):
     payment_id: int
     project_id: int
     user_id: int
 
 
-class WebhookData(BaseModel):
-    amount: Amount
-    authorization_details: AuthorizationDetails
+class YooWebhookDataSchema(BaseModel):
+    amount: YooAmount
+    authorization_details: YooAuthorizationDetails
     captured_at: datetime
     created_at: datetime
     description: str
     id: str
-    income_amount: Amount
-    metadata: Metadata
+    income_amount: YooAmount
+    metadata: YooMetadataCallbackSchema
     paid: bool
     status: str
     test: bool

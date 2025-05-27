@@ -2,33 +2,37 @@ import json
 from ipaddress import ip_address, ip_network
 
 from exceptions import YookassaCallbackForbiddenException
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, Depends, Path, Query, Response
 from models.user import User
+from pydantic_core import Url
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
 from v1.dependencies.auth_dep import get_current_user
 from v1.dependencies.dao_dep import get_session_with_commit
 from v1.payment.enums import PaymentStatusEnum
-from v1.payment.schemas import PaymentIdFilter, PaymentStatusUpdateSchema, PaymentUrlSchema, WebhookData
+from v1.payment.schemas import PaymentStatusUpdateSchema, YooPaymentIdFilter, YooPaymentUrlSchema, YooWebhookDataSchema
 from v1.payment.use_cases.create_payment import CreatePaymentUseCaseImpl
 from v1.users.dao import PaymentDAO
 
 v1_payments_router = APIRouter()
 
 
-@v1_payments_router.post("/{project_id}/{amount}", response_model=PaymentUrlSchema)
+@v1_payments_router.post("/{project_id}/{amount}", response_model=YooPaymentUrlSchema)
 async def create_payment(
-    project_id: int,
-    amount: int,
-    return_url: str,
-    user_data: User = Depends(get_current_user),
+    project_id: int = Path(gt=0, description="ID проекта"),
+    amount: int = Path(gt=0, description="Сумма платежа"),
     session: AsyncSession = Depends(get_session_with_commit),
-) -> PaymentUrlSchema:
+    user_data: User = Depends(get_current_user),
+    return_url: Url = Query(default="http://212.67.11.108/app/v1/thaks_page", alias="return_url"),
+) -> YooPaymentUrlSchema:
     use_case = CreatePaymentUseCaseImpl(
-        session=session, project_id=project_id, amount=amount, user_data=user_data, return_url=return_url
+        session=session,
+        amount=amount,
+        user_data=user_data,
+        project_id=project_id,
+        return_url=return_url,
     )
     redirect_url = await use_case.execute()
-
     return redirect_url
 
 
@@ -50,14 +54,14 @@ async def client_ip_security(request: Request) -> None:
         raise YookassaCallbackForbiddenException  # return status 200 for hiding info from criminals
 
 
-async def get_webhook_data_object(request: Request) -> WebhookData:
+async def get_webhook_data_object(request: Request) -> YooWebhookDataSchema:
     decoded_data = await request.body()
     decoded_data = decoded_data.decode("utf-8")
 
     object_data = json.loads(decoded_data)
     data = object_data.get("object")
 
-    return WebhookData(**data)
+    return YooWebhookDataSchema(**data)
 
 
 @v1_payments_router.post("/yookassa_callback")
@@ -71,11 +75,11 @@ async def yookassa_callback(
     payment_dao = PaymentDAO(session=session)
     if webhook_object.status == PaymentStatusEnum.SUCCEEDED:
         await payment_dao.update(
-            filters=PaymentIdFilter(id=webhook_object.metadata.payment_id),
+            filters=YooPaymentIdFilter(id=webhook_object.metadata.payment_id),
             values=PaymentStatusUpdateSchema(status=PaymentStatusEnum.SUCCEEDED),
         )
 
     else:
-        await payment_dao.delete(filters=PaymentIdFilter(id=webhook_object.metadata.payment_id))
+        await payment_dao.delete(filters=YooPaymentIdFilter(id=webhook_object.metadata.payment_id))
 
     return Response(status_code=200)
