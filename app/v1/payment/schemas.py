@@ -1,14 +1,18 @@
 from datetime import datetime
 
 from pydantic import BaseModel
+from pydantic_core import Url
 from v1.payment.enums import PaymentStatusEnum
+
+
+class PaymentUrlSchema(BaseModel):
+    redirect_url: Url
 
 
 class PaymentCreateSchema(BaseModel):
     amount: float | None = 0
     income_amount: float | None = 0
     test: bool = True
-    description: str | None = ""
     status: PaymentStatusEnum = PaymentStatusEnum.PENDING
     user_id: int
     project_id: int
