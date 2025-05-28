@@ -8,6 +8,13 @@ from tests.schemas import AuthorizedClientModel, CookiesModel
 from utils.scripts.local_db_fill import prepare_database_core
 from v1.dao.database import async_session_maker
 from v1.users.dao import UserDAO
+from yookassa import Configuration
+
+
+@pytest.fixture(autouse=True)
+def setup_yookassa_config():
+    Configuration.account_id = settings.YOOKASSA_TEST_SHOP_ID
+    Configuration.secret_key = settings.YOOKASSA_TEST_SECRET_KEY
 
 
 @pytest.fixture(scope="class", autouse=True)
