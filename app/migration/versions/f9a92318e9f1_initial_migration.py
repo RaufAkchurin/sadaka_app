@@ -1,8 +1,8 @@
 """Initial migration
 
-Revision ID: 6c3ed4a7566f
+Revision ID: f9a92318e9f1
 Revises: 
-Create Date: 2025-05-24 12:13:09.227445
+Create Date: 2025-05-28 11:54:24.875211
 
 """
 from typing import Sequence, Union
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = "6c3ed4a7566f"
+revision: str = "f9a92318e9f1"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -180,10 +180,12 @@ def upgrade() -> None:
     )
     op.create_table(
         "payments",
+        sa.Column("id", sa.UUID(), nullable=False),
+        sa.Column("created_at", sa.TIMESTAMP(), nullable=False),
+        sa.Column("captured_at", sa.TIMESTAMP(), nullable=False),
         sa.Column("amount", sa.Float(), nullable=True),
         sa.Column("income_amount", sa.Float(), nullable=True),
         sa.Column("test", sa.Boolean(), nullable=False),
-        sa.Column("description", sa.String(), nullable=True),
         sa.Column(
             "status",
             sa.Enum("PENDING", "CANCELED", "WAITING_FOR_CAPTURE", "SUCCEEDED", name="payment_status_enum"),
@@ -192,8 +194,6 @@ def upgrade() -> None:
         sa.Column("user_id", sa.Integer(), nullable=False),
         sa.Column("project_id", sa.Integer(), nullable=False),
         sa.Column("stage_id", sa.Integer(), nullable=False),
-        sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
-        sa.Column("created_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
         sa.Column("updated_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
         sa.ForeignKeyConstraint(
             ["project_id"],

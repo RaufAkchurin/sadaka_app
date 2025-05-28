@@ -1,13 +1,11 @@
 import var_dump as var_dump
-from models.payments import Payment
 from models.project import Project
 from models.user import User
 from pydantic_core import Url
 from sqlalchemy.ext.asyncio import AsyncSession
-from v1.payment.enums import PaymentStatusEnum
-from v1.payment.schemas import PaymentCreateSchema, YooMetadataInputSchema, YooPaymentUrlSchema
+from v1.payment.schemas import YooMetadataInputSchema, YooPaymentUrlSchema
 from v1.payment.validators import project_id_validator
-from v1.users.dao import PaymentDAO, ProjectDAO
+from v1.users.dao import ProjectDAO
 from yookassa import Payment as YookassaStockPayment
 from yookassa.domain.common.confirmation_type import ConfirmationType
 from yookassa.domain.models.currency import Currency
@@ -15,8 +13,8 @@ from yookassa.domain.models.receipt import Receipt, ReceiptItem
 from yookassa.domain.request.payment_request_builder import PaymentRequestBuilder
 
 
-class CreatePaymentUseCaseImpl:
-    def __init__(self, session: AsyncSession, amount: int, user_data: User, project_id: int, return_url: Url):
+class CreateYooPaymentUseCaseImpl:
+    def __init__(self, amount: int, user_data: User, project_id: int, return_url: Url, session: AsyncSession):
         self.session = session
         self.amount = amount
         self.user_data = user_data
@@ -34,28 +32,9 @@ class CreatePaymentUseCaseImpl:
         project = await project_dao.find_one_or_none_by_id(data_id=self.project_id)
         return project
 
-    async def create_payment_in_db(self) -> Payment:
-        payment_dao = PaymentDAO(session=self.session)
-
-        new_payment = await payment_dao.add(
-            values=PaymentCreateSchema(
-                amount=self.amount,
-                income_amount=self.amount,
-                test=True,
-                status=PaymentStatusEnum.PENDING,
-                user_id=self.user_data.id,
-                project_id=self.project_id,
-                stage_id=1,  # TODO add dynamic data
-            )
-        )
-        return new_payment
-
     async def yoo_payment_build(self) -> YookassaStockPayment:
         project = await self.project
-        new_payment = await self.create_payment_in_db()
-        metadata = YooMetadataInputSchema(
-            payment_id=str(new_payment.id), project_id=str(project.id), user_id=str(self.user_data.id)
-        )
+        metadata = YooMetadataInputSchema(project_id=str(project.id), user_id=str(self.user_data.id))
 
         receipt = Receipt()
         receipt.customer = {"email": self.user_data.email}

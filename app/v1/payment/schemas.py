@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime
 
 from pydantic import BaseModel
@@ -6,33 +7,28 @@ from v1.payment.enums import PaymentStatusEnum
 
 
 class PaymentCreateSchema(BaseModel):
-    amount: float | None = 0
-    income_amount: float | None = 0
+    id: uuid.UUID
+    amount: float
+    income_amount: float
     test: bool = True
     status: PaymentStatusEnum = PaymentStatusEnum.PENDING
     user_id: int
     project_id: int
     stage_id: int
+    created_at: datetime
+    captured_at: datetime
 
     class Config:
         use_enum_values = True
-
-
-class PaymentStatusUpdateSchema(BaseModel):
-    status: PaymentStatusEnum = PaymentStatusEnum.PENDING
 
 
 class YooPaymentUrlSchema(BaseModel):
     redirect_url: Url
 
 
-class YooPaymentIdFilter(BaseModel):
-    id: int
-
-
 class YooAmount(BaseModel):
     currency: str
-    value: str
+    value: float
 
 
 class YooThreeDSecure(BaseModel):
@@ -48,13 +44,11 @@ class YooAuthorizationDetails(BaseModel):
 
 
 class YooMetadataInputSchema(BaseModel):
-    payment_id: str
     project_id: str
     user_id: str
 
 
 class YooMetadataCallbackSchema(BaseModel):
-    payment_id: int
     project_id: int
     user_id: int
 
@@ -65,9 +59,9 @@ class YooWebhookDataSchema(BaseModel):
     captured_at: datetime
     created_at: datetime
     description: str
-    id: str
+    id: uuid.UUID
     income_amount: YooAmount
     metadata: YooMetadataCallbackSchema
     paid: bool
-    status: str
+    status: PaymentStatusEnum = PaymentStatusEnum.PENDING
     test: bool

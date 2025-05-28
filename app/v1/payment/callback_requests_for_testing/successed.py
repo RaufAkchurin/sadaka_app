@@ -1,7 +1,7 @@
 import requests
 
 url = "http://localhost:8000/app/v1/payments/yookassa_callback"
-data = {
+callback_mock_success = {
     "amount": {"currency": "RUB", "value": "32.00"},
     "authorization_details": {
         "auth_code": "235381",
@@ -42,4 +42,4 @@ data = {
     "test": True,
 }
 
-response = requests.post(url, json={"object": data})
+response = requests.post(url, json={"object": callback_mock_success})

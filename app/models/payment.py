@@ -1,5 +1,7 @@
 from dataclasses import dataclass
+from datetime import datetime
 
+from sqlalchemy import TIMESTAMP, UUID
 from sqlalchemy import Enum as SqlEnum
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -9,6 +11,11 @@ from v1.payment.enums import PaymentStatusEnum
 
 @dataclass
 class Payment(Base):
+    # Base info
+    id: Mapped[UUID] = mapped_column(UUID, primary_key=True)
+    created_at: Mapped[datetime] = mapped_column(TIMESTAMP)
+    captured_at: Mapped[datetime] = mapped_column(TIMESTAMP)
+
     # Core data
     amount: Mapped[float | None] = mapped_column(default=None)
     income_amount: Mapped[float | None] = mapped_column(default=None)

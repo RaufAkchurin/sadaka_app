@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from email_validator import EmailNotValidError, validate_email
 from models.geo import City
-from models.payments import Payment
+from models.payment import Payment
 from sqlalchemy import Enum as SqlEnum
 from sqlalchemy import ForeignKey, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
