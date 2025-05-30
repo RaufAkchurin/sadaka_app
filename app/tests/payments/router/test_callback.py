@@ -7,6 +7,8 @@ from v1.dependencies.dao_dep import get_session_without_commit
 from v1.users.dao import PaymentDAO
 
 
+# TODO ТЕСТЫ нагрузочные написать напрмиер на 100/1000 закпросов и смотреть количество записей в БД
+# TODO РПОБЛЕМА С ЗАПУСКОМ ДВУХ ТЕСТОВ ОДНОВРЕМЕННО - с сессией какая то фигня
 class TestPaymentCallback:
     callback_mock_success = {
         "amount": {"currency": "RUB", "value": "32.00"},
