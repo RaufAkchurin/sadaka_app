@@ -1,3 +1,4 @@
+import asyncio
 import json
 from ipaddress import ip_address, ip_network
 
@@ -16,7 +17,7 @@ class YooCallbackSuccessUseCaseImpl:
         self.session = session
 
     async def execute(self):
-        # await self.__yookassa_client_ip_security_checker()
+        await self.__yookassa_client_ip_security_checker()
         await self.__create_payment_in_db()
 
     async def __create_payment_in_db(self):
@@ -42,21 +43,24 @@ class YooCallbackSuccessUseCaseImpl:
             )
 
     async def __yookassa_client_ip_security_checker(self) -> None:
-        ip_ranges = [
-            "185.71.76.0/27",
-            "185.71.77.0/27",
-            "77.75.153.0/25",
-            "77.75.156.11/32",
-            "77.75.156.35/32",
-            "77.75.154.128/25",
-            "2a02:5180::/32",
-        ]
+        def check_ip():
+            ip_ranges = [
+                "185.71.76.0/27",
+                "185.71.77.0/27",
+                "77.75.153.0/25",
+                "77.75.156.11/32",
+                "77.75.156.35/32",
+                "77.75.154.128/25",
+                "2a02:5180::/32",
+            ]
 
-        ip_networks = [ip_network(range) for range in ip_ranges]
-        ip = ip_address(self.request.client.host)
-        is_in_range = any(ip in network for network in ip_networks)
-        if not is_in_range:
-            raise YookassaCallbackForbiddenException
+            ip_networks = [ip_network(range) for range in ip_ranges]
+            ip = ip_address(self.request.client.host)
+            is_in_range = any(ip in network for network in ip_networks)
+            if not is_in_range:
+                raise YookassaCallbackForbiddenException
+
+        await asyncio.to_thread(check_ip)
 
     async def __get_webhook_data_object(self) -> YooWebhookDataSchema:
         decoded_data = await self.request.body()

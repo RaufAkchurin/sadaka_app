@@ -58,6 +58,7 @@ async def auth_ac():
     async with AsyncClient(transport=ASGITransport(fastapi_app), base_url="http://test") as ac:
         await ac.post("/app/v1/auth/login/", json={"email": "user1@test.com", "password": "password"})
         assert ac.cookies["user_access_token"]
+
         yield AuthorizedClientModel(
             client=ac,
             cookies=CookiesModel(
