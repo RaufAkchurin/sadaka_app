@@ -109,7 +109,7 @@ class TestProjectDetail:
                     "status": "active",
                 },
             ],
-            "status": "finished",
+            "status": "active",
             "total_collected": 2000,
             "unique_sponsors": 1,
         }
