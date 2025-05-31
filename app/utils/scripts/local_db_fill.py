@@ -5,7 +5,6 @@ import os
 from models.file import File
 from models.fund import Fund
 from models.geo import City, Country, Region
-from models.payment import Payment
 from models.project import Project, Stage
 from models.user import User
 
@@ -23,7 +22,7 @@ MODELS_MAP = {
     "project": Project,
     "stage": Stage,
     "file": File,
-    "payment": Payment,
+    # "payment": Payment,
 }
 
 

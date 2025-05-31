@@ -10,6 +10,7 @@ from loguru import logger
 from settings import settings
 from v1.auth.router import v1_auth_router, v2_auth_router
 from v1.auth_google.router import v1_google_router
+from v1.city.router import v1_city_router
 from v1.fund.router import v1_funds_router
 from v1.payment.router import v1_payments_router
 from v1.project.router import v1_projects_router
@@ -73,6 +74,7 @@ def register_routers(app: FastAPI) -> None:
     app.include_router(v1_projects_router, prefix="/app/v1/projects", tags=["Projects v1"])
     app.include_router(v1_funds_router, prefix="/app/v1/funds", tags=["Funds v1"])
     app.include_router(v1_payments_router, prefix="/app/v1/payments", tags=["Payments v1"])
+    app.include_router(v1_city_router, prefix="/app/v1/city", tags=["City v1"])
 
 
 # Создание экземпляра приложения
