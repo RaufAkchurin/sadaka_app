@@ -58,3 +58,7 @@ ProjectNotFoundException = HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
 
 # Фонды
 FundNotFoundException = HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Фонд не найден")
+
+# Юкасса
+
+YookassaCallbackForbiddenException = HTTPException(status_code=status.HTTP_403_FORBIDDEN)

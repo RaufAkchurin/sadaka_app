@@ -10,7 +10,7 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, declared_attr, mapped_column
 
 if settings.MODE == "TEST":
     DATABASE_URL = f"sqlite+aiosqlite:///{settings.BASE_DIR}/data/db_test.sqlite3"
-    DATABASE_PARAMS = {"poolclass": NullPool}
+    DATABASE_PARAMS = {"echo": True, "poolclass": NullPool}
 else:
     DATABASE_URL = f"sqlite+aiosqlite:///{settings.BASE_DIR}/data/db.sqlite3"
     DATABASE_PARAMS = {}
