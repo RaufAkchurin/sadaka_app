@@ -11,7 +11,7 @@ def create_tokens(data: dict) -> dict:
     now = datetime.now(timezone.utc)
 
     # AccessToken - 30 минут
-    access_expire = now + timedelta(weeks=999)
+    access_expire = now + timedelta(days=1)
     access_payload = data.copy()
     access_payload.update({"exp": int(access_expire.timestamp()), "type": "access"})
     access_token = jwt.encode(access_payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
