@@ -4,13 +4,13 @@ from decimal import Decimal
 from typing import Annotated
 
 from settings import settings
-from sqlalchemy import TIMESTAMP, Integer, func, inspect
+from sqlalchemy import TIMESTAMP, Integer, NullPool, func, inspect
 from sqlalchemy.ext.asyncio import AsyncAttrs, AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase, Mapped, declared_attr, mapped_column
 
 if settings.MODE == "TEST":
     DATABASE_URL = f"sqlite+aiosqlite:///{settings.BASE_DIR}/data/db_test.sqlite3"
-    DATABASE_PARAMS = {"echo": True}
+    DATABASE_PARAMS = {"echo": True, "poolclass": NullPool}
 else:
     DATABASE_URL = f"sqlite+aiosqlite:///{settings.BASE_DIR}/data/db.sqlite3"
     DATABASE_PARAMS = {}

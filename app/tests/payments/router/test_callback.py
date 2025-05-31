@@ -3,6 +3,7 @@ from unittest.mock import patch
 
 from models.payment import Payment
 from starlette.datastructures import Address
+from v1.dependencies.dao_dep import get_session_with_commit
 from v1.users.dao import PaymentDAO
 
 
@@ -56,21 +57,27 @@ class TestPaymentCallback:
 
     # TEST IT WORK BUT NOT IN SCOPE AND RUN SINGULAR
     @patch("fastapi.Request.client", Address("185.71.76.1", 1234))  # For ip_security checker
-    async def test_callback_cancelled(self, ac, session) -> None:
+    async def test_callback_cancelled(self, ac) -> None:
         callback_mock_canceled = self.callback_mock_success
         callback_mock_canceled["status"] = "canceled"
 
         response = await ac.post("/app/v1/payments/yookassa_callback", json={"object": callback_mock_canceled})
         assert response.status_code == 200
 
+        session_gen = get_session_with_commit()
+        session = await session_gen.__anext__()
+
         payment_dao = PaymentDAO(session=session)
         payments: list[Payment] = await payment_dao.find_all()
         assert len(payments) == 6  # sum of mocked data without new
 
     @patch("fastapi.Request.client", Address("185.71.76.1", 1234))  # For ip_security checker
-    async def test_callback_success(self, ac, session) -> None:
+    async def test_callback_success(self, ac) -> None:
         response = await ac.post("/app/v1/payments/yookassa_callback", json={"object": self.callback_mock_success})
         assert response.status_code == 200
+
+        session_gen = get_session_with_commit()
+        session = await session_gen.__anext__()
 
         payment_dao = PaymentDAO(session=session)
         payments: list[Payment] = await payment_dao.find_all()

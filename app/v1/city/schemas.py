@@ -1,7 +1,7 @@
 from pydantic import BaseModel, ConfigDict
 
 
-class CityListSchema(BaseModel):
+class CityForListSchema(BaseModel):
     id: int
     name: str
 
