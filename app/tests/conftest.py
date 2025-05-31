@@ -8,6 +8,13 @@ from tests.schemas import AuthorizedClientModel, CookiesModel
 from utils.scripts.local_db_fill import prepare_database_core
 from v1.dao.database import async_session_maker
 from v1.users.dao import UserDAO
+from yookassa import Configuration
+
+
+@pytest.fixture(autouse=True)
+def setup_yookassa_config():
+    Configuration.account_id = settings.YOOKASSA_TEST_SHOP_ID
+    Configuration.secret_key = settings.YOOKASSA_TEST_SECRET_KEY
 
 
 @pytest.fixture(scope="class", autouse=True)
@@ -51,6 +58,7 @@ async def auth_ac():
     async with AsyncClient(transport=ASGITransport(fastapi_app), base_url="http://test") as ac:
         await ac.post("/app/v1/auth/login/", json={"email": "user1@test.com", "password": "password"})
         assert ac.cookies["user_access_token"]
+
         yield AuthorizedClientModel(
             client=ac,
             cookies=CookiesModel(

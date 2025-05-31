@@ -180,7 +180,7 @@ class TestUsers:
     @pytest.mark.parametrize(
         "status_code, response_message",
         [
-            (400, {"detail": "Нет города с данным city_id."}),
+            (422, {"detail": "Нет города с данным city_id."}),
         ],
     )
     async def test_update_user_city_id_validation(self, ac, auth_ac, user_dao, status_code, response_message) -> None:

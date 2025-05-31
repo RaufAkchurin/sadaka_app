@@ -2,7 +2,7 @@ from admin.views.base import BaseAdminView, CreateWithPictureAdmin
 from models.file import File
 from models.fund import Fund
 from models.geo import City, Country, Region
-from models.payments import Payment
+from models.payment import Payment
 from models.project import Project, Stage
 
 ############### ГЕОГРАФИЯ ############### # noqa E266

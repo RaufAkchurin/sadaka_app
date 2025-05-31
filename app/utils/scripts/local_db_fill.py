@@ -1,11 +1,13 @@
 import asyncio
 import json
 import os
+import uuid
+from datetime import datetime
 
 from models.file import File
 from models.fund import Fund
 from models.geo import City, Country, Region
-from models.payments import Payment
+from models.payment import Payment
 from models.project import Project, Stage
 from models.user import User
 
@@ -41,12 +43,20 @@ async def prepare_database_core(session):
             await conn.run_sync(Base.metadata.drop_all)
             await conn.run_sync(Base.metadata.create_all)
 
-        async with async_session_maker() as session:
             for model_name, model_class in MODELS_MAP.items():
                 try:
                     data = open_mock_json(model_name)
                     if not data:
                         continue
+
+                    else:
+                        if model_name == "payment":
+                            for item in data:
+                                uuid_raw = item["id"]
+                                item["id"] = uuid.UUID(uuid_raw)
+                                item["created_at"] = datetime.now()
+                                item["captured_at"] = datetime.now()
+
                     stmt = insert(model_class).values(data)
                     await session.execute(stmt)
                 except Exception as e:
