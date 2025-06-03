@@ -197,3 +197,28 @@ CRUD-операций.
    alembic downgrade -1
    ```
 ---
+
+## Деплой
+
+1. Клонируем репозиторий
+2. создаем виртуальную среду 
+python3 -m venv venv
+3. Активируем
+source venv/bin/activate
+4. Устанавливаем uv (менеджер пакетов)
+pip install uv
+5. Запускаем его впервые
+uv run
+6. Накатываем зависимости через uv (флаг актив - значит в активную венв среду)
+uv sync --active
+7. Запускаем Фастапи приложение
+uvicorn main:app --host 0.0.0.0 --port 80
+8. Радуемся идём пить чай
+
+## ОБНОВЛЕНИЯ НА ПРОДЕ
+
+0. pkill -f "uvicorn main:app"
+1. source /var/www/sadaka_app/app/venv/bin/activate
+2. cd /var/www/sadaka_app/app/
+3. uv sync --active
+4. nohup uvicorn main:app --host 0.0.0.0 --port 80
