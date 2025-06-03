@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, Response
 from models.user import User
 from sqlalchemy.ext.asyncio import AsyncSession
 from tests.factory.mimesis import person
-from v1.auth.service_auth import authenticate_user, set_tokens
+from v1.auth.service_auth import authenticate_user, set_tokens_to_response
 from v1.dependencies.auth_dep import check_refresh_token
 from v1.dependencies.dao_dep import get_session_with_commit, get_session_without_commit
 from v1.users.dao import UserDAO
@@ -43,7 +43,7 @@ async def register_and_login_anonymous(
             email=person.email(domains=["first.com", "second.ru"]), name=person.name(), is_anonymous=True
         )
     )
-    set_tokens(response, user.id)
+    set_tokens_to_response(response, user.id)
     return {"message": "Анонимный пользователь добавлен"}
 
 
@@ -58,7 +58,7 @@ async def login_by_email(
 
     if not (user and await authenticate_user(user=user, password=user_data.password)):
         raise IncorrectEmailOrPasswordException
-    set_tokens(response, user.id)
+    set_tokens_to_response(response, user.id)
     return {"ok": True, "message": "Авторизация успешна!"}
 
 
@@ -71,11 +71,11 @@ async def logout(response: Response):
 
 @v1_auth_router.post("/refresh")
 async def process_refresh_token(response: Response, user: User = Depends(check_refresh_token)):
-    set_tokens(response, user.id)
+    set_tokens_to_response(response, user.id)
     return {"message": "Токены успешно обновлены"}
 
 
 @v2_auth_router.post("/versioning_for_example")
 async def versioning_for_example(response: Response, user: User = Depends(check_refresh_token)):
-    set_tokens(response, user.id)
+    set_tokens_to_response(response, user.id)
     return {"message": "Токены успешно обновлены"}

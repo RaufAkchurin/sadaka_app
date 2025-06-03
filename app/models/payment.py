@@ -37,4 +37,4 @@ class Payment(Base):
     stage: Mapped["Stage"] = relationship("Stage", back_populates="payments", lazy="joined")  # noqa F821
 
     def __str__(self):
-        return f"{self.balance_tokens}, {self.status}"
+        return f"{self.project.name}, {self.income_amount}, {self.status}, test - {self.test}"

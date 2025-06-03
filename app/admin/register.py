@@ -8,14 +8,16 @@ from admin.views.all import (  # PaymentAdmin,
     RegionAdmin,
     StageAdmin,
 )
+from admin.views.auth import MyAuthenticationBackend
 from admin.views.user import UserAdmin
 from fastapi import FastAPI
+from settings import settings
 from sqladmin import Admin
 from v1.dao.database import engine
 
 
-def Create_admin_panel(app: FastAPI):
-    admin = Admin(app, engine)
+def create_admin_panel(app: FastAPI):
+    admin = Admin(app, engine, authentication_backend=MyAuthenticationBackend(secret_key=settings.SECRET_KEY))
 
     admin.add_view(CountryAdmin)
     admin.add_view(RegionAdmin)

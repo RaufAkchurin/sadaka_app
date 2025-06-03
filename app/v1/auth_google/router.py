@@ -2,7 +2,7 @@ from exceptions import FailedGoogleOauthException
 from fastapi import APIRouter, Depends, HTTPException, Response
 from loguru import logger
 from sqlalchemy.ext.asyncio import AsyncSession
-from v1.auth.service_auth import set_tokens
+from v1.auth.service_auth import set_tokens_to_response
 from v1.auth_google.schemas import GoogleRedirectUrl
 from v1.auth_google.service import google_auth_service
 from v1.client.google_client import google_client
@@ -31,7 +31,7 @@ async def google_auth(
 ):
     google_permitted_user = await google_auth_service(code, session)
     if google_permitted_user:
-        set_tokens(response, google_permitted_user.id)
+        set_tokens_to_response(response, google_permitted_user.id)
         return Response(status_code=200, content="Thanks to logging in sadaka app via Google")
     else:
         raise FailedGoogleOauthException

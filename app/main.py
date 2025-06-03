@@ -3,7 +3,7 @@ import sys
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
-from admin.register import Create_admin_panel
+from admin.register import create_admin_panel
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
@@ -31,7 +31,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[dict, None]:
         secret_key=settings.YOOKASSA_TEST_SECRET_KEY,
     )
 
-    Create_admin_panel(app)
+    create_admin_panel(app)
 
     yield
     logger.info("Завершение работы приложения...")

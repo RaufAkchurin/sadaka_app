@@ -30,7 +30,7 @@ async def authenticate_user(user, password):
     return user
 
 
-def set_tokens(response: Response, user_id: int):
+def set_tokens_to_response(response: Response, user_id: int):
     new_tokens = create_tokens(data={"sub": str(user_id)})
     access_token = new_tokens.get("access_token")
     refresh_token = new_tokens.get("refresh_token")
@@ -51,3 +51,28 @@ def set_tokens(response: Response, user_id: int):
         secure=secure,
         samesite="lax",
     )
+
+
+# def set_tokens_to_request_session(request: Request, user_id: int):
+#     new_tokens = create_tokens(data={"sub": str(user_id)})
+#     access_token = new_tokens.get("access_token")
+#     refresh_token = new_tokens.get("refresh_token")
+#     secure = settings.MODE in ["PROD", "TEST"]
+#
+#
+#
+#     response.set_cookie(
+#         key="user_access_token",
+#         value=access_token,
+#         httponly=True,
+#         secure=secure,
+#         samesite="lax",
+#     )
+#
+#     response.set_cookie(
+#         key="user_refresh_token",
+#         value=refresh_token,
+#         httponly=True,
+#         secure=secure,
+#         samesite="lax",
+#     )
