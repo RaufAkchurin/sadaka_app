@@ -1,7 +1,7 @@
-from typing import Optional
-
+from exceptions import ForbiddenException
 from fastapi import Request
 from jose import jwt
+from loguru import logger
 from pydantic.v1 import EmailStr
 from settings import settings
 from sqladmin.authentication import AuthenticationBackend
@@ -33,15 +33,18 @@ class MyAuthenticationBackend(AuthenticationBackend):
             user = await user_dao.find_one_or_none(filters=EmailModel(email=EmailStr(email)))
 
             if not user:
+                logger.info(f"Пользователь админ панели по данному email не найден - {email}")
                 return False
 
             # Проверяем пароль и роль пользователя
             if not await authenticate_user(user=user, password=password):
+                logger.info(f"Пароль для админ панели некорректный для пользователя {user.email}")
                 return False
 
             # Проверяем, имеет ли пользователь права администратора
             if user.role.value not in ["superuser", "fund_admin"]:
-                return False
+                logger.info(f"У вас недостаточно прав для доступа к админ панели. текущая роль - {user.role.value}")
+                raise ForbiddenException
 
             new_tokens = create_tokens(data={"user_id": str(user.id), "user_role": user.role.value})
             request.session.update(
@@ -53,9 +56,6 @@ class MyAuthenticationBackend(AuthenticationBackend):
                 }
             )
             return True
-
-        except Exception:
-            return False
         finally:
             await session.close()
 
@@ -65,7 +65,7 @@ class MyAuthenticationBackend(AuthenticationBackend):
 
         return True
 
-    async def authenticate(self, request: Request) -> Optional[bool]:
+    async def authenticate(self, request: Request) -> bool:
         """Проверка аутентификации для каждого запроса к админке."""
         # Проверяем наличие токена
         token = request.session.get("cookies").get("user_access_token")

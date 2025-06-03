@@ -8,7 +8,7 @@ from admin.views.all import (  # PaymentAdmin,
     RegionAdmin,
     StageAdmin,
 )
-from admin.views.authentication import MyAuthenticationBackend
+from admin.views.auth import MyAuthenticationBackend
 from admin.views.user import UserAdmin
 from fastapi import FastAPI
 from sqladmin import Admin
