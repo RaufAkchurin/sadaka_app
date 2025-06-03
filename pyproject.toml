@@ -17,6 +17,7 @@ dependencies = [
     "flake8>=7.2.0",
     "httpx>=0.28.1",
     "isort>=6.0.1",
+    "itsdangerous>=2.2.0",
     "mimesis>=18.0.0",
     "passlib>=1.7.4",
     "phonenumbers>=9.0.3",
