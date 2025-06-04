@@ -1,8 +1,8 @@
-from admin.views.base import CreateWithPictureAdmin
+from admin.views.base import AdminPicturePreview
 from models.user import User
 
 
-class UserAdmin(CreateWithPictureAdmin, model=User):
+class UserAdminPicturePreview(AdminPicturePreview, model=User):
     name_plural = "Пользователи"
     name = "Пользователь"
 

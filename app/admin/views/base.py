@@ -1,9 +1,5 @@
-from fastapi import Request, UploadFile
 from markupsafe import Markup
 from sqladmin import ModelView
-from v1.dependencies.s3 import get_s3_client
-from v1.s3_storage.use_cases.s3_upload import S3UploadUseCaseImpl
-from wtforms import FileField
 
 
 class BaseAdminView(ModelView):
@@ -11,33 +7,14 @@ class BaseAdminView(ModelView):
     column_list = ["id", "name"]
 
 
-class CreateWithPictureAdmin(BaseAdminView):
+class AdminPicturePreview(BaseAdminView):
     column_list = ["id", "name", "picture_url"]
-    form_excluded_columns = ["created_at", "updated_at", "url"]
-
-    def __init__(self):
-        super().__init__()
-        self.s3_client = get_s3_client()
-
-    async def scaffold_form(self, form_rules=None):
-        form_class = await super().scaffold_form()
-        form_class.picture_file = FileField("Загрузить картинку")
-        return form_class
-
-    async def insert_model(self, request: Request, data: dict):
-        form = await request.form()
-        file: UploadFile = form.get("picture_file")
-
-        if file and file.filename:
-            use_case = S3UploadUseCaseImpl(s3_client=self.s3_client)
-            s3_file = await use_case(file=file)
-            data["url"] = s3_file.url
-
-        return await super().insert_model(request, data)
+    form_excluded_columns = ["created_at", "updated_at"]
+    column_details_list = ["picture_url"]
 
     @staticmethod
     def _picture_preview(model, name):
-        url = getattr(model, "picture_url", None)
+        url = getattr(model, "picture_url")
         if url:
             return Markup(f'<img src="{url}" width="50" height="50" style="object-fit:cover;border-radius:40px;" />')
         return "—"

@@ -68,7 +68,11 @@ class MyAuthenticationBackend(AuthenticationBackend):
     async def authenticate(self, request: Request) -> bool:
         """Проверка аутентификации для каждого запроса к админке."""
         # Проверяем наличие токена
-        token = request.session.get("cookies").get("user_access_token")
+        cookies = request.session.get("cookies", None)
+        if cookies is not None:
+            token = cookies.get("user_access_token", None)
+        else:
+            return False
         if not token:
             return False
 

@@ -1,5 +1,4 @@
-from admin.views.base import BaseAdminView, CreateWithPictureAdmin
-from models.file import File
+from admin.views.base import AdminPicturePreview, BaseAdminView
 from models.fund import Fund
 from models.geo import City, Country, Region
 from models.payment import Payment
@@ -14,7 +13,7 @@ class CityAdmin(BaseAdminView, model=City):
     name_plural = "Города"
 
 
-class RegionAdmin(CreateWithPictureAdmin, model=Region):
+class RegionAdminPicturePreview(AdminPicturePreview, model=Region):
     icon = "fa-solid fa-map"
     name = "Регион"
     name_plural = "Регионы"
@@ -29,7 +28,7 @@ class CountryAdmin(BaseAdminView, model=Country):
 ############### ФОНДЫ И ПРОЕКТЫ ############### # noqa E266
 
 
-class FundAdmin(CreateWithPictureAdmin, model=Fund):
+class FundAdminPicturePreview(AdminPicturePreview, model=Fund):
     icon = "fa-solid fa-hand-holding-heart"
     name = "Фонд"
     name_plural = "Фонды"
@@ -46,15 +45,6 @@ class StageAdmin(BaseAdminView, model=Stage):
     icon = "fa-solid fa-layer-group"
     name = "Этап"
     name_plural = "Этапы"
-
-
-class FileAdmin(CreateWithPictureAdmin, model=File):
-    # TODO у файла поля отображаются только заполненные все сотальные скрывать
-    # TODO тк привязка напрмиер только к юзеру а все остальное ненужно видеть в таком случае
-
-    icon = "fa-solid fa-file-alt"
-    name = "Файл"
-    name_plural = "Файлы"
 
 
 ############### ПЛАТЕЖИ ############### # noqa E266

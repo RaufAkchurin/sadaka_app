@@ -1,0 +1,37 @@
+from admin.views.base import AdminPicturePreview, BaseAdminView
+from fastapi import Request, UploadFile
+from models.file import File
+from v1.dependencies.s3 import get_s3_client
+from v1.s3_storage.use_cases.s3_upload import S3UploadUseCaseImpl
+from wtforms import FileField
+
+
+class FileModelPictureUploadField(BaseAdminView):
+    def __init__(self):
+        super().__init__()
+        self.s3_client = get_s3_client()
+
+    async def scaffold_form(self, form_rules=None):
+        form_class = await super().scaffold_form()
+        form_class.picture_file = FileField("Загрузить файл")
+        return form_class
+
+    async def insert_model(self, request: Request, data: dict):
+        form = await request.form()
+        file: UploadFile = form.get("picture_file", None)
+
+        if file and file.filename:
+            use_case = S3UploadUseCaseImpl(s3_client=self.s3_client)
+            s3_file = await use_case(file=file)
+            data["url"] = s3_file.url
+
+        return await super().insert_model(request, data)
+
+
+class FileAdminPicturePreview(AdminPicturePreview, FileModelPictureUploadField, model=File):
+    # TODO у файла поля отображаются только заполненные все сотальные скрывать
+    # TODO тк привязка напрмиер только к юзеру а все остальное ненужно видеть в таком случае
+
+    icon = "fa-solid fa-file-alt"
+    name = "Файл"
+    name_plural = "Файлы"

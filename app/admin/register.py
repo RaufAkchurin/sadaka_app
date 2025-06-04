@@ -1,15 +1,15 @@
 from admin.views.all import (  # PaymentAdmin,
     CityAdmin,
     CountryAdmin,
-    FileAdmin,
-    FundAdmin,
+    FundAdminPicturePreview,
     PaymentAdmin,
     ProjectAdmin,
-    RegionAdmin,
+    RegionAdminPicturePreview,
     StageAdmin,
 )
 from admin.views.auth import MyAuthenticationBackend
-from admin.views.user import UserAdmin
+from admin.views.file import FileAdminPicturePreview
+from admin.views.user import UserAdminPicturePreview
 from fastapi import FastAPI
 from settings import settings
 from sqladmin import Admin
@@ -17,17 +17,22 @@ from v1.dao.database import engine
 
 
 def create_admin_panel(app: FastAPI):
-    admin = Admin(app, engine, authentication_backend=MyAuthenticationBackend(secret_key=settings.SECRET_KEY))
+    admin = Admin(
+        app=app,
+        engine=engine,
+        authentication_backend=MyAuthenticationBackend(secret_key=settings.SECRET_KEY),
+        title="Садака app админка",
+    )
 
     admin.add_view(CountryAdmin)
-    admin.add_view(RegionAdmin)
+    admin.add_view(RegionAdminPicturePreview)
     admin.add_view(CityAdmin)
 
-    admin.add_view(UserAdmin)
+    admin.add_view(UserAdminPicturePreview)
 
-    admin.add_view(FundAdmin)
+    admin.add_view(FundAdminPicturePreview)
     admin.add_view(ProjectAdmin)
     admin.add_view(StageAdmin)
-    admin.add_view(FileAdmin)
+    admin.add_view(FileAdminPicturePreview)
 
     admin.add_view(PaymentAdmin)
