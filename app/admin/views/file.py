@@ -1,4 +1,4 @@
-from admin.views.base import AdminPicturePreview
+from admin.views.base.picture_preview import AdminPicturePreview
 from fastapi import Request, UploadFile
 from models.file import File
 from v1.dependencies.s3 import get_s3_client
@@ -13,12 +13,11 @@ class FileModelPictureUploadField(AdminPicturePreview):
 
     async def scaffold_form(self, form_rules=None):
         form_class = await super().scaffold_form()
-        form_class.upload = FileField()
-
+        form_class.upload = FileField()  # we always have it, but without file it size == 0
         return form_class
 
     async def insert_model(self, request: Request, data: dict):
-        file: UploadFile | None = data.pop("upload", None)
+        file: UploadFile = data.pop("upload")
 
         if file and file.filename:
             use_case = S3UploadUseCaseImpl(s3_client=self.s3_client)
@@ -29,14 +28,16 @@ class FileModelPictureUploadField(AdminPicturePreview):
 
     async def update_model(self, request, pk, data):
         file: UploadFile = data.pop("upload")
+
         if file.size != 0:
             use_case = S3UploadUseCaseImpl(s3_client=self.s3_client)
             s3_file = await use_case(file=file)
             data["url"] = s3_file.url
+
         return await super().update_model(request, pk, data)
 
 
-class FileAdminPicturePreview(FileModelPictureUploadField, AdminPicturePreview, model=File):
+class FileAdminPicturePreview(FileModelPictureUploadField, model=File):
     # TODO у файла поля отображаются только заполненные все сотальные скрывать
     # TODO тк привязка напрмиер только к юзеру а все остальное ненужно видеть в таком случае
 

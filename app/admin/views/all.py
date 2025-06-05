@@ -1,8 +1,8 @@
-from admin.views.base import AdminPicturePreview, BaseAdminView
+from admin.views.base.picture_preview import AdminPicturePreview, BaseAdminView
 from models.fund import Fund
 from models.geo import City, Country, Region
 from models.payment import Payment
-from models.project import Project, Stage
+from models.project import Stage
 
 ############### ГЕОГРАФИЯ ############### # noqa E266
 
@@ -32,12 +32,6 @@ class FundAdminPicturePreview(AdminPicturePreview, model=Fund):
     icon = "fa-solid fa-hand-holding-heart"
     name = "Фонд"
     name_plural = "Фонды"
-
-
-class ProjectAdmin(BaseAdminView, model=Project):
-    icon = "fa-solid fa-diagram-project"
-    name = "Проект"
-    name_plural = "Проекты"
 
 
 class StageAdmin(BaseAdminView, model=Stage):

@@ -1,4 +1,4 @@
-from admin.views.base import AdminPicturePreview
+from admin.views.base.picture_preview import AdminPicturePreview
 from models.user import User
 
 

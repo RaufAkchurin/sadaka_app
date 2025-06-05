@@ -92,5 +92,5 @@ class File(Base):
         return self.url
 
     @property
-    def upload(self):
+    def upload(self):  # this method for sqladmin update method without uploaded picture
         return None

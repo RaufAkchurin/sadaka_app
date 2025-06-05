@@ -3,12 +3,12 @@ from admin.views.all import (  # PaymentAdmin,
     CountryAdmin,
     FundAdminPicturePreview,
     PaymentAdmin,
-    ProjectAdmin,
     RegionAdminPicturePreview,
     StageAdmin,
 )
 from admin.views.auth import MyAuthenticationBackend
 from admin.views.file import FileAdminPicturePreview
+from admin.views.project import ProjectAdmin
 from admin.views.user import UserAdminPicturePreview
 from fastapi import FastAPI
 from settings import settings
