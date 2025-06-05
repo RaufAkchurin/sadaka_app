@@ -1,8 +1,17 @@
+from admin.views.base.multiple_preview import MultipleFilesPreviewAdmin
 from admin.views.base.picture_preview import AdminPicturePreview, BaseAdminView
 from models.fund import Fund
 from models.geo import City, Country, Region
 from models.payment import Payment
-from models.project import Stage
+from models.project import Project, Stage
+
+
+class ProjectAdmin(MultipleFilesPreviewAdmin, model=Project):
+    column_list = ["name", "status", "documents_preview", "pictures_preview"]
+    icon = "fa-solid fa-diagram-project"
+    name = "Проект"
+    name_plural = "Проекты"
+
 
 ############### ГЕОГРАФИЯ ############### # noqa E266
 
@@ -13,10 +22,12 @@ class CityAdmin(BaseAdminView, model=City):
     name_plural = "Города"
 
 
-class RegionAdminPicturePreview(AdminPicturePreview, model=Region):
+class RegionAdmin(AdminPicturePreview, model=Region):
     icon = "fa-solid fa-map"
     name = "Регион"
     name_plural = "Регионы"
+
+    form_columns = [Region.name, Region.country, Region.citys, Region.funds]
 
 
 class CountryAdmin(BaseAdminView, model=Country):

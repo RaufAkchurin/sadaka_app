@@ -3,12 +3,12 @@ from admin.views.all import (  # PaymentAdmin,
     CountryAdmin,
     FundAdminPicturePreview,
     PaymentAdmin,
-    RegionAdminPicturePreview,
+    ProjectAdmin,
+    RegionAdmin,
     StageAdmin,
 )
 from admin.views.auth import MyAuthenticationBackend
 from admin.views.file import FileAdminPicturePreview
-from admin.views.project import ProjectAdmin
 from admin.views.user import UserAdminPicturePreview
 from fastapi import FastAPI
 from settings import settings
@@ -25,7 +25,7 @@ def create_admin_panel(app: FastAPI):
     )
 
     admin.add_view(CountryAdmin)
-    admin.add_view(RegionAdminPicturePreview)
+    admin.add_view(RegionAdmin)
     admin.add_view(CityAdmin)
 
     admin.add_view(UserAdminPicturePreview)
