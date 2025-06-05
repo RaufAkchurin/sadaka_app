@@ -9,7 +9,8 @@ class BaseAdminView(ModelView):
 
 class AdminPicturePreview(BaseAdminView):
     column_list = ["id", "name", "picture_url"]
-    form_excluded_columns = ["created_at", "updated_at"]
+    form_excluded_columns = ["created_at", "updated_at", "upload"]
+
     column_details_list = ["picture_url"]
 
     @staticmethod
@@ -29,3 +30,25 @@ class AdminPicturePreview(BaseAdminView):
     column_labels = {
         "picture_url": "Превью",
     }
+
+    # # FILE ACTIONS
+    #
+    # def __init__(self):
+    #     super().__init__()
+    #     self.s3_client = get_s3_client()
+    #
+    # async def scaffold_form(self, form_rules=None):
+    #     form_class = await super().scaffold_form()
+    #     form_class.picture_file = FileField("Загрузить файл")
+    #     return form_class
+    #
+    # async def insert_model(self, request: Request, data: dict):
+    #     form = await request.form()
+    #     file: UploadFile = form.get("picture_file", None)
+    #
+    #     if file and file.filename:
+    #         use_case = S3UploadUseCaseImpl(s3_client=self.s3_client)
+    #         s3_file = await use_case(file=file)
+    #         data["url"] = s3_file.url
+    #
+    #     return await super().insert_model(request, data)

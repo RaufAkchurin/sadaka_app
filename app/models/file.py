@@ -53,29 +53,31 @@ class File(Base):
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.id}, name={self.name})"
 
-    @validates(
-        "fund_document_id", "project_id", "stage_id", "user_picture", "project_document_id", "project_picture_id"
-    )
-    def validate_single_target(self, key, value):
-        user_picture = 1 if key == "user_picture" else self.user_picture
-        fund_picture = 1 if key == "fund_picture" else self.fund_picture
-        region = 1 if key == "region" else self.region
-        fund_document_id = value if key == "fund_document_id" else self.fund_document_id
-        project_document_id = value if key == "project_document_id" else self.project_document_id
-        project_picture_id = value if key == "project_picture_id" else self.project_picture_id
-        stage_id = value if key == "stage_id" else self.stage_id
-
-        ids = [fund_picture, fund_document_id, project_document_id, project_picture_id, stage_id, user_picture, region]
-        num_set = sum(bool(i) for i in ids)
-
-        if num_set == 0:
-            raise ValueError("File must be related to at least one model (project or fund).")
-        if num_set > 1:
-            raise ValueError(
-                "File must be related to only one model (project or fund or stage or user_picture) not multiple."
-            )
-
-        return value
+    # @validates(
+    #     "fund_document_id", "project_id", "stage_id", "user_picture", "project_document_id", "project_picture_id"
+    # )
+    # def validate_single_target(self, key, value):
+    #     user_picture = 1 if key == "user_picture" else self.user_picture
+    #     fund_picture = 1 if key == "fund_picture" else self.fund_picture
+    #     project_document = 1 if key == "project_document" else self.project_document
+    #     region = 1 if key == "region" else self.region
+    #     fund_document_id = value if key == "fund_document_id" else self.fund_document_id
+    #     project_document_id = value if key == "project_document_id" else self.project_document_id
+    #     project_picture_id = value if key == "project_picture_id" else self.project_picture_id
+    #     stage_id = value if key == "stage_id" else self.stage_id
+    #
+    #     ids = [fund_picture, fund_document_id, project_document_id, project_document, project_picture_id,
+    #     stage_id, user_picture, region]
+    #     num_set = sum(bool(i) for i in ids)
+    #
+    #     if num_set == 0:
+    #         raise ValueError("File must be related to at least one model (project or fund).")
+    #     if num_set > 1:
+    #         raise ValueError(
+    #             "File must be related to only one model (project or fund or stage or user_picture) not multiple."
+    #         )
+    #
+    #     return value
 
     @validates("url")
     def validate_link(self, key: str, value: str) -> str:
@@ -88,3 +90,7 @@ class File(Base):
     @property
     def picture_url(self) -> str | None:
         return self.url
+
+    @property
+    def upload(self):
+        return None
