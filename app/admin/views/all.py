@@ -1,7 +1,7 @@
 from admin.views.base.multiple_preview import MultipleFilesPreviewAdmin
 from admin.views.base.picture_preview import AdminPicturePreview, BaseAdminView
 from models.fund import Fund
-from models.geo import City, Country, Region
+from models.geo import City, Country
 from models.payment import Payment
 from models.project import Project, Stage
 
@@ -20,14 +20,6 @@ class CityAdmin(BaseAdminView, model=City):
     icon = "fa-solid fa-city"
     name = "Город"
     name_plural = "Города"
-
-
-class RegionAdmin(AdminPicturePreview, model=Region):
-    icon = "fa-solid fa-map"
-    name = "Регион"
-    name_plural = "Регионы"
-
-    form_columns = [Region.name, Region.country, Region.citys, Region.funds]
 
 
 class CountryAdmin(BaseAdminView, model=Country):

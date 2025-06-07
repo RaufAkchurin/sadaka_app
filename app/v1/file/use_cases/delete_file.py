@@ -18,3 +18,4 @@ class FileDeleteWithContentUseCaseImpl:
         file_instance: File = await self.file_dao.find_one_or_none_by_id(file_id)
         await self.file_dao.delete(filters=IdModel(id=file_id))
         await self.s3_deleter(file_instance.get_fullname)
+        print(123)

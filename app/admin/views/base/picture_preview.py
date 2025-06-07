@@ -8,9 +8,7 @@ class BaseAdminView(ModelView):
 
 
 class AdminPicturePreview(BaseAdminView):
-    column_list = ["id", "name", "picture_url"]
     form_excluded_columns = ["created_at", "updated_at", "upload"]
-
     column_details_list = ["picture_url"]
 
     @staticmethod

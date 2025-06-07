@@ -47,8 +47,10 @@ class Region(Base):
     country: Mapped["Country"] = relationship("Country", back_populates="regions", lazy="joined")
 
     # Связь с городами
-    citys: Mapped[list["City"]] = relationship("City", back_populates="region")
-    funds: Mapped[list["Fund"]] = relationship("Fund", back_populates="region")  # imported in __init__.py # noqa F821
+    citys: Mapped[list["City"]] = relationship("City", back_populates="region", lazy="joined")
+    funds: Mapped[list["Fund"]] = relationship(
+        "Fund", back_populates="region", lazy="joined"
+    )  # imported in __init__.py # noqa F821
 
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.id}, name={self.name})"
@@ -56,6 +58,10 @@ class Region(Base):
     @property
     def picture_url(self) -> str | None:
         return self.picture.url if self.picture else None
+
+    @property
+    def upload(self):
+        return None
 
 
 @dataclass

@@ -59,7 +59,7 @@ class UserDataUpdateSchema(BaseModel):
         use_enum_values = True
 
 
-class UserLogoUpdateSchema(BaseModel):
+class PictureUpdateSchema(BaseModel):
     picture_id: int = Field(description="Картинка пользователя")
 
 
