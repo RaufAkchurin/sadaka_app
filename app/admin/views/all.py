@@ -1,9 +1,17 @@
-from admin.views.base import BaseAdminView, CreateWithPictureAdmin
-from models.file import File
+from admin.views.base.multiple_preview import MultipleFilesPreviewAdmin
+from admin.views.base.picture_preview import AdminPicturePreview, BaseAdminView
 from models.fund import Fund
-from models.geo import City, Country, Region
+from models.geo import City, Country
 from models.payment import Payment
 from models.project import Project, Stage
+
+
+class ProjectAdmin(MultipleFilesPreviewAdmin, model=Project):
+    column_list = ["name", "status", "documents_preview", "pictures_preview"]
+    icon = "fa-solid fa-diagram-project"
+    name = "Проект"
+    name_plural = "Проекты"
+
 
 ############### ГЕОГРАФИЯ ############### # noqa E266
 
@@ -12,12 +20,6 @@ class CityAdmin(BaseAdminView, model=City):
     icon = "fa-solid fa-city"
     name = "Город"
     name_plural = "Города"
-
-
-class RegionAdmin(CreateWithPictureAdmin, model=Region):
-    icon = "fa-solid fa-map"
-    name = "Регион"
-    name_plural = "Регионы"
 
 
 class CountryAdmin(BaseAdminView, model=Country):
@@ -29,16 +31,10 @@ class CountryAdmin(BaseAdminView, model=Country):
 ############### ФОНДЫ И ПРОЕКТЫ ############### # noqa E266
 
 
-class FundAdmin(CreateWithPictureAdmin, model=Fund):
+class FundAdminPicturePreview(AdminPicturePreview, model=Fund):
     icon = "fa-solid fa-hand-holding-heart"
     name = "Фонд"
     name_plural = "Фонды"
-
-
-class ProjectAdmin(BaseAdminView, model=Project):
-    icon = "fa-solid fa-diagram-project"
-    name = "Проект"
-    name_plural = "Проекты"
 
 
 class StageAdmin(BaseAdminView, model=Stage):
@@ -46,15 +42,6 @@ class StageAdmin(BaseAdminView, model=Stage):
     icon = "fa-solid fa-layer-group"
     name = "Этап"
     name_plural = "Этапы"
-
-
-class FileAdmin(CreateWithPictureAdmin, model=File):
-    # TODO у файла поля отображаются только заполненные все сотальные скрывать
-    # TODO тк привязка напрмиер только к юзеру а все остальное ненужно видеть в таком случае
-
-    icon = "fa-solid fa-file-alt"
-    name = "Файл"
-    name_plural = "Файлы"
 
 
 ############### ПЛАТЕЖИ ############### # noqa E266

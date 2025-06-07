@@ -14,7 +14,7 @@ async def get_session_with_commit() -> AsyncGenerator[AsyncSession, None]:
             await session.rollback()
             raise
         finally:
-            await session.close()
+            await session.aclose()
 
 
 async def get_session_without_commit() -> AsyncGenerator[AsyncSession, None]:
@@ -26,4 +26,4 @@ async def get_session_without_commit() -> AsyncGenerator[AsyncSession, None]:
             await session.rollback()
             raise
         finally:
-            await session.close()
+            await session.aclose()

@@ -10,3 +10,4 @@ class S3DeleteUseCaseImpl:
         if file_name == "None":
             raise FileNameNotProvidedException
         await self.s3_client.delete_file(object_name=file_name)
+        print(123)

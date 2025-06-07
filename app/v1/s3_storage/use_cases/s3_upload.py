@@ -24,11 +24,15 @@ class S3UploadUseCaseImpl:
 
         contents = await file.read()
 
+        current_file_size_bytes = len(contents)
+        max_size_bytes = self.max_size_mb * 1024 * 1024
+
         # Проверка размера файла
-        if not 0 < len(contents) <= self.max_size_mb * 1024 * 1024:
+        if not 0 < current_file_size_bytes <= max_size_bytes:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Supported file size is 0 - {self.max_size_mb} MB",
+                detail=f"Supported file size is 0 - {self.max_size_mb} MB"
+                f"and you file is {len(contents) / 1024 / 1024} MB",
             )
 
         # Извлекаем расширение
