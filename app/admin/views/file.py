@@ -6,7 +6,7 @@ from v1.s3_storage.use_cases.s3_upload import S3UploadUseCaseImpl
 from wtforms import FileField
 
 
-class PictureUploadNotRelated(AdminPicturePreview):
+class FileModelPictureUploadField(AdminPicturePreview):
     def __init__(self):
         super().__init__()
         self.s3_client = get_s3_client()
@@ -37,7 +37,7 @@ class PictureUploadNotRelated(AdminPicturePreview):
         return await super().update_model(request, pk, data)
 
 
-class FileAdmin(PictureUploadNotRelated, AdminPicturePreview, model=File):
+class FileAdminPicturePreview(FileModelPictureUploadField, model=File):
     # TODO у файла поля отображаются только заполненные все сотальные скрывать
     # TODO тк привязка напрмиер только к юзеру а все остальное ненужно видеть в таком случае
 
