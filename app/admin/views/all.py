@@ -13,7 +13,7 @@ class ProjectAdmin(MultipleFilesPreviewAdmin, model=Project):
     name = "Проект"
     name_plural = "Проекты"
 
-    form_excluded_columns = ["created_at", "updated_at", "payments", "documents", "stages", "pictures"]
+    form_excluded_columns = ["payments", "stages"]  # because sqladmin error for relations
 
 
 ############### ГЕОГРАФИЯ ############### # noqa E266
@@ -31,7 +31,11 @@ class RegionAdmin(ModelView, model=Region):
     name_plural = "Регионы"
 
     # form_columns = [Region.name, Region.country, Region.citys, Region.funds]
-    form_excluded_columns = ["created_at", "updated_at", "funds", "citys"]
+    form_excluded_columns = [
+        "created_at",
+        "updated_at",
+        "funds",
+    ]
 
 
 class CountryAdmin(BaseAdminView, model=Country):
@@ -48,12 +52,20 @@ class FundAdminPicturePreview(AdminPicturePreview, model=Fund):
     name = "Фонд"
     name_plural = "Фонды"
 
+    form_excluded_columns = [
+        "projects",
+    ]  # because sqladmin error for relations
+
 
 class StageAdmin(BaseAdminView, model=Stage):
     column_list = [Stage.id, Stage.name]
     icon = "fa-solid fa-layer-group"
     name = "Этап"
     name_plural = "Этапы"
+
+    form_excluded_columns = [
+        "payments",
+    ]  # because sqladmin error for relations
 
 
 ############### ПЛАТЕЖИ ############### # noqa E266

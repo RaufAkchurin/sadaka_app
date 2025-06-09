@@ -16,3 +16,7 @@ class UserAdminPicturePreview(AdminPicturePreview, model=User):
         User.email: "Email",
         User.language: "Язык",
     }
+
+    form_excluded_columns = [
+        "payments",
+    ]  # because sqladmin error for relations
