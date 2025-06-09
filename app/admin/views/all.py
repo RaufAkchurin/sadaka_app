@@ -4,6 +4,7 @@ from models.fund import Fund
 from models.geo import City, Country, Region
 from models.payment import Payment
 from models.project import Project, Stage
+from sqladmin import ModelView
 
 
 class ProjectAdmin(MultipleFilesPreviewAdmin, model=Project):
@@ -11,6 +12,8 @@ class ProjectAdmin(MultipleFilesPreviewAdmin, model=Project):
     icon = "fa-solid fa-diagram-project"
     name = "Проект"
     name_plural = "Проекты"
+
+    form_excluded_columns = ["created_at", "updated_at", "payments", "documents", "stages", "pictures"]
 
 
 ############### ГЕОГРАФИЯ ############### # noqa E266
@@ -22,12 +25,13 @@ class CityAdmin(BaseAdminView, model=City):
     name_plural = "Города"
 
 
-class RegionAdmin(AdminPicturePreview, model=Region):
+class RegionAdmin(ModelView, model=Region):
     icon = "fa-solid fa-map"
     name = "Регион"
     name_plural = "Регионы"
 
-    form_columns = [Region.name, Region.country, Region.citys, Region.funds]
+    # form_columns = [Region.name, Region.country, Region.citys, Region.funds]
+    form_excluded_columns = ["created_at", "updated_at", "funds", "citys"]
 
 
 class CountryAdmin(BaseAdminView, model=Country):
