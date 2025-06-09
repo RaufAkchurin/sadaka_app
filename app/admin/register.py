@@ -1,14 +1,12 @@
-from admin.views.all import (  # PaymentAdmin,
-    CityAdmin,
-    CountryAdmin,
-    FundAdminPicturePreview,
-    PaymentAdmin,
-    ProjectAdmin,
-    RegionAdmin,
-    StageAdmin,
-)
 from admin.views.auth import MyAuthenticationBackend
+from admin.views.city import CityAdmin
+from admin.views.country import CountryAdmin
 from admin.views.file import FileAdminPicturePreview
+from admin.views.fund import FundAdminPicturePreview
+from admin.views.payment import PaymentAdmin
+from admin.views.project import ProjectAdmin
+from admin.views.region import RegionAdmin
+from admin.views.stage import StageAdmin
 from admin.views.user import UserAdminPicturePreview
 from fastapi import FastAPI
 from settings import settings

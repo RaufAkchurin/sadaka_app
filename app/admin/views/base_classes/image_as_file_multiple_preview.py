@@ -1,4 +1,4 @@
-from admin.views.base.picture_preview import BaseAdminView
+from admin.views.base_classes.image_as_file_singular_preview import BaseAdminView
 from markupsafe import Markup
 
 

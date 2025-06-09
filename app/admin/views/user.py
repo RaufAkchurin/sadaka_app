@@ -1,4 +1,4 @@
-from admin.views.base.picture_preview import AdminPicturePreview
+from admin.views.base_classes.image_as_file_singular_preview import AdminPicturePreview
 from models.user import User
 
 
@@ -7,7 +7,6 @@ class UserAdminPicturePreview(AdminPicturePreview, model=User):
     name = "Пользователь"
 
     icon = "fa-solid fa-user"
-    # column_list = [User.id, User.name, User.email, User.language, User.city_id]
     column_searchable_list = [User.name, User.email]
     column_sortable_list = [User.id, User.name, User.email]
     column_labels = {
