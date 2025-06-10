@@ -1,5 +1,5 @@
 from admin.views.base_classes.image_as_file_singular_preview import AdminPicturePreview
-from models.geo import Region
+from models.region import Region
 from sqladmin import ModelView
 
 

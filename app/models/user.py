@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from email_validator import EmailNotValidError, validate_email
-from models.geo import City
+from models.city import City
 from models.payment import Payment
 from sqlalchemy import Enum as SqlEnum
 from sqlalchemy import ForeignKey, text
