@@ -1,5 +1,5 @@
 from fastapi import UploadFile
-from models.geo import Region
+from models.region import Region
 from sqlalchemy.ext.asyncio import AsyncSession
 from v1.client.interfaces import S3ClientUseCaseProtocol
 from v1.dao.base import BaseDAO

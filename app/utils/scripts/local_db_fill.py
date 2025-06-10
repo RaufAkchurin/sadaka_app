@@ -4,11 +4,13 @@ import os
 import uuid
 from datetime import datetime
 
+from models.city import City
+from models.country import Country
 from models.file import File
 from models.fund import Fund
-from models.geo import City, Country, Region
 from models.payment import Payment
 from models.project import Project, Stage
+from models.region import Region
 from models.user import User
 
 # Мапа: имя модели в JSON → (модель SQLAlchemy, имя файла без расширения)
