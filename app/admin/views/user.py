@@ -1,13 +1,12 @@
-from admin.views.base import CreateWithPictureAdmin
+from admin.views.base_classes.image_as_file_singular_preview import AdminPicturePreview
 from models.user import User
 
 
-class UserAdmin(CreateWithPictureAdmin, model=User):
+class UserAdminPicturePreview(AdminPicturePreview, model=User):
     name_plural = "Пользователи"
     name = "Пользователь"
 
     icon = "fa-solid fa-user"
-    # column_list = [User.id, User.name, User.email, User.language, User.city_id]
     column_searchable_list = [User.name, User.email]
     column_sortable_list = [User.id, User.name, User.email]
     column_labels = {
@@ -16,3 +15,7 @@ class UserAdmin(CreateWithPictureAdmin, model=User):
         User.email: "Email",
         User.language: "Язык",
     }
+
+    form_excluded_columns = [
+        "payments",
+    ]  # because sqladmin error for relations
