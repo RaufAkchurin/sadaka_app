@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -15,6 +16,16 @@ async def get_session_with_commit() -> AsyncGenerator[AsyncSession, None]:
             raise
         finally:
             await session.close()
+
+
+@asynccontextmanager
+async def get_session_with_commit_cm():
+    gen = get_session_with_commit()
+    session = await gen.__anext__()
+    try:
+        yield session
+    finally:
+        await gen.aclose()
 
 
 async def get_session_without_commit() -> AsyncGenerator[AsyncSession, None]:

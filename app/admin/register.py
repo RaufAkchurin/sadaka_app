@@ -20,6 +20,8 @@ def create_admin_panel(app: FastAPI):
         engine=engine,
         authentication_backend=MyAuthenticationBackend(secret_key=settings.SECRET_KEY),
         title="Садака app админка",
+        logo_url="https://fastapi.tiangolo.com/img/logo-margin/logo-teal.png",
+        debug=True,  # Enable debug mode for better error reporting
     )
 
     admin.add_view(CountryAdmin)
