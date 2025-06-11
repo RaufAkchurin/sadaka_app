@@ -9,3 +9,4 @@ class ProjectAdmin(MultipleFilesPreviewAdmin, model=Project):
     name_plural = "Проекты"
 
     form_excluded_columns = ["payments", "stages"]  # because sqladmin error for relations
+    column_searchable_list = [Project.fund_id]

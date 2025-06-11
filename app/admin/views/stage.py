@@ -11,3 +11,5 @@ class StageAdmin(BaseAdminView, model=Stage):
     form_excluded_columns = [
         "payments",
     ]  # because sqladmin error for relations
+
+    column_searchable_list = [Stage.project_id]

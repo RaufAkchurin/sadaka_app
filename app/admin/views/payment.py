@@ -7,3 +7,5 @@ class PaymentAdmin(BaseAdminView, model=Payment):
     icon = "fa-solid fa-credit-card"
     name = "Платёж"
     name_plural = "Платежи"
+
+    column_searchable_list = [Payment.project_id]
