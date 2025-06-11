@@ -56,6 +56,10 @@ class MyAuthenticationBackend(AuthenticationBackend):
                 }
             )
             return True
+
+        except Exception:
+            return False
+
         finally:
             await session.close()
 

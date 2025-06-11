@@ -4,8 +4,9 @@ from email_validator import EmailNotValidError, validate_email
 from models.city import City
 from models.payment import Payment
 from sqlalchemy import Enum as SqlEnum
-from sqlalchemy import ForeignKey, text
+from sqlalchemy import ForeignKey, event, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
+from v1.auth.service_jwt import hash_password_in_signal
 from v1.dao.database import Base
 from v1.users.enums import LanguageEnum, RoleEnum
 
@@ -65,3 +66,7 @@ class User(Base):
     @property
     def picture_url(self) -> str | None:
         return self.picture.url if self.picture else None
+
+
+# всегда хешируем пароль, привязываем событие перед вставкой или обновлением
+event.listen(User.password, "set", hash_password_in_signal, retval=True)
