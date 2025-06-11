@@ -1,27 +1,9 @@
 from dataclasses import dataclass
 
-from sqlalchemy import Enum as SqlEnum
+from models.city import City
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from v1.dao.database import Base, str_uniq
-from v1.users.enums import LanguageEnum
-
-
-@dataclass
-class Country(Base):
-    name: Mapped[str_uniq]
-    language: Mapped[LanguageEnum] = mapped_column(
-        SqlEnum(LanguageEnum, name="language_enum"),
-        server_default=LanguageEnum.RU.value,
-        default=LanguageEnum.RU.value,
-        nullable=False,
-    )
-
-    # Связь с регионами
-    regions: Mapped[list["Region"]] = relationship("Region", back_populates="country")
-
-    def __repr__(self):
-        return f"{self.__class__.__name__}(id={self.id}, name={self.name})"
 
 
 @dataclass
@@ -44,7 +26,7 @@ class Region(Base):
 
     # Внешний ключ для страны
     country_id: Mapped[int] = mapped_column(ForeignKey("countrys.id"), nullable=False)
-    country: Mapped["Country"] = relationship("Country", back_populates="regions", lazy="joined")
+    country: Mapped["Country"] = relationship("Country", back_populates="regions", lazy="joined")  # noqa F821
 
     # Связь с городами
     citys: Mapped[list["City"]] = relationship("City", back_populates="region")
@@ -56,18 +38,3 @@ class Region(Base):
     @property
     def picture_url(self) -> str | None:
         return self.picture.url if self.picture else None
-
-
-@dataclass
-class City(Base):
-    name: Mapped[str_uniq]
-
-    # Связь с пользователями
-    users: Mapped[list["User"]] = relationship("User", back_populates="city")  # noqa F821
-
-    # Внешний ключ для региона
-    region_id: Mapped[int] = mapped_column(ForeignKey("regions.id"), nullable=False)
-    region: Mapped["Region"] = relationship("Region", back_populates="citys", lazy="joined")
-
-    def __repr__(self):
-        return f"{self.__class__.__name__}(id={self.id}, name={self.name})"

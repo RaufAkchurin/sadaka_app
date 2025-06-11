@@ -217,8 +217,8 @@ uvicorn main:app --host 0.0.0.0 --port 80
 
 ## ОБНОВЛЕНИЯ НА ПРОДЕ
 
-0. pkill -f "uvicorn main:app"
-1. source /var/www/sadaka_app/app/venv/bin/activate
-2. cd /var/www/sadaka_app/app/
-3. uv sync --active
-4. nohup uvicorn main:app --host 0.0.0.0 --port 80
+pkill -f "uvicorn main:app"
+source /var/www/sadaka_app/venv/bin/activate
+cd /var/www/sadaka_app/app/
+uv sync --active
+nohup uvicorn main:app --host 0.0.0.0 --port 80
