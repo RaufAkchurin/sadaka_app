@@ -5,7 +5,6 @@ from jose import jwt
 from models.user import User
 from settings import settings
 from v1.auth.service_auth import authenticate_user, create_tokens
-from v1.auth.service_jwt import get_password_hash
 from v1.users.schemas import EmailModel, SUserAddDB
 
 
@@ -49,11 +48,10 @@ class TestUtils:
         assert decoded_refresh["exp"] == int(refresh_expire.timestamp())
 
     async def test_authenticate_user(self, user_dao):
-        hash = get_password_hash("12345")
         user_data_dict = {
             "email": "test12@test.com",
             "name": "test12",
-            "password": hash,
+            "password": "12345",
         }
 
         await user_dao.add(values=SUserAddDB(**user_data_dict, is_active=True))
