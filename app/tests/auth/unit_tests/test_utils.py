@@ -12,7 +12,7 @@ class TestUtils:
     @pytest.mark.parametrize("user_id", ["123", "456"])
     async def test_create_token_success(self, user_id):
         # Данные для теста
-        data = {"sub": user_id}
+        data = {"user_id": user_id}
 
         # Создание токенов
         new_tokens = create_tokens(data)
@@ -28,14 +28,14 @@ class TestUtils:
         refresh_expire = now + datetime.timedelta(days=7)
 
         # Декодируем access_token и проверяем его содержимое
-        decoded_sub = jwt.decode(
+        decoded_access = jwt.decode(
             new_tokens.get("access_token"),
             settings.SECRET_KEY,
             algorithms=[settings.ALGORITHM],
         )
-        assert decoded_sub["sub"] == user_id
-        assert decoded_sub["type"] == "access"
-        assert decoded_sub["exp"] == int(access_expire.timestamp())
+        assert decoded_access["user_id"] == user_id
+        assert decoded_access["type"] == "access"
+        assert decoded_access["exp"] == int(access_expire.timestamp())
 
         # Декодируем refresh_token и проверяем его содержимое
         decoded_refresh = jwt.decode(
@@ -43,7 +43,7 @@ class TestUtils:
             settings.SECRET_KEY,
             algorithms=[settings.ALGORITHM],
         )
-        assert decoded_refresh["sub"] == user_id
+        assert decoded_refresh["user_id"] == user_id
         assert decoded_refresh["type"] == "refresh"
         assert decoded_refresh["exp"] == int(refresh_expire.timestamp())
 
