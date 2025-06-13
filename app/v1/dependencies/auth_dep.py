@@ -40,7 +40,7 @@ async def check_refresh_token(
     """Проверяем refresh_token и возвращаем пользователя."""
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
-        user_id = payload.get("sub")
+        user_id = payload.get("user_id")
         if not user_id:
             raise NoJwtException
 
@@ -72,7 +72,7 @@ async def get_current_user(
     if (not expire) or (expire_time < datetime.now(timezone.utc)):
         raise TokenExpiredException
 
-    user_id: str = payload.get("sub")
+    user_id: str = payload.get("user_id")
     if not user_id:
         raise NoUserIdException
 
