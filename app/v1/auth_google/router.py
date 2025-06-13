@@ -31,7 +31,7 @@ async def google_auth(
 ):
     google_permitted_user = await google_auth_service(code, session)
     if google_permitted_user:
-        set_tokens_to_response(response, google_permitted_user)
+        set_tokens_to_response(response, google_permitted_user.id)
         return Response(status_code=200, content="Thanks to logging in sadaka app via Google")
     else:
         raise FailedGoogleOauthException

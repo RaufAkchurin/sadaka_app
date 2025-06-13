@@ -20,21 +20,17 @@ async def register_by_email(
 ) -> dict:
     user_dao = UserDAO(session)
     existing_user = await user_dao.find_one_or_none(filters=EmailModel(email=user_data.email))
-    try:
-        if existing_user:
-            await UserDAO(session).update(
-                filters=EmailModel(email=existing_user.email),
-                values=UserActiveModel(is_active=True),
-            )
-        else:
-            user_data_dict = user_data.model_dump()
-            user_data_dict.pop("confirm_password", None)
+    if existing_user:
+        await UserDAO(session).update(
+            filters=EmailModel(email=existing_user.email),
+            values=UserActiveModel(is_active=True),
+        )
+    else:
+        user_data_dict = user_data.model_dump()
+        user_data_dict.pop("confirm_password", None)
 
-            await user_dao.add(values=SUserAddDB(**user_data_dict, is_active=True))
-        return {"message": "Вы успешно зарегистрированы!"}
-
-    except ValueError:
-        return IncorrectEmailOrPasswordException
+        await user_dao.add(values=SUserAddDB(**user_data_dict, is_active=True))
+    return {"message": "Вы успешно зарегистрированы!"}
 
 
 @v1_auth_router.post("/login_anonymous/")
@@ -47,7 +43,7 @@ async def register_and_login_anonymous(
             email=person.email(domains=["first.com", "second.ru"]), name=person.name(), is_anonymous=True
         )
     )
-    set_tokens_to_response(response, user)
+    set_tokens_to_response(response, user.id)
     return {"message": "Анонимный пользователь добавлен"}
 
 
@@ -62,7 +58,7 @@ async def login_by_email(
 
     if not (user and await authenticate_user(user=user, password=user_data.password)):
         raise IncorrectEmailOrPasswordException
-    set_tokens_to_response(response, user)
+    set_tokens_to_response(response, user.id)
     return {"ok": True, "message": "Авторизация успешна!"}
 
 
@@ -75,11 +71,11 @@ async def logout(response: Response):
 
 @v1_auth_router.post("/refresh")
 async def process_refresh_token(response: Response, user: User = Depends(check_refresh_token)):
-    set_tokens_to_response(response, user)
+    set_tokens_to_response(response, user.id)
     return {"message": "Токены успешно обновлены"}
 
 
 @v2_auth_router.post("/versioning_for_example")
 async def versioning_for_example(response: Response, user: User = Depends(check_refresh_token)):
-    set_tokens_to_response(response, user)
+    set_tokens_to_response(response, user.id)
     return {"message": "Токены успешно обновлены"}

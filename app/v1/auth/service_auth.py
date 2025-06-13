@@ -2,7 +2,6 @@ from datetime import datetime, timedelta, timezone
 
 from fastapi.responses import Response
 from jose import jwt
-from models.user import User
 from settings import settings
 from v1.auth.service_jwt import verify_password
 
@@ -31,13 +30,8 @@ async def authenticate_user(user, password):
     return user
 
 
-def set_tokens_to_response(response: Response, user: User):
-    new_tokens = create_tokens(
-        data={
-            "user_id": str(user.id),
-            "role": user.role,
-        }
-    )
+def set_tokens_to_response(response: Response, user_id: int):
+    new_tokens = create_tokens(data={"sub": str(user_id)})
     access_token = new_tokens.get("access_token")
     refresh_token = new_tokens.get("refresh_token")
     secure = settings.MODE in ["PROD", "TEST"]
