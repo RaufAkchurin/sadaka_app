@@ -2,6 +2,7 @@ from datetime import datetime, timedelta, timezone
 
 from fastapi.responses import Response
 from jose import jwt
+from models.user import User
 from settings import settings
 from v1.auth.service_jwt import verify_password
 
@@ -30,8 +31,13 @@ async def authenticate_user(user, password):
     return user
 
 
-def set_tokens_to_response(response: Response, user_id: int):
-    new_tokens = create_tokens(data={"sub": str(user_id)})
+def set_tokens_to_response(response: Response, user: User):
+    new_tokens = create_tokens(
+        data={
+            "user_id": str(user.id),
+            "role": user.role,
+        }
+    )
     access_token = new_tokens.get("access_token")
     refresh_token = new_tokens.get("refresh_token")
     secure = settings.MODE in ["PROD", "TEST"]
@@ -51,28 +57,3 @@ def set_tokens_to_response(response: Response, user_id: int):
         secure=secure,
         samesite="lax",
     )
-
-
-# def set_tokens_to_request_session(request: Request, user_id: int):
-#     new_tokens = create_tokens(data={"sub": str(user_id)})
-#     access_token = new_tokens.get("access_token")
-#     refresh_token = new_tokens.get("refresh_token")
-#     secure = settings.MODE in ["PROD", "TEST"]
-#
-#
-#
-#     response.set_cookie(
-#         key="user_access_token",
-#         value=access_token,
-#         httponly=True,
-#         secure=secure,
-#         samesite="lax",
-#     )
-#
-#     response.set_cookie(
-#         key="user_refresh_token",
-#         value=refresh_token,
-#         httponly=True,
-#         secure=secure,
-#         samesite="lax",
-#     )

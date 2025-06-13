@@ -2,7 +2,7 @@ from fastapi import HTTPException, status
 
 # АВТОРИЗАЦИЯ
 
-# Пользователь не найден
+# Пользователь
 UserNotFoundException = HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Пользователь не найден")
 
 UserIdNotFoundException = HTTPException(
