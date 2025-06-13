@@ -1,8 +1,9 @@
+from admin.views.auth_permissions import FundAdminAccess
 from admin.views.base_classes.image_as_file_multiple_preview import MultipleFilesPreviewAdmin
 from models.project import Project
 
 
-class ProjectAdmin(MultipleFilesPreviewAdmin, model=Project):
+class ProjectAdmin(MultipleFilesPreviewAdmin, FundAdminAccess, model=Project):
     column_list = ["name", "status", "documents_preview", "pictures_preview"]
     icon = "fa-solid fa-diagram-project"
     name = "Проект"

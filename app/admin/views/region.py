@@ -1,9 +1,10 @@
+from admin.views.auth_permissions import SuperAdminPerm
 from admin.views.base_classes.image_as_file_singular_preview import AdminPicturePreview
 from models.region import Region
 from sqladmin import ModelView
 
 
-class RegionAdmin(AdminPicturePreview, ModelView, model=Region):
+class RegionAdmin(SuperAdminPerm, AdminPicturePreview, ModelView, model=Region):
     icon = "fa-solid fa-map"
     name = "Регион"
     name_plural = "Регионы"

@@ -1,8 +1,9 @@
+from admin.views.auth_permissions import SuperAdminPerm
 from admin.views.base_classes.image_as_file_singular_preview import AdminPicturePreview
 from models.user import User
 
 
-class UserAdminPicturePreview(AdminPicturePreview, model=User):
+class UserAdmin(AdminPicturePreview, SuperAdminPerm, model=User):
     name_plural = "Пользователи"
     name = "Пользователь"
 
