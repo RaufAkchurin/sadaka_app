@@ -25,6 +25,13 @@ def get_access_token(request: Request) -> str:
     return token
 
 
+def get_access_token_from_session_for_admin_panel(request: Request) -> str:
+    token = request.session.get("cookies").get("user_access_token")
+    if not token:
+        raise TokenNoFound
+    return token
+
+
 def get_refresh_token(request: Request) -> str:
     """Извлекаем refresh_token из кук."""
     token = request.cookies.get("user_refresh_token")
