@@ -26,10 +26,13 @@ async def register_by_email(
             values=UserActiveModel(is_active=True),
         )
     else:
-        user_data_dict = user_data.model_dump()
-        user_data_dict.pop("confirm_password", None)
+        try:
+            user_data_dict = user_data.model_dump()
+            user_data_dict.pop("confirm_password", None)
 
-        await user_dao.add(values=SUserAddDB(**user_data_dict, is_active=True))
+            await user_dao.add(values=SUserAddDB(**user_data_dict, is_active=True))
+        except ValueError:
+            raise IncorrectEmailOrPasswordException
     return {"message": "Вы успешно зарегистрированы!"}
 
 
