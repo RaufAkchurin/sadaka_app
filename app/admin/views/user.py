@@ -19,4 +19,5 @@ class UserAdmin(AdminPicturePreview, SuperAdminPerm, model=User):
 
     form_excluded_columns = [
         "payments",
+        "funds_access",
     ]  # because sqladmin error for relations

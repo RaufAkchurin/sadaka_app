@@ -11,8 +11,6 @@ class AdminPicturePreview(BaseAdminView):
     column_list = ["id", "name", "picture_url"]
     form_excluded_columns = ["created_at", "updated_at", "upload"]
 
-    column_details_list = ["picture_url"]
-
     @staticmethod
     def _picture_preview(model, name):
         url = getattr(model, "picture_url")
@@ -25,7 +23,6 @@ class AdminPicturePreview(BaseAdminView):
     }
 
     column_formatters_list = column_formatters
-    column_formatters_detail = column_formatters
 
     column_labels = {
         "picture_url": "Превью",

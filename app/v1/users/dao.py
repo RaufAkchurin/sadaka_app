@@ -3,8 +3,9 @@ from models.country import Country
 from models.file import File
 from models.fund import Fund
 from models.payment import Payment
-from models.project import Project, Stage
+from models.project import Project
 from models.region import Region
+from models.stage import Stage
 from models.user import User
 from v1.dao.base import BaseDAO
 

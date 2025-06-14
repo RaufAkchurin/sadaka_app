@@ -10,7 +10,11 @@ class TokenTypeEnum(str, enum.Enum):
 
 
 class TokenPayloadSchema(BaseModel):
+    # payload
     user_id: int
     user_role: RoleEnum
+    funds_access_ids: list[int]
+
+    # core data
     exp: int
     type: TokenTypeEnum

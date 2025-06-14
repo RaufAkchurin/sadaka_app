@@ -9,4 +9,5 @@ class LanguageEnum(str, enum.Enum):
 class RoleEnum(str, enum.Enum):
     SUPERUSER = "superuser"
     FUND_ADMIN = "fund_admin"
+    FUND_STAFF = "fund_staff"
     USER = "user"
