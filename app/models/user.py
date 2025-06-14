@@ -1,14 +1,21 @@
 from dataclasses import dataclass
 
-from email_validator import EmailNotValidError, validate_email
 from models.city import City
 from models.payment import Payment
+from sqlalchemy import Column
 from sqlalchemy import Enum as SqlEnum
-from sqlalchemy import ForeignKey, event, text
-from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
+from sqlalchemy import ForeignKey, Integer, Table, event, text
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from v1.auth.service_jwt import hash_password_in_signal
 from v1.dao.database import Base
 from v1.users.enums import LanguageEnum, RoleEnum
+
+user_fund_access = Table(
+    "user_fund_access",
+    Base.metadata,
+    Column("user_id", Integer, ForeignKey("users.id")),
+    Column("fund_id", Integer, ForeignKey("funds.id")),
+)
 
 
 @dataclass
@@ -24,6 +31,10 @@ class User(Base):
         server_default=LanguageEnum.RU.value,
         default=LanguageEnum.RU.value,
         nullable=False,
+    )
+
+    funds_access: Mapped[list["Fund"]] = relationship(  # noqa F821
+        secondary=user_fund_access, back_populates="user_have_access"
     )
 
     role: Mapped[RoleEnum] = mapped_column(
@@ -54,14 +65,6 @@ class User(Base):
 
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.id}, name={self.name})"
-
-    @validates("email")
-    def validate_email_field(self, key, value):
-        try:
-            valid = validate_email(value)
-            return valid.normalized
-        except EmailNotValidError as e:
-            raise ValueError(f"Невалидный email: {e}")
 
     @property
     def picture_url(self) -> str | None:

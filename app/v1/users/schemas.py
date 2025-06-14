@@ -1,8 +1,8 @@
 from typing import Self
 
+from email_validator import EmailNotValidError, validate_email
 from models.user import LanguageEnum
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, model_validator
-from v1.auth.service_jwt import get_password_hash
 
 
 class IdModel(BaseModel):
@@ -13,6 +13,14 @@ class IdModel(BaseModel):
 class EmailModel(BaseModel):
     email: EmailStr = Field(description="Электронная почта")
     model_config = ConfigDict(from_attributes=True)
+
+    @model_validator(mode="after")
+    def check_email(self) -> Self:
+        try:
+            validate_email(str(self.email))
+            return self
+        except EmailNotValidError as e:
+            raise ValueError(f"Невалидный email: {e}")
 
 
 class UserBase(EmailModel):
@@ -31,7 +39,6 @@ class SUserEmailRegister(UserBase):
     def check_password(self) -> Self:
         if self.password != self.confirm_password:
             raise ValueError("Пароли не совпадают")
-        # self.password = get_password_hash(self.password)  # хешируем пароль до сохранения в базе данных
         return self
 
 
