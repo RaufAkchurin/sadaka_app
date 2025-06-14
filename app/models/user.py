@@ -34,7 +34,9 @@ class User(Base):
     )
 
     funds_access: Mapped[list["Fund"]] = relationship(  # noqa F821
-        secondary=user_fund_access, back_populates="user_have_access"
+        secondary=user_fund_access,
+        back_populates="user_have_access",
+        lazy="selectin",
     )
 
     role: Mapped[RoleEnum] = mapped_column(
@@ -69,6 +71,10 @@ class User(Base):
     @property
     def picture_url(self) -> str | None:
         return self.picture.url if self.picture else None
+
+    @property
+    def funds_access_ids(self) -> list[int]:
+        return [fund.id for fund in self.funds_access]
 
 
 # всегда хешируем пароль, привязываем событие перед вставкой или обновлением

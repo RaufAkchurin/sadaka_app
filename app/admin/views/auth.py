@@ -1,3 +1,4 @@
+from admin.views.schemas import TokenPayloadSchema
 from exceptions import ForbiddenException
 from fastapi import Request
 from jose import jwt
@@ -6,9 +7,17 @@ from pydantic.v1 import EmailStr
 from settings import settings
 from sqladmin.authentication import AuthenticationBackend
 from v1.auth.service_auth import authenticate_user, create_tokens
+from v1.dependencies.auth_dep import get_access_token_from_session_for_admin_panel
 from v1.dependencies.dao_dep import get_session_without_commit
 from v1.users.dao import UserDAO
 from v1.users.schemas import EmailModel
+
+
+def get_token_payload(request: Request) -> TokenPayloadSchema:
+    token = get_access_token_from_session_for_admin_panel(request)
+    payload_raw = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+    payload = TokenPayloadSchema(**payload_raw)
+    return payload
 
 
 class MyAuthenticationBackend(AuthenticationBackend):
@@ -46,7 +55,14 @@ class MyAuthenticationBackend(AuthenticationBackend):
                 logger.info(f"У вас недостаточно прав для доступа к админ панели. текущая роль - {user.role.value}")
                 raise ForbiddenException
 
-            new_tokens = create_tokens(data={"user_id": str(user.id), "user_role": user.role.value})
+            new_tokens = create_tokens(
+                data={
+                    "user_id": str(user.id),
+                    "user_role": user.role.value,
+                    "funds_access_ids": user.funds_access_ids,
+                }
+            )
+
             request.session.update(
                 {
                     "cookies": {

@@ -6,7 +6,7 @@ from models.city import City  # noqa: F401
 from models.country import Country  # noqa: F401
 from models.file import File  # noqa: F401
 from models.fund import Fund  # noqa: F401
-from models.project import Project, Stage  # noqa: F401
+from models.project import Project  # noqa: F401
 from models.region import Region  # noqa: F401
 from models.user import User  # noqa: F401
 from sqlalchemy import pool
