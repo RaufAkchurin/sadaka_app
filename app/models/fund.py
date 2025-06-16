@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 from models.file import File
+from models.user import user_fund_access
 from sqlalchemy import ForeignKey, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
 from v1.api_utils.validators import validate_phone
@@ -22,6 +23,13 @@ class Fund(Base):
     region: Mapped["Region"] = relationship(  # noqa F821
         "Region", back_populates="funds", lazy="joined"
     )  # imported in __init__.py
+
+    # user:
+    user_have_access: Mapped[list["User"]] = relationship(  # noqa F821
+        secondary=user_fund_access,
+        back_populates="funds_access",
+        lazy="selectin",
+    )
 
     picture_id: Mapped[int | None] = mapped_column(ForeignKey("files.id"), nullable=True, unique=True)
     picture: Mapped["File | None"] = relationship(  # noqa F821
