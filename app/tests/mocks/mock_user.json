@@ -12,7 +12,7 @@
     "email": "admin@test.com",
     "name": "admin",
     "password": "$2b$12$rm7Bu.bjhNHKU25th37EFO6tpnvjz5EiB2s7QyJX/BKx9aOsIwEKm",
-    "role": "SUPERUSER",
+    "role": "FUND_ADMIN",
     "picture_id": 10
   },
     {
