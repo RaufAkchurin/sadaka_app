@@ -10,3 +10,7 @@ class FileAdmin(FileModelPictureUploadField, model=File):
     name = "Файл"
     name_plural = "Файлы"
     can_export = False
+    form_excluded_columns = [
+        "created_at",
+        "updated_at",
+    ]

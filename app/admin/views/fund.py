@@ -11,4 +11,6 @@ class FundAdmin(SuperAdminPerm, AdminPicturePreview, model=Fund):
 
     form_excluded_columns = [
         "projects",
+        "created_at",
+        "updated_at",
     ]  # because sqladmin error for relations

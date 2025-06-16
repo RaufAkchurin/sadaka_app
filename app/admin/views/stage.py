@@ -15,8 +15,10 @@ class StageAdmin(BaseAdminView, FundAdminAccess, model=Stage):
     can_export = False
 
     form_excluded_columns = [
-        "payments",
-    ]  # because sqladmin error for relations
+        "payments",  # because sqladmin error for relations
+        "created_at",
+        "updated_at",
+    ]
 
     column_searchable_list = [Stage.project_id]
 
