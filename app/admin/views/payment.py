@@ -8,5 +8,6 @@ class PaymentAdmin(BaseAdminView, FundAdminAccess, model=Payment):
     icon = "fa-solid fa-credit-card"
     name = "Платёж"
     name_plural = "Платежи"
+    can_export = False
 
     column_searchable_list = [Payment.project_id]

@@ -7,6 +7,7 @@ class FundAdmin(SuperAdminPerm, AdminPicturePreview, model=Fund):
     icon = "fa-solid fa-hand-holding-heart"
     name = "Фонд"
     name_plural = "Фонды"
+    can_export = False
 
     form_excluded_columns = [
         "projects",

@@ -6,6 +6,7 @@ from models.user import User
 class UserAdmin(AdminPicturePreview, SuperAdminPerm, model=User):
     name_plural = "Пользователи"
     name = "Пользователь"
+    can_export = False
 
     icon = "fa-solid fa-user"
     column_searchable_list = [User.name, User.email]

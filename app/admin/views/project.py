@@ -11,6 +11,7 @@ class ProjectAdmin(MultipleFilesPreviewAdmin, FundAdminAccess, model=Project):
     icon = "fa-solid fa-diagram-project"
     name = "Проект"
     name_plural = "Проекты"
+    can_export = False
 
     form_excluded_columns = ["payments", "stages"]  # because sqladmin error for relations
     column_searchable_list = [Project.fund_id]

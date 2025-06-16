@@ -7,3 +7,4 @@ class CityAdmin(BaseAdminView, SuperAdminPerm, model=City):
     icon = "fa-solid fa-city"
     name = "Город"
     name_plural = "Города"
+    can_export = False

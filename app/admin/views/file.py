@@ -9,3 +9,4 @@ class FileAdmin(FileModelPictureUploadField, model=File):
     icon = "fa-solid fa-file-alt"
     name = "Файл"
     name_plural = "Файлы"
+    can_export = False

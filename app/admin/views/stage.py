@@ -12,6 +12,7 @@ class StageAdmin(BaseAdminView, FundAdminAccess, model=Stage):
     icon = "fa-solid fa-layer-group"
     name = "Этап"
     name_plural = "Этапы"
+    can_export = False
 
     form_excluded_columns = [
         "payments",

@@ -8,6 +8,7 @@ class RegionAdmin(SuperAdminPerm, AdminPicturePreview, ModelView, model=Region):
     icon = "fa-solid fa-map"
     name = "Регион"
     name_plural = "Регионы"
+    can_export = False
 
     form_excluded_columns = [
         "created_at",
