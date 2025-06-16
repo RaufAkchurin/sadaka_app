@@ -12,10 +12,13 @@ class StageAdmin(BaseAdminView, FundAdminAccess, model=Stage):
     icon = "fa-solid fa-layer-group"
     name = "Этап"
     name_plural = "Этапы"
+    can_export = False
 
     form_excluded_columns = [
-        "payments",
-    ]  # because sqladmin error for relations
+        "payments",  # because sqladmin error for relations
+        "created_at",
+        "updated_at",
+    ]
 
     column_searchable_list = [Stage.project_id]
 

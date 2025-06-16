@@ -9,3 +9,8 @@ class FileAdmin(FileModelPictureUploadField, model=File):
     icon = "fa-solid fa-file-alt"
     name = "Файл"
     name_plural = "Файлы"
+    can_export = False
+    form_excluded_columns = [
+        "created_at",
+        "updated_at",
+    ]

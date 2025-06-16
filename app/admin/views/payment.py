@@ -1,12 +1,15 @@
 from admin.views.auth_permissions import FundAdminAccess
-from admin.views.base_classes.image_as_file_singular_preview import BaseAdminView
 from models.payment import Payment
+from sqladmin import ModelView
 
 
-class PaymentAdmin(BaseAdminView, FundAdminAccess, model=Payment):
-    column_list = [Payment.id]
+class PaymentAdmin(FundAdminAccess, ModelView, model=Payment):
     icon = "fa-solid fa-credit-card"
     name = "Платёж"
     name_plural = "Платежи"
+    can_create = False
+    can_edit = False
+    can_delete = False
 
+    column_exclude_list = ["id", "user", "captured_at", "updated_at", "project_id", "stage_id", "user_id"]
     column_searchable_list = [Payment.project_id]

@@ -7,3 +7,4 @@ class CountryAdmin(BaseAdminView, SuperAdminPerm, model=Country):
     icon = "fa-solid fa-globe"
     name = "Страна"
     name_plural = "Страны"
+    can_export = False
