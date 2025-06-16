@@ -24,7 +24,7 @@ class StageAdmin(BaseAdminView, FundAdminAccess, model=Stage):
         stmt = select(self.model).join(Project, Stage.project_id == Project.id)
 
         # фильтруем по фондам
-        if payload.funds_access_ids:
+        if payload.user_role.value != "superuser":
             stmt = stmt.where(Project.fund_id.in_(payload.funds_access_ids))
 
         return stmt
