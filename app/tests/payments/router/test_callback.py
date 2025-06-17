@@ -1,3 +1,4 @@
+import copy
 import uuid
 from unittest.mock import patch
 
@@ -58,7 +59,9 @@ class TestPaymentCallback:
     # TEST IT WORK BUT NOT IN SCOPE AND RUN SINGULAR
     @patch("fastapi.Request.client", Address("185.71.76.1", 1234))  # For ip_security checker
     async def test_callback_cancelled(self, ac) -> None:
-        callback_mock_canceled = self.callback_mock_success
+        # Create an independent deep copy of the original dictionary,
+        # including all nested structures, to prevent side effects during modification.
+        callback_mock_canceled = copy.deepcopy(self.callback_mock_success)
         callback_mock_canceled["status"] = "canceled"
 
         response = await ac.post("/app/v1/payments/yookassa_callback", json={"object": callback_mock_canceled})
