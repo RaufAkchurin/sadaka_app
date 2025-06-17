@@ -34,7 +34,7 @@ class FileModelPictureUploadField(AdminPicturePreview):
             file_dao = FileDAO(session)
             user_instance = await file_dao.find_one_or_none_by_id(data_id=new_file_data.id)
 
-            #  в ретёр добавить инстанс нового файла
+            await session.commit()
             return user_instance
 
     async def update_model(self, request, pk, data):
