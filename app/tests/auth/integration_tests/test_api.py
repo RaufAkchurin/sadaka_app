@@ -57,7 +57,7 @@ class TestApi:
     async def test_register_by_email_after_deleting(self, session, user_dao, ac):
         assert await user_dao.count() == 6
         user_data = {
-            "email": "user_after_deleting@test.com",
+            "email": "user_after_deleting@gmail.com",
             "name": "string",
             "password": "password",
             "confirm_password": "password",
@@ -66,7 +66,7 @@ class TestApi:
         # Создаем пользака
         await ac.post("/app/v1/auth/register/", json=user_data)
         assert await user_dao.count() == 7
-        current_user = await user_dao.find_one_or_none(filters=UserEmailSchema(email="user_after_deleting@test.com"))
+        current_user = await user_dao.find_one_or_none(filters=UserEmailSchema(email="user_after_deleting@gmail.com"))
         assert current_user.is_active
 
         # Удаляем и проверяем что он деактивировался
