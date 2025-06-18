@@ -1,6 +1,6 @@
 from models.user import User
 from v1.users.dao import UserDAO
-from v1.users.schemas import EmailModel, UserActiveModel
+from v1.users.schemas import UserActiveSchema, UserEmailSchema
 
 
 class DeleteUserUseCase:
@@ -9,8 +9,8 @@ class DeleteUserUseCase:
 
     async def __call__(self, user: User):
         await self.users_dao.update(
-            filters=EmailModel(email=user.email),
-            values=UserActiveModel(
+            filters=UserEmailSchema(email=user.email),
+            values=UserActiveSchema(
                 is_active=False,
             ),
         )

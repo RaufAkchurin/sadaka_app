@@ -1,19 +1,19 @@
 import requests
 from settings import settings
-from v1.auth_google.schemas import GoogleUserData
+from v1.auth_google.schemas import GoogleUserDataSchema
 
 
 class GoogleClient:
     def __init__(self):
         self.google_redirect_url = settings.google_redirect_url
 
-    def get_google_user_info(self, code: str) -> GoogleUserData:
+    def get_google_user_info(self, code: str) -> GoogleUserDataSchema:
         access_token = self._get_google_user_access_token(code)
         user_info = requests.get(
             "https://www.googleapis.com/oauth2/v1/userinfo",
             headers={"Authorization": f"Bearer {access_token}"},
         )
-        return GoogleUserData(**user_info.json(), google_access_token=access_token)
+        return GoogleUserDataSchema(**user_info.json(), google_access_token=access_token)
 
     @staticmethod
     def _get_google_user_access_token(code: str) -> str | None:

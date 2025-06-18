@@ -2,7 +2,7 @@ from models.user import User
 from sqlalchemy.ext.asyncio import AsyncSession
 from v1.geo.validators import city_id_validator
 from v1.users.dao import UserDAO
-from v1.users.schemas import EmailModel, UserDataUpdateSchema
+from v1.users.schemas import UserDataUpdateSchema, UserEmailSchema
 
 
 class UserDataUpdateUseCase:
@@ -14,7 +14,7 @@ class UserDataUpdateUseCase:
         if hasattr(update_data, "city_id") and update_data.city_id:
             await city_id_validator(city_id=update_data.city_id, session=self.session)
 
-        await self.users_dao.update(filters=EmailModel(email=user.email), values=update_data)
+        await self.users_dao.update(filters=UserEmailSchema(email=user.email), values=update_data)
 
         updated_user = await self.users_dao.find_one_or_none_by_id(data_id=user.id)
         validated_data = UserDataUpdateSchema(
