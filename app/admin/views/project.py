@@ -28,9 +28,8 @@ class ProjectAdmin(MultipleFilesPreviewAdmin, FundAdminAccess, model=Project):
         """
         payload = get_token_payload(request)
 
-        if (
-            not payload.funds_access_ids and payload.user_role.value != "superuser"
-        ):  # if list empty its work without error
+        if not payload.funds_access_ids and payload.user_role.value != "superuser":
+            # if list empty its work without error
             return select(self.model).where(false())
 
         if payload.user_role.value != "superuser":  # filtering by fund_ids_access
