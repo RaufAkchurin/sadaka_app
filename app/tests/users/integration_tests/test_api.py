@@ -150,7 +150,7 @@ class TestUsers:
                 200,
                 {
                     "city_id": 1,
-                    "email": "updated@example.com",
+                    "email": "updated@first.com",
                     "name": "updated",
                     "language": "RU",
                 },
@@ -160,7 +160,7 @@ class TestUsers:
     )
     async def test_update_user(self, ac, auth_ac, user_dao, authorized, status_code, response_message) -> None:
         new_data = {
-            "email": "updated@example.com",
+            "email": "updated@first.com",
             "name": "updated",
             "picture": "updated",
             "city_id": 1,
@@ -222,13 +222,13 @@ class TestUsers:
             (
                 200,
                 {
-                    "email": "updated@example.com",
+                    "email": "updated@first.com",
                     "name": "updated",
                     "city_id": 1,
                     "language": "EN",
                 },
                 {
-                    "email": "updated@example.com",
+                    "email": "updated@first.com",
                     "name": "updated",
                     "city_id": 1,
                     "language": "EN",
@@ -238,7 +238,7 @@ class TestUsers:
                 200,
                 {"city_id": 2},
                 {
-                    "email": "updated@example.com",
+                    "email": "updated@first.com",
                     "name": "updated",
                     "city_id": 2,
                     "language": "EN",
@@ -248,7 +248,7 @@ class TestUsers:
                 200,
                 {"name": "updated1"},
                 {
-                    "email": "updated@example.com",
+                    "email": "updated@first.com",
                     "name": "updated1",
                     "city_id": 2,
                     "language": "EN",
@@ -256,9 +256,9 @@ class TestUsers:
             ),
             (
                 200,
-                {"email": "1updated@example.com"},
+                {"email": "1updated@first.com"},
                 {
-                    "email": "1updated@example.com",
+                    "email": "1updated@first.com",
                     "name": "updated1",
                     "city_id": 2,
                     "language": "EN",

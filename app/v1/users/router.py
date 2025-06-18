@@ -20,7 +20,7 @@ v1_users_router = APIRouter()
 
 @v1_users_router.get("/me")
 async def get_me(user_data: User = Depends(get_current_user)) -> SUserInfo:
-    return SUserInfo.model_validate(user_data)
+    return SUserInfo(**user_data.to_dict())
 
 
 @v1_users_router.put("/update_logo")
