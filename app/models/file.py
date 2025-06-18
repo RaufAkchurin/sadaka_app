@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from sqlalchemy import Enum as SqlEnum
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, event
 from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
 from v1.api_utils.validators import validate_link_url
 from v1.dao.database import Base
@@ -53,32 +53,6 @@ class File(Base):
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.id}, name={self.name})"
 
-    # @validates(
-    #     "fund_document_id", "project_id", "stage_id", "user_picture", "project_document_id", "project_picture_id"
-    # )
-    # def validate_single_target(self, key, value):
-    #     user_picture = 1 if key == "user_picture" else self.user_picture
-    #     fund_picture = 1 if key == "fund_picture" else self.fund_picture
-    #     project_document = 1 if key == "project_document" else self.project_document
-    #     region = 1 if key == "region" else self.region
-    #     fund_document_id = value if key == "fund_document_id" else self.fund_document_id
-    #     project_document_id = value if key == "project_document_id" else self.project_document_id
-    #     project_picture_id = value if key == "project_picture_id" else self.project_picture_id
-    #     stage_id = value if key == "stage_id" else self.stage_id
-    #
-    #     ids = [fund_picture, fund_document_id, project_document_id, project_document, project_picture_id,
-    #     stage_id, user_picture, region]
-    #     num_set = sum(bool(i) for i in ids)
-    #
-    #     if num_set == 0:
-    #         raise ValueError("File must be related to at least one model (project or fund).")
-    #     if num_set > 1:
-    #         raise ValueError(
-    #             "File must be related to only one model (project or fund or stage or user_picture) not multiple."
-    #         )
-    #
-    #     return value
-
     @validates("url")
     def validate_link(self, key: str, value: str) -> str:
         return validate_link_url(value)
@@ -94,3 +68,35 @@ class File(Base):
     @property
     def upload(self):  # this method for sqladmin update method without uploaded picture
         return None
+
+    def count_non_null_relations(self) -> int:
+        count = 0
+        if self.user_picture is not None:
+            count += 1
+        if self.region is not None:
+            count += 1
+        if self.fund_picture is not None:
+            count += 1
+        if self.fund_document is not None:
+            count += 1
+        if self.project_document is not None:
+            count += 1
+        if self.project_picture is not None:
+            count += 1
+        if self.stage is not None:
+            count += 1
+        return count
+
+    def validate_one_relation(self):
+        count = self.count_non_null_relations()
+        if count != 1:
+            raise ValueError(
+                "File must be linked to exactly ONE related model (User, Region, Fund, Project, Stage). "
+                f"Found {count} linked."
+            )
+
+
+@event.listens_for(File, "before_insert")
+@event.listens_for(File, "before_update")
+def receive_before_insert_or_update(mapper, connection, target):
+    target.validate_one_relation()
