@@ -8,7 +8,7 @@ from v1.file.use_cases.create_file import FileCreateWithContentUseCaseImpl
 from v1.file.use_cases.delete_file import FileDeleteWithContentUseCaseImpl
 from v1.s3_storage.use_cases.s3_upload import S3UploadUseCaseImpl
 from v1.users.dao import FileDAO, RegionDAO
-from v1.users.schemas import IdModel, PictureIdSchema
+from v1.users.schemas import IdSchema, PictureIdSchema
 
 
 class RegionPictureUpdateUseCaseImpl:
@@ -26,7 +26,7 @@ class RegionPictureUpdateUseCaseImpl:
         mew_file_instance_data = await self.creator(picture=picture)
 
         await self.regions_dao.update(
-            filters=IdModel(id=region.id),
+            filters=IdSchema(id=region.id),
             values=PictureIdSchema(picture_id=mew_file_instance_data.id),
         )
 

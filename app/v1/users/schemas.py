@@ -5,12 +5,12 @@ from models.user import LanguageEnum
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, model_validator
 
 
-class IdModel(BaseModel):
-    id: int = Field(description="Электронная почта")
+class IdSchema(BaseModel):
+    id: int
     model_config = ConfigDict(from_attributes=True)
 
 
-class EmailModel(BaseModel):
+class UserEmailSchema(BaseModel):
     email: EmailStr = Field(description="Электронная почта")
     model_config = ConfigDict(from_attributes=True)
 
@@ -23,15 +23,15 @@ class EmailModel(BaseModel):
             raise ValueError(f"Невалидный email: {e}")
 
 
-class UserBase(EmailModel):
+class UserBaseSchema(UserEmailSchema):
     name: str = Field(min_length=3, max_length=50, description="Имя, от 3 до 50 символов")
 
 
-class AnonymousUserAddDB(UserBase):
+class AnonymousUserAddSchemaSchema(UserBaseSchema):
     is_anonymous: bool
 
 
-class SUserEmailRegister(UserBase):
+class SUserEmailRegisterSchemaSchema(UserBaseSchema):
     password: str = Field(min_length=5, max_length=50, description="Пароль, от 5 до 50 знаков")
     confirm_password: str = Field(min_length=5, max_length=50, description="Повторите пароль")
 
@@ -42,12 +42,12 @@ class SUserEmailRegister(UserBase):
         return self
 
 
-class SUserAddDB(UserBase):
+class SUserAddSchemaSchema(UserBaseSchema):
     password: str = Field(min_length=5, description="Пароль в формате HASH-строки")
     is_active: bool = Field(description="Активный пользователь", default=True)
 
 
-class SUserAuth(EmailModel):
+class SUserAuthSchema(UserEmailSchema):
     password: str = Field(min_length=5, max_length=50, description="Пароль, от 5 до 50 знаков")
 
 
@@ -70,21 +70,21 @@ class PictureIdSchema(BaseModel):
     picture_id: int = Field(description="Картинка пользователя")
 
 
-class UserActiveModel(BaseModel):
+class UserActiveSchema(BaseModel):
     is_active: bool = Field(description="Активный пользователь")
 
 
-class CityModel(BaseModel):
+class CitySchema(BaseModel):
     id: int = Field(description="Идентификатор города")
     name: str = Field(description="Название города")
 
     model_config = ConfigDict(from_attributes=True)
 
 
-class SUserInfo(UserBase):
+class SUserInfoSchemaSchema(UserBaseSchema):
     id: int = Field(description="Идентификатор пользователя")
     is_anonymous: bool = Field(description="Анонимный пользователь")
     is_active: bool = Field(description="Активный пользователь")
-    city: CityModel = Field(description="Город пользователя")
+    city: CitySchema = Field(description="Город пользователя")
     language: str = Field(description="Язык пользователя")
     picture_url: str | None = None

@@ -10,7 +10,7 @@ from v1.auth.service_auth import authenticate_user, create_tokens
 from v1.dependencies.auth_dep import get_access_token_from_session_for_admin_panel
 from v1.dependencies.dao_dep import get_session_without_commit
 from v1.users.dao import UserDAO
-from v1.users.schemas import EmailModel
+from v1.users.schemas import UserEmailSchema
 
 
 def get_token_payload(request: Request) -> TokenPayloadSchema:
@@ -39,7 +39,7 @@ class MyAuthenticationBackend(AuthenticationBackend):
         try:
             # Ищем пользователя по email
             user_dao = UserDAO(session)
-            user = await user_dao.find_one_or_none(filters=EmailModel(email=EmailStr(email)))
+            user = await user_dao.find_one_or_none(filters=UserEmailSchema(email=EmailStr(email)))
 
             if not user:
                 logger.info(f"Пользователь админ панели по данному email не найден - {email}")

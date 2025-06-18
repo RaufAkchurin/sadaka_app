@@ -1,5 +1,5 @@
 from tests.factory.factories_polyfactory import faker
-from v1.users.schemas import EmailModel, SUserAddDB, UserBase
+from v1.users.schemas import SUserAddSchemaSchema, UserBaseSchema, UserEmailSchema
 
 
 class TestDAO:
@@ -14,7 +14,7 @@ class TestDAO:
         res = []
 
         for user in users:
-            user_base_instance = UserBase.model_validate(vars(user))
+            user_base_instance = UserBaseSchema.model_validate(vars(user))
             res.append(user_base_instance)
 
         await user_dao.bulk_update(res)
@@ -30,7 +30,7 @@ class TestDAO:
             "password": "8654567",
         }
 
-        new_user = await user_dao.add(values=SUserAddDB(**user_data_dict))
+        new_user = await user_dao.add(values=SUserAddSchemaSchema(**user_data_dict))
         assert new_user.id == 6
 
         user = await user_dao.find_one_or_none_by_id(new_user.id)
@@ -43,11 +43,11 @@ class TestDAO:
             "password": "876trfghy6t5r",
         }
 
-        await user_dao.add(values=SUserAddDB(**user_data_dict))
-        user = await user_dao.find_one_or_none(filters=EmailModel(email="2test@test.com"))
+        await user_dao.add(values=SUserAddSchemaSchema(**user_data_dict))
+        user = await user_dao.find_one_or_none(filters=UserEmailSchema(email="2test@test.com"))
         assert user.name == "test4"
 
-        user = await user_dao.find_one_or_none(filters=EmailModel(email="nonexistent@test.com"))
+        user = await user_dao.find_one_or_none(filters=UserEmailSchema(email="nonexistent@test.com"))
         assert user is None
 
     async def test_find_all(self, user_dao):
@@ -64,7 +64,7 @@ class TestDAO:
             for i in range(10)
         ]
 
-        new_users = await user_dao.add_many([SUserAddDB(**user_data) for user_data in users])
+        new_users = await user_dao.add_many([SUserAddSchemaSchema(**user_data) for user_data in users])
         assert len(new_users) == 10
 
     async def test_update(self, user_dao):
@@ -73,12 +73,12 @@ class TestDAO:
             "name": "test3",
             "password": "8654567",
         }
-        new_user = await user_dao.add(values=SUserAddDB(**user_data_dict))
+        new_user = await user_dao.add(values=SUserAddSchemaSchema(**user_data_dict))
         assert new_user.name == "test3"
 
         user_data_dict["name"] = "updated_name"
         updated_user = await user_dao.update(
-            filters=EmailModel(email=new_user.email), values=UserBase(**user_data_dict)
+            filters=UserEmailSchema(email=new_user.email), values=UserBaseSchema(**user_data_dict)
         )
         assert updated_user == 1
 
@@ -91,10 +91,10 @@ class TestDAO:
             "name": "test4",
             "password": "8654567",
         }
-        new_user = await user_dao.add(values=SUserAddDB(**user_data_dict))
+        new_user = await user_dao.add(values=SUserAddSchemaSchema(**user_data_dict))
         assert new_user.name == "test4"
 
-        deleted_user = await user_dao.delete(filters=EmailModel(email=new_user.email))
+        deleted_user = await user_dao.delete(filters=UserEmailSchema(email=new_user.email))
         assert deleted_user == 1
 
         deleted_user = await user_dao.find_one_or_none_by_id(new_user.id)
