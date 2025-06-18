@@ -89,7 +89,7 @@ class File(Base):
 
     def validate_one_relation(self):
         count = self.count_non_null_relations()
-        if count != 1:
+        if count > 1:
             raise ValueError(
                 "File must be linked to exactly ONE related model (User, Region, Fund, Project, Stage). "
                 f"Found {count} linked."
