@@ -36,7 +36,7 @@ async def yookassa_success_callback(
     request: Request,
     session: AsyncSession = Depends(get_session_with_commit),
 ) -> Response:
-    use_case = YooCallbackSuccessUseCaseImpl(request=request, session=session)
-    await use_case.execute()
+    use_case = YooCallbackSuccessUseCaseImpl(session=session)
+    await use_case.execute(request=request)
 
     return Response(status_code=200)
