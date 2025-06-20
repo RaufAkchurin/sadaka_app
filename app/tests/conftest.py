@@ -1,12 +1,14 @@
 import httpx
 import pytest
 from httpx import ASGITransport, AsyncClient
+from main import app
 from main import app as fastapi_app
 from models.user import User
 from settings import settings
 from tests.schemas import AuthorizedClientModel, CookiesModel
 from utils.scripts.local_db_fill import prepare_database_core
 from v1.dao.database import async_session_maker
+from v1.dependencies.dao_dep import get_session_with_commit
 from v1.users.dao import UserDAO
 from yookassa import Configuration
 
@@ -26,6 +28,29 @@ async def prepare_database(session):
 @pytest.fixture(scope="class")
 async def prepare_database_manually(session):
     await prepare_database_core(session)
+
+
+@pytest.fixture
+async def test_session():
+    async with async_session_maker() as session:
+        try:
+            yield session
+            await session.commit()
+        except Exception:
+            await session.rollback()
+            raise
+        finally:
+            await session.close()
+
+
+@pytest.fixture
+def override_get_session_with_commit(test_session):
+    async def _override():
+        yield test_session
+
+    app.dependency_overrides[get_session_with_commit] = _override
+    yield
+    app.dependency_overrides.pop(get_session_with_commit)
 
 
 @pytest.fixture(scope="class")

@@ -12,11 +12,12 @@ from v1.users.dao import PaymentDAO, ProjectDAO
 
 
 class YooCallbackSuccessUseCaseImpl:
-    def __init__(self, request: Request, session: AsyncSession):
-        self.request = request
+    def __init__(self, session: AsyncSession):
         self.session = session
+        self.request = None
 
-    async def execute(self):
+    async def execute(self, request: Request) -> None:
+        self.request = request
         await self.__yookassa_client_ip_security_checker()
         await self.__create_payment_in_db()
 
