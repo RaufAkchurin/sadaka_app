@@ -66,30 +66,46 @@ class TestPaymentCallback:
 
         session_gen = get_session_with_commit()
         session = await session_gen.__anext__()
-
-        payment_dao = PaymentDAO(session=session)
-        payments: list[Payment] = await payment_dao.find_all()
-        assert len(payments) == 6  # sum of mocked data without new
+        try:
+            payment_dao = PaymentDAO(session=session)
+            payments = await payment_dao.find_all()
+            assert len(payments) == 6  # sum of mocked data without new
+        finally:
+            await session_gen.aclose()
 
     @patch("fastapi.Request.client", Address("185.71.76.1", 1234))  # For ip_security checker
     async def test_callback_success(self, ac) -> None:
+        # Получаем количество платежей до callback
+        session_gen = get_session_with_commit()
+        session = await session_gen.__anext__()
+        try:
+            payment_dao = PaymentDAO(session=session)
+            payments_before = await payment_dao.find_all()
+            print("Платежей до callback:", len(payments_before))
+        finally:
+            await session_gen.aclose()
+
         response = await ac.post("/app/v1/payments/yookassa_callback", json={"object": self.callback_mock_success})
         assert response.status_code == 200
 
+        # Получаем количество платежей после callback
         session_gen = get_session_with_commit()
         session = await session_gen.__anext__()
+        try:
+            payment_dao = PaymentDAO(session=session)
+            payments_after = await payment_dao.find_all()
+            print("Платежей после callback:", len(payments_after))
+            assert len(payments_after) == 7
 
-        payment_dao = PaymentDAO(session=session)
-        payments: list[Payment] = await payment_dao.find_all()
-        assert len(payments) == 7
+            current_payment = payments_after[-1]
+            assert current_payment.id == uuid.UUID("2fc64f42-000f-5000-8000-14945ca734f5")
 
-        current_payment = payments[-1]
-        assert current_payment.id == uuid.UUID("2fc64f42-000f-5000-8000-14945ca734f5")
-
-        assert current_payment.project_id == 1
-        assert current_payment.user_id == 1
-        assert current_payment.stage_id == 2
-        assert current_payment.amount == 32.0
+            assert current_payment.project_id == 1
+            assert current_payment.user_id == 1
+            assert current_payment.stage_id == 2
+            assert current_payment.amount == 32.0
+        finally:
+            await session_gen.aclose()
 
     async def test_callback_forbidden(self, ac) -> None:
         response = await ac.post("/app/v1/payments/yookassa_callback", json={"object": self.callback_mock_success})
