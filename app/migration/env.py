@@ -8,11 +8,11 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from app.models.city import City  # noqa: F401
 from app.models.country import Country  # noqa: F401
-from app.models.models.file import File  # noqa: F401
-from app.models.models.fund import Fund  # noqa: F401
-from app.models.models.project import Project  # noqa: F401
-from app.models.models.region import Region  # noqa: F401
-from app.models.models.user import User  # noqa: F401
+from app.models.file import File  # noqa: F401
+from app.models.fund import Fund  # noqa: F401
+from app.models.project import Project  # noqa: F401
+from app.models.region import Region  # noqa: F401
+from app.models.user import User  # noqa: F401
 from app.v1.dao.database import DATABASE_URL, Base
 
 config = context.config
