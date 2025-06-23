@@ -1,6 +1,6 @@
 from typing import List
 
-from v1.users.schemas import SUserInfoSchemaSchema
+from app.v1.users.schemas import SUserInfoSchemaSchema
 
 
 class GetAllUsersUseCase:

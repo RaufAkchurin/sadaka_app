@@ -1,6 +1,7 @@
 import requests
 from settings import settings
-from v1.auth_google.schemas import GoogleUserDataSchema
+
+from app.v1.auth_google.schemas import GoogleUserDataSchema
 
 
 class GoogleClient:

@@ -1,6 +1,7 @@
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from v1.users.dao import ProjectDAO
+
+from app.v1.users.dao import ProjectDAO
 
 
 async def project_id_validator(project_id: int, session: AsyncSession):

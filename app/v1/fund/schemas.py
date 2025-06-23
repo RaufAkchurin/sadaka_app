@@ -16,7 +16,8 @@
 -отчёты
 """
 from pydantic import BaseModel, ConfigDict
-from v1.project.schemas import FileBaseSchema, ProjectForListAPISchema
+
+from app.v1.project.schemas import FileBaseSchema, ProjectForListAPISchema
 
 
 class FundDetailAPISchema(BaseModel):

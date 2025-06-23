@@ -1,6 +1,7 @@
 from admin.views.auth_permissions import SuperAdminPerm
 from admin.views.base_classes.image_as_file_singular_preview import AdminPicturePreview
-from models.fund import Fund
+
+from app.models.fund import Fund
 
 
 class FundAdmin(SuperAdminPerm, AdminPicturePreview, model=Fund):

@@ -11,7 +11,8 @@ from admin.views.user import UserAdmin
 from fastapi import FastAPI
 from settings import settings
 from sqladmin import Admin
-from v1.dao.database import engine
+
+from app.v1.dao.database import engine
 
 
 def create_admin_panel(app: FastAPI):

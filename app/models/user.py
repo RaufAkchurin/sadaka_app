@@ -1,14 +1,15 @@
 from dataclasses import dataclass
 
-from models.city import City
-from models.payment import Payment
 from sqlalchemy import Column
 from sqlalchemy import Enum as SqlEnum
 from sqlalchemy import ForeignKey, Integer, Table, event, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from v1.auth.service_jwt import hash_password_in_signal
-from v1.dao.database import Base
-from v1.users.enums import LanguageEnum, RoleEnum
+
+from app.models.city import City
+from app.models.payment import Payment
+from app.v1.auth.service_jwt import hash_password_in_signal
+from app.v1.dao.database import Base
+from app.v1.users.enums import LanguageEnum, RoleEnum
 
 user_fund_access = Table(
     "user_fund_access",

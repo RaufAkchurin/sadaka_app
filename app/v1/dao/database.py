@@ -3,20 +3,24 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Annotated
 
-from settings import settings
 from sqlalchemy import TIMESTAMP, Integer, NullPool, func, inspect
 from sqlalchemy.ext.asyncio import AsyncAttrs, AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase, Mapped, declared_attr, mapped_column
 
-if settings.MODE == "TEST":
-    DATABASE_URL = f"sqlite+aiosqlite:///{settings.BASE_DIR}/data/db_test.sqlite3"
-    DATABASE_PARAMS = {"echo": True, "poolclass": NullPool}
-else:
+from app.settings import settings
+
+mode = settings.MODE
+
+if mode == "PROD":
     DATABASE_URL = (
         f"postgresql+asyncpg://{settings.POSTGRES_USER}:"
         f"{settings.POSTGRES_PASSWORD}@{settings.POSTGRES_HOST}/{settings.POSTGRES_DB_NAME}"
     )
     DATABASE_PARAMS = {"pool_size": 5, "max_overflow": 10}
+
+else:
+    DATABASE_URL = f"sqlite+aiosqlite:///{settings.BASE_DIR}/data/db_test.sqlite3"
+    DATABASE_PARAMS = {"echo": True, "poolclass": NullPool}
 
 engine = create_async_engine(url=DATABASE_URL, **DATABASE_PARAMS)
 async_session_maker = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)

@@ -1,16 +1,17 @@
 import var_dump as var_dump
-from models.project import Project
-from models.user import User
 from pydantic_core import Url
 from sqlalchemy.ext.asyncio import AsyncSession
-from v1.payment.schemas import YooMetadataInputSchema, YooPaymentUrlSchema
-from v1.payment.validators import project_id_validator
-from v1.users.dao import ProjectDAO
 from yookassa import Payment as YookassaStockPayment
 from yookassa.domain.common.confirmation_type import ConfirmationType
 from yookassa.domain.models.currency import Currency
 from yookassa.domain.models.receipt import Receipt, ReceiptItem
 from yookassa.domain.request.payment_request_builder import PaymentRequestBuilder
+
+from app.models.project import Project
+from app.models.user import User
+from app.v1.payment.schemas import YooMetadataInputSchema, YooPaymentUrlSchema
+from app.v1.payment.validators import project_id_validator
+from app.v1.users.dao import ProjectDAO
 
 
 class CreateYooPaymentUseCaseImpl:
