@@ -5,7 +5,6 @@ from alembic import context
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
-from v1.dao.database import DATABASE_URL, Base
 
 from app.models.city import City  # noqa: F401
 from app.models.country import Country  # noqa: F401
@@ -14,6 +13,7 @@ from app.models.models.fund import Fund  # noqa: F401
 from app.models.models.project import Project  # noqa: F401
 from app.models.models.region import Region  # noqa: F401
 from app.models.models.user import User  # noqa: F401
+from app.v1.dao.database import DATABASE_URL, Base
 
 config = context.config
 config.set_main_option("sqlalchemy.url", DATABASE_URL)
