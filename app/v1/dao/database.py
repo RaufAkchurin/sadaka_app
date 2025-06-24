@@ -9,11 +9,27 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, declared_attr, mapped_column
 
 from app.settings import settings
 
-if settings.MODE == "TEST":
-    DATABASE_URL = f"sqlite+aiosqlite:///{settings.BASE_DIR}/data/db_test.sqlite3"
+mode = settings.MODE
+
+if settings.MODE == "PROD":
+    # Настройки для Production
+    DB_DRIVER = "postgresql+asyncpg"
+    DATABASE_URL = (
+        f"{DB_DRIVER}://{settings.POSTGRES_USER}:{settings.POSTGRES_PASSWORD}"
+        f"@{settings.POSTGRES_HOST}/{settings.POSTGRES_DB_NAME}"
+    )
+    DATABASE_PARAMS = {"pool_size": 5, "max_overflow": 10}
+
+elif settings.MODE == "TEST":
+    # Настройки для тестирования
+    DB_DRIVER = "sqlite+aiosqlite"
+    DATABASE_URL = f"{DB_DRIVER}:///{settings.BASE_DIR}/data/db_test.sqlite3"
     DATABASE_PARAMS = {"echo": True, "poolclass": NullPool}
+
 else:
-    DATABASE_URL = f"sqlite+aiosqlite:///{settings.BASE_DIR}/data/db.sqlite3"
+    # Настройки по умолчанию
+    DB_DRIVER = "sqlite+aiosqlite"
+    DATABASE_URL = f"{DB_DRIVER}:///{settings.BASE_DIR}/data/db.sqlite3"
     DATABASE_PARAMS = {}
 
 engine = create_async_engine(url=DATABASE_URL, **DATABASE_PARAMS)
