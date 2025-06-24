@@ -2,11 +2,12 @@ from exceptions import FailedGoogleOauthException
 from fastapi import APIRouter, Depends, HTTPException, Response
 from loguru import logger
 from sqlalchemy.ext.asyncio import AsyncSession
-from v1.auth.service_auth import set_tokens_to_response
-from v1.auth_google.schemas import GoogleRedirectUrl
-from v1.auth_google.service import google_auth_service
-from v1.client.google_client import google_client
-from v1.dependencies.dao_dep import get_session_with_commit
+
+from app.v1.auth.service_auth import set_tokens_to_response
+from app.v1.auth_google.schemas import GoogleRedirectUrl
+from app.v1.auth_google.service import google_auth_service
+from app.v1.client.google_client import google_client
+from app.v1.dependencies.dao_dep import get_session_with_commit
 
 v1_google_router = APIRouter()
 

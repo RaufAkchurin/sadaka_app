@@ -2,7 +2,8 @@ from dataclasses import dataclass
 
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from v1.dao.database import Base, str_uniq
+
+from app.v1.dao.database import Base, str_uniq
 
 
 @dataclass

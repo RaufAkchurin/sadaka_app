@@ -2,13 +2,14 @@ import httpx
 import pytest
 from httpx import ASGITransport, AsyncClient
 from main import app as fastapi_app
-from models.user import User
-from settings import settings
 from tests.schemas import AuthorizedClientModel, CookiesModel
 from utils.scripts.local_db_fill import prepare_database_core
-from v1.dao.database import async_session_maker
-from v1.users.dao import UserDAO
 from yookassa import Configuration
+
+from app.models.user import User
+from app.settings import settings
+from app.v1.dao.database import async_session_maker
+from app.v1.users.dao import UserDAO
 
 
 @pytest.fixture(autouse=True)

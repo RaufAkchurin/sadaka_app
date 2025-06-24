@@ -1,7 +1,8 @@
 from admin.views.auth_permissions import SuperAdminPerm
 from admin.views.base_classes.image_as_file_singular_preview import AdminPicturePreview
-from models.region import Region
 from sqladmin import ModelView
+
+from app.models.region import Region
 
 
 class RegionAdmin(SuperAdminPerm, AdminPicturePreview, ModelView, model=Region):
@@ -30,8 +31,8 @@ class RegionAdmin(SuperAdminPerm, AdminPicturePreview, ModelView, model=Region):
     # from sqlalchemy import Select
     # from starlette.requests import Request
     # from wtforms.validators import Optional
-    # from v1.geo.use_cases.region.update_picture import RegionPictureUpdateUseCaseImpl
-    # from v1.users.dao import RegionDAO
+    # from app.v1.geo.use_cases.region.update_picture import RegionPictureUpdateUseCaseImpl
+    # from app.v1.users.dao import RegionDAO
 
     # def __init__(self):
     #     super().__init__()

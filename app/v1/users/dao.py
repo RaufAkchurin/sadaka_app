@@ -1,13 +1,13 @@
-from models.city import City
-from models.country import Country
-from models.file import File
-from models.fund import Fund
-from models.payment import Payment
-from models.project import Project
-from models.region import Region
-from models.stage import Stage
-from models.user import User
-from v1.dao.base import BaseDAO
+from app.models.city import City
+from app.models.country import Country
+from app.models.file import File
+from app.models.fund import Fund
+from app.models.payment import Payment
+from app.models.project import Project
+from app.models.region import Region
+from app.models.stage import Stage
+from app.models.user import User
+from app.v1.dao.base import BaseDAO
 
 
 class UserDAO(BaseDAO):

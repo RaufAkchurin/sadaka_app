@@ -3,10 +3,11 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Annotated
 
-from settings import settings
 from sqlalchemy import TIMESTAMP, Integer, NullPool, func, inspect
 from sqlalchemy.ext.asyncio import AsyncAttrs, AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase, Mapped, declared_attr, mapped_column
+
+from app.settings import settings
 
 if settings.MODE == "TEST":
     DATABASE_URL = f"sqlite+aiosqlite:///{settings.BASE_DIR}/data/db_test.sqlite3"

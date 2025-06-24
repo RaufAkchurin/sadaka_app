@@ -1,8 +1,9 @@
 from unittest.mock import MagicMock, patch
 
 import pytest
-from v1.auth import google_auth_service
-from v1.users.schemas import UserActiveSchema, UserEmailSchema
+
+from app.v1.auth import google_auth_service
+from app.v1.users.schemas import UserActiveSchema, UserEmailSchema
 
 
 @pytest.fixture

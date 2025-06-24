@@ -3,12 +3,13 @@ import json
 from ipaddress import ip_address, ip_network
 
 from exceptions import YookassaCallbackForbiddenException
-from models.project import Project
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
-from v1.payment.enums import PaymentStatusEnum
-from v1.payment.schemas import PaymentCreateSchema, YooWebhookDataSchema
-from v1.users.dao import PaymentDAO, ProjectDAO
+
+from app.models.project import Project
+from app.v1.payment.enums import PaymentStatusEnum
+from app.v1.payment.schemas import PaymentCreateSchema, YooWebhookDataSchema
+from app.v1.users.dao import PaymentDAO, ProjectDAO
 
 
 class YooCallbackSuccessUseCaseImpl:

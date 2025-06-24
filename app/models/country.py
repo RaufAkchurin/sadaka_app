@@ -1,10 +1,11 @@
 from dataclasses import dataclass
 
-from models.region import Region
 from sqlalchemy import Enum as SqlEnum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from v1.dao.database import Base, str_uniq
-from v1.users.enums import LanguageEnum
+
+from app.models.region import Region
+from app.v1.dao.database import Base, str_uniq
+from app.v1.users.enums import LanguageEnum
 
 
 @dataclass

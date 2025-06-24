@@ -1,8 +1,9 @@
 from typing import Self
 
 from email_validator import EmailNotValidError, validate_email
-from models.user import LanguageEnum
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, model_validator
+
+from app.models.user import LanguageEnum
 
 
 class IdSchema(BaseModel):

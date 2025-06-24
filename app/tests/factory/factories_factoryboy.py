@@ -1,7 +1,8 @@
 import factory
 from factory.alchemy import SQLAlchemyModelFactory
-from models.user import User
 from sqlalchemy.orm import Session
+
+from app.models.user import User
 
 
 class BaseFactory(SQLAlchemyModelFactory):

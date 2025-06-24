@@ -1,10 +1,11 @@
 from admin.views.auth import get_token_payload
 from admin.views.auth_permissions import FundAdminAccess
 from admin.views.base_classes.image_as_file_singular_preview import BaseAdminView
-from models.project import Project
-from models.stage import Stage
 from sqlalchemy import select
 from starlette.requests import Request
+
+from app.models.project import Project
+from app.models.stage import Stage
 
 
 class StageAdmin(BaseAdminView, FundAdminAccess, model=Stage):

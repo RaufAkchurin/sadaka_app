@@ -1,10 +1,11 @@
 import uuid
 from unittest.mock import patch
 
-from models.payment import Payment
 from starlette.datastructures import Address
-from v1.dependencies.dao_dep import get_session_with_commit
-from v1.users.dao import PaymentDAO
+
+from app.models.payment import Payment
+from app.v1.dependencies.dao_dep import get_session_with_commit
+from app.v1.users.dao import PaymentDAO
 
 
 # TODO ТЕСТЫ нагрузочные написать напрмиер на 100/1000 закпросов и смотреть количество записей в БД

@@ -1,9 +1,10 @@
-from models.project import Project
 from sqlalchemy import Enum as SqlEnum
 from sqlalchemy import ForeignKey, Integer, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
-from v1.dao.database import Base
-from v1.project.enums import AbstractStatusEnum
+
+from app.models.project import Project
+from app.v1.dao.database import Base
+from app.v1.project.enums import AbstractStatusEnum
 
 
 class Stage(Base):
