@@ -1,10 +1,11 @@
-from models.fund import Fund
 from sqlalchemy import Enum as SqlEnum
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
-from v1.dao.database import Base
-from v1.project.enums import AbstractStatusEnum
-from v1.project.schemas import RegionInfoSchema
+
+from app.models.fund import Fund
+from app.v1.dao.database import Base
+from app.v1.project.enums import AbstractStatusEnum
+from app.v1.project.schemas import RegionInfoSchema
 
 
 class Project(Base):

@@ -5,8 +5,9 @@ from sqlalchemy import TIMESTAMP, UUID
 from sqlalchemy import Enum as SqlEnum
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from v1.dao.database import Base
-from v1.payment.enums import PaymentStatusEnum
+
+from app.v1.dao.database import Base
+from app.v1.payment.enums import PaymentStatusEnum
 
 
 @dataclass
