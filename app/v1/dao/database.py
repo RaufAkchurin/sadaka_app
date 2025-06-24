@@ -9,12 +9,18 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, declared_attr, mapped_column
 
 from app.settings import settings
 
-if settings.MODE == "TEST":
+mode = settings.MODE
+
+if mode == "PROD":
+    DATABASE_URL = (
+        f"postgresql+asyncpg://{settings.POSTGRES_USER}:"
+        f"{settings.POSTGRES_PASSWORD}@{settings.POSTGRES_HOST}/{settings.POSTGRES_DB_NAME}"
+    )
+    DATABASE_PARAMS = {"pool_size": 5, "max_overflow": 10}
+
+else:
     DATABASE_URL = f"sqlite+aiosqlite:///{settings.BASE_DIR}/data/db_test.sqlite3"
     DATABASE_PARAMS = {"echo": True, "poolclass": NullPool}
-else:
-    DATABASE_URL = f"sqlite+aiosqlite:///{settings.BASE_DIR}/data/db.sqlite3"
-    DATABASE_PARAMS = {}
 
 engine = create_async_engine(url=DATABASE_URL, **DATABASE_PARAMS)
 async_session_maker = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)

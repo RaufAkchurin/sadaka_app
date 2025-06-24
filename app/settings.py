@@ -24,6 +24,11 @@ class Settings(BaseSettings):
     YOOKASSA_TEST_SECRET_KEY: str
     YOOKASSA_TEST_SHOP_ID: int
 
+    POSTGRES_USER: str
+    POSTGRES_PASSWORD: str
+    POSTGRES_HOST: str
+    POSTGRES_DB_NAME: str
+
     model_config = SettingsConfigDict(env_file=f"{BASE_DIR}/.env")
 
     @property
