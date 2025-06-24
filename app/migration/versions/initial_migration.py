@@ -120,7 +120,7 @@ def upgrade() -> None:
         sa.Column(
             "role",
             sa.Enum("SUPERUSER", "FUND_ADMIN", "FUND_STAFF", "USER", name="role_enum"),
-            server_default="user",
+            server_default="USER",  # Изменено на верхний регистр
             nullable=False,
         ),
         sa.Column("is_anonymous", sa.Boolean(), nullable=False),
@@ -131,6 +131,7 @@ def upgrade() -> None:
         sa.Column("created_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
         sa.Column("updated_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
         sa.ForeignKeyConstraint(["city_id"], ["citys.id"]),
+        sa.ForeignKeyConstraint(["picture_id"], ["files.id"]),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("email"),
         sa.UniqueConstraint("picture_id"),
