@@ -29,6 +29,100 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("name"),
     )
+
+    op.create_table(
+        "regions",
+        sa.Column("name", sa.String(), nullable=False),
+        sa.Column("picture_id", sa.Integer(), nullable=True),
+        sa.Column("country_id", sa.Integer(), nullable=False),
+        sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
+        sa.Column("created_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
+        sa.Column("updated_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
+        sa.ForeignKeyConstraint(
+            ["country_id"],
+            ["countrys.id"],
+        ),
+        sa.ForeignKeyConstraint(
+            ["picture_id"], ["files.id"], name="fk_region_picture_id", ondelete="SET NULL", use_alter=True
+        ),
+        sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint("name"),
+        sa.UniqueConstraint("picture_id"),
+    )
+
+    op.create_table(
+        "citys",
+        sa.Column("name", sa.String(), nullable=False),
+        sa.Column("region_id", sa.Integer(), nullable=False),
+        sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
+        sa.Column("created_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
+        sa.Column("updated_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
+        sa.ForeignKeyConstraint(
+            ["region_id"],
+            ["regions.id"],
+        ),
+        sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint("name"),
+    )
+
+    op.create_table(
+        "funds",
+        sa.Column("name", sa.String(), nullable=False),
+        sa.Column("description", sa.String(), nullable=True),
+        sa.Column("hot_line", sa.String(), nullable=False),
+        sa.Column("address", sa.String(), nullable=False),
+        sa.Column("region_id", sa.Integer(), server_default=sa.text("1"), nullable=False),
+        sa.Column("picture_id", sa.Integer(), nullable=True),
+        sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
+        sa.Column("created_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
+        sa.Column("updated_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
+        sa.ForeignKeyConstraint(
+            ["picture_id"],
+            ["files.id"],
+        ),
+        sa.ForeignKeyConstraint(
+            ["region_id"],
+            ["regions.id"],
+        ),
+        sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint("picture_id"),
+    )
+
+    op.create_table(
+        "projects",
+        sa.Column("name", sa.String(), nullable=False),
+        sa.Column("status", sa.Enum("ACTIVE", "FINISHED", "ALL", name="project_status_enum"), nullable=False),
+        sa.Column("description", sa.String(), nullable=True),
+        sa.Column("goal", sa.Integer(), nullable=False),
+        sa.Column("fund_id", sa.Integer(), nullable=False),
+        sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
+        sa.Column("created_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
+        sa.Column("updated_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
+        sa.ForeignKeyConstraint(
+            ["fund_id"],
+            ["funds.id"],
+        ),
+        sa.PrimaryKeyConstraint("id"),
+    )
+
+    op.create_table(
+        "stages",
+        sa.Column("number", sa.Integer(), nullable=False),
+        sa.Column("name", sa.String(), nullable=False),
+        sa.Column("goal", sa.Integer(), nullable=False),
+        sa.Column("status", sa.Enum("ACTIVE", "FINISHED", "ALL", name="stage_status_enum"), nullable=False),
+        sa.Column("project_id", sa.Integer(), nullable=False),
+        sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
+        sa.Column("created_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
+        sa.Column("updated_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
+        sa.ForeignKeyConstraint(
+            ["project_id"],
+            ["projects.id"],
+        ),
+        sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint("project_id", "number", name="unique_stage_number_per_project"),
+    )
+
     op.create_table(
         "files",
         sa.Column("name", sa.String(), nullable=False),
@@ -61,94 +155,7 @@ def upgrade() -> None:
         ),
         sa.PrimaryKeyConstraint("id"),
     )
-    op.create_table(
-        "funds",
-        sa.Column("name", sa.String(), nullable=False),
-        sa.Column("description", sa.String(), nullable=True),
-        sa.Column("hot_line", sa.String(), nullable=False),
-        sa.Column("address", sa.String(), nullable=False),
-        sa.Column("region_id", sa.Integer(), server_default=sa.text("1"), nullable=False),
-        sa.Column("picture_id", sa.Integer(), nullable=True),
-        sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
-        sa.Column("created_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
-        sa.Column("updated_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
-        sa.ForeignKeyConstraint(
-            ["picture_id"],
-            ["files.id"],
-        ),
-        sa.ForeignKeyConstraint(
-            ["region_id"],
-            ["regions.id"],
-        ),
-        sa.PrimaryKeyConstraint("id"),
-        sa.UniqueConstraint("picture_id"),
-    )
-    op.create_table(
-        "projects",
-        sa.Column("name", sa.String(), nullable=False),
-        sa.Column("status", sa.Enum("ACTIVE", "FINISHED", "ALL", name="project_status_enum"), nullable=False),
-        sa.Column("description", sa.String(), nullable=True),
-        sa.Column("goal", sa.Integer(), nullable=False),
-        sa.Column("fund_id", sa.Integer(), nullable=False),
-        sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
-        sa.Column("created_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
-        sa.Column("updated_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
-        sa.ForeignKeyConstraint(
-            ["fund_id"],
-            ["funds.id"],
-        ),
-        sa.PrimaryKeyConstraint("id"),
-    )
-    op.create_table(
-        "stages",
-        sa.Column("number", sa.Integer(), nullable=False),
-        sa.Column("name", sa.String(), nullable=False),
-        sa.Column("goal", sa.Integer(), nullable=False),
-        sa.Column("status", sa.Enum("ACTIVE", "FINISHED", "ALL", name="stage_status_enum"), nullable=False),
-        sa.Column("project_id", sa.Integer(), nullable=False),
-        sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
-        sa.Column("created_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
-        sa.Column("updated_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
-        sa.ForeignKeyConstraint(
-            ["project_id"],
-            ["projects.id"],
-        ),
-        sa.PrimaryKeyConstraint("id"),
-        sa.UniqueConstraint("project_id", "number", name="unique_stage_number_per_project"),
-    )
-    op.create_table(
-        "regions",
-        sa.Column("name", sa.String(), nullable=False),
-        sa.Column("picture_id", sa.Integer(), nullable=True),
-        sa.Column("country_id", sa.Integer(), nullable=False),
-        sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
-        sa.Column("created_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
-        sa.Column("updated_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
-        sa.ForeignKeyConstraint(
-            ["country_id"],
-            ["countrys.id"],
-        ),
-        sa.ForeignKeyConstraint(
-            ["picture_id"], ["files.id"], name="fk_region_picture_id", ondelete="SET NULL", use_alter=True
-        ),
-        sa.PrimaryKeyConstraint("id"),
-        sa.UniqueConstraint("name"),
-        sa.UniqueConstraint("picture_id"),
-    )
-    op.create_table(
-        "citys",
-        sa.Column("name", sa.String(), nullable=False),
-        sa.Column("region_id", sa.Integer(), nullable=False),
-        sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
-        sa.Column("created_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
-        sa.Column("updated_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
-        sa.ForeignKeyConstraint(
-            ["region_id"],
-            ["regions.id"],
-        ),
-        sa.PrimaryKeyConstraint("id"),
-        sa.UniqueConstraint("name"),
-    )
+
     op.create_table(
         "users",
         sa.Column("name", sa.String(), nullable=False),
@@ -181,6 +188,21 @@ def upgrade() -> None:
         sa.UniqueConstraint("email"),
         sa.UniqueConstraint("picture_id"),
     )
+
+    op.create_table(
+        "user_fund_access",
+        sa.Column("user_id", sa.Integer(), nullable=True),
+        sa.Column("fund_id", sa.Integer(), nullable=True),
+        sa.ForeignKeyConstraint(
+            ["fund_id"],
+            ["funds.id"],
+        ),
+        sa.ForeignKeyConstraint(
+            ["user_id"],
+            ["users.id"],
+        ),
+    )
+
     op.create_table(
         "payments",
         sa.Column("id", sa.UUID(), nullable=False),
@@ -211,19 +233,6 @@ def upgrade() -> None:
             ["users.id"],
         ),
         sa.PrimaryKeyConstraint("id"),
-    )
-    op.create_table(
-        "user_fund_access",
-        sa.Column("user_id", sa.Integer(), nullable=True),
-        sa.Column("fund_id", sa.Integer(), nullable=True),
-        sa.ForeignKeyConstraint(
-            ["fund_id"],
-            ["funds.id"],
-        ),
-        sa.ForeignKeyConstraint(
-            ["user_id"],
-            ["users.id"],
-        ),
     )
     # ### end Alembic commands ###
 
