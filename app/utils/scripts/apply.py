@@ -9,11 +9,6 @@ MIGRATIONS_DIR = PROJECT_ROOT / "app" / "migration" / "versions"
 DB_FILL_SCRIPT = PROJECT_ROOT / "app" / "utils" / "scripts" / "local_db_fill.py"
 
 
-def make_migration():
-    subprocess.run("alembic revision --autogenerate -m 'Initial migration'", shell=True, check=True, cwd=PROJECT_ROOT)
-    print("✅ Миграция создана.")
-
-
 def apply_migration():
     subprocess.run("alembic upgrade head", shell=True, check=True, cwd=PROJECT_ROOT)
     print("✅ Миграции применены.")
@@ -22,5 +17,4 @@ def apply_migration():
 if __name__ == "__main__":
     os.chdir(PROJECT_ROOT)
     print(f"📁 Переход в корень проекта: {PROJECT_ROOT}")
-    make_migration()
     apply_migration()
