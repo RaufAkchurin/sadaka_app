@@ -66,39 +66,6 @@ def upgrade() -> None:
     )
 
     op.create_table(
-        "files",
-        sa.Column("name", sa.String(), nullable=False),
-        sa.Column("size", sa.Integer(), nullable=False),
-        sa.Column("url", sa.String(), nullable=False),
-        sa.Column("type", sa.Enum("DOCUMENT", "REPORT", "PICTURE", name="file_type_enum"), nullable=False),
-        sa.Column("mime", sa.Enum("PDF", "PNG", "JPEG", name="file_mime_enum"), nullable=False),
-        sa.Column("fund_document_id", sa.Integer(), nullable=True),
-        sa.Column("project_document_id", sa.Integer(), nullable=True),
-        sa.Column("project_picture_id", sa.Integer(), nullable=True),
-        sa.Column("stage_id", sa.Integer(), nullable=True),
-        sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
-        sa.Column("created_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
-        sa.Column("updated_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
-        sa.ForeignKeyConstraint(
-            ["fund_document_id"],
-            ["funds.id"],
-        ),
-        sa.ForeignKeyConstraint(
-            ["project_document_id"],
-            ["projects.id"],
-        ),
-        sa.ForeignKeyConstraint(
-            ["project_picture_id"],
-            ["projects.id"],
-        ),
-        sa.ForeignKeyConstraint(
-            ["stage_id"],
-            ["stages.id"],
-        ),
-        sa.PrimaryKeyConstraint("id"),
-    )
-
-    op.create_table(
         "funds",
         sa.Column("name", sa.String(), nullable=False),
         sa.Column("description", sa.String(), nullable=True),
@@ -154,6 +121,39 @@ def upgrade() -> None:
         ),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("project_id", "number", name="unique_stage_number_per_project"),
+    )
+
+    op.create_table(
+        "files",
+        sa.Column("name", sa.String(), nullable=False),
+        sa.Column("size", sa.Integer(), nullable=False),
+        sa.Column("url", sa.String(), nullable=False),
+        sa.Column("type", sa.Enum("DOCUMENT", "REPORT", "PICTURE", name="file_type_enum"), nullable=False),
+        sa.Column("mime", sa.Enum("PDF", "PNG", "JPEG", name="file_mime_enum"), nullable=False),
+        sa.Column("fund_document_id", sa.Integer(), nullable=True),
+        sa.Column("project_document_id", sa.Integer(), nullable=True),
+        sa.Column("project_picture_id", sa.Integer(), nullable=True),
+        sa.Column("stage_id", sa.Integer(), nullable=True),
+        sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
+        sa.Column("created_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
+        sa.Column("updated_at", sa.TIMESTAMP(), server_default=sa.text("(CURRENT_TIMESTAMP)"), nullable=False),
+        sa.ForeignKeyConstraint(
+            ["fund_document_id"],
+            ["funds.id"],
+        ),
+        sa.ForeignKeyConstraint(
+            ["project_document_id"],
+            ["projects.id"],
+        ),
+        sa.ForeignKeyConstraint(
+            ["project_picture_id"],
+            ["projects.id"],
+        ),
+        sa.ForeignKeyConstraint(
+            ["stage_id"],
+            ["stages.id"],
+        ),
+        sa.PrimaryKeyConstraint("id"),
     )
 
     op.create_table(
