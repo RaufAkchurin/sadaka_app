@@ -1,5 +1,6 @@
 from pydantic import BaseModel
-from v1.file.enums import FileTypeEnum, MimeEnum
+
+from app.v1.file.enums import FileTypeEnum, MimeEnum
 
 
 class S3UploadedFileSchema(BaseModel):

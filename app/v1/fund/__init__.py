@@ -1,7 +1,7 @@
 # geo/__init__.py
-from models.city import City
-from models.country import Country
-from models.region import Region
+from app.models.city import City
+from app.models.country import Country
+from app.models.region import Region
 
 Region = Region
 Country = Country

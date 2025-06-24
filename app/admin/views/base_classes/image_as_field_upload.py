@@ -1,11 +1,12 @@
 from admin.views.base_classes.image_as_file_singular_preview import AdminPicturePreview
 from fastapi import Request, UploadFile
-from v1.dependencies.dao_dep import get_session_without_commit
-from v1.dependencies.s3 import get_s3_client
-from v1.file.use_cases.create_file import FileCreateWithContentUseCaseImpl
-from v1.s3_storage.use_cases.s3_upload import S3UploadUseCaseImpl
-from v1.users.dao import FileDAO
 from wtforms import FileField
+
+from app.v1.dependencies.dao_dep import get_session_without_commit
+from app.v1.dependencies.s3 import get_s3_client
+from app.v1.file.use_cases.create_file import FileCreateWithContentUseCaseImpl
+from app.v1.s3_storage.use_cases.s3_upload import S3UploadUseCaseImpl
+from app.v1.users.dao import FileDAO
 
 
 class FileModelPictureUploadField(AdminPicturePreview):

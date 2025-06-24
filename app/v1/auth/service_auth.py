@@ -2,9 +2,10 @@ from datetime import datetime, timedelta, timezone
 
 from fastapi.responses import Response
 from jose import jwt
-from models.user import User
-from settings import settings
-from v1.auth.service_jwt import verify_password
+
+from app.models.user import User
+from app.settings import settings
+from app.v1.auth.service_jwt import verify_password
 
 
 def create_tokens(data: dict) -> dict:

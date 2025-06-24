@@ -1,5 +1,6 @@
 from admin.views.base_classes.image_as_field_upload import FileModelPictureUploadField
-from models.file import File
+
+from app.models.file import File
 
 
 class FileAdmin(FileModelPictureUploadField, model=File):

@@ -1,19 +1,20 @@
 from typing import List
 
 from fastapi import APIRouter, Depends, UploadFile
-from models.user import User
 from sqlalchemy.ext.asyncio import AsyncSession
-from v1.client.interfaces import S3ClientUseCaseProtocol
-from v1.dependencies.auth_dep import get_current_admin_user, get_current_user
-from v1.dependencies.dao_dep import get_session_with_commit
-from v1.dependencies.s3 import get_s3_client
-from v1.file.schemas import UploadedFileDataSchema
-from v1.users.dao import UserDAO
-from v1.users.schemas import SUserInfoSchemaSchema, UserDataUpdateSchema
-from v1.users.use_cases.delete_user import DeleteUserUseCase
-from v1.users.use_cases.get_all_users import GetAllUsersUseCase
-from v1.users.use_cases.update_data import UserDataUpdateUseCase
-from v1.users.use_cases.update_logo import UserLogoUpdateUseCaseImpl
+
+from app.models.user import User
+from app.v1.client.interfaces import S3ClientUseCaseProtocol
+from app.v1.dependencies.auth_dep import get_current_admin_user, get_current_user
+from app.v1.dependencies.dao_dep import get_session_with_commit
+from app.v1.dependencies.s3 import get_s3_client
+from app.v1.file.schemas import UploadedFileDataSchema
+from app.v1.users.dao import UserDAO
+from app.v1.users.schemas import SUserInfoSchemaSchema, UserDataUpdateSchema
+from app.v1.users.use_cases.delete_user import DeleteUserUseCase
+from app.v1.users.use_cases.get_all_users import GetAllUsersUseCase
+from app.v1.users.use_cases.update_data import UserDataUpdateUseCase
+from app.v1.users.use_cases.update_logo import UserLogoUpdateUseCaseImpl
 
 v1_users_router = APIRouter()
 

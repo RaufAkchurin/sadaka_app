@@ -3,7 +3,8 @@ from datetime import datetime
 
 from pydantic import BaseModel
 from pydantic_core import Url
-from v1.payment.enums import PaymentStatusEnum
+
+from app.v1.payment.enums import PaymentStatusEnum
 
 
 class PaymentCreateSchema(BaseModel):

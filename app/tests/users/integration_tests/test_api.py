@@ -1,7 +1,8 @@
 import httpx
 import pytest
 from tests.conftest import auth_by
-from v1.users.schemas import UserEmailSchema
+
+from app.v1.users.schemas import UserEmailSchema
 
 
 class TestUsers:

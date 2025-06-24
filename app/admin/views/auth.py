@@ -4,13 +4,14 @@ from fastapi import Request
 from jose import jwt
 from loguru import logger
 from pydantic.v1 import EmailStr
-from settings import settings
 from sqladmin.authentication import AuthenticationBackend
-from v1.auth.service_auth import authenticate_user, create_tokens
-from v1.dependencies.auth_dep import get_access_token_from_session_for_admin_panel
-from v1.dependencies.dao_dep import get_session_without_commit
-from v1.users.dao import UserDAO
-from v1.users.schemas import UserEmailSchema
+
+from app.settings import settings
+from app.v1.auth.service_auth import authenticate_user, create_tokens
+from app.v1.dependencies.auth_dep import get_access_token_from_session_for_admin_panel
+from app.v1.dependencies.dao_dep import get_session_without_commit
+from app.v1.users.dao import UserDAO
+from app.v1.users.schemas import UserEmailSchema
 
 
 def get_token_payload(request: Request) -> TokenPayloadSchema:

@@ -1,5 +1,6 @@
 from tests.factory.factories_polyfactory import faker
-from v1.users.schemas import SUserAddSchemaSchema, UserBaseSchema, UserEmailSchema
+
+from app.v1.users.schemas import SUserAddSchemaSchema, UserBaseSchema, UserEmailSchema
 
 
 class TestDAO:

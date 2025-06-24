@@ -1,14 +1,15 @@
 from fastapi import UploadFile
-from models.region import Region
 from sqlalchemy.ext.asyncio import AsyncSession
-from v1.client.interfaces import S3ClientUseCaseProtocol
-from v1.dao.base import BaseDAO
-from v1.file.schemas import UploadedFileDataSchema
-from v1.file.use_cases.create_file import FileCreateWithContentUseCaseImpl
-from v1.file.use_cases.delete_file import FileDeleteWithContentUseCaseImpl
-from v1.s3_storage.use_cases.s3_upload import S3UploadUseCaseImpl
-from v1.users.dao import FileDAO, RegionDAO
-from v1.users.schemas import IdSchema, PictureIdSchema
+
+from app.models.region import Region
+from app.v1.client.interfaces import S3ClientUseCaseProtocol
+from app.v1.dao.base import BaseDAO
+from app.v1.file.schemas import UploadedFileDataSchema
+from app.v1.file.use_cases.create_file import FileCreateWithContentUseCaseImpl
+from app.v1.file.use_cases.delete_file import FileDeleteWithContentUseCaseImpl
+from app.v1.s3_storage.use_cases.s3_upload import S3UploadUseCaseImpl
+from app.v1.users.dao import FileDAO, RegionDAO
+from app.v1.users.schemas import IdSchema, PictureIdSchema
 
 
 class RegionPictureUpdateUseCaseImpl:

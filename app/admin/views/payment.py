@@ -1,6 +1,7 @@
 from admin.views.auth_permissions import FundAdminAccess
-from models.payment import Payment
 from sqladmin import ModelView
+
+from app.models.payment import Payment
 
 
 class PaymentAdmin(FundAdminAccess, ModelView, model=Payment):

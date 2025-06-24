@@ -1,13 +1,14 @@
 from fastapi import APIRouter, Depends, Path, Query, Response
-from models.user import User
 from pydantic_core import Url
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
-from v1.dependencies.auth_dep import get_current_user
-from v1.dependencies.dao_dep import get_session_with_commit
-from v1.payment.schemas import YooPaymentUrlSchema
-from v1.payment.use_cases.callback import YooCallbackSuccessUseCaseImpl
-from v1.payment.use_cases.create_payment import CreateYooPaymentUseCaseImpl
+
+from app.models.user import User
+from app.v1.dependencies.auth_dep import get_current_user
+from app.v1.dependencies.dao_dep import get_session_with_commit
+from app.v1.payment.schemas import YooPaymentUrlSchema
+from app.v1.payment.use_cases.callback import YooCallbackSuccessUseCaseImpl
+from app.v1.payment.use_cases.create_payment import CreateYooPaymentUseCaseImpl
 
 v1_payments_router = APIRouter()
 
