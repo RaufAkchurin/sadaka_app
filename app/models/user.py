@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+from admin.views.schemas import RoleEnum
 from sqlalchemy import Column
 from sqlalchemy import Enum as SqlEnum
 from sqlalchemy import ForeignKey, Integer, Table, event, text
@@ -9,7 +10,7 @@ from app.models.city import City
 from app.models.payment import Payment
 from app.v1.auth.service_jwt import hash_password_in_signal
 from app.v1.dao.database import Base
-from app.v1.users.enums import LanguageEnum, RoleEnum
+from app.v1.users.enums import LanguageEnum
 
 user_fund_access = Table(
     "user_fund_access",
