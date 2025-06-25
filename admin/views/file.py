@@ -1,5 +1,4 @@
 from admin.views.base_classes.image_as_field_upload import FileModelPictureUploadField
-
 from app.models.file import File
 
 

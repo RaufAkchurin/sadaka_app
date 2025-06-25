@@ -1,4 +1,3 @@
-from admin.views.schemas import TokenPayloadSchema
 from exceptions import ForbiddenException
 from fastapi import Request
 from jose import jwt
@@ -6,6 +5,7 @@ from loguru import logger
 from pydantic.v1 import EmailStr
 from sqladmin.authentication import AuthenticationBackend
 
+from admin.views.schemas import TokenPayloadSchema
 from app.settings import settings
 from app.v1.auth.service_auth import authenticate_user, create_tokens
 from app.v1.dependencies.auth_dep import get_access_token_from_session_for_admin_panel

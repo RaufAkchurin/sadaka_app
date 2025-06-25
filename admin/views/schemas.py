@@ -1,13 +1,7 @@
 import enum
 
 from pydantic import BaseModel
-
-
-class RoleEnum(str, enum.Enum):
-    SUPERUSER = "superuser"
-    FUND_ADMIN = "fund_admin"
-    FUND_STAFF = "fund_staff"
-    USER = "user"
+from v1.users.enums import RoleEnum
 
 
 class TokenTypeEnum(str, enum.Enum):
