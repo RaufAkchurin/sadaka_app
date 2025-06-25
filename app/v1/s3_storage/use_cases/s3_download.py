@@ -1,5 +1,4 @@
-from exceptions import FileNameNotProvidedException, FileNotFoundS3Exception
-
+from app.exceptions import FileNameNotProvidedException, FileNotFoundS3Exception
 from app.v1.client.interfaces import S3ClientUseCaseProtocol
 
 

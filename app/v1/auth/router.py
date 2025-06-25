@@ -1,8 +1,8 @@
-from exceptions import IncorrectEmailOrPasswordException
 from fastapi import APIRouter, Depends, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 from tests.factory.mimesis import person
 
+from app.exceptions import IncorrectEmailOrPasswordException
 from app.models.user import User
 from app.v1.auth.service_auth import authenticate_user, set_tokens_to_response
 from app.v1.dependencies.auth_dep import check_refresh_token

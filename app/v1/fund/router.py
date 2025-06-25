@@ -1,7 +1,7 @@
-from exceptions import FundNotFoundException
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.exceptions import FundNotFoundException
 from app.models.user import User
 from app.v1.dependencies.auth_dep import get_current_user
 from app.v1.dependencies.dao_dep import get_session_with_commit
