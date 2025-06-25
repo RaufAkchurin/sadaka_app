@@ -1,6 +1,6 @@
 from markupsafe import Markup
 
-from admin.views.base_classes.image_as_file_singular_preview import BaseAdminView
+from app.admin.views.base_classes.image_as_file_singular_preview import BaseAdminView
 
 
 class MultipleFilesPreviewAdmin(BaseAdminView):

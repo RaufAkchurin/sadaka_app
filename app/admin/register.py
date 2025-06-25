@@ -1,16 +1,16 @@
-from admin.views.auth import MyAuthenticationBackend
-from admin.views.city import CityAdmin
-from admin.views.country import CountryAdmin
-from admin.views.file import FileAdmin
-from admin.views.fund import FundAdmin
-from admin.views.payment import PaymentAdmin
-from admin.views.project import ProjectAdmin
-from admin.views.region import RegionAdmin
-from admin.views.stage import StageAdmin
-from admin.views.user import UserAdmin
 from fastapi import FastAPI
 from sqladmin import Admin
 
+from app.admin.views.auth import MyAuthenticationBackend
+from app.admin.views.city import CityAdmin
+from app.admin.views.country import CountryAdmin
+from app.admin.views.file import FileAdmin
+from app.admin.views.fund import FundAdmin
+from app.admin.views.payment import PaymentAdmin
+from app.admin.views.project import ProjectAdmin
+from app.admin.views.region import RegionAdmin
+from app.admin.views.stage import StageAdmin
+from app.admin.views.user import UserAdmin
 from app.settings import settings
 from app.v1.dao.database import engine
 

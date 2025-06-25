@@ -1,7 +1,7 @@
 from sqladmin import ModelView
 from starlette.requests import Request
 
-from admin.views.auth import get_token_payload
+from app.admin.views.auth import get_token_payload
 
 
 class SuperAdminPerm(ModelView):

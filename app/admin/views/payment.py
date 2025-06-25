@@ -1,6 +1,6 @@
 from sqladmin import ModelView
 
-from admin.views.auth_permissions import FundAdminAccess
+from app.admin.views.auth_permissions import FundAdminAccess
 from app.models.payment import Payment
 
 
