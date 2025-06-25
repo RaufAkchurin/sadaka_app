@@ -1,6 +1,3 @@
-from fastapi import FastAPI
-from sqladmin import Admin
-
 from admin.views.auth import MyAuthenticationBackend
 from admin.views.city import CityAdmin
 from admin.views.country import CountryAdmin
@@ -11,6 +8,9 @@ from admin.views.project import ProjectAdmin
 from admin.views.region import RegionAdmin
 from admin.views.stage import StageAdmin
 from admin.views.user import UserAdmin
+from fastapi import FastAPI
+from sqladmin import Admin
+
 from app.settings import settings
 from app.v1.dao.database import engine
 
