@@ -1,7 +1,7 @@
-from exceptions import ProjectNotFoundException
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.exceptions import ProjectNotFoundException
 from app.models.user import User
 from app.v1.api_utils.pagination import Pagination, PaginationParams, PaginationResponseSchema
 from app.v1.dependencies.auth_dep import get_current_user

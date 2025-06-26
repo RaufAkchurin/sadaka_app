@@ -1,7 +1,7 @@
-from admin.views.auth_permissions import SuperAdminPerm
-from admin.views.base_classes.image_as_file_singular_preview import AdminPicturePreview
 from sqladmin import ModelView
 
+from app.admin.views.auth_permissions import SuperAdminPerm
+from app.admin.views.base_classes.image_as_file_singular_preview import AdminPicturePreview
 from app.models.region import Region
 
 

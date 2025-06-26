@@ -2,10 +2,10 @@ import asyncio
 import json
 from ipaddress import ip_address, ip_network
 
-from exceptions import YookassaCallbackForbiddenException
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
 
+from app.exceptions import YookassaCallbackForbiddenException
 from app.models.project import Project
 from app.v1.payment.enums import PaymentStatusEnum
 from app.v1.payment.schemas import PaymentCreateSchema, YooWebhookDataSchema

@@ -3,12 +3,12 @@ import sys
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
-from admin.register import create_admin_panel
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 from yookassa import Configuration as YookassaConfiguration
 
+from app.admin.register import create_admin_panel
 from app.settings import settings
 from app.v1.auth.router import v1_auth_router, v2_auth_router
 from app.v1.auth_google.router import v1_google_router

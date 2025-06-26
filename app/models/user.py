@@ -42,8 +42,8 @@ class User(Base):
 
     role: Mapped[RoleEnum] = mapped_column(
         SqlEnum(RoleEnum, name="role_enum"),
-        server_default=RoleEnum.USER.value,
-        default=RoleEnum.USER,
+        server_default="USER",
+        default="USER",
         nullable=False,
     )
 
