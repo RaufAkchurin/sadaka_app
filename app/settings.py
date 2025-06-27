@@ -8,7 +8,7 @@ class Settings(BaseSettings):
     BASE_DIR: str = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     SECRET_KEY: str
     ALGORITHM: str
-    MODE: Literal["PROD", "DEV", "TEST"]
+    MODE: Literal["PROD", "STAGE", "DEV", "TEST"]
 
     GOOGLE_CLIENT_ID: str = ""
     GOOGLE_CLIENT_SECRET: str = ""
