@@ -220,6 +220,6 @@ uvicorn main:app --host 0.0.0.0 --port 80
 source /var/www/sadaka_app/venv/bin/activate
 cd /var/www/sadaka_app/app/
 
-pkill -f "uvicorn main:app"
+pkill -f "uvicorn app.main:app"
 uv sync --active
-nohup uvicorn main:app --host 0.0.0.0 --port 80
+nohup uvicorn app.main:app --host 0.0.0.0 --port 80

@@ -6,8 +6,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.exceptions import (
     ForbiddenException,
-    NoJwtException,
+    InvalidJwtException,
     NoUserIdException,
+    RefreshJwtExpiredException,
     TokenExpiredException,
     TokenNoFound,
     UserNotFoundException,
@@ -42,23 +43,27 @@ def get_refresh_token(request: Request) -> str:
 
 
 async def check_refresh_token(
-    token: str = Depends(get_refresh_token),
+    refresh_token: str = Depends(get_refresh_token),
     session: AsyncSession = Depends(get_session_without_commit),
 ) -> User:
     """Проверяем refresh_token и возвращаем пользователя."""
     try:
-        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
-        user_id = payload.get("user_id")
+        refresh_payload = jwt.decode(refresh_token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        user_id = refresh_payload.get("user_id")
         if not user_id:
-            raise NoJwtException
+            raise InvalidJwtException
 
         user = await UserDAO(session).find_one_or_none_by_id(data_id=int(user_id))
         if not user:
-            raise NoJwtException
+            raise InvalidJwtException
 
         return user
-    except JWTError:
-        raise NoJwtException
+
+    except ExpiredSignatureError:
+        raise RefreshJwtExpiredException
+
+    except JWTError as e:
+        raise InvalidJwtException
 
 
 async def get_current_user(
@@ -73,7 +78,7 @@ async def get_current_user(
         raise TokenExpiredException
     except JWTError:
         # Общая ошибка для токенов
-        raise NoJwtException
+        raise InvalidJwtException
 
     expire: str = payload.get("exp")
     expire_time = datetime.fromtimestamp(int(expire), tz=timezone.utc)

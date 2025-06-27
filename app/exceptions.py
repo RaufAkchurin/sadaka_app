@@ -31,7 +31,9 @@ InvalidTokenFormatException = HTTPException(
 
 TokenNoFound = HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Токен отсутствует в заголовке")
 
-NoJwtException = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Токен не валидный")
+InvalidJwtException = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Токен не валидный")
+
+RefreshJwtExpiredException = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Refresh просрочен")
 
 NoUserIdException = HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Не найден ID пользователя")
 

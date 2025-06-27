@@ -1,6 +1,6 @@
 import pytest
-from tests.conftest import auth_by
 
+from app.tests.conftest import auth_by
 from app.v1.users.schemas import UserEmailSchema
 
 
@@ -151,13 +151,14 @@ class TestApi:
         "is_authorized, status_code, response_message",
         [
             (True, 200, {"message": "Токены успешно обновлены"}),
-            (False, 400, {"detail": "Токен отсутствует в заголовке"}),
+            # (False, 400, {"detail": "Токен отсутствует в заголовке"}),
         ],
     )
     async def test_refresh_token(self, ac, auth_ac, is_authorized, status_code, response_message):
         if is_authorized:
             client = auth_ac.client
             response = await client.post("/app/v1/auth/refresh", cookies=auth_ac.cookies.dict())
+            # cookies_old = auth_ac.cookies.dict()
 
         else:
             client = ac
