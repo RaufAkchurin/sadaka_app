@@ -40,7 +40,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[dict, None]:
 
 def create_app() -> FastAPI:
     app = FastAPI(
-        title="Садака_app",
+        title=f"Садака_app ({settings.MODE})",
         lifespan=lifespan,
     )
 
