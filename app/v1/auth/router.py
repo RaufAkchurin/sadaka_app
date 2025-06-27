@@ -52,6 +52,7 @@ async def register_and_login_anonymous(
         )
     )
     set_tokens_to_response(response, user)
+    res = 23 / 0
     return {"message": "Анонимный пользователь добавлен"}
 
 
