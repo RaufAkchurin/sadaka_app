@@ -212,7 +212,7 @@ uv run
 6. Накатываем зависимости через uv (флаг актив - значит в активную венв среду)
 uv sync --active
 7. Запускаем Фастапи приложение
-uvicorn main:app --host 0.0.0.0 --port 80
+uvicorn app.main:app --host 0.0.0.0 --port 80
 8. Радуемся идём пить чай
 
 ## ОБНОВЛЕНИЯ НА ПРОДЕ
@@ -222,4 +222,4 @@ cd /var/www/sadaka_app/app/
 
 pkill -f "uvicorn main:app"
 uv sync --active
-nohup uvicorn main:app --host 0.0.0.0 --port 80
+nohup uvicorn app.main:app --host 0.0.0.0 --port 80
