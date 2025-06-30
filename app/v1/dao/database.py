@@ -11,7 +11,7 @@ from app.settings import settings
 
 mode = settings.MODE
 
-if settings.MODE == "PROD":
+if settings.MODE in ["PROD", "STAGE"]:
     # Настройки для Production
     DB_DRIVER = "postgresql+asyncpg"
     DATABASE_URL = (
