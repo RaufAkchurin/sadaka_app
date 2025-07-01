@@ -215,11 +215,30 @@ uv sync --active
 uvicorn app.main:app --host 0.0.0.0 --port 80
 8. Радуемся идём пить чай
 
-## ОБНОВЛЕНИЯ НА ПРОДЕ
 
+## ОБНОВЛЕНИЯ UV НА ПРОДЕ
 source /var/www/sadaka_app/venv/bin/activate
-cd /var/www/sadaka_app/app/
-
-pkill -f "uvicorn main:app"
+cd /var/www/sadaka_app/
 uv sync --active
-nohup uvicorn app.main:app --host 0.0.0.0 --port 80
+
+### ОСНОВНОЙ ЗАПУСК С ВОРКЕРАМИ
+cd /var/www/sadaka_app
+source venv/bin/activate
+nohup gunicorn app.main:app   --workers 4   --worker-class uvicorn.workers.UvicornWorker   --bind 127.0.0.1:8000
+
+##### ДЛЯ ОТЛАДКИ И ДЕПЛОЯ
+# Запуск Фастапи напрямую(доступ по айпишнику)
+source /var/www/sadaka_app/venv/bin/activate
+cd /var/www/sadaka_app/
+uvicorn app.main:app --host 0.0.0.0 --port 80
+
+# C NGINX без воркеров
+source /var/www/sadaka_app/venv/bin/activate
+cd /var/www/sadaka_app/
+uvicorn app.main:app --host 127.0.0.1 --port 8000
+
+# настройки нгинкс
+sudo nano /etc/nginx/sites-available/myfastapiapp
+
+# почему сдох нгинкс 
+sudo systemctl status nginx.service
