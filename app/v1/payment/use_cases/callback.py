@@ -38,8 +38,8 @@ class YooCallbackSuccessUseCaseImpl:
                     user_id=webhook_object.metadata.user_id,
                     project_id=webhook_object.metadata.project_id,
                     stage_id=project.active_stage_number,
-                    created_at=webhook_object.created_at,
-                    captured_at=webhook_object.captured_at,
+                    created_at=webhook_object.created_at.replace(tzinfo=None),  # because yukassa give with timezone
+                    captured_at=webhook_object.captured_at.replace(tzinfo=None),  # and we save without
                 )
             )
 
