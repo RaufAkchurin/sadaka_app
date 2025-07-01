@@ -224,7 +224,8 @@ uv sync --active
 ### ОСНОВНОЙ ЗАПУСК С ВОРКЕРАМИ
 cd /var/www/sadaka_app
 source venv/bin/activate
-nohup gunicorn app.main:app   --workers 4   --worker-class uvicorn.workers.UvicornWorker   --bind 127.0.0.1:8000
+nohup gunicorn app.main:app   --workers 4   --worker-class uvicorn.workers.UvicornWorker   --bind 127.0.0.1:8000 
+gunicorn app.main:app   --workers 4   --worker-class uvicorn.workers.UvicornWorker   --bind 127.0.0.1:8000 --log-level debug 
 
 ##### ДЛЯ ОТЛАДКИ И ДЕПЛОЯ
 # Запуск Фастапи напрямую(доступ по айпишнику)
