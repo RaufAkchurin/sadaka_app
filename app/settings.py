@@ -36,8 +36,14 @@ class Settings(BaseSettings):
     def google_redirect_url(self) -> str:
         return (
             f"https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={self.GOOGLE_CLIENT_ID}"
-            f"&redirect_uri={self.GOOGLE_REDIRECT_URI}&scope=openid%20profile%20email&access_type=offline"
+            f"&redirect_uri={settings.APP_HOST + settings.GOOGLE_REDIRECT_URI}"
+            f"&scope=openid%20profile%20email&access_type=offline"
         )
+
+    @property
+    def APP_HOST(self) -> str:
+        host_mapping = {"STAGE": "https://sadaka.pro", "PROD": "https://GIVE_ME_PROD_URL"}
+        return host_mapping.get(self.MODE, "http://localhost:8000")
 
 
 # Получаем параметры для загрузки переменных среды
