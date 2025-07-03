@@ -91,4 +91,4 @@ async def versioning_for_example(response: Response, user: User = Depends(check_
 
 @v2_auth_router.get("/sentry-debug")
 async def trigger_error():
-    division_by_zero = 1 / 0
+    division_by_zerou = 1 / 0
