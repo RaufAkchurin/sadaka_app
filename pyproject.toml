@@ -27,6 +27,7 @@ dependencies = [
     "python-jose>=3.4.0",
     "python-multipart>=0.0.20",
     "requests>=2.32.3",
+    "sentry-sdk>=2.32.0",
     "sqladmin>=0.20.1",
     "sqlalchemy>=2.0.39",
     "tld>=0.13",
