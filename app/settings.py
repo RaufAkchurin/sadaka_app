@@ -14,7 +14,6 @@ class Settings(BaseSettings):
     GOOGLE_CLIENT_SECRET: str = ""
     GOOGLE_CALLBACK_URI: str = ""
     GOOGLE_FINAL_REDIRECT_URI: str = ""
-    GOOGLE_TOKEN_URI: str = "https://accounts.google.com/o/oauth2/token"
 
     S3_ACCESS_KEY: str
     S3_SECRET_KEY: str
@@ -34,7 +33,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=f"{BASE_DIR}/.env")
 
     @property
-    def google_redirect_url(self) -> str:
+    def google_redirect_to_service_url(self) -> str:
         return (
             f"https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={self.GOOGLE_CLIENT_ID}"
             f"&redirect_uri={self.GOOGLE_CALLBACK_URI}&scope=openid%20profile%20email&access_type=offline"

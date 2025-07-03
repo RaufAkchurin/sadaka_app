@@ -5,9 +5,6 @@ from app.v1.auth_google.schemas import GoogleUserDataSchema
 
 
 class GoogleClient:
-    def __init__(self):
-        self.google_redirect_url = settings.google_redirect_url
-
     def get_google_user_info(self, code: str) -> GoogleUserDataSchema:
         access_token = self._get_google_user_access_token(code)
         user_info = requests.get(
@@ -25,7 +22,7 @@ class GoogleClient:
             "redirect_uri": settings.GOOGLE_CALLBACK_URI,
             "grant_type": "authorization_code",
         }
-        response = requests.post(settings.GOOGLE_TOKEN_URI, data=data)
+        response = requests.post("https://accounts.google.com/o/oauth2/token", data=data)
         if response.status_code == 200:
             access_token = response.json()["access_token"]
             return access_token
