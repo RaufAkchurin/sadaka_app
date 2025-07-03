@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Response
 from loguru import logger
 from sqlalchemy.ext.asyncio import AsyncSession
-from starlette.responses import RedirectResponse
+from starlette.responses import JSONResponse, RedirectResponse
 
 from app.exceptions import FailedGoogleOauthException
 from app.v1.auth.service_auth import set_tokens_to_response
@@ -16,7 +16,7 @@ v1_google_router = APIRouter()
 async def google_login():
     redirect_url = google_client.google_redirect_url
     logger.error(f"Гугл авторизация \n {redirect_url}")
-    return RedirectResponse(redirect_url)
+    return JSONResponse(status_code=200, content={"redirect_url": redirect_url})
 
 
 @v1_google_router.get("/callback/")
