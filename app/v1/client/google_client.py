@@ -5,9 +5,6 @@ from app.v1.auth_google.schemas import GoogleUserDataSchema
 
 
 class GoogleClient:
-    def __init__(self):
-        self.google_redirect_url = settings.google_redirect_url
-
     def get_google_user_info(self, code: str) -> GoogleUserDataSchema:
         access_token = self._get_google_user_access_token(code)
         user_info = requests.get(
