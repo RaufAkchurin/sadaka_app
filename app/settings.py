@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     GOOGLE_CLIENT_ID: str = ""
     GOOGLE_CLIENT_SECRET: str = ""
     GOOGLE_CALLBACK_URI: str = ""
+    GOOGLE_FINAL_REDIRECT_URI: str = ""
     GOOGLE_TOKEN_URI: str = "https://accounts.google.com/o/oauth2/token"
 
     S3_ACCESS_KEY: str
