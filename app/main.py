@@ -3,6 +3,7 @@ import sys
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
+import sentry_sdk
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
@@ -26,6 +27,14 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 async def lifespan(app: FastAPI) -> AsyncGenerator[dict, None]:
     """Управление жизненным циклом приложения."""
     logger.info("Инициализация приложения...")
+
+    if settings.MODE in ["PROD", "STAGE"]:
+        sentry_sdk.init(
+            dsn="https://44123996ba5b9e090680074bf6925991@o4506274465972224.ingest.us.sentry.io/4509603417227264",
+            # Add data like request headers and IP for users,
+            # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
+            send_default_pii=True,
+        )
 
     YookassaConfiguration.configure(
         account_id=settings.YOOKASSA_TEST_SHOP_ID,

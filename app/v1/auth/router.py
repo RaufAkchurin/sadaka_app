@@ -87,3 +87,8 @@ async def process_refresh_token(response: Response, user: User = Depends(check_r
 async def versioning_for_example(response: Response, user: User = Depends(check_refresh_token)):
     set_tokens_to_response(response, user)
     return {"message": "Токены успешно обновлены"}
+
+
+@v2_auth_router.get("/sentry-debug")
+async def trigger_error():
+    division_by_zero = 1 / 0
