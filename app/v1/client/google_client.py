@@ -22,7 +22,7 @@ class GoogleClient:
             "code": code,
             "client_id": settings.GOOGLE_CLIENT_ID,
             "client_secret": settings.GOOGLE_CLIENT_SECRET,
-            "redirect_uri": settings.GOOGLE_REDIRECT_URI,
+            "redirect_uri": settings.GOOGLE_CALLBACK_URI,
             "grant_type": "authorization_code",
         }
         response = requests.post(settings.GOOGLE_TOKEN_URI, data=data)

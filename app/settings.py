@@ -12,7 +12,7 @@ class Settings(BaseSettings):
 
     GOOGLE_CLIENT_ID: str = ""
     GOOGLE_CLIENT_SECRET: str = ""
-    GOOGLE_REDIRECT_URI: str = ""
+    GOOGLE_CALLBACK_URI: str = ""
     GOOGLE_TOKEN_URI: str = "https://accounts.google.com/o/oauth2/token"
 
     S3_ACCESS_KEY: str
@@ -36,7 +36,7 @@ class Settings(BaseSettings):
     def google_redirect_url(self) -> str:
         return (
             f"https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={self.GOOGLE_CLIENT_ID}"
-            f"&redirect_uri={self.GOOGLE_REDIRECT_URI}&scope=openid%20profile%20email&access_type=offline"
+            f"&redirect_uri={self.GOOGLE_CALLBACK_URI}&scope=openid%20profile%20email&access_type=offline"
         )
 
 
