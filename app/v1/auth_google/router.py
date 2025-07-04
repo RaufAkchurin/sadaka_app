@@ -19,11 +19,7 @@ async def google_login():
 
 
 @v1_google_router.get("/callback/")
-async def google_auth(
-    code: str,
-    response: Response,
-    session: AsyncSession = Depends(get_session_with_commit),
-):
+async def google_auth(code: str, response: Response, session: AsyncSession = Depends(get_session_with_commit)):
     google_permitted_user = await google_auth_service(code, session)
     if google_permitted_user:
         set_tokens_to_response(response, google_permitted_user)
