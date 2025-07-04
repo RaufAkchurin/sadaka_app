@@ -1,10 +1,11 @@
-from sqlalchemy import false, select
+from sqlalchemy import false, select, or_
 from starlette.requests import Request
 
 from app.admin.views.auth import get_token_payload
 from app.admin.views.auth_permissions import FundAdminAccess
 from app.admin.views.base_classes.image_as_file_multiple_preview import MultipleFilesPreviewAdmin
 from app.models.project import Project
+from app.models.file import File
 
 
 class ProjectAdmin(MultipleFilesPreviewAdmin, FundAdminAccess, model=Project):
@@ -37,3 +38,12 @@ class ProjectAdmin(MultipleFilesPreviewAdmin, FundAdminAccess, model=Project):
             return select(self.model).where(self.model.fund_id.in_(payload.funds_access_ids))
 
         return select(self.model)
+
+    def scaffold_form(self, *args, **kwargs):
+        """Форма редактирования проекта"""
+        form = super().scaffold_form(*args, **kwargs)
+        return form
+    
+
+    
+

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.exceptions import ProjectNotFoundException
+from app.exceptions import ProjectNotFoundException, ForbiddenException
 from app.models.user import User
 from app.v1.api_utils.pagination import Pagination, PaginationParams, PaginationResponseSchema
 from app.v1.dependencies.auth_dep import get_current_user
@@ -23,7 +23,7 @@ async def get_projects_list(
     session: AsyncSession = Depends(get_session_with_commit),
 ) -> PaginationResponseSchema[ProjectForListAPISchema]:
     project_list_use_case = ProjectListUseCase()
-    projects = await project_list_use_case(status_of_project, fund_id, session)
+    projects = await project_list_use_case(status_of_project, fund_id, session, user_data)
     return await Pagination.execute(projects, pagination.page, pagination.limit)
 
 
@@ -36,6 +36,10 @@ async def get_project_detail_by_id(
     project = await ProjectDAO(session=session).find_one_or_none_by_id(data_id=project_id)
 
     if project is not None:
+        # Проверяем доступ пользователя к фонду проекта
+        if project.fund_id not in user_data.funds_access_ids and user_data.role.value != "superuser":
+            raise ForbiddenException
+        
         return ProjectDetailAPISchema.model_validate(project)
 
     else:
