@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional, Self
 
 from email_validator import EmailNotValidError, validate_email
@@ -40,6 +41,26 @@ class UserContactsSchema(BaseModel):
             validate_phone(str(self.phone))
 
         return self
+
+
+class UserPhoneOnlySchema(BaseModel):
+    phone: str = Field(min_length=12, max_length=12, description="Телефон, в формате +7xxxxxxxxxx")
+    model_config = ConfigDict(from_attributes=True)
+
+    @model_validator(mode="after")
+    def check_contacts(self) -> Self:
+        if self.phone:
+            validate_phone(str(self.phone))
+
+        return self
+
+
+class UserAddWithCodeSchema(UserPhoneOnlySchema):
+    confirmation_code: int = Field(description="Текущий код подтверждения")
+    confirmation_code_expiry: datetime = Field()
+    is_active: bool = Field(description="Активный пользователь", default=False)
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserBaseSchema(UserContactsSchema):

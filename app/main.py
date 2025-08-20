@@ -13,6 +13,7 @@ from app.admin.register import create_admin_panel
 from app.settings import settings
 from app.v1.auth.router import v1_auth_router, v2_auth_router
 from app.v1.auth_google.router import v1_google_router
+from app.v1.auth_sms.router import v1_auth_sms_router
 from app.v1.city.router import v1_cities_router
 from app.v1.fund.router import v1_funds_router
 from app.v1.payment.router import v1_payments_router
@@ -77,6 +78,7 @@ def create_app() -> FastAPI:
 
 def register_routers(app: FastAPI) -> None:
     app.include_router(v1_auth_router, prefix="/app/v1/auth", tags=["Auth v1"])
+    app.include_router(v1_auth_sms_router, prefix="/app/v1/auth/sms", tags=["Auth sms v1"])
     app.include_router(v2_auth_router, prefix="/app/v2/auth", tags=["Auth v2"])
     app.include_router(v1_google_router, prefix="/app/v1/google", tags=["Google OAuth v1"])
     app.include_router(v1_s3_router, prefix="/app/v1/s3_storage", tags=["S3 Storage v1"])

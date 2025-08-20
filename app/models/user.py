@@ -1,6 +1,7 @@
 from dataclasses import dataclass
+from datetime import datetime
 
-from sqlalchemy import Column
+from sqlalchemy import Column, DateTime
 from sqlalchemy import Enum as SqlEnum
 from sqlalchemy import ForeignKey, Integer, String, Table, event, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -23,11 +24,13 @@ user_fund_access = Table(
 class User(Base):
     name: Mapped[str | None]
     password: Mapped[str | None]
-
     google_access_token: Mapped[str | None]
 
     phone: Mapped[str | None] = mapped_column(String(11), unique=True, nullable=True)
     email: Mapped[str | None] = mapped_column(String, unique=True, nullable=True)
+
+    confirmation_code: Mapped[str | None] = mapped_column(String(6), nullable=True)
+    confirmation_code_expiry: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
 
     language: Mapped[LanguageEnum] = mapped_column(
         SqlEnum(LanguageEnum, name="language_enum"),
