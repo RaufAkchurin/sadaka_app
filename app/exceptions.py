@@ -1,6 +1,15 @@
 from fastapi import HTTPException, status
 
-# АВТОРИЗАЦИЯ
+# Код авторизации
+CodeWrongException = HTTPException(
+    status_code=status.HTTP_403_FORBIDDEN, detail="Проверьте номер телефона или код подтверждения"
+)
+
+CodeExpiredException = HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Код подтверждения устарел")
+
+CodeNotFoundedException = HTTPException(
+    status_code=status.HTTP_403_FORBIDDEN, detail="Код подтверждения отсутствует, запросите повторно."
+)
 
 # Пользователь
 UserNotFoundException = HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Пользователь не найден")

@@ -55,8 +55,12 @@ class UserPhoneOnlySchema(BaseModel):
         return self
 
 
-class UserAddWithCodeSchema(UserPhoneOnlySchema):
-    confirmation_code: int = Field(description="Текущий код подтверждения")
+class UserCodeCheckSchema(UserPhoneOnlySchema):
+    confirmation_code: str = Field(min_length=6, max_length=6, description="Код подтверждения в формате 123456")
+
+
+class UserCodeAddSchema(UserPhoneOnlySchema):
+    confirmation_code: int = Field(description="Код подтверждения")
     confirmation_code_expiry: datetime = Field()
     is_active: bool = Field(description="Активный пользователь", default=False)
 
@@ -64,7 +68,7 @@ class UserAddWithCodeSchema(UserPhoneOnlySchema):
 
 
 class UserBaseSchema(UserContactsSchema):
-    name: str = Field(min_length=3, max_length=50, description="Имя, от 3 до 50 символов")
+    name: str | None = Field(min_length=3, max_length=50, description="Имя, от 3 до 50 символов")
 
 
 class AnonymousUserAddSchema(UserBaseSchema):
