@@ -41,6 +41,21 @@ async def register_by_email(
     return {"message": "Вы успешно зарегистрированы!"}
 
 
+@v1_auth_router.post("/sms/register/")
+async def register_by_sms(
+    response: Response,
+    user_data: UserContactsSchema,
+    session: AsyncSession = Depends(get_session_with_commit),
+) -> dict:
+    user_dao = UserDAO(session)
+    user_data_dict = user_data.model_dump()
+    user = await user_dao.add(values=UserContactsSchema(**user_data_dict))
+
+    # set_tokens_to_response(response, user)
+
+    return {"message": "Вы успешно зарегистрированы!"}
+
+
 @v1_auth_router.post("/login_anonymous/")
 async def register_and_login_anonymous(
     response: Response, session: AsyncSession = Depends(get_session_with_commit)
@@ -51,7 +66,9 @@ async def register_and_login_anonymous(
             email=person.email(domains=["first.com", "second.ru"]), name=person.name(), is_anonymous=True
         )
     )
+
     set_tokens_to_response(response, user)
+
     return {"message": "Анонимный пользователь добавлен"}
 
 

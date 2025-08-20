@@ -21,7 +21,7 @@ user_fund_access = Table(
 
 @dataclass
 class User(Base):
-    name: Mapped[str]
+    name: Mapped[str | None]
     password: Mapped[str | None]
 
     google_access_token: Mapped[str | None]

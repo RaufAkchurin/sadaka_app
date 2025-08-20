@@ -15,12 +15,21 @@ class IdSchema(BaseModel):
 class UserContactsSchema(BaseModel):
     email: Optional[EmailStr] = Field(default=None, description="Электронная почта")
     phone: Optional[str] = Field(
-        default=None, min_length=11, max_length=11, description="Телефон,в формате +7xxxxxxxxxx"
+        default=None, min_length=12, max_length=12, description="Телефон, в формате +7xxxxxxxxxx"
     )
     model_config = ConfigDict(from_attributes=True)
 
     @model_validator(mode="after")
     def check_contacts(self) -> Self:
+        # Проверка на обязательность хотя бы одного поля
+        if not self.email and not self.phone:
+            raise ValueError("Обязательно одно из двух поля: EMAIL или PHONE")
+
+        # Если email отсутствует, телефон обязателен
+        if not self.phone and self.email is None:
+            raise ValueError("Телефон обязателен, если email не передан.")
+
+        # Если оба поля присутствуют, можно делать дополнительные проверки
         if self.email:
             try:
                 validate_email(str(self.email))
@@ -29,9 +38,6 @@ class UserContactsSchema(BaseModel):
 
         if self.phone:
             validate_phone(str(self.phone))
-
-        if not self.phone and not self.email:
-            raise ValueError("Обязательно одно из двух поля: EMAIL или PHONE")
 
         return self
 
