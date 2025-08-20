@@ -6,7 +6,7 @@ from jose import jwt
 from app.models.user import User
 from app.settings import settings
 from app.v1.auth.service_auth import authenticate_user, create_tokens
-from app.v1.users.schemas import SUserAddSchemaSchema, UserEmailSchema
+from app.v1.users.schemas import SUserAddSchema, UserContactsSchema
 
 
 class TestUtils:
@@ -55,8 +55,8 @@ class TestUtils:
             "password": "12345",
         }
 
-        await user_dao.add(values=SUserAddSchemaSchema(**user_data_dict, is_active=True))
-        user = await user_dao.find_one_or_none(filters=UserEmailSchema(email="test12@test.com"))
+        await user_dao.add(values=SUserAddSchema(**user_data_dict, is_active=True))
+        user = await user_dao.find_one_or_none(filters=UserContactsSchema(email="test12@test.com"))
 
         authenticated = await authenticate_user(user=user, password="12345")
         assert isinstance(authenticated, User)

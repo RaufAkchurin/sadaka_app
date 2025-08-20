@@ -3,7 +3,6 @@
 
 import smtplib
 from datetime import datetime
-from time import sleep
 
 try:
     from urllib import quote, urlopen
@@ -12,8 +11,10 @@ except ImportError:
     from urllib.request import urlopen
 
 # Константы для настройки библиотеки
+# TODO СЕКРЕТЫ СКИНУТЬ В ЕНВ, ДОБАВИТЬ В ВАЛИДАТОР ПАЙДАНТИКА
 SMSC_LOGIN = "mecenat"  # логин клиента
-SMSC_PASSWORD = "Gabdr09roof!"  # пароль клиента. Если передан пустой логин, то SMSC_PASSWORD используется, как API ключ, вместо логина и пароля
+SMSC_PASSWORD = "Gabdr09roof!"
+# пароль клиента. Если передан пустой логин, то SMSC_PASSWORD используется, как API ключ, вместо логина и пароля
 SMSC_POST = False  # использовать метод POST
 SMSC_HTTPS = False  # использовать HTTPS протокол
 SMSC_CHARSET = "utf-8"  # кодировка сообщения (windows-1251 или koi8-r), по умолчанию используется utf-8
@@ -49,7 +50,8 @@ class SMSC(object):
     # translit - переводить или нет в транслит (1,2 или 0)
     # time - необходимое время доставки в виде строки (DDMMYYhhmm, h1-h2, 0ts, +m)
     # id - идентификатор сообщения. Представляет собой 32-битное число в диапазоне от 1 до 2147483647.
-    # format - формат сообщения (0 - обычное sms, 1 - flash-sms, 2 - wap-push, 3 - hlr, 4 - bin, 5 - bin-hex, 6 - ping-sms, 7 - mms, 8 - mail, 9 - call, 10 - viber, 11 - soc, 12 - bot, 13 - telegram)
+    # format - формат сообщения (0 - обычное sms, 1 - flash-sms, 2 - wap-push, 3 - hlr, 4 - bin, 5 - bin-hex,
+    # 6 - ping-sms, 7 - mms, 8 - mail, 9 - call, 10 - viber, 11 - soc, 12 - bot, 13 - telegram)
     # sender - имя отправителя (Sender ID) или имя бота для telegram и whatsapp.
     # query - строка дополнительных параметров, добавляемая в URL-запрос ("valid=01:00&maxsms=3")
     #
@@ -84,7 +86,7 @@ class SMSC(object):
             + "&id="
             + str(id)
             + ifs(format > 0, "&" + formats[format - 1], "")
-            + ifs(sender == False, "", ifs(format == 12, "&bot=", "&sender=") + quote(str(sender)))
+            + ifs(sender == False, "", ifs(format == 12, "&bot=", "&sender=") + quote(str(sender)))  # noqa F712
             + ifs(time, "&time=" + quote(time), "")
             + ifs(query, "&" + query, ""),
         )
@@ -155,9 +157,11 @@ class SMSC(object):
     # необязательные параметры:
     #
     # translit - переводить или нет в транслит (1,2 или 0)
-    # format - формат сообщения (0 - обычное sms, 1 - flash-sms, 2 - wap-push, 3 - hlr, 4 - bin, 5 - bin-hex, 6 - ping-sms, 7 - mms, 8 - mail, 9 - call, 10 - viber, 11 - soc, 12 - bot, 13 - telegram)
+    # format - формат сообщения (0 - обычное sms, 1 - flash-sms, 2 - wap-push, 3 - hlr, 4 - bin, 5 - bin-hex,
+    # 6 - ping-sms, 7 - mms, 8 - mail, 9 - call, 10 - viber, 11 - soc, 12 - bot, 13 - telegram)
     # sender - имя отправителя (Sender ID) или имя бота для telegram и whatsapp
-    # query - строка дополнительных параметров, добавляемая в URL-запрос ("list=79999999999:Ваш пароль: 123\n78888888888:Ваш пароль: 456")
+    # query - строка дополнительных параметров, добавляемая в URL-запрос ("list=79999999999:
+    # Ваш пароль: 123\n78888888888:Ваш пароль: 456")
     #
     # возвращает массив (<стоимость>, <количество sms>) либо массив (0, -<код ошибки>) в случае ошибки
 
@@ -184,7 +188,7 @@ class SMSC(object):
             + quote(phones)
             + "&mes="
             + quote(message)
-            + ifs(sender == False, "", ifs(format == 12, "&bot=", "&sender=") + quote(str(sender)))
+            + ifs(sender == False, "", ifs(format == 12, "&bot=", "&sender=") + quote(str(sender)))  # noqa F712
             + "&translit="
             + str(translit)
             + ifs(format > 0, "&" + formats[format - 1], "")
@@ -208,8 +212,10 @@ class SMSC(object):
     #
     # возвращает массив:
     # для отправленного SMS (<статус>, <время изменения>, <код ошибки sms>)
-    # для HLR-запроса (<статус>, <время изменения>, <код ошибки sms>, <код IMSI SIM-карты>, <номер сервис-центра>, <код страны регистрации>,
-    # <код оператора абонента>, <название страны регистрации>, <название оператора абонента>, <название роуминговой страны>,
+    # для HLR-запроса (<статус>, <время изменения>, <код ошибки sms>, <код IMSI SIM-карты>, <номер сервис-центра>,
+    # <код страны регистрации>,
+    # <код оператора абонента>, <название страны регистрации>, <название оператора абонента>,
+    # <название роуминговой страны>,
     # <название роумингового оператора>)
     #
     # При all = 1 дополнительно возвращаются элементы в конце массива:
@@ -285,7 +291,7 @@ class SMSC(object):
                     data = urlopen(url + "?" + arg)
 
                 ret = str(data.read().decode(SMSC_CHARSET))
-            except:
+            except:  # noqa F294
                 ret = ""
 
             i += 1

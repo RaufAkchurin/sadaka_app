@@ -9,12 +9,12 @@ from app.v1.dependencies.auth_dep import check_refresh_token
 from app.v1.dependencies.dao_dep import get_session_with_commit, get_session_without_commit
 from app.v1.users.dao import UserDAO
 from app.v1.users.schemas import (
-    AnonymousUserAddSchemaSchema,
-    SUserAddSchemaSchema,
-    SUserAuthSchema,
-    SUserEmailRegisterSchemaSchema,
+    AnonymousUserAddSchema,
+    SUserAddSchema,
+    SUserAuthPasswordSchema,
+    SUserEmailRegisterSchema,
     UserActiveSchema,
-    UserEmailSchema,
+    UserContactsSchema,
 )
 
 v1_auth_router = APIRouter(tags=["Auth v1"])
@@ -23,21 +23,21 @@ v2_auth_router = APIRouter(tags=["Auth v2"])
 
 @v1_auth_router.post("/register/")
 async def register_by_email(
-    user_data: SUserEmailRegisterSchemaSchema,
+    user_data: SUserEmailRegisterSchema,
     session: AsyncSession = Depends(get_session_with_commit),
 ) -> dict:
     user_dao = UserDAO(session)
-    existing_user = await user_dao.find_one_or_none(filters=UserEmailSchema(email=user_data.email))
+    existing_user = await user_dao.find_one_or_none(filters=UserContactsSchema(email=user_data.email))
     if existing_user:
         await UserDAO(session).update(
-            filters=UserEmailSchema(email=existing_user.email),
+            filters=UserContactsSchema(email=existing_user.email),
             values=UserActiveSchema(is_active=True),
         )
     else:
         user_data_dict = user_data.model_dump()
         user_data_dict.pop("confirm_password", None)
 
-        await user_dao.add(values=SUserAddSchemaSchema(**user_data_dict, is_active=True))
+        await user_dao.add(values=SUserAddSchema(**user_data_dict, is_active=True))
     return {"message": "Вы успешно зарегистрированы!"}
 
 
@@ -47,7 +47,7 @@ async def register_and_login_anonymous(
 ) -> dict:
     user_dao = UserDAO(session)
     user = await user_dao.add(
-        values=AnonymousUserAddSchemaSchema(
+        values=AnonymousUserAddSchema(
             email=person.email(domains=["first.com", "second.ru"]), name=person.name(), is_anonymous=True
         )
     )
@@ -58,11 +58,11 @@ async def register_and_login_anonymous(
 @v1_auth_router.post("/login/")
 async def login_by_email(
     response: Response,
-    user_data: SUserAuthSchema,
+    user_data: SUserAuthPasswordSchema,
     session: AsyncSession = Depends(get_session_without_commit),
 ) -> dict:
     users_dao = UserDAO(session)
-    user = await users_dao.find_one_or_none(filters=UserEmailSchema(email=user_data.email))
+    user = await users_dao.find_one_or_none(filters=UserContactsSchema(email=user_data.email))
 
     if not (user and await authenticate_user(user=user, password=user_data.password)):
         raise IncorrectEmailOrPasswordException
@@ -83,6 +83,7 @@ async def process_refresh_token(response: Response, user: User = Depends(check_r
     return {"message": "Токены успешно обновлены"}
 
 
+# NOT USED IN PROD! BUT DON'T DELETE IT!
 @v2_auth_router.post("/versioning_for_example")
 async def versioning_for_example(response: Response, user: User = Depends(check_refresh_token)):
     set_tokens_to_response(response, user)
@@ -91,4 +92,4 @@ async def versioning_for_example(response: Response, user: User = Depends(check_
 
 @v2_auth_router.get("/sentry-debug")
 async def trigger_error():
-    division_by_zerou = 1 / 0
+    1 / 0

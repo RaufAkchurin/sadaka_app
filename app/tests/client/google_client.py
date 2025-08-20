@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from app.v1.auth import google_auth_service
-from app.v1.users.schemas import UserActiveSchema, UserEmailSchema
+from app.v1.users.schemas import UserActiveSchema, UserContactsSchema
 
 
 @pytest.fixture
@@ -98,11 +98,11 @@ class TestGoogleAuthService:
         mock_requests_post, mock_requests_get = mock_google_api_responses
 
         await user_dao.update(
-            filters=UserEmailSchema(email="superadmin@test.com"),
+            filters=UserContactsSchema(email="superadmin@test.com"),
             values=UserActiveSchema(is_active=False),
         )
 
-        current_user = await user_dao.find_one_or_none(filters=UserEmailSchema(email="superadmin@test.com"))
+        current_user = await user_dao.find_one_or_none(filters=UserContactsSchema(email="superadmin@test.com"))
         assert not current_user.is_active
 
         # Мокаем response от requests.get (для получения данных пользователя)

@@ -1,7 +1,7 @@
-from smsc_api import *
+from service_smsc import *  # noqa F403
 
 ...
-smsc = SMSC()
+smsc = SMSC()  # noqa F405
 ...
 r = smsc.send_sms("79170494397", "Ваш пароль: 123", sender="sms")
 # ...

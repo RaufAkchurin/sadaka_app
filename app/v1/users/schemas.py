@@ -1,9 +1,10 @@
-from typing import Self
+from typing import Optional, Self
 
 from email_validator import EmailNotValidError, validate_email
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, model_validator
 
 from app.models.user import LanguageEnum
+from app.v1.api_utils.validators import validate_phone
 
 
 class IdSchema(BaseModel):
@@ -11,28 +12,39 @@ class IdSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class UserEmailSchema(BaseModel):
-    email: EmailStr = Field(description="Электронная почта")
+class UserContactsSchema(BaseModel):
+    email: Optional[EmailStr] = Field(default=None, description="Электронная почта")
+    phone: Optional[str] = Field(
+        default=None, min_length=11, max_length=11, description="Телефон,в формате +7xxxxxxxxxx"
+    )
     model_config = ConfigDict(from_attributes=True)
 
     @model_validator(mode="after")
-    def check_email(self) -> Self:
-        try:
-            validate_email(str(self.email))
-            return self
-        except EmailNotValidError as e:
-            raise ValueError(f"Невалидный email: {e}")
+    def check_contacts(self) -> Self:
+        if self.email:
+            try:
+                validate_email(str(self.email))
+            except EmailNotValidError as e:
+                raise ValueError(f"Невалидный email: {e}")
+
+        if self.phone:
+            validate_phone(str(self.phone))
+
+        if not self.phone and not self.email:
+            raise ValueError("Обязательно одно из двух поля: EMAIL или PHONE")
+
+        return self
 
 
-class UserBaseSchema(UserEmailSchema):
+class UserBaseSchema(UserContactsSchema):
     name: str = Field(min_length=3, max_length=50, description="Имя, от 3 до 50 символов")
 
 
-class AnonymousUserAddSchemaSchema(UserBaseSchema):
+class AnonymousUserAddSchema(UserBaseSchema):
     is_anonymous: bool
 
 
-class SUserEmailRegisterSchemaSchema(UserBaseSchema):
+class SUserEmailRegisterSchema(UserBaseSchema):
     password: str = Field(min_length=5, max_length=50, description="Пароль, от 5 до 50 знаков")
     confirm_password: str = Field(min_length=5, max_length=50, description="Повторите пароль")
 
@@ -43,12 +55,12 @@ class SUserEmailRegisterSchemaSchema(UserBaseSchema):
         return self
 
 
-class SUserAddSchemaSchema(UserBaseSchema):
+class SUserAddSchema(UserBaseSchema):
     password: str = Field(min_length=5, description="Пароль в формате HASH-строки")
     is_active: bool = Field(description="Активный пользователь", default=True)
 
 
-class SUserAuthSchema(UserEmailSchema):
+class SUserAuthPasswordSchema(UserContactsSchema):
     password: str = Field(min_length=5, max_length=50, description="Пароль, от 5 до 50 знаков")
 
 
@@ -82,7 +94,7 @@ class CitySchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class SUserInfoSchemaSchema(UserBaseSchema):
+class SUserInfoSchema(UserBaseSchema):
     id: int = Field(description="Идентификатор пользователя")
     is_anonymous: bool = Field(description="Анонимный пользователь")
     is_active: bool = Field(description="Активный пользователь")
