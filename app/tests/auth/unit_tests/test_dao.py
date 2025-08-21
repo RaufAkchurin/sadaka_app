@@ -1,6 +1,6 @@
 from tests.factory.factories_polyfactory import faker
 
-from app.v1.users.schemas import SUserAddSchema, UserBaseSchema, UserContactsSchema
+from app.v1.users.schemas import UserAddWithPasswordSchema, UserBaseSchema, UserContactsSchema
 
 
 class TestDAO:
@@ -31,7 +31,7 @@ class TestDAO:
             "password": "8654567",
         }
 
-        new_user = await user_dao.add(values=SUserAddSchema(**user_data_dict))
+        new_user = await user_dao.add(values=UserAddWithPasswordSchema(**user_data_dict))
         assert new_user.id == 6
 
         user = await user_dao.find_one_or_none_by_id(new_user.id)
@@ -44,7 +44,7 @@ class TestDAO:
             "password": "876trfghy6t5r",
         }
 
-        await user_dao.add(values=SUserAddSchema(**user_data_dict))
+        await user_dao.add(values=UserAddWithPasswordSchema(**user_data_dict))
         user = await user_dao.find_one_or_none(filters=UserContactsSchema(email="2test@test.com"))
         assert user.name == "test4"
 
@@ -65,7 +65,7 @@ class TestDAO:
             for i in range(10)
         ]
 
-        new_users = await user_dao.add_many([SUserAddSchema(**user_data) for user_data in users])
+        new_users = await user_dao.add_many([UserAddWithPasswordSchema(**user_data) for user_data in users])
         assert len(new_users) == 10
 
     async def test_update(self, user_dao):
@@ -74,7 +74,7 @@ class TestDAO:
             "name": "test3",
             "password": "8654567",
         }
-        new_user = await user_dao.add(values=SUserAddSchema(**user_data_dict))
+        new_user = await user_dao.add(values=UserAddWithPasswordSchema(**user_data_dict))
         assert new_user.name == "test3"
 
         user_data_dict["name"] = "updated_name"
@@ -92,7 +92,7 @@ class TestDAO:
             "name": "test4",
             "password": "8654567",
         }
-        new_user = await user_dao.add(values=SUserAddSchema(**user_data_dict))
+        new_user = await user_dao.add(values=UserAddWithPasswordSchema(**user_data_dict))
         assert new_user.name == "test4"
 
         deleted_user = await user_dao.delete(filters=UserContactsSchema(email=new_user.email))

@@ -10,9 +10,9 @@ from app.v1.dependencies.dao_dep import get_session_with_commit, get_session_wit
 from app.v1.users.dao import UserDAO
 from app.v1.users.schemas import (
     AnonymousUserAddSchema,
-    SUserAddSchema,
-    SUserAuthPasswordSchema,
-    SUserEmailRegisterSchema,
+    UserAddWithPasswordSchema,
+    UserAuthPasswordSchema,
+    UserEmailRegisterSchema,
     UserActiveSchema,
     UserContactsSchema,
 )
@@ -23,7 +23,7 @@ v2_auth_router = APIRouter(tags=["Auth v2"])
 
 @v1_auth_router.post("/register/")
 async def register_by_email(
-    user_data: SUserEmailRegisterSchema,
+    user_data: UserEmailRegisterSchema,
     session: AsyncSession = Depends(get_session_with_commit),
 ) -> dict:
     user_dao = UserDAO(session)
@@ -37,7 +37,7 @@ async def register_by_email(
         user_data_dict = user_data.model_dump()
         user_data_dict.pop("confirm_password", None)
 
-        await user_dao.add(values=SUserAddSchema(**user_data_dict, is_active=True))
+        await user_dao.add(values=UserAddWithPasswordSchema(**user_data_dict, is_active=True))
     return {"message": "Вы успешно зарегистрированы!"}
 
 
@@ -60,7 +60,7 @@ async def register_and_login_anonymous(
 @v1_auth_router.post("/login/")
 async def login_by_email(
     response: Response,
-    user_data: SUserAuthPasswordSchema,
+    user_data: UserAuthPasswordSchema,
     session: AsyncSession = Depends(get_session_without_commit),
 ) -> dict:
     users_dao = UserDAO(session)

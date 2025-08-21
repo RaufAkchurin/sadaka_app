@@ -1,11 +1,11 @@
-from datetime import datetime
-from typing import Annotated, Optional, Self
+from typing import Optional, Self
 
 from email_validator import EmailNotValidError, validate_email
-from pydantic import AfterValidator, BaseModel, ConfigDict, EmailStr, Field, StringConstraints, model_validator
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, model_validator
 
 from app.models.user import LanguageEnum
 from app.v1.api_utils.validators import validate_phone
+from app.v1.auth_sms.schemas import PhoneE164_RUS
 
 
 class IdSchema(BaseModel):
@@ -43,12 +43,8 @@ class UserContactsSchema(BaseModel):
         return self
 
 
-PhoneE164_RUS = Annotated[
-    str,
-    StringConstraints(pattern=r"^\+7\d{10}$", min_length=12, max_length=12),
-    # FOR view correct phone number in docs when trying
-    AfterValidator(validate_phone),
-]
+class UserBaseSchema(UserContactsSchema):
+    name: str | None = Field(min_length=3, max_length=50, description="Имя, от 3 до 50 символов")
 
 
 class UserPhoneOnlySchema(BaseModel):
@@ -56,29 +52,10 @@ class UserPhoneOnlySchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class UserCodeCheckSchema(UserPhoneOnlySchema):
-    confirmation_code: str = Field(
-        min_length=6, max_length=6, pattern=r"^\d{6}$", description="Код подтверждения в формате 123456"
-    )
-
-
-class UserCodeAddSchema(UserPhoneOnlySchema):
-    confirmation_code: str = Field(description="Код подтверждения")
-    confirmation_code_expiry: datetime = Field()
-    is_active: bool = Field(description="Активный пользователь", default=False)
-
-    model_config = ConfigDict(from_attributes=True)
-
-
-class UserBaseSchema(UserContactsSchema):
-    name: str | None = Field(min_length=3, max_length=50, description="Имя, от 3 до 50 символов")
-
-
 class AnonymousUserAddSchema(UserBaseSchema):
     is_anonymous: bool
 
-
-class SUserEmailRegisterSchema(UserBaseSchema):
+class UserEmailRegisterSchema(UserBaseSchema):
     password: str = Field(min_length=5, max_length=50, description="Пароль, от 5 до 50 знаков")
     confirm_password: str = Field(min_length=5, max_length=50, description="Повторите пароль")
 
@@ -89,12 +66,12 @@ class SUserEmailRegisterSchema(UserBaseSchema):
         return self
 
 
-class SUserAddSchema(UserBaseSchema):
+class UserAddWithPasswordSchema(UserBaseSchema):
     password: str = Field(min_length=5, description="Пароль в формате HASH-строки")
     is_active: bool = Field(description="Активный пользователь", default=True)
 
 
-class SUserAuthPasswordSchema(UserContactsSchema):
+class UserAuthPasswordSchema(UserContactsSchema):
     password: str = Field(min_length=5, max_length=50, description="Пароль, от 5 до 50 знаков")
 
 
@@ -128,7 +105,7 @@ class CitySchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class SUserInfoSchema(UserBaseSchema):
+class UserInfoSchema(UserBaseSchema):
     id: int = Field(description="Идентификатор пользователя")
     is_anonymous: bool = Field(description="Анонимный пользователь")
     is_active: bool = Field(description="Активный пользователь")

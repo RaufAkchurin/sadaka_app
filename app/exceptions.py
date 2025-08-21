@@ -8,17 +8,12 @@ CodeWrongException = HTTPException(
 
 CodeExpiredException = HTTPException(
     status_code=status.HTTP_403_FORBIDDEN,
-    detail="Код подтверждения устарел"
-)
-
-CodeNotFoundedException = HTTPException(
-    status_code=status.HTTP_403_FORBIDDEN,
-    detail="Код подтверждения отсутствует, запросите повторно."
+    detail="Код подтверждения устарел, запросите новый"
 )
 
 CodeRequestBlockerException = HTTPException(
     status_code=status.HTTP_403_FORBIDDEN,
-    detail="Запрос отправлен ранее, попробуйте попозже, или после 00-00"
+    detail="Запрос уже был отправлен ранее, попробуйте попозже, или после 00-00"
 )
 
 # Пользователь
