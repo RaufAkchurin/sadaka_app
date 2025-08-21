@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from sqladmin import Admin
 
 from app.admin.views.auth import MyAuthenticationBackend
+from app.admin.views.one_time_pass import OneTimePassAdmin
 from app.admin.views.city import CityAdmin
 from app.admin.views.country import CountryAdmin
 from app.admin.views.file import FileAdmin
@@ -37,3 +38,4 @@ def create_admin_panel(app: FastAPI):
     admin.add_view(FileAdmin)
 
     admin.add_view(PaymentAdmin)
+    admin.add_view(OneTimePassAdmin)

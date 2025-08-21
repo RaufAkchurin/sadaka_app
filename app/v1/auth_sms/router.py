@@ -1,17 +1,48 @@
 import random
 from datetime import datetime, timedelta
 
+from botocore.docs import generate_docs
 from fastapi import APIRouter, Depends, Response
+from rsa import newkeys
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.exceptions import CodeExpiredException, CodeNotFoundedException, CodeWrongException
+from app.exceptions import CodeExpiredException, CodeNotFoundedException, CodeWrongException, \
+    CodeRequestBlockerException
 from app.v1.auth.service_auth import set_tokens_to_response
+from app.v1.auth_sms.schemas import OtpSearchSchema, OtpAddSchema
 from app.v1.auth_sms.service_smsc import SMSC
 from app.v1.dependencies.dao_dep import get_session_with_commit
-from app.v1.users.dao import UserDAO
+from app.v1.users.dao import UserDAO, OneTimePassDAO
 from app.v1.users.schemas import UserCodeAddSchema, UserCodeCheckSchema, UserPhoneOnlySchema
 
 v1_auth_sms_router = APIRouter()
+
+# @v1_auth_sms_router.post("/send_code/")
+# async def send_sms(
+#     user_data: UserPhoneOnlySchema,
+#     session: AsyncSession = Depends(get_session_with_commit),
+# ) -> dict:
+#     user_dao = UserDAO(session)
+#     confirmation_code = random.randint(100000, 999999)
+#
+#     old_user = await user_dao.find_one_or_none(filters=UserPhoneOnlySchema(phone=user_data.phone))
+#     if old_user is None:
+#         await user_dao.add(
+#             UserCodeAddSchema(
+#                 phone=user_data.phone,
+#                 confirmation_code=confirmation_code,
+#                 confirmation_code_expiry=datetime.now() + timedelta(minutes=5),
+#                 is_active=False,  # To be active after code positive confirmation
+#             )
+#         )
+#     else:
+#         old_user.confirmation_code = confirmation_code
+#         old_user.confirmation_code_expiry = datetime.now() + timedelta(minutes=5)
+#
+#     smsc = SMSC()
+#     smsc.send_sms(user_data.phone[1:], f"Код подтверждения: {confirmation_code}", sender="sms")
+#
+#     return {"message": "Code sent"}
 
 
 @v1_auth_sms_router.post("/send_code/")
@@ -19,25 +50,27 @@ async def send_sms(
     user_data: UserPhoneOnlySchema,
     session: AsyncSession = Depends(get_session_with_commit),
 ) -> dict:
+
+
     user_dao = UserDAO(session)
-    confirmation_code = random.randint(100000, 999999)
+    otp_dao = OneTimePassDAO(session)
 
-    old_user = await user_dao.find_one_or_none(filters=UserPhoneOnlySchema(phone=user_data.phone))
-    if old_user is None:
-        await user_dao.add(
-            UserCodeAddSchema(
-                phone=user_data.phone,
-                confirmation_code=confirmation_code,
-                confirmation_code_expiry=datetime.now() + timedelta(minutes=5),
-                is_active=False,  # To be active after code positive confirmation
-            )
-        )
+    new_code = random.randint(100000, 999999)
+    new_expiration = datetime.now() + timedelta(minutes=5)
+    max_requests_count = 5
+
+    old_otp = await otp_dao.find_one_or_none(filters=OtpSearchSchema(phone=user_data.phone))
+    if old_otp is None:
+        await otp_dao.add(
+            OtpAddSchema(phone=user_data.phone, code=str(new_code), expiration=new_expiration))
+
     else:
-        old_user.confirmation_code = confirmation_code
-        old_user.confirmation_code_expiry = datetime.now() + timedelta(minutes=5)
-
-    smsc = SMSC()
-    smsc.send_sms(user_data.phone[1:], f"Код подтверждения: {confirmation_code}", sender="sms")
+        if old_otp.blocked_requests_until < datetime.now() and  old_otp.count_of_request < max_requests_count:
+            old_otp.count_of_request += 1
+            old_otp.code = new_code
+            old_otp.expiration = new_expiration
+        else:
+            raise CodeRequestBlockerException
 
     return {"message": "Code sent"}
 
