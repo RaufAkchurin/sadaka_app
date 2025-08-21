@@ -11,7 +11,7 @@ from app.v1.dependencies.dao_dep import get_session_with_commit
 from app.v1.users.dao import UserDAO
 from app.v1.users.schemas import UserCodeAddSchema, UserCodeCheckSchema, UserPhoneOnlySchema
 
-v1_auth_sms_router = APIRouter(tags=["Auth v1"])
+v1_auth_sms_router = APIRouter()
 
 
 @v1_auth_sms_router.post("/send_code/")
@@ -52,11 +52,11 @@ async def check_code_from_sms(
     user_by_phone = await user_dao.find_one_or_none(filters=UserPhoneOnlySchema(phone=user_data.phone))
 
     if user_by_phone is not None and user_by_phone.confirmation_code == user_data.confirmation_code:
-        if hasattr(user_by_phone, "confirmation_code"):
+        if hasattr(user_by_phone, "confirmation_code") and hasattr(user_by_phone, "confirmation_code_expiry"):
             if datetime.now() < user_by_phone.confirmation_code_expiry:
                 user_by_phone.is_active = True
                 set_tokens_to_response(response, user_by_phone)
-                return {"message": "Success"}
+                return {"message": "Вы успешно авторизованы."}
             else:
                 raise CodeExpiredException
         else:

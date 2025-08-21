@@ -1,8 +1,8 @@
 from datetime import datetime
-from typing import Optional, Self
+from typing import Annotated, Optional, Self
 
 from email_validator import EmailNotValidError, validate_email
-from pydantic import BaseModel, ConfigDict, EmailStr, Field, model_validator
+from pydantic import AfterValidator, BaseModel, ConfigDict, EmailStr, Field, StringConstraints, model_validator
 
 from app.models.user import LanguageEnum
 from app.v1.api_utils.validators import validate_phone
@@ -43,24 +43,27 @@ class UserContactsSchema(BaseModel):
         return self
 
 
+PhoneE164_RUS = Annotated[
+    str,
+    StringConstraints(pattern=r"^\+7\d{10}$", min_length=12, max_length=12),
+    # FOR view correct phone number in docs when trying
+    AfterValidator(validate_phone),
+]
+
+
 class UserPhoneOnlySchema(BaseModel):
-    phone: str = Field(min_length=12, max_length=12, description="Телефон, в формате +7xxxxxxxxxx")
+    phone: PhoneE164_RUS
     model_config = ConfigDict(from_attributes=True)
-
-    @model_validator(mode="after")
-    def check_contacts(self) -> Self:
-        if self.phone:
-            validate_phone(str(self.phone))
-
-        return self
 
 
 class UserCodeCheckSchema(UserPhoneOnlySchema):
-    confirmation_code: str = Field(min_length=6, max_length=6, description="Код подтверждения в формате 123456")
+    confirmation_code: str = Field(
+        min_length=6, max_length=6, pattern=r"^\d{6}$", description="Код подтверждения в формате 123456"
+    )
 
 
 class UserCodeAddSchema(UserPhoneOnlySchema):
-    confirmation_code: int = Field(description="Код подтверждения")
+    confirmation_code: str = Field(description="Код подтверждения")
     confirmation_code_expiry: datetime = Field()
     is_active: bool = Field(description="Активный пользователь", default=False)
 
