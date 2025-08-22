@@ -40,10 +40,15 @@ async def send_sms(
 
     else:
         # если код уже выдавался, сначала проверим на блокировку
-        if otp.blocked_requests_until and otp.blocked_requests_until > datetime.now():
-            raise CodeRequestBlockerException
+        if otp.blocked_requests_until:
+            # если блокировка не истекла
+            if otp.blocked_requests_until > datetime.now():
+                raise CodeRequestBlockerException
+            else:
+                # если была блокировка когда-то, но истекла - обнуляем счетчик
+                otp.count_of_request = 0
 
-        # если блокировки небыло, обновим данные
+        # если блокировки небыло, но код уже выдавался ранее - обновим данные
         otp.count_of_request += 1
         otp.code = new_code
         otp.expiration = new_expiration
@@ -77,8 +82,11 @@ async def check_code_from_sms(
         raise CodeConfirmationNotExistException
 
     # в первую очередь проверим наличие блокировки по лимиту
-    if otp.blocked_confirmations_until and otp.blocked_confirmations_until > datetime.now():
-        raise CodeConfirmationBlockerException
+    if otp.blocked_confirmations_until:
+        if otp.blocked_confirmations_until > datetime.now():
+            raise CodeConfirmationBlockerException
+        else:
+            otp.count_of_confirmations = 0
 
     # проверка срока жизни
     if datetime.now() > otp.expiration:
