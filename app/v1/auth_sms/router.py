@@ -6,9 +6,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.exceptions import (
     CodeConfirmationBlockerException,
-    CodeExpiredException,
+    CodeConfirmationExpiredException,
+    CodeConfirmationNotExistException,
+    CodeConfirmationWrongException,
     CodeRequestBlockerException,
-    CodeWrongException,
 )
 from app.models.one_time_pass import OneTimePass
 from app.models.user import User
@@ -39,7 +40,7 @@ async def send_sms(
 
     else:
         # если код уже выдавался, сначала проверим на блокировку
-        if otp.blocked_requests_until > datetime.now():
+        if otp.blocked_requests_until and otp.blocked_requests_until > datetime.now():
             raise CodeRequestBlockerException
 
         # если блокировки небыло, обновим данные
@@ -71,13 +72,17 @@ async def check_code_from_sms(
     user: User = await user_dao.find_one_or_none(filters=OtpPhoneOnlySchema(phone=check_code_data.phone))
     otp: OneTimePass = await otp_dao.find_one_or_none(filters=OtpPhoneOnlySchema(phone=check_code_data.phone))
 
+    # проверим существует ли код подтверждения шестизначный для данного контакта(возможно уже все использованы)
+    if not otp.code or not otp.expiration:
+        raise CodeConfirmationNotExistException
+
     # в первую очередь проверим наличие блокировки по лимиту
-    if otp.blocked_confirmations_until > datetime.now():
+    if otp.blocked_confirmations_until and otp.blocked_confirmations_until > datetime.now():
         raise CodeConfirmationBlockerException
 
     # проверка срока жизни
     if datetime.now() > otp.expiration:
-        raise CodeExpiredException
+        raise CodeConfirmationExpiredException
 
         # проверка кода подтверждения
     if otp.code != check_code_data.code:
@@ -85,9 +90,8 @@ async def check_code_from_sms(
         # блокировка возможности подтвердить смс
         if otp.count_of_confirmation >= max_confirmation_count:
             otp.blocked_confirmations_until = datetime.now() + timedelta(hours=4)
-
         # Исключение в любом случае если изначально код неверный втч если наступает блокировка
-        raise CodeWrongException
+        raise CodeConfirmationWrongException
 
         # успех
     if user is not None:
