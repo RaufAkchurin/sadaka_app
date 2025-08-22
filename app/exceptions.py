@@ -2,25 +2,25 @@ from fastapi import HTTPException, status
 
 # Код авторизации (шестизначный)
 CodeWrongException = HTTPException(
-    status_code=status.HTTP_403_FORBIDDEN,
-    detail="Проверьте номер телефона или код подтверждения"
+    status_code=status.HTTP_403_FORBIDDEN, detail="Проверьте номер телефона или код подтверждения"
 )
 
 CodeExpiredException = HTTPException(
-    status_code=status.HTTP_403_FORBIDDEN,
-    detail="Код подтверждения устарел, запросите новый"
+    status_code=status.HTTP_403_FORBIDDEN, detail="Код подтверждения устарел, запросите новый"
 )
 
 CodeRequestBlockerException = HTTPException(
     status_code=status.HTTP_403_FORBIDDEN,
-    detail="Запрос уже был отправлен ранее, попробуйте попозже, или после 00-00"
+    detail="Превышен лимит на отправку смс с кодом, попробуйте попозже, или после 00-00",
+)
+
+CodeConfirmationBlockerException = HTTPException(
+    status_code=status.HTTP_403_FORBIDDEN,
+    detail="Превышен лимит на подтверждение кода, попробуйте попозже, или после 00-00",
 )
 
 # Пользователь
-UserNotFoundException = HTTPException(
-    status_code=status.HTTP_404_NOT_FOUND,
-    detail="Пользователь не найден"
-)
+UserNotFoundException = HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Пользователь не найден")
 
 UserIdNotFoundException = HTTPException(
     status_code=status.HTTP_404_NOT_FOUND,
@@ -28,8 +28,7 @@ UserIdNotFoundException = HTTPException(
 )
 
 IncorrectEmailOrPasswordException = HTTPException(
-    status_code=status.HTTP_400_BAD_REQUEST,
-    detail="Неверная почта или пароль"
+    status_code=status.HTTP_400_BAD_REQUEST, detail="Неверная почта или пароль"
 )
 
 FailedGoogleOauthException = HTTPException(
@@ -40,14 +39,10 @@ FailedGoogleOauthException = HTTPException(
 
 # ТОКЕНЫ
 
-TokenExpiredException = HTTPException(
-    status_code=status.HTTP_401_UNAUTHORIZED,
-    detail="Токен истек"
-)
+TokenExpiredException = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Токен истек")
 
 InvalidTokenFormatException = HTTPException(
-    status_code=status.HTTP_400_BAD_REQUEST,
-    detail="Некорректный формат токена"
+    status_code=status.HTTP_400_BAD_REQUEST, detail="Некорректный формат токена"
 )
 
 
