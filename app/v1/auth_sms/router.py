@@ -13,6 +13,7 @@ from app.exceptions import (
 )
 from app.models.one_time_pass import OneTimePass
 from app.models.user import User
+from app.settings import settings
 from app.v1.auth.service_auth import set_tokens_to_response
 from app.v1.auth_sms.schemas import OtpAddSchema, OtpCodeCheckSchema, OtpPhoneOnlySchema
 from app.v1.auth_sms.service_smsc import SMSC
@@ -57,8 +58,9 @@ async def send_sms(
         if otp.count_of_request >= max_requests_count:
             otp.blocked_requests_until = datetime.now() + timedelta(hours=4)
 
-    smsc = SMSC()
-    smsc.send_sms(user_data.phone[1:], f"Код подтверждения: {new_code}", sender="sms")
+    if settings.MODE == "PROD":
+        smsc = SMSC()
+        smsc.send_sms(user_data.phone[1:], f"Код подтверждения: {new_code}", sender="sms")
 
     return {"message": "Код подтверждения успешно отправлен."}
 

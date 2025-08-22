@@ -1,9 +1,8 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 
 import pytest
 
-from app.models.one_time_pass import OneTimePass
-from app.v1.auth_sms.schemas import OtpCodeCheckSchema, OtpPhoneOnlySchema
+from app.v1.auth_sms.schemas import OtpPhoneOnlySchema, OtpAddSchema
 
 
 class TestAuthSms:
@@ -15,7 +14,7 @@ class TestAuthSms:
         ],
     )
     async def test_send_code(self, ac, otp_dao, phone, status_code, response_message):
-        response = await ac.post("/app/v1/auth_sms/send_code/", json={"phone": phone})
+        response = await ac.post("/app/v1/auth/sms/send_code/", json={"phone": phone})
         assert response.status_code == status_code
         if response_message:
             assert response.json() == response_message
@@ -24,34 +23,34 @@ class TestAuthSms:
             otp = await otp_dao.find_one_or_none(filters=OtpPhoneOnlySchema(phone=phone))
             assert otp is not None
             assert otp.code is not None
-            assert otp.expiration > datetime.now(timezone.utc)
+            assert otp.expiration > datetime.now()
 
     async def test_send_code_blocked(self, ac, otp_dao):
         phone = "+79990000002"
         # искусственно добавляем блокировку
-        otp = await otp_dao.add(
-            OneTimePass(
+        await otp_dao.add(
+            OtpAddSchema(
                 phone=phone,
                 code="123456",
-                expiration=datetime.now(timezone.utc) + timedelta(minutes=5),
-                blocked_requests_until=datetime.now(timezone.utc) + timedelta(hours=1),
+                expiration=datetime.now() + timedelta(minutes=5),
+                blocked_requests_until=datetime.now() + timedelta(hours=1),
             )
         )
-        response = await ac.post("/app/v1/auth_sms/send_code/", json={"phone": phone})
+        response = await ac.post("/app/v1/auth/sms/send_code/", json={"phone": phone})
         assert response.status_code == 403
         assert response.json()["detail"] == "Превышено число запросов кода"
 
     async def test_check_code_success(self, ac, user_dao, otp_dao):
         phone = "+79990000003"
-        otp = await otp_dao.add(
-            OneTimePass(
+        await otp_dao.add(
+            OtpAddSchema(
                 phone=phone,
                 code="123456",
-                expiration=datetime.now(timezone.utc) + timedelta(minutes=5),
+                expiration=datetime.now() + timedelta(minutes=5),
             )
         )
         response = await ac.post(
-            "/app/v1/auth_sms/check_code/",
+            "/app/v1/auth/sms/check_code/",
             json={"phone": phone, "code": "123456"},
         )
         assert response.status_code == 200
@@ -71,15 +70,16 @@ class TestAuthSms:
     async def test_check_code_wrong_or_expired(self, ac, otp_dao, code, status_code, detail):
         phone = "+79990000004"
 
-        otp = OneTimePass(
-            phone=phone,
-            code="123456",
-            expiration=datetime.now(timezone.utc) - timedelta(minutes=1),  # сразу истёкший
+        await otp_dao.add(
+            OtpAddSchema(
+                phone=phone,
+                code=code,
+                expiration=datetime.now() + timedelta(minutes=1),
+            )
         )
-        await otp_dao.add(otp)
 
         response = await ac.post(
-            "/app/v1/auth_sms/check_code/",
+            "/app/v1/auth/sms/check_code/",
             json={"phone": phone, "code": code},
         )
         assert response.status_code == status_code
@@ -87,16 +87,16 @@ class TestAuthSms:
 
     async def test_check_code_blocked(self, ac, otp_dao):
         phone = "+79990000005"
-        otp = await otp_dao.add(
-            OneTimePass(
+        await otp_dao.add(
+            OtpAddSchema(
                 phone=phone,
                 code="123456",
-                expiration=datetime.now(timezone.utc) + timedelta(minutes=5),
-                blocked_confirmations_until=datetime.now(timezone.utc) + timedelta(hours=1),
+                expiration=datetime.now() + timedelta(minutes=5),
+                blocked_confirmations_until=datetime.now() + timedelta(hours=1),
             )
         )
         response = await ac.post(
-            "/app/v1/auth_sms/check_code/",
+            "/app/v1/auth/sms/check_code/",
             json={"phone": phone, "code": "123456"},
         )
         assert response.status_code == 403
