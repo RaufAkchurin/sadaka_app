@@ -88,7 +88,7 @@ async def check_code_from_sms(
         if otp.blocked_confirmations_until > datetime.now():
             raise CodeConfirmationBlockerException
         else:
-            otp.count_of_confirmations = 0
+            otp.count_of_confirmation = 0
 
     # проверка срока жизни
     if datetime.now() > otp.expiration:
@@ -101,6 +101,9 @@ async def check_code_from_sms(
         if otp.count_of_confirmation >= max_confirmation_count:
             otp.blocked_confirmations_until = datetime.now() + timedelta(hours=4)
         # Исключение в любом случае если изначально код неверный втч если наступает блокировка
+
+        await session.flush()
+        await session.commit()
         raise CodeConfirmationWrongException
 
         # успех

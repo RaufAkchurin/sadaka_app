@@ -83,7 +83,7 @@ class TestAuthSms:
     @pytest.mark.parametrize(
         "phone, " "code, status_code, detail",
         [
-            ("+79990000004", "000000", 403, "Код подтверждения устарел, запросите новый"),
+            ("+79990000005", "000000", 403, "Код подтверждения устарел, запросите новый"),
         ],
     )
     async def test_check_code_expired(self, ac, otp_dao, phone, code, status_code, detail):
@@ -103,7 +103,7 @@ class TestAuthSms:
         assert response.json()["detail"] == detail
 
     async def test_send_code_blocked(self, ac, otp_dao):
-        phone = "+79990000002"
+        phone = "+79990000006"
         # искусственно добавляем блокировку
         await otp_dao.add(
             OtpBlockedRequestAddSchema(
@@ -120,7 +120,7 @@ class TestAuthSms:
         )
 
     async def test_check_code_blocked(self, ac, otp_dao):
-        phone = "+79990000005"
+        phone = "+79990000007"
         await otp_dao.add(
             OtpBlockedConfirmationsAddSchema(
                 phone=phone,
