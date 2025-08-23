@@ -25,7 +25,7 @@ class User(Base):
     password: Mapped[str | None]
     google_access_token: Mapped[str | None]
 
-    phone: Mapped[str | None] = mapped_column(String(11), unique=True, nullable=True)
+    phone: Mapped[str | None] = mapped_column(String(12), unique=True, nullable=True)
     email: Mapped[str | None] = mapped_column(String, unique=True, nullable=True)
 
     language: Mapped[LanguageEnum] = mapped_column(
@@ -79,16 +79,16 @@ class User(Base):
         return [fund.id for fund in self.funds_access]
 
 
-# def _ensure_contact(mapper, connection, target: User):
-#     """ORM-валидация перед INSERT/UPDATE: нужен хотя бы один из email/phone."""
-#     if not (target.email and target.email.strip()) and not (target.phone and target.phone.strip()):
-#         # Любое исключение прервёт flush/commit
-#         raise ValueError("У пользователя должен быть указан email или phone (хотя бы одно поле).")
-#
-#
-# # Подвязываем на insert/update
-# event.listen(User, "before_insert", _ensure_contact)
-# event.listen(User, "before_update", _ensure_contact)
+def _ensure_contact(mapper, connection, target: User):
+    """ORM-валидация перед INSERT/UPDATE: нужен хотя бы один из email/phone."""
+    if not (target.email and target.email.strip()) and not (target.phone and target.phone.strip()):
+        # Любое исключение прервёт flush/commit
+        raise ValueError("У пользователя должен быть указан email или phone (хотя бы одно поле).")
+
+
+# Подвязываем на insert/update
+event.listen(User, "before_insert", _ensure_contact)
+event.listen(User, "before_update", _ensure_contact)
 
 
 # всегда хешируем пароль, привязываем событие перед вставкой или обновлением
