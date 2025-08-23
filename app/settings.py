@@ -29,6 +29,11 @@ class Settings(BaseSettings):
     POSTGRES_HOST: str
     POSTGRES_DB_NAME: str
 
+    POSTGRES_TEST_USER: str
+    POSTGRES_TEST_PASSWORD: str
+    POSTGRES_TEST_HOST: str
+    POSTGRES_TEST_DB_NAME: str
+
     model_config = SettingsConfigDict(env_file=f"{BASE_DIR}/.env")
 
     @property

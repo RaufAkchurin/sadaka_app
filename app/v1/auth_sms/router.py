@@ -51,7 +51,7 @@ async def send_sms(
 
         # если блокировки небыло, но код уже выдавался ранее - обновим данные
         otp.count_of_request += 1
-        otp.code = new_code
+        otp.code = str(new_code)
         otp.expiration = new_expiration
 
         # если достигнут лимит запросов, заблокируем для следующей попытки(без исключения сейчас)
