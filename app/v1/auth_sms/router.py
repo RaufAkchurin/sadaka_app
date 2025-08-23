@@ -58,7 +58,7 @@ async def send_sms(
         if otp.count_of_request >= max_requests_count:
             otp.blocked_requests_until = datetime.now() + timedelta(hours=4)
 
-    if settings.MODE == "PROD":
+    if settings.MODE != "TEST":
         smsc = SMSC()
         smsc.send_sms(user_data.phone[1:], f"Код подтверждения: {new_code}", sender="sms")
 
