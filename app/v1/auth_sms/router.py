@@ -15,7 +15,7 @@ from app.models.one_time_pass import OneTimePass
 from app.models.user import User
 from app.settings import settings
 from app.v1.auth.service_auth import set_tokens_to_response
-from app.v1.auth_sms.schemas import OtpAddSchema, OtpCodeCheckSchema, OtpPhoneOnlySchema
+from app.v1.auth_sms.schemas import OtpCodeAddSchema, OtpCodeCheckSchema, OtpPhoneOnlySchema
 from app.v1.auth_sms.service_smsc import SMSC
 from app.v1.dependencies.dao_dep import get_session_with_commit
 from app.v1.users.dao import OneTimePassDAO, UserDAO
@@ -37,7 +37,7 @@ async def send_sms(
     otp: OneTimePass = await otp_dao.find_one_or_none(filters=OtpPhoneOnlySchema(phone=user_data.phone))
 
     if otp is None:
-        await otp_dao.add(OtpAddSchema(phone=user_data.phone, code=str(new_code), expiration=new_expiration))
+        await otp_dao.add(OtpCodeAddSchema(phone=user_data.phone, code=str(new_code), expiration=new_expiration))
 
     else:
         # если код уже выдавался, сначала проверим на блокировку
