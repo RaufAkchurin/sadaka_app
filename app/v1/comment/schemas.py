@@ -12,7 +12,14 @@ class CommentSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class CommentUpdateSchema(BaseModel):
+class CommentCreateDataSchema(BaseModel):
+    project_id: int
+    content: str
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class CommentContentSchema(BaseModel):
     content: str
 
     model_config = ConfigDict(from_attributes=True)
