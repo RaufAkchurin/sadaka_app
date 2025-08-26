@@ -74,7 +74,8 @@ class MyAuthenticationBackend(AuthenticationBackend):
             )
             return True
 
-        except Exception:
+        except Exception as e:
+            logger.error(e)
             return False
 
         finally:
