@@ -1,4 +1,5 @@
 from app.models.city import City
+from app.models.comment import Comment
 from app.models.country import Country
 from app.models.file import File
 from app.models.fund import Fund
@@ -13,6 +14,7 @@ from app.v1.dao.base import BaseDAO
 
 class UserDAO(BaseDAO):
     model = User
+
 
 class OneTimePassDAO(BaseDAO):
     model = OneTimePass
@@ -48,3 +50,7 @@ class FileDAO(BaseDAO):
 
 class PaymentDAO(BaseDAO):
     model = Payment
+
+
+class CommentDAO(BaseDAO):
+    model = Comment
