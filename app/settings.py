@@ -34,6 +34,9 @@ class Settings(BaseSettings):
     POSTGRES_TEST_HOST: str
     POSTGRES_TEST_DB_NAME: str
 
+    SMSC_LOGIN: str
+    SMSC_PASSWORD: str
+
     model_config = SettingsConfigDict(env_file=f"{BASE_DIR}/.env")
 
     @property

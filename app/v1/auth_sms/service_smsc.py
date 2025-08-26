@@ -4,6 +4,8 @@
 import smtplib
 from datetime import datetime
 
+from app.settings import settings
+
 try:
     from urllib import quote, urlopen
 except ImportError:
@@ -12,8 +14,8 @@ except ImportError:
 
 # Константы для настройки библиотеки
 # TODO СЕКРЕТЫ СКИНУТЬ В ЕНВ, ДОБАВИТЬ В ВАЛИДАТОР ПАЙДАНТИКА
-SMSC_LOGIN = "mecenat"  # логин клиента
-SMSC_PASSWORD = "Gabdr09roof!"
+SMSC_LOGIN = settings.SMSC_LOGIN
+SMSC_PASSWORD = settings.SMSC_PASSWORD
 # пароль клиента. Если передан пустой логин, то SMSC_PASSWORD используется, как API ключ, вместо логина и пароля
 SMSC_POST = False  # использовать метод POST
 SMSC_HTTPS = False  # использовать HTTPS протокол
