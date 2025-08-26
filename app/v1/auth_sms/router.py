@@ -61,7 +61,6 @@ async def send_sms(
     if settings.MODE != "TEST":
         smsc = SMSC()
         smsc.send_sms(user_data.phone[1:], f"Код подтверждения: {new_code}", sender="sms")
-
     return {"message": "Код подтверждения успешно отправлен."}
 
 
@@ -80,7 +79,7 @@ async def check_code_from_sms(
     otp: OneTimePass = await otp_dao.find_one_or_none(filters=OtpPhoneOnlySchema(phone=check_code_data.phone))
 
     # проверим существует ли код подтверждения шестизначный для данного контакта(возможно уже все использованы)
-    if not otp.code or not otp.expiration:
+    if otp is None:
         raise CodeConfirmationNotExistException
 
     # в первую очередь проверим наличие блокировки по лимиту
