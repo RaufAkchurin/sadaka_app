@@ -21,7 +21,7 @@ from app.v1.users.schemas import IdSchema
 v1_comment_router = APIRouter()
 
 
-@v1_comment_router.post("/create", response_model=CommentInfoSchema, status_code=status.HTTP_201_CREATED)
+@v1_comment_router.post("/", response_model=CommentInfoSchema, status_code=status.HTTP_201_CREATED)
 async def create_comment(
     payload: CommentCreateDataSchema,
     user_data: User = Depends(get_current_user),
@@ -53,13 +53,13 @@ async def delete_comment(
     await comment_dao.delete(filters=IdSchema(id=comment_id))
 
 
-@v1_comment_router.patch("/{comment_id}", response_model=CommentInfoSchema, status_code=status.HTTP_200_OK)
+@v1_comment_router.patch("/{comment_id}", status_code=status.HTTP_200_OK)
 async def edit_comment(
     comment_id: int,
     payload: CommentContentSchema,
     user_data: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session_with_commit),
-) -> CommentInfoSchema:
+) -> None:
     comment_dao = CommentDAO(session=session)
     old_comment: Comment = await comment_dao.find_one_or_none_by_id(comment_id)
 
@@ -69,11 +69,7 @@ async def edit_comment(
     if old_comment.user_id != user_data.id:
         raise CommentNotPermissionsException
 
-    updated_comment = await comment_dao.update(
-        filters=IdSchema(id=comment_id), values=CommentContentSchema(content=payload.content)
-    )
-
-    return CommentInfoSchema.model_validate(updated_comment)
+    await comment_dao.update(filters=IdSchema(id=comment_id), values=CommentContentSchema(content=payload.content))
 
 
 @v1_comment_router.get(
