@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class CommentSchema(BaseModel):
@@ -20,7 +20,7 @@ class CommentCreateDataSchema(BaseModel):
 
 
 class CommentContentSchema(BaseModel):
-    content: str
+    content: str = Field(min_length=1, max_length=250)
 
     model_config = ConfigDict(from_attributes=True)
 

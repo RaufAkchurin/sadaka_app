@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from app.exceptions import CommentNotFoundByIdException, CommentNotPermissionsException, CommentsNotFoundException
+from app.exceptions import CommentNotFoundByIdException, CommentNotPermissionsException
 from app.models.comment import Comment
 from app.models.user import User
 from app.v1.api_utils.pagination import Pagination, PaginationParams, PaginationResponseSchema
@@ -21,19 +21,15 @@ from app.v1.users.schemas import IdSchema
 v1_comment_router = APIRouter()
 
 
-class CommentListUseCase:
-    async def execute(self, session: AsyncSession, filtered_comments: list[CommentDAO]) -> list[CommentInfoSchema]:
-        return [CommentInfoSchema.model_validate(project) for project in filtered_comments]
-
-
 @v1_comment_router.post("/create", response_model=CommentInfoSchema, status_code=status.HTTP_201_CREATED)
 async def create_comment(
-    comment_data: CommentCreateDataSchema,
+    payload: CommentCreateDataSchema,
     user_data: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session_with_commit),
 ) -> CommentInfoSchema:
-    new_comment: Comment = await CommentDAO(session=session).add(
-        values=CommentSchema(user_id=user_data.id, project_id=comment_data.project_id, content=comment_data.content)
+    comment_dao = CommentDAO(session=session)
+    new_comment: Comment = await comment_dao.add(
+        values=CommentSchema(user_id=user_data.id, project_id=payload.project_id, content=payload.content)
     )
 
     return CommentInfoSchema.model_validate(new_comment)
@@ -45,7 +41,8 @@ async def delete_comment(
     user_data: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session_with_commit),
 ) -> None:
-    old_comment: Comment = await CommentDAO(session=session).find_one_or_none_by_id(comment_id)
+    comment_dao = CommentDAO(session=session)
+    old_comment: Comment = await comment_dao.find_one_or_none_by_id(comment_id)
 
     if old_comment is None:
         raise CommentNotFoundByIdException
@@ -53,17 +50,18 @@ async def delete_comment(
     if old_comment.user_id != user_data.id:
         raise CommentNotPermissionsException
 
-    await CommentDAO(session=session).delete(filters=IdSchema(id=comment_id))
+    await comment_dao.delete(filters=IdSchema(id=comment_id))
 
 
 @v1_comment_router.patch("/{comment_id}", response_model=CommentInfoSchema, status_code=status.HTTP_200_OK)
 async def edit_comment(
     comment_id: int,
-    content: str,
+    payload: CommentContentSchema,
     user_data: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session_with_commit),
-) -> dict[str, str]:
-    old_comment: Comment = await CommentDAO(session=session).find_one_or_none_by_id(comment_id)
+) -> CommentInfoSchema:
+    comment_dao = CommentDAO(session=session)
+    old_comment: Comment = await comment_dao.find_one_or_none_by_id(comment_id)
 
     if old_comment is None:
         raise CommentNotFoundByIdException
@@ -71,11 +69,11 @@ async def edit_comment(
     if old_comment.user_id != user_data.id:
         raise CommentNotPermissionsException
 
-    await CommentDAO(session=session).update(
-        filters=IdSchema(id=comment_id), values=CommentContentSchema(content=content)
+    updated_comment = await comment_dao.update(
+        filters=IdSchema(id=comment_id), values=CommentContentSchema(content=payload.content)
     )
 
-    return {"message": "Комментарий успешно отредактирован"}
+    return CommentInfoSchema.model_validate(updated_comment)
 
 
 @v1_comment_router.get(
@@ -88,12 +86,6 @@ async def get_comments_by_project_id(
     session: AsyncSession = Depends(get_session_with_commit),
 ) -> PaginationResponseSchema[CommentInfoSchema] | None:
     comments = await CommentDAO(session=session).find_all(filters=CommentProjectFilterSchema(project_id=project_id))
+    serialized_comments = [CommentInfoSchema.model_validate(c) for c in comments]
 
-    comments_list_use_case = CommentListUseCase()
-    serialized_comments = await comments_list_use_case.execute(session, comments)
-
-    if comments is None or len(comments) == 0:
-        raise CommentsNotFoundException
-
-    if len(comments) > 0:
-        return await Pagination.execute(serialized_comments, pagination.page, pagination.limit)
+    return await Pagination.execute(serialized_comments, pagination.page, pagination.limit)
