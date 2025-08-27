@@ -29,6 +29,11 @@ class Settings(BaseSettings):
     POSTGRES_HOST: str
     POSTGRES_DB_NAME: str
 
+    POSTGRES_DEV_USER: str
+    POSTGRES_DEV_PASSWORD: str
+    POSTGRES_DEV_HOST: str
+    POSTGRES_DEV_DB_NAME: str
+
     POSTGRES_TEST_USER: str
     POSTGRES_TEST_PASSWORD: str
     POSTGRES_TEST_HOST: str

@@ -3,7 +3,7 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Annotated
 
-from sqlalchemy import TIMESTAMP, Integer, StaticPool, func, inspect
+from sqlalchemy import TIMESTAMP, Integer, func, inspect
 from sqlalchemy.ext.asyncio import AsyncAttrs, AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase, Mapped, declared_attr, mapped_column
 
@@ -20,34 +20,15 @@ if settings.MODE in ["PROD", "STAGE"]:
     )
     DATABASE_PARAMS = {"pool_size": 5, "max_overflow": 10}
 
-# ТЕСТ НА СКЛЛАЙТЕ ЛОКАЛЬНО
-
 elif settings.MODE == "TEST":
-    # Настройки для тестирования (in-memory SQLite)
-    DB_DRIVER = "sqlite+aiosqlite"
-    DATABASE_URL = f"{DB_DRIVER}:///:memory:"
-    DATABASE_PARAMS = {
-        "echo": True,
-        "poolclass": StaticPool,  # одно соединение на все тесты
-        "connect_args": {"check_same_thread": False},
-    }
-
-
-# ТЕСТ на ПОСТГРЕС ОБЛАЧНОМ ТУДУ - ЗАМЕНИТЬ НА ДОКЕР ЛОКАЛЬНО
-# elif settings.MODE == "TEST":
-#     DB_DRIVER = "postgresql+asyncpg"
-#     DATABASE_URL = (
-#         f"{DB_DRIVER}://{settings.POSTGRES_TEST_USER}:{settings.POSTGRES_TEST_PASSWORD}"
-#         f"@{settings.POSTGRES_TEST_HOST}/{settings.POSTGRES_TEST_DB_NAME}"
-#     )
-#     DATABASE_PARAMS = {"pool_size": 5, "max_overflow": 10}
+    DB_DRIVER = "postgresql+asyncpg"
+    DATABASE_URL = (
+        f"{DB_DRIVER}://{settings.POSTGRES_TEST_USER}:{settings.POSTGRES_TEST_PASSWORD}"
+        f"@{settings.POSTGRES_TEST_HOST}/{settings.POSTGRES_TEST_DB_NAME}"
+    )
+    DATABASE_PARAMS = {"pool_size": 5, "max_overflow": 10}
 
 else:
-    # Настройки по умолчанию
-    # DB_DRIVER = "sqlite+aiosqlite"
-    # DATABASE_URL = f"{DB_DRIVER}:///{settings.BASE_DIR}/data/db.sqlite3"
-    # DATABASE_PARAMS = {}
-
     DB_DRIVER = "postgresql+asyncpg"
     DATABASE_URL = (
         f"{DB_DRIVER}://{settings.POSTGRES_TEST_USER}:{settings.POSTGRES_TEST_PASSWORD}"
