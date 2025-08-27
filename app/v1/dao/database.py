@@ -12,10 +12,9 @@ from app.settings import settings
 mode = settings.MODE
 
 if settings.MODE == "STAGE":
-    # Настройки для Production
     DB_DRIVER = "postgresql+asyncpg"
     DATABASE_URL = (
-        f"{DB_DRIVER}://{settings.POSTGRES_SATGE_USER}:{settings.POSTGRES_STAGE_PASSWORD}"
+        f"{DB_DRIVER}://{settings.POSTGRES_STAGE_USER}:{settings.POSTGRES_STAGE_PASSWORD}"
         f"@{settings.POSTGRES_STAGE_HOST}/{settings.POSTGRES_STAGE_DB_NAME}"
     )
     DATABASE_PARAMS = {"pool_size": 5, "max_overflow": 10}
