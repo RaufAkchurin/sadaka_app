@@ -1,13 +1,34 @@
 from fastapi import HTTPException, status
 
-# АВТОРИЗАЦИЯ
+# Код авторизации (шестизначный)
+CodeRequestBlockerException = HTTPException(
+    status_code=status.HTTP_403_FORBIDDEN,
+    detail="Превышен лимит на отправку смс с кодом, попробуйте попозже, или после 00-00",
+)
+
+CodeConfirmationBlockerException = HTTPException(
+    status_code=status.HTTP_403_FORBIDDEN,
+    detail="Превышен лимит на подтверждение кода, попробуйте попозже, или после 00-00",
+)
+
+CodeConfirmationWrongException = HTTPException(
+    status_code=status.HTTP_403_FORBIDDEN, detail="Проверьте номер телефона или код подтверждения"
+)
+
+CodeConfirmationExpiredException = HTTPException(
+    status_code=status.HTTP_403_FORBIDDEN, detail="Код подтверждения устарел, запросите новый"
+)
+
+CodeConfirmationNotExistException = HTTPException(
+    status_code=status.HTTP_403_FORBIDDEN,
+    detail="Для вашего контакта нет действующих кодов подтверждения, запросите новый",
+)
 
 # Пользователь
 UserNotFoundException = HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Пользователь не найден")
 
 UserIdNotFoundException = HTTPException(
-    status_code=status.HTTP_404_NOT_FOUND,
-    detail="Отсутствует идентификатор пользователя",
+    status_code=status.HTTP_404_NOT_FOUND, detail="Отсутствует идентификатор пользователя"
 )
 
 IncorrectEmailOrPasswordException = HTTPException(
@@ -15,10 +36,8 @@ IncorrectEmailOrPasswordException = HTTPException(
 )
 
 FailedGoogleOauthException = HTTPException(
-    status_code=status.HTTP_400_BAD_REQUEST,
-    detail="Google авторизация не удалась" "Попробуйте позже",
+    status_code=status.HTTP_400_BAD_REQUEST, detail="Google авторизация не удалась" "Попробуйте позже"
 )
-
 
 # ТОКЕНЫ
 
@@ -27,7 +46,6 @@ TokenExpiredException = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, 
 InvalidTokenFormatException = HTTPException(
     status_code=status.HTTP_400_BAD_REQUEST, detail="Некорректный формат токена"
 )
-
 
 TokenNoFound = HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Токен отсутствует в заголовке")
 
@@ -42,7 +60,6 @@ TokenInvalidFormatException = HTTPException(
     detail="Неверный формат токена. Ожидается 'Bearer <токен>'",
 )
 
-
 # Файлы
 FileNotProvidedException = HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Файл не передан.")
 
@@ -51,7 +68,6 @@ FileNameNotProvidedException = HTTPException(
 )
 
 FileNotFoundS3Exception = HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Файл не найден в хранилище S3")
-
 
 # Проекты
 ProjectNotFoundException = HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Проект не найден")
@@ -62,3 +78,13 @@ FundNotFoundException = HTTPException(status_code=status.HTTP_404_NOT_FOUND, det
 # Юкасса
 
 YookassaCallbackForbiddenException = HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+
+# Комменты
+
+CommentsNotFoundException = HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Комментарии не найдены")
+CommentNotFoundByIdException = HTTPException(
+    status_code=status.HTTP_404_NOT_FOUND, detail="Комментарий с данным ID не найден"
+)
+CommentNotPermissionsException = HTTPException(
+    status_code=status.HTTP_403_FORBIDDEN, detail="Недостаточно прав для изменения комментария"
+)

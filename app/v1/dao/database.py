@@ -3,7 +3,7 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Annotated
 
-from sqlalchemy import TIMESTAMP, Integer, NullPool, func, inspect
+from sqlalchemy import TIMESTAMP, Integer, func, inspect
 from sqlalchemy.ext.asyncio import AsyncAttrs, AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase, Mapped, declared_attr, mapped_column
 
@@ -11,26 +11,30 @@ from app.settings import settings
 
 mode = settings.MODE
 
-if settings.MODE in ["PROD", "STAGE"]:
+if settings.MODE == "STAGE":
     # Настройки для Production
     DB_DRIVER = "postgresql+asyncpg"
     DATABASE_URL = (
-        f"{DB_DRIVER}://{settings.POSTGRES_USER}:{settings.POSTGRES_PASSWORD}"
-        f"@{settings.POSTGRES_HOST}/{settings.POSTGRES_DB_NAME}"
+        f"{DB_DRIVER}://{settings.POSTGRES_SATGE_USER}:{settings.POSTGRES_STAGE_PASSWORD}"
+        f"@{settings.POSTGRES_STAGE_HOST}/{settings.POSTGRES_STAGE_DB_NAME}"
     )
     DATABASE_PARAMS = {"pool_size": 5, "max_overflow": 10}
 
 elif settings.MODE == "TEST":
-    # Настройки для тестирования
-    DB_DRIVER = "sqlite+aiosqlite"
-    DATABASE_URL = f"{DB_DRIVER}:///{settings.BASE_DIR}/data/db_test.sqlite3"
-    DATABASE_PARAMS = {"echo": True, "poolclass": NullPool}
+    DB_DRIVER = "postgresql+asyncpg"
+    DATABASE_URL = (
+        f"{DB_DRIVER}://{settings.POSTGRES_TEST_USER}:{settings.POSTGRES_TEST_PASSWORD}"
+        f"@{settings.POSTGRES_TEST_HOST}/{settings.POSTGRES_TEST_DB_NAME}"
+    )
+    DATABASE_PARAMS = {"pool_size": 5, "max_overflow": 10}
 
-else:
-    # Настройки по умолчанию
-    DB_DRIVER = "sqlite+aiosqlite"
-    DATABASE_URL = f"{DB_DRIVER}:///{settings.BASE_DIR}/data/db.sqlite3"
-    DATABASE_PARAMS = {}
+elif settings.MODE == "DEV":
+    DB_DRIVER = "postgresql+asyncpg"
+    DATABASE_URL = (
+        f"{DB_DRIVER}://{settings.POSTGRES_DEV_USER}:{settings.POSTGRES_DEV_PASSWORD}"
+        f"@{settings.POSTGRES_DEV_HOST}/{settings.POSTGRES_DEV_DB_NAME}"
+    )
+    DATABASE_PARAMS = {"pool_size": 5, "max_overflow": 10}
 
 engine = create_async_engine(url=DATABASE_URL, **DATABASE_PARAMS)
 async_session_maker = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)

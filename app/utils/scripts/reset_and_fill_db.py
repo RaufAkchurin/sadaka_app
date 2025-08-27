@@ -48,8 +48,8 @@ def run_fill_script():
 if __name__ == "__main__":
     os.chdir(PROJECT_ROOT)
     print(f"📁 Переход в корень проекта: {PROJECT_ROOT}")
-    remove_all_migrations()
+    # remove_all_migrations()
     remove_database()
-    make_migration()
+    # make_migration()
     apply_migration()
     run_fill_script()

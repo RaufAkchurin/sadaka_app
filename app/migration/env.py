@@ -6,6 +6,7 @@ from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
+from app.models.one_time_pass import OneTimePass  # noqa: F401
 from app.models.city import City  # noqa: F401
 from app.models.country import Country  # noqa: F401
 from app.models.file import File  # noqa: F401

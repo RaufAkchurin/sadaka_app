@@ -10,7 +10,7 @@ from app.v1.file.use_cases.create_file import FileCreateWithContentUseCaseImpl
 from app.v1.file.use_cases.delete_file import FileDeleteWithContentUseCaseImpl
 from app.v1.s3_storage.use_cases.s3_upload import S3UploadUseCaseImpl
 from app.v1.users.dao import FileDAO, UserDAO
-from app.v1.users.schemas import PictureIdSchema, UserEmailSchema
+from app.v1.users.schemas import PictureIdSchema, UserContactsSchema
 
 
 class UserLogoUpdateUseCaseImpl:
@@ -31,7 +31,7 @@ class UserLogoUpdateUseCaseImpl:
             await self.deleter(user.picture.id)
 
         await self.users_dao.update(
-            filters=UserEmailSchema(email=EmailStr(user.email)),
+            filters=UserContactsSchema(email=EmailStr(user.email)),
             values=PictureIdSchema(picture_id=mew_file_instance_data.id),
         )
         return mew_file_instance_data

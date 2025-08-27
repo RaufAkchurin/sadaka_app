@@ -2,7 +2,7 @@ import httpx
 import pytest
 from tests.conftest import auth_by
 
-from app.v1.users.schemas import UserEmailSchema
+from app.v1.users.schemas import UserContactsSchema
 
 
 class TestUsers:
@@ -20,6 +20,7 @@ class TestUsers:
                     "is_anonymous": False,
                     "language": "RU",
                     "name": "user1",
+                    "phone": None,
                     "picture_url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/tests%2Fdigits%2F2.png",
                 },
             ),
@@ -50,7 +51,7 @@ class TestUsers:
     )
     async def test_all_users(self, ac, user_dao, email, status_code, users_count, response_message) -> None:
         if email:
-            current_user = await user_dao.find_one_or_none(filters=UserEmailSchema(email=email))
+            current_user = await user_dao.find_one_or_none(filters=UserContactsSchema(email=email))
             if current_user is None:
                 raise ValueError("User not found")
             authorized_client = await auth_by(ac, current_user)

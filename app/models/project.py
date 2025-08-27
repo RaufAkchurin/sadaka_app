@@ -47,6 +47,10 @@ class Project(Base):
         "Payment", back_populates="project", cascade="all, delete-orphan", lazy="joined"
     )
 
+    comments: Mapped[list["Comment"]] = relationship(  # noqa: F821
+        "Comment", back_populates="project", cascade="all, delete-orphan", lazy="joined"
+    )
+
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.id}, name={self.name})"
 
