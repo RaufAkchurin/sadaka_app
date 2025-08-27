@@ -28,8 +28,7 @@ CodeConfirmationNotExistException = HTTPException(
 UserNotFoundException = HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Пользователь не найден")
 
 UserIdNotFoundException = HTTPException(
-    status_code=status.HTTP_404_NOT_FOUND,
-    detail="Отсутствует идентификатор пользователя",
+    status_code=status.HTTP_404_NOT_FOUND, detail="Отсутствует идентификатор пользователя"
 )
 
 IncorrectEmailOrPasswordException = HTTPException(
@@ -37,8 +36,7 @@ IncorrectEmailOrPasswordException = HTTPException(
 )
 
 FailedGoogleOauthException = HTTPException(
-    status_code=status.HTTP_400_BAD_REQUEST,
-    detail="Google авторизация не удалась" "Попробуйте позже",
+    status_code=status.HTTP_400_BAD_REQUEST, detail="Google авторизация не удалась" "Попробуйте позже"
 )
 
 
@@ -88,3 +86,9 @@ YookassaCallbackForbiddenException = HTTPException(status_code=status.HTTP_403_F
 # Комменты
 
 CommentsNotFoundException = HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Комментарии не найдены")
+CommentNotFoundByIdException = HTTPException(
+    status_code=status.HTTP_404_NOT_FOUND, detail="Комментарий с данным ID не найден"
+)
+CommentNotPermissionsException = HTTPException(
+    status_code=status.HTTP_403_FORBIDDEN, detail="Недостаточно прав для изменения комментария"
+)

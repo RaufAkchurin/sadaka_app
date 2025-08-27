@@ -1,14 +1,21 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.exceptions import CommentsNotFoundException
+from app.exceptions import CommentNotFoundByIdException, CommentNotPermissionsException, CommentsNotFoundException
 from app.models.comment import Comment
 from app.models.user import User
 from app.v1.api_utils.pagination import Pagination, PaginationParams, PaginationResponseSchema
-from app.v1.comment.schemas import CommentCreateDataSchema, CommentInfoSchema, CommentProjectFilterSchema, CommentSchema
+from app.v1.comment.schemas import (
+    CommentContentSchema,
+    CommentCreateDataSchema,
+    CommentInfoSchema,
+    CommentProjectFilterSchema,
+    CommentSchema,
+)
 from app.v1.dependencies.auth_dep import get_current_user
 from app.v1.dependencies.dao_dep import get_session_with_commit
 from app.v1.users.dao import CommentDAO
+from app.v1.users.schemas import IdSchema
 
 v1_comment_router = APIRouter()
 
@@ -29,6 +36,46 @@ async def create_comment(
     )
 
     return CommentInfoSchema.model_validate(new_comment)
+
+
+@v1_comment_router.delete("/{comment_id}")
+async def delete_comment(
+    comment_id: int,
+    user_data: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_session_with_commit),
+) -> dict[str, str]:
+    old_comment: Comment = await CommentDAO(session=session).find_one_or_none_by_id(comment_id)
+
+    if old_comment is None:
+        raise CommentNotFoundByIdException
+
+    if old_comment.user_id != user_data.id:
+        raise CommentNotPermissionsException
+
+    await CommentDAO(session=session).delete(filters=IdSchema(id=comment_id))
+    return {"message": "Комментарий успешно удалён"}
+
+
+@v1_comment_router.patch("/{comment_id}")
+async def edit_comment(
+    comment_id: int,
+    content: str,
+    user_data: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_session_with_commit),
+) -> dict[str, str]:
+    old_comment: Comment = await CommentDAO(session=session).find_one_or_none_by_id(comment_id)
+
+    if old_comment is None:
+        raise CommentNotFoundByIdException
+
+    if old_comment.user_id != user_data.id:
+        raise CommentNotPermissionsException
+
+    await CommentDAO(session=session).update(
+        filters=IdSchema(id=comment_id), values=CommentContentSchema(content=content)
+    )
+
+    return {"message": "Комментарий успешно отредактирован"}
 
 
 @v1_comment_router.get("/{project_id}", response_model=PaginationResponseSchema[CommentInfoSchema])
