@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
+from starlette import status
 
 from app.exceptions import CommentNotFoundByIdException, CommentNotPermissionsException, CommentsNotFoundException
 from app.models.comment import Comment
@@ -25,7 +26,7 @@ class CommentListUseCase:
         return [CommentInfoSchema.model_validate(project) for project in filtered_comments]
 
 
-@v1_comment_router.post("/create", response_model=CommentInfoSchema)
+@v1_comment_router.post("/create", response_model=CommentInfoSchema, status_code=status.HTTP_201_CREATED)
 async def create_comment(
     comment_data: CommentCreateDataSchema,
     user_data: User = Depends(get_current_user),
@@ -38,12 +39,12 @@ async def create_comment(
     return CommentInfoSchema.model_validate(new_comment)
 
 
-@v1_comment_router.delete("/{comment_id}")
+@v1_comment_router.delete("/{comment_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_comment(
     comment_id: int,
     user_data: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session_with_commit),
-) -> dict[str, str]:
+) -> None:
     old_comment: Comment = await CommentDAO(session=session).find_one_or_none_by_id(comment_id)
 
     if old_comment is None:
@@ -53,10 +54,9 @@ async def delete_comment(
         raise CommentNotPermissionsException
 
     await CommentDAO(session=session).delete(filters=IdSchema(id=comment_id))
-    return {"message": "Комментарий успешно удалён"}
 
 
-@v1_comment_router.patch("/{comment_id}")
+@v1_comment_router.patch("/{comment_id}", response_model=CommentInfoSchema, status_code=status.HTTP_200_OK)
 async def edit_comment(
     comment_id: int,
     content: str,
@@ -78,7 +78,9 @@ async def edit_comment(
     return {"message": "Комментарий успешно отредактирован"}
 
 
-@v1_comment_router.get("/{project_id}", response_model=PaginationResponseSchema[CommentInfoSchema])
+@v1_comment_router.get(
+    "/{project_id}", response_model=PaginationResponseSchema[CommentInfoSchema], status_code=status.HTTP_200_OK
+)
 async def get_comments_by_project_id(
     project_id: int,
     pagination: PaginationParams = Depends(),

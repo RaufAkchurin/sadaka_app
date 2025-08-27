@@ -39,7 +39,6 @@ FailedGoogleOauthException = HTTPException(
     status_code=status.HTTP_400_BAD_REQUEST, detail="Google авторизация не удалась" "Попробуйте позже"
 )
 
-
 # ТОКЕНЫ
 
 TokenExpiredException = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Токен истек")
@@ -47,7 +46,6 @@ TokenExpiredException = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, 
 InvalidTokenFormatException = HTTPException(
     status_code=status.HTTP_400_BAD_REQUEST, detail="Некорректный формат токена"
 )
-
 
 TokenNoFound = HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Токен отсутствует в заголовке")
 
@@ -62,7 +60,6 @@ TokenInvalidFormatException = HTTPException(
     detail="Неверный формат токена. Ожидается 'Bearer <токен>'",
 )
 
-
 # Файлы
 FileNotProvidedException = HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Файл не передан.")
 
@@ -71,7 +68,6 @@ FileNameNotProvidedException = HTTPException(
 )
 
 FileNotFoundS3Exception = HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Файл не найден в хранилище S3")
-
 
 # Проекты
 ProjectNotFoundException = HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Проект не найден")
