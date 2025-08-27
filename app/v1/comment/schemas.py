@@ -14,7 +14,7 @@ class CommentSchema(BaseModel):
 
 class CommentCreateDataSchema(BaseModel):
     project_id: int
-    content: str
+    content: str = Field(min_length=1, max_length=250)
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -25,10 +25,15 @@ class CommentContentSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class CommentInfoSchema(CommentSchema):
+class CommentInfoSchema(BaseModel):
     id: int
+    user_id: int
+    project_id: int
+    content: str
     created_at: datetime
     updated_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class CommentProjectFilterSchema(BaseModel):

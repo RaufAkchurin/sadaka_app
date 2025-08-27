@@ -28,11 +28,11 @@ elif settings.MODE == "TEST":
     )
     DATABASE_PARAMS = {"pool_size": 5, "max_overflow": 10}
 
-else:
+elif settings.MODE == "DEV":
     DB_DRIVER = "postgresql+asyncpg"
     DATABASE_URL = (
-        f"{DB_DRIVER}://{settings.POSTGRES_TEST_USER}:{settings.POSTGRES_TEST_PASSWORD}"
-        f"@{settings.POSTGRES_TEST_HOST}/{settings.POSTGRES_TEST_DB_NAME}"
+        f"{DB_DRIVER}://{settings.POSTGRES_DEV_USER}:{settings.POSTGRES_DEV_PASSWORD}"
+        f"@{settings.POSTGRES_DEV_HOST}/{settings.POSTGRES_DEV_DB_NAME}"
     )
     DATABASE_PARAMS = {"pool_size": 5, "max_overflow": 10}
 
