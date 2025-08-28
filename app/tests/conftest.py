@@ -2,12 +2,12 @@ import httpx
 import pytest
 from httpx import ASGITransport, AsyncClient
 from main import app as fastapi_app
-from tests.schemas import AuthorizedClientModel, CookiesModel
-from utils.scripts.local_db_fill import prepare_database_core
 from yookassa import Configuration
 
 from app.models.user import User
 from app.settings import settings
+from app.tests.schemas import AuthorizedClientModel, CookiesModel
+from app.utils.scripts.local_db_fill import prepare_database_core
 from app.v1.dao.database import async_session_maker
 from app.v1.users.dao import CommentDAO, OneTimePassDAO, UserDAO
 
