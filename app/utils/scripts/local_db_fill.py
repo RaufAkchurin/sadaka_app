@@ -80,7 +80,7 @@ if __name__ == "__main__":
 
     async def main():
         async with async_session_maker() as session:
-            assert settings.MODE == "DEV"
+            assert settings.MODE in ["DEV", "TEST"]
             await prepare_database_core(session)
 
     asyncio.run(main())

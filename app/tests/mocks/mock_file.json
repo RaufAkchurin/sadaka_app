@@ -2,7 +2,7 @@
   {
     "id": 1,
     "name": "Док1 для Проекта 1",
-    "size": "123",
+    "size": 123,
     "url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/tests%2Fdigits%2F1.png",
     "type": "DOCUMENT",
     "mime": "PDF",
@@ -13,7 +13,7 @@
     {
     "id": 2,
     "name": "Док2 для Проекта 1",
-    "size": "123",
+    "size": 123,
     "url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/tests%2Fdigits%2F2.png",
     "type": "DOCUMENT",
     "mime": "PDF",
@@ -24,7 +24,7 @@
     {
     "id": 3,
     "name": "Док1 для Проекта 2",
-    "size": "123",
+    "size": 123,
     "url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/tests%2Fdigits%2F3.png",
     "type": "DOCUMENT",
     "mime": "PDF",
@@ -35,7 +35,7 @@
     {
     "id": 4,
     "name": "Док2 для Проекта 2",
-    "size": "123",
+    "size": 123,
     "url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/tests%2Fdigits%2F4.png",
     "type": "DOCUMENT",
     "mime": "PDF",
@@ -46,7 +46,7 @@
       {
       "id": 25,
       "name": "Картинка 1 для Проекта 1",
-      "size": "123",
+      "size": 123,
       "url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/tests%2Fdigits%2F5.png",
       "type": "PICTURE",
       "mime": "JPEG",
@@ -58,7 +58,7 @@
     {
       "id": 26,
       "name": "Картинка 2 для Проекта 1",
-      "size": "123",
+      "size": 123,
       "url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/tests%2Fdigits%2F6.png",
       "type": "PICTURE",
       "mime": "JPEG",
@@ -70,7 +70,7 @@
     {
     "id": 27,
     "name": "Картинка 1 для Проекта 2",
-    "size": "123",
+    "size": 123,
     "url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/tests%2Fdigits%2F7.png",
     "type": "PICTURE",
     "mime": "JPEG",
@@ -82,7 +82,7 @@
   {
     "id": 28,
     "name": "Картинка 2 для Проекта 2",
-    "size": "123",
+    "size": 123,
     "url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/tests%2Fdigits%2F8.png",
     "type": "PICTURE",
     "mime": "JPEG",
@@ -95,7 +95,7 @@
     {
     "id": 5,
     "name": "Реп1 для Стадии 1",
-    "size": "123",
+    "size": 123,
     "url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/tests%2Fdigits%2F5.png",
     "type": "REPORT",
     "mime": "PDF",
@@ -106,7 +106,7 @@
   {
     "id": 6,
     "name": "Реп2 для Стадии 1",
-    "size": "123",
+    "size": 123,
     "url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/tests%2Fdigits%2F6.png",
     "type": "REPORT",
     "mime": "PDF",
@@ -117,7 +117,7 @@
   {
     "id": 7,
     "name": "Реп1 для Стадии 2",
-    "size": "123",
+    "size": 123,
       "url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/tests%2Fdigits%2F7.png",
     "type": "REPORT",
     "mime": "PDF",
@@ -128,7 +128,7 @@
   {
     "id": 8,
     "name": "Реп2 для Стадии 2",
-    "size": "123",
+    "size": 123,
       "url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/tests%2Fdigits%2F8.png",
     "type": "REPORT",
     "mime": "PDF",
@@ -141,7 +141,7 @@
   {
     "id": 9,
     "name": "Картинка 1 для Юзера 1",
-    "size": "123",
+    "size": 123,
       "url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/tests%2Fdigits%2F9.png",
     "type": "PICTURE",
     "mime": "JPEG",
@@ -152,7 +152,7 @@
   {
     "id": 10,
     "name": "Картинка 1 для Юзера 2",
-    "size": "123",
+    "size": 123,
     "url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/tests%2Fdigits%2F0.png",
     "type": "PICTURE",
     "mime": "JPEG",
@@ -163,7 +163,7 @@
   {
     "id": 11,
     "name": "Картинка 1 для Юзера 3",
-    "size": "123",
+    "size": 123,
     "url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/tests%2Fdigits%2F1.png",
     "type": "PICTURE",
     "mime": "JPEG",
@@ -174,7 +174,7 @@
   {
     "id": 12,
     "name": "Картинка 1 для Юзера 4",
-    "size": "123",
+    "size": 123,
     "url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/tests%2Fdigits%2F2.png",
     "type": "PICTURE",
     "mime": "JPEG",
@@ -185,7 +185,7 @@
   {
     "id": 13,
     "name": "Картинка 1 для Юзера 5",
-    "size": "123",
+    "size": 123,
     "url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/tests%2Fdigits%2F3.png",
     "type": "PICTURE",
     "mime": "JPEG",
@@ -196,7 +196,7 @@
   {
     "id": 14,
     "name": "Картинка 1 для Региона 1",
-    "size": "123",
+    "size": 123,
     "url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/tests%2Fdigits%2F4.png",
     "type": "PICTURE",
     "mime": "JPEG",
@@ -207,7 +207,7 @@
   {
     "id": 15,
     "name": "Картинка 1 для Региона 2",
-    "size": "123",
+    "size": 123,
     "url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/tests%2Fdigits%2F5.png",
     "type": "PICTURE",
     "mime": "JPEG",
@@ -218,7 +218,7 @@
   {
     "id": 16,
     "name": "Картинка 1 для Региона 3",
-    "size": "123",
+    "size": 123,
     "url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/tests%2Fdigits%2F6.png",
     "type": "PICTURE",
     "mime": "JPEG",
@@ -229,7 +229,7 @@
   {
     "id": 17,
     "name": "Документ 1 для Фонда 1",
-    "size": "123",
+    "size": 123,
     "url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/tests%2Fdigits%2F7.png",
     "type": "PICTURE",
     "mime": "JPEG",
@@ -240,7 +240,7 @@
   {
     "id": 18,
     "name": "Документ 2 для Фонда 1",
-    "size": "123",
+    "size": 123,
     "url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/tests%2Fdigits%2F8.png",
     "type": "PICTURE",
     "mime": "JPEG",
@@ -251,7 +251,7 @@
   {
     "id": 19,
     "name": "Документ 1 для Фонда 2",
-    "size": "123",
+    "size": 123,
     "url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/tests%2Fdigits%2F9.png",
     "type": "PICTURE",
     "mime": "JPEG",
@@ -262,7 +262,7 @@
   {
     "id": 20,
     "name": "Документ 2 для Фонда 2",
-    "size": "123",
+    "size": 123,
     "url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/tests%2Fdigits%2F0.png",
     "type": "PICTURE",
     "mime": "JPEG",
@@ -273,7 +273,7 @@
   {
     "id": 21,
     "name": "Документ 1 для Фонда 3",
-    "size": "123",
+    "size": 123,
       "url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/tests%2Fdigits%2F1.png",
     "type": "PICTURE",
     "mime": "JPEG",
@@ -284,7 +284,7 @@
   {
     "id": 22,
     "name": "Документ 2 для Фонда 3",
-    "size": "123",
+    "size": 123,
     "url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/tests%2Fdigits%2F2.png",
     "type": "PICTURE",
     "mime": "JPEG",
@@ -295,7 +295,7 @@
   {
     "id": 23,
     "name": "Картинка 1 для Фонда 1",
-    "size": "123",
+    "size": 123,
     "url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/tests%2Fdigits%2F3.png",
     "type": "PICTURE",
     "mime": "JPEG",
@@ -306,7 +306,7 @@
   {
     "id": 24,
     "name": "Картинка 2 для Фонда 1",
-    "size": "123",
+    "size": 123,
     "url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/tests%2Fdigits%2F4.png",
     "type": "PICTURE",
     "mime": "JPEG",

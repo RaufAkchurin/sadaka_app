@@ -1,3 +1,7 @@
+import asyncio
+import subprocess
+from pathlib import Path
+
 import httpx
 import pytest
 from httpx import ASGITransport, AsyncClient
@@ -11,6 +15,21 @@ from app.settings import settings
 from app.v1.dao.database import async_session_maker
 from app.v1.users.dao import CommentDAO, OneTimePassDAO, UserDAO
 
+SCRIPT_DIR = Path(__file__).resolve().parent
+PROJECT_ROOT = SCRIPT_DIR.parent.parent  # sadaka_app/
+
+
+@pytest.fixture(scope="session")
+def event_loop():
+    loop = asyncio.new_event_loop()
+    yield loop
+    loop.close()
+
+
+@pytest.fixture(scope="session", autouse=True)
+def apply_migrations_once():
+    subprocess.run("alembic upgrade head", shell=True, check=True, cwd=PROJECT_ROOT)
+
 
 @pytest.fixture(autouse=True)
 def setup_yookassa_config():
@@ -21,11 +40,6 @@ def setup_yookassa_config():
 @pytest.fixture(scope="class", autouse=True)
 async def prepare_database(session):
     assert settings.MODE == "TEST"
-    await prepare_database_core(session)
-
-
-@pytest.fixture(scope="class")
-async def prepare_database_manually(session):
     await prepare_database_core(session)
 
 
@@ -60,7 +74,7 @@ async def comment_dao(session) -> CommentDAO:
     return comment_dao
 
 
-@pytest.fixture(scope="class")
+@pytest.fixture(scope="function")
 async def ac():
     async with AsyncClient(transport=ASGITransport(fastapi_app), base_url="http://test/") as async_client:
         yield async_client
