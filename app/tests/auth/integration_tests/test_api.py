@@ -168,7 +168,7 @@ class TestApi:
         assert response.status_code == status_code
         assert response.json() == response_message
 
-    @pytest.mark.usefixtures("prepare_database_manually")
+    # @pytest.mark.usefixtures("prepare_database_manually")
     @pytest.mark.parametrize(
         "email, status_code, users_count, response_message",
         [  # AUTHORIZED USERS

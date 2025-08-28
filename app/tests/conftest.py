@@ -1,3 +1,6 @@
+import subprocess
+from pathlib import Path
+
 import httpx
 import pytest
 from httpx import ASGITransport, AsyncClient
@@ -10,6 +13,14 @@ from app.tests.schemas import AuthorizedClientModel, CookiesModel
 from app.utils.scripts.local_db_fill import prepare_database_core
 from app.v1.dao.database import async_session_maker
 from app.v1.users.dao import CommentDAO, OneTimePassDAO, UserDAO
+
+SCRIPT_DIR = Path(__file__).resolve().parent.parent.parent
+
+
+@pytest.fixture(scope="session", autouse=True)
+def apply_migrations():
+    """Прогоняем миграции перед запуском тестов."""
+    subprocess.run("alembic upgrade head", shell=True, check=True, cwd=SCRIPT_DIR)
 
 
 @pytest.fixture(autouse=True)
@@ -24,22 +35,18 @@ async def prepare_database(session):
     await prepare_database_core(session)
 
 
-@pytest.fixture(scope="class")
-async def prepare_database_manually(session):
-    await prepare_database_core(session)
+# @pytest.fixture(scope="class")
+# async def prepare_database_manually(session):
+#     await prepare_database_core(session)
 
 
-@pytest.fixture(scope="class")
+@pytest.fixture(scope="function")
 async def session():
     async with async_session_maker() as session:
-        try:
-            yield session
-            await session.commit()
-        except Exception:
-            await session.rollback()
-            raise
-        finally:
-            await session.close()
+        trans = await session.begin_nested()
+        yield session
+        await trans.rollback()
+        await session.close()
 
 
 @pytest.fixture(scope="function")
