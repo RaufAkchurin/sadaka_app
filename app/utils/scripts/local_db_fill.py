@@ -40,13 +40,23 @@ def open_mock_json(model_name: str):
         return json.load(file)
 
 
+import os
+import subprocess
+from pathlib import Path
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+PROJECT_ROOT = SCRIPT_DIR.parent.parent  # sadaka_app/
+
+
+def apply_migration():
+    subprocess.run("alembic upgrade head", shell=True, check=True, cwd=PROJECT_ROOT)
+    print("✅ Миграции применены.")
+
+
 async def prepare_database_core(session):
     try:
         # Очистка и пересоздание таблиц
         async with engine.begin() as conn:
-            await conn.run_sync(Base.metadata.drop_all)
-            await conn.run_sync(Base.metadata.create_all)
-
             for model_name, model_class in MODELS_MAP.items():
                 try:
                     data = open_mock_json(model_name)
@@ -72,8 +82,8 @@ async def prepare_database_core(session):
         await session.rollback()
         print(f"‼️ Общая ошибка в prepare_database_core: {e}")
         raise
-    finally:
-        await session.close()
+    # finally:
+    #     await session.close()
 
 
 if __name__ == "__main__":

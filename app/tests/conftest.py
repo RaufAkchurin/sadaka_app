@@ -1,15 +1,26 @@
+import subprocess
+from pathlib import Path
+
 import httpx
 import pytest
 from httpx import ASGITransport, AsyncClient
 from main import app as fastapi_app
-from tests.schemas import AuthorizedClientModel, CookiesModel
-from utils.scripts.local_db_fill import prepare_database_core
 from yookassa import Configuration
 
 from app.models.user import User
 from app.settings import settings
+from app.tests.schemas import AuthorizedClientModel, CookiesModel
+from app.utils.scripts.local_db_fill import prepare_database_core
 from app.v1.dao.database import async_session_maker
 from app.v1.users.dao import CommentDAO, OneTimePassDAO, UserDAO
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+PROJECT_ROOT = SCRIPT_DIR.parent.parent  # sadaka_app/
+
+
+def apply_migration():
+    subprocess.run("alembic upgrade head", shell=True, check=True, cwd=PROJECT_ROOT)
+    print("✅ Миграции применены.")
 
 
 @pytest.fixture(autouse=True)
@@ -20,6 +31,7 @@ def setup_yookassa_config():
 
 @pytest.fixture(scope="class", autouse=True)
 async def prepare_database(session):
+    apply_migration()
     assert settings.MODE == "TEST"
     await prepare_database_core(session)
 
