@@ -20,10 +20,14 @@ if settings.MODE == "STAGE":
     DATABASE_PARAMS = {"pool_size": 5, "max_overflow": 10}
 
 elif settings.MODE == "TEST":
+    # # Настройки для тестирования
+    # DB_DRIVER = "sqlite+aiosqlite"
+    # DATABASE_URL = f"{DB_DRIVER}:///{settings.BASE_DIR}/data/db_test.sqlite3"
+    # DATABASE_PARAMS = {"echo": True, "poolclass": NullPool}
     DB_DRIVER = "postgresql+asyncpg"
     DATABASE_URL = (
         f"{DB_DRIVER}://{settings.POSTGRES_TEST_USER}:{settings.POSTGRES_TEST_PASSWORD}"
-        f"@{settings.POSTGRES_TEST_HOST}/{settings.POSTGRES_TEST_DB_NAME}"
+        f"@{settings.POSTGRES_TEST_DB_NAME}/{settings.POSTGRES_TEST_DB_NAME}"
     )
     DATABASE_PARAMS = {"pool_size": 5, "max_overflow": 10}
 

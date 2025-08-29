@@ -72,8 +72,8 @@ async def prepare_database_core(session):
         await session.rollback()
         print(f"‼️ Общая ошибка в prepare_database_core: {e}")
         raise
-    finally:
-        await session.close()
+    # finally:
+    #     await session.close()
 
 
 if __name__ == "__main__":
