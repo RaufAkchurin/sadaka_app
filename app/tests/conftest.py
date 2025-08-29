@@ -5,13 +5,14 @@ import httpx
 import pytest
 from httpx import ASGITransport, AsyncClient
 from main import app as fastapi_app
+from sqlalchemy import text
 from yookassa import Configuration
 
 from app.models.user import User
 from app.settings import settings
 from app.tests.schemas import AuthorizedClientModel, CookiesModel
 from app.utils.scripts.local_db_fill import prepare_database_core
-from app.v1.dao.database import async_session_maker
+from app.v1.dao.database import async_session_maker, Base, engine
 from app.v1.users.dao import CommentDAO, OneTimePassDAO, UserDAO
 
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -24,6 +25,13 @@ def apply_migration():
     subprocess.run("alembic upgrade head", shell=True, check=True, cwd=PROJECT_ROOT)
     print("✅ Миграции применены.")
 
+async def reset_database():
+    async with engine.begin() as conn:
+        await conn.execute(text("DROP SCHEMA public CASCADE"))
+        await conn.execute(text("CREATE SCHEMA public"))
+    subprocess.run("alembic upgrade head", shell=True, check=True, cwd=PROJECT_ROOT)
+
+
 
 @pytest.fixture(autouse=True)
 def setup_yookassa_config():
@@ -33,7 +41,7 @@ def setup_yookassa_config():
 # --- готовим БД один раз перед всеми тестами ---
 @pytest.fixture(scope="session", autouse=True)
 async def prepare_database():
-    apply_migration()
+    await reset_database()
     async with async_session_maker() as session_new:
         assert settings.MODE == "TEST"
         await prepare_database_core(session_new)
