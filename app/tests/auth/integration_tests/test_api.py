@@ -57,6 +57,7 @@ class TestApi:
         if status_code == 200:
             assert await user_dao.count() == 6
 
+    @pytest.mark.asyncio(loop_scope="session")
     async def test_register_by_email_after_deleting(self, user_dao, ac):
         assert await user_dao.count() == 6
         user_data = {
@@ -92,6 +93,7 @@ class TestApi:
         assert me_response.status_code == 200
         assert me_response.json()["is_active"]
 
+    @pytest.mark.asyncio(loop_scope="session")
     async def test_login_anonymous(self, ac, user_dao):
         assert await user_dao.count() == 7
         response = await ac.post("/app/v1/auth/login_anonymous/")
@@ -123,6 +125,8 @@ class TestApi:
             ),
         ],
     )
+
+    @pytest.mark.asyncio(loop_scope="session")
     async def test_login(self, ac, email, password, status_code, response_message):
         user_data = {"email": email, "password": password}
         response = await ac.post("/app/v1/auth/login/", json=user_data)
@@ -158,6 +162,8 @@ class TestApi:
             (False, 400, {"detail": "Токен отсутствует в заголовке"}),
         ],
     )
+
+    @pytest.mark.asyncio(loop_scope="session")
     async def test_refresh_token(self, ac, auth_ac, is_authorized, status_code, response_message):
         if is_authorized:
             client = auth_ac.client
@@ -182,6 +188,7 @@ class TestApi:
             (None, 400, None, {"detail": "Токен отсутствует в заголовке"}),
         ],
     )
+    @pytest.mark.asyncio(loop_scope="session")
     async def test_all_users(self, ac, user_dao, email, status_code, users_count, response_message):
         if email:
             current_user = await user_dao.find_one_or_none(filters=UserContactsSchema(email=email))
