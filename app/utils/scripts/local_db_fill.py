@@ -76,13 +76,19 @@ async def prepare_database_core(session):
                 print(f"❌ Ошибка при вставке данных для '{model_name}': {e}")
                 raise
 
-        # --- ВАЖНО: синхронизируем все последовательности ---
-        for table_name in MODELS_MAP.keys():
-            await session.execute(
-                text(
-                    f"SELECT setval(pg_get_serial_sequence('{table_name}s', 'id'),"
-                    f" COALESCE(MAX(id), 1)) FROM {table_name}s;")
-            )
+        # --- синхронизируем только int/bigint PK ---
+        for model_class in MODELS_MAP.values():
+            table = model_class.__tablename__
+            pk_col = list(model_class.__table__.primary_key)[0]
+            if pk_col.type.python_type in (int,):  # только числа
+                seq_sql = text(f"""
+                    SELECT setval(
+                        pg_get_serial_sequence('{table}', 'id'),
+                        COALESCE((SELECT MAX(id) FROM {table}), 1),
+                        true
+                    );
+                """)
+                await session.execute(seq_sql)
         await session.commit()
     except Exception as e:
         await session.rollback()
