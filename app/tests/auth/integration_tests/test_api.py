@@ -1,4 +1,5 @@
 import pytest
+from pyasn1.debug import scope
 from tests.conftest import auth_by
 
 from app.v1.users.schemas import UserContactsSchema
@@ -27,6 +28,7 @@ class TestApi:
             ("abcde", "string", "password", "password", 422, None),  # email validation
         ],
     )
+    @pytest.mark.asyncio(loop_scope="session")
     async def test_register_by_email(
         self,
         user_dao,
@@ -55,7 +57,7 @@ class TestApi:
         if status_code == 200:
             assert await user_dao.count() == 6
 
-    async def test_register_by_email_after_deleting(self, session, user_dao, ac):
+    async def test_register_by_email_after_deleting(self, user_dao, ac):
         assert await user_dao.count() == 6
         user_data = {
             "email": "user_after_deleting@gmail.com",

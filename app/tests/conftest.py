@@ -17,6 +17,8 @@ from app.v1.users.dao import CommentDAO, OneTimePassDAO, UserDAO
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parent.parent  # sadaka_app/
 
+import pytest
+
 
 def apply_migration():
     subprocess.run("alembic upgrade head", shell=True, check=True, cwd=PROJECT_ROOT)
@@ -28,20 +30,17 @@ def setup_yookassa_config():
     Configuration.account_id = settings.YOOKASSA_TEST_SHOP_ID
     Configuration.secret_key = settings.YOOKASSA_TEST_SECRET_KEY
 
-
-@pytest.fixture(scope="class", autouse=True)
-async def prepare_database(session):
+# --- готовим БД один раз перед всеми тестами ---
+@pytest.fixture(scope="session", autouse=True)
+async def prepare_database():
     apply_migration()
-    assert settings.MODE == "TEST"
-    await prepare_database_core(session)
+    async with async_session_maker() as session_new:
+        assert settings.MODE == "TEST"
+        await prepare_database_core(session_new)
+        await session_new.commit()
 
-
-@pytest.fixture(scope="class")
-async def prepare_database_manually(session):
-    await prepare_database_core(session)
-
-
-@pytest.fixture(scope="class")
+# --- каждая функция теста получает свою сессию ---
+@pytest.fixture(scope="function")
 async def session():
     async with async_session_maker() as session:
         try:
@@ -52,6 +51,8 @@ async def session():
             raise
         finally:
             await session.close()
+
+
 
 
 @pytest.fixture(scope="function")
@@ -72,13 +73,13 @@ async def comment_dao(session) -> CommentDAO:
     return comment_dao
 
 
-@pytest.fixture(scope="class")
+@pytest.fixture(scope="function")
 async def ac():
     async with AsyncClient(transport=ASGITransport(fastapi_app), base_url="http://test/") as async_client:
         yield async_client
 
 
-@pytest.fixture(scope="class")
+@pytest.fixture(scope="function")
 async def auth_ac():
     async with AsyncClient(transport=ASGITransport(fastapi_app), base_url="http://test") as ac:
         await ac.post("/app/v1/auth/login/", json={"email": "user1@test.com", "password": "password"})

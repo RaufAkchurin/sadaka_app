@@ -4,7 +4,7 @@ import os
 import uuid
 from datetime import datetime
 
-from sqlalchemy import insert
+from sqlalchemy import insert, text
 
 from app.models.city import City
 from app.models.country import Country
@@ -56,41 +56,45 @@ def apply_migration():
 async def prepare_database_core(session):
     try:
         # Очистка и пересоздание таблиц
-        async with engine.begin() as conn:
-            for model_name, model_class in MODELS_MAP.items():
-                try:
-                    data = open_mock_json(model_name)
-                    if not data:
-                        continue
+        for model_name, model_class in MODELS_MAP.items():
+            try:
+                data = open_mock_json(model_name)
+                if not data:
+                    continue
 
-                    else:
-                        if model_name == "payment":
-                            for item in data:
-                                uuid_raw = item["id"]
-                                item["id"] = uuid.UUID(uuid_raw)
-                                item["created_at"] = datetime.now()
-                                item["captured_at"] = datetime.now()
+                else:
+                    if model_name == "payment":
+                        for item in data:
+                            uuid_raw = item["id"]
+                            item["id"] = uuid.UUID(uuid_raw)
+                            item["created_at"] = datetime.now()
+                            item["captured_at"] = datetime.now()
 
-                    stmt = insert(model_class).values(data)
-                    await session.execute(stmt)
-                except Exception as e:
-                    print(f"❌ Ошибка при вставке данных для '{model_name}': {e}")
-                    raise
+                stmt = insert(model_class).values(data)
+                await session.execute(stmt)
+            except Exception as e:
+                print(f"❌ Ошибка при вставке данных для '{model_name}': {e}")
+                raise
 
-            await session.commit()
+        # --- ВАЖНО: синхронизируем все последовательности ---
+        for table_name in MODELS_MAP.keys():
+            await session.execute(
+                text(
+                    f"SELECT setval(pg_get_serial_sequence('{table_name}s', 'id'),"
+                    f" COALESCE(MAX(id), 1)) FROM {table_name}s;")
+            )
+        await session.commit()
     except Exception as e:
         await session.rollback()
         print(f"‼️ Общая ошибка в prepare_database_core: {e}")
         raise
-    # finally:
-    #     await session.close()
 
 
-if __name__ == "__main__":
-
-    async def main():
-        async with async_session_maker() as session:
-            assert settings.MODE == "DEV"
-            await prepare_database_core(session)
-
-    asyncio.run(main())
+# if __name__ == "__main__":
+#
+#     async def main():
+#         async with async_session_maker() as session:
+#             assert settings.MODE == "DEV"
+#             await prepare_database_core(session)
+#
+#     asyncio.run(main())

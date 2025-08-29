@@ -36,7 +36,7 @@ elif settings.MODE == "DEV":
     DATABASE_PARAMS = {"pool_size": 5, "max_overflow": 10}
 
 engine = create_async_engine(url=DATABASE_URL, **DATABASE_PARAMS)
-async_session_maker = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+async_session_maker = async_sessionmaker(engine, class_=AsyncSession)
 str_uniq = Annotated[str, mapped_column(unique=True, nullable=False)]
 
 
