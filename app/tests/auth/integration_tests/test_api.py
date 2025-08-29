@@ -1,5 +1,4 @@
 import pytest
-from pyasn1.debug import scope
 from tests.conftest import auth_by
 
 from app.v1.users.schemas import UserContactsSchema
@@ -102,7 +101,7 @@ class TestApi:
         assert await user_dao.count() == 8
 
         users = await user_dao.find_all()
-        last_user = users[-1]
+        last_user = users[0]
         assert last_user.is_anonymous
 
         assert response.cookies.get("user_access_token")
@@ -125,7 +124,6 @@ class TestApi:
             ),
         ],
     )
-
     @pytest.mark.asyncio(loop_scope="session")
     async def test_login(self, ac, email, password, status_code, response_message):
         user_data = {"email": email, "password": password}
@@ -162,7 +160,6 @@ class TestApi:
             (False, 400, {"detail": "Токен отсутствует в заголовке"}),
         ],
     )
-
     @pytest.mark.asyncio(loop_scope="session")
     async def test_refresh_token(self, ac, auth_ac, is_authorized, status_code, response_message):
         if is_authorized:
@@ -176,12 +173,11 @@ class TestApi:
         assert response.status_code == status_code
         assert response.json() == response_message
 
-    @pytest.mark.usefixtures("prepare_database_manually")
     @pytest.mark.parametrize(
         "email, status_code, users_count, response_message",
         [  # AUTHORIZED USERS
-            ("superadmin@test.com", 200, 5, None),
-            ("admin@test.com", 200, 5, None),
+            ("superadmin@test.com", 200, 8, None),
+            ("admin@test.com", 200, 8, None),
             ("moderator@test.com", 403, None, {"detail": "Недостаточно прав"}),
             ("user1@test.com", 403, None, {"detail": "Недостаточно прав"}),
             # NOT AUTHORIZED USERS
