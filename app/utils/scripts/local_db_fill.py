@@ -1,35 +1,28 @@
-import asyncio
 import json
 import os
+import subprocess
 import uuid
 from datetime import datetime
+from pathlib import Path
 
 from sqlalchemy import insert, text
 
 from app.models.city import City
 from app.models.country import Country
-from app.models.file import File
-from app.models.fund import Fund
-from app.models.payment import Payment
-from app.models.project import Project
 from app.models.region import Region
-from app.models.stage import Stage
-from app.models.user import User
 
 # Мапа: имя модели в JSON → (модель SQLAlchemy, имя файла без расширения)
-from app.settings import settings
-from app.v1.dao.database import Base, async_session_maker, engine
 
 MODELS_MAP = {
     "country": Country,
     "region": Region,
     "city": City,
-    "user": User,
-    "fund": Fund,
-    "project": Project,
-    "stage": Stage,
-    "file": File,
-    "payment": Payment,
+    # "user": User,
+    # "fund": Fund,
+    # "project": Project,
+    # "stage": Stage,
+    # "file": File,
+    # "payment": Payment,
 }
 
 
@@ -39,10 +32,6 @@ def open_mock_json(model_name: str):
     with open(file_path, "r", encoding="utf-8") as file:
         return json.load(file)
 
-
-import os
-import subprocess
-from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parent.parent  # sadaka_app/
@@ -81,13 +70,15 @@ async def prepare_database_core(session):
             table = model_class.__tablename__
             pk_col = list(model_class.__table__.primary_key)[0]
             if pk_col.type.python_type in (int,):  # только числа
-                seq_sql = text(f"""
+                seq_sql = text(
+                    f"""
                     SELECT setval(
                         pg_get_serial_sequence('{table}', 'id'),
                         COALESCE((SELECT MAX(id) FROM {table}), 1),
                         true
                     );
-                """)
+                """
+                )
                 await session.execute(seq_sql)
         await session.commit()
     except Exception as e:

@@ -12,31 +12,38 @@ from app.models.user import User
 from app.settings import settings
 from app.tests.schemas import AuthorizedClientModel, CookiesModel
 from app.utils.scripts.local_db_fill import prepare_database_core
-from app.v1.dao.database import Base, async_session_maker, engine
+from app.v1.dao.database import async_session_maker, engine
 from app.v1.users.dao import CommentDAO, OneTimePassDAO, UserDAO
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parent.parent  # sadaka_app/
 
-import pytest
-
 
 def apply_migration():
-    subprocess.run("alembic upgrade head", shell=True, check=True, cwd=PROJECT_ROOT)
+    result = subprocess.run(
+        "alembic upgrade head",
+        shell=True,
+        cwd=PROJECT_ROOT,
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        print("❌ Alembic failed:")
+        print("stdout:", result.stdout)
+        print("stderr:", result.stderr)
+        raise RuntimeError("Alembic migrations failed")
     print("✅ Миграции применены.")
 
 
 async def reset_database():
     async with engine.begin() as conn:
-        await conn.execute(text("DROP SCHEMA public CASCADE"))
-        await conn.execute(text("CREATE SCHEMA public"))
-    subprocess.run("alembic upgrade head", shell=True, check=True, cwd=PROJECT_ROOT)
+        # удаляем схему public со всеми объектами
+        await conn.execute(text("DROP SCHEMA public CASCADE;"))
+        # создаём схему заново
+        await conn.execute(text("CREATE SCHEMA public;"))
 
-
-@pytest.fixture(autouse=True)
-def setup_yookassa_config():
-    Configuration.account_id = settings.YOOKASSA_TEST_SHOP_ID
-    Configuration.secret_key = settings.YOOKASSA_TEST_SECRET_KEY
+    # применяем все миграции
+    apply_migration()
 
 
 # --- готовим БД один раз перед всеми тестами ---
@@ -50,7 +57,7 @@ async def prepare_database():
 
 
 # --- каждая функция теста получает свою сессию ---
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="class")
 async def session():
     async with async_session_maker() as session:
         try:
@@ -119,6 +126,12 @@ async def authenticated_super():
                 user_refresh_token=ac.cookies.get("user_refresh_token"),
             ),
         )
+
+
+@pytest.fixture(autouse=True)
+def setup_yookassa_config():
+    Configuration.account_id = settings.YOOKASSA_TEST_SHOP_ID
+    Configuration.secret_key = settings.YOOKASSA_TEST_SECRET_KEY
 
 
 async def auth_by(ac: AsyncClient, user: User):

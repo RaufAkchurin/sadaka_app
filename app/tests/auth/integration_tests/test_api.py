@@ -40,7 +40,7 @@ class TestApi:
         response_message,
     ):
         if status_code == 200:
-            assert await user_dao.count() == 5
+            assert await user_dao.count() == 0
 
         user_data = {
             "email": email,
@@ -54,11 +54,11 @@ class TestApi:
             assert response.json() == response_message
 
         if status_code == 200:
-            assert await user_dao.count() == 6
+            assert await user_dao.count() == 1
 
     @pytest.mark.asyncio(loop_scope="session")
     async def test_register_by_email_after_deleting(self, user_dao, ac):
-        assert await user_dao.count() == 6
+        assert await user_dao.count() == 1
         user_data = {
             "email": "user_after_deleting@gmail.com",
             "name": "string",
@@ -68,7 +68,7 @@ class TestApi:
 
         # Создаем пользака
         await ac.post("/app/v1/auth/register/", json=user_data)
-        assert await user_dao.count() == 7
+        assert await user_dao.count() == 2
         current_user = await user_dao.find_one_or_none(
             filters=UserContactsSchema(email="user_after_deleting@gmail.com")
         )
@@ -94,11 +94,11 @@ class TestApi:
 
     @pytest.mark.asyncio(loop_scope="session")
     async def test_login_anonymous(self, ac, user_dao):
-        assert await user_dao.count() == 7
+        assert await user_dao.count() == 2
         response = await ac.post("/app/v1/auth/login_anonymous/")
         assert response.status_code == 200
         assert response.json() == {"message": "Анонимный пользователь добавлен"}
-        assert await user_dao.count() == 8
+        assert await user_dao.count() == 3
 
         users = await user_dao.find_all()
         last_user = users[0]
