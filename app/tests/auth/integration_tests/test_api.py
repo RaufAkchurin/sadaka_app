@@ -28,8 +28,10 @@ class TestApi:
         ],
     )
     @pytest.mark.asyncio(loop_scope="session")
+    @pytest.mark.usefixtures("geo_fixture")
     async def test_register_by_email(
         self,
+        load_mock,
         user_dao,
         ac,
         email,

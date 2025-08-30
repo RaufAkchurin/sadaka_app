@@ -9,7 +9,13 @@ from sqlalchemy import insert, text
 
 from app.models.city import City
 from app.models.country import Country
+from app.models.file import File
+from app.models.fund import Fund
+from app.models.payment import Payment
+from app.models.project import Project
 from app.models.region import Region
+from app.models.stage import Stage
+from app.models.user import User
 
 # Мапа: имя модели в JSON → (модель SQLAlchemy, имя файла без расширения)
 
@@ -17,12 +23,12 @@ MODELS_MAP = {
     "country": Country,
     "region": Region,
     "city": City,
-    # "user": User,
-    # "fund": Fund,
-    # "project": Project,
-    # "stage": Stage,
-    # "file": File,
-    # "payment": Payment,
+    "user": User,
+    "fund": Fund,
+    "project": Project,
+    "stage": Stage,
+    "file": File,
+    "payment": Payment,
 }
 
 

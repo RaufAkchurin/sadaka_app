@@ -1,58 +1,24 @@
-import subprocess
-from pathlib import Path
-
 import httpx
-import pytest
+import pytest  # noqa F403
 from httpx import ASGITransport, AsyncClient
 from main import app as fastapi_app
-from sqlalchemy import text
 from yookassa import Configuration
 
 from app.models.user import User
 from app.settings import settings
+from app.tests.fixtures.dao_fixtures import *  # noqa F403
+from app.tests.fixtures.db_fixtures import *  # noqa F403
+from app.tests.fixtures.mock_fixtures import *  # noqa F403
 from app.tests.schemas import AuthorizedClientModel, CookiesModel
-from app.utils.scripts.local_db_fill import prepare_database_core
-from app.v1.dao.database import async_session_maker, engine
-from app.v1.users.dao import CommentDAO, OneTimePassDAO, UserDAO
-
-SCRIPT_DIR = Path(__file__).resolve().parent
-PROJECT_ROOT = SCRIPT_DIR.parent.parent  # sadaka_app/
-
-
-def apply_migration():
-    result = subprocess.run(
-        "alembic upgrade head",
-        shell=True,
-        cwd=PROJECT_ROOT,
-        capture_output=True,
-        text=True,
-    )
-    if result.returncode != 0:
-        print("❌ Alembic failed:")
-        print("stdout:", result.stdout)
-        print("stderr:", result.stderr)
-        raise RuntimeError("Alembic migrations failed")
-    print("✅ Миграции применены.")
-
-
-async def reset_database():
-    async with engine.begin() as conn:
-        # удаляем схему public со всеми объектами
-        await conn.execute(text("DROP SCHEMA public CASCADE;"))
-        # создаём схему заново
-        await conn.execute(text("CREATE SCHEMA public;"))
-
-    # применяем все миграции
-    apply_migration()
+from app.v1.dao.database import async_session_maker
 
 
 # --- готовим БД один раз перед всеми тестами ---
 @pytest.fixture(scope="class", autouse=True)
 async def prepare_database():
-    await reset_database()
+    await reset_database()  # noqa
     async with async_session_maker() as session_new:
         assert settings.MODE == "TEST"
-        await prepare_database_core(session_new)
         await session_new.commit()
 
 
@@ -68,24 +34,6 @@ async def session():
             raise
         finally:
             await session.close()
-
-
-@pytest.fixture(scope="function")
-async def user_dao(session) -> UserDAO:
-    user_dao = UserDAO(session)
-    return user_dao
-
-
-@pytest.fixture(scope="function")
-async def otp_dao(session) -> OneTimePassDAO:
-    otp_dao = OneTimePassDAO(session)
-    return otp_dao
-
-
-@pytest.fixture(scope="function")
-async def comment_dao(session) -> CommentDAO:
-    comment_dao = CommentDAO(session)
-    return comment_dao
 
 
 @pytest.fixture(scope="function")
