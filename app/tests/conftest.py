@@ -1,34 +1,28 @@
 import httpx
-import pytest
+import pytest  # noqa F403
 from httpx import ASGITransport, AsyncClient
 from main import app as fastapi_app
-from tests.schemas import AuthorizedClientModel, CookiesModel
-from utils.scripts.local_db_fill import prepare_database_core
 from yookassa import Configuration
 
 from app.models.user import User
 from app.settings import settings
+from app.tests.fixtures.dao_fixtures import *  # noqa F403
+from app.tests.fixtures.db_fixtures import *  # noqa F403
+from app.tests.fixtures.mock_fixtures import *  # noqa F403
+from app.tests.schemas import AuthorizedClientModel, CookiesModel
 from app.v1.dao.database import async_session_maker
-from app.v1.users.dao import CommentDAO, OneTimePassDAO, UserDAO
 
 
-@pytest.fixture(autouse=True)
-def setup_yookassa_config():
-    Configuration.account_id = settings.YOOKASSA_TEST_SHOP_ID
-    Configuration.secret_key = settings.YOOKASSA_TEST_SECRET_KEY
-
-
+# --- готовим БД один раз перед всеми тестами ---
 @pytest.fixture(scope="class", autouse=True)
-async def prepare_database(session):
-    assert settings.MODE == "TEST"
-    await prepare_database_core(session)
+async def prepare_database():
+    await reset_database()  # noqa
+    async with async_session_maker() as session_new:
+        assert settings.MODE == "TEST"
+        await session_new.commit()
 
 
-@pytest.fixture(scope="class")
-async def prepare_database_manually(session):
-    await prepare_database_core(session)
-
-
+# --- каждая функция теста получает свою сессию ---
 @pytest.fixture(scope="class")
 async def session():
     async with async_session_maker() as session:
@@ -43,30 +37,12 @@ async def session():
 
 
 @pytest.fixture(scope="function")
-async def user_dao(session) -> UserDAO:
-    user_dao = UserDAO(session)
-    return user_dao
-
-
-@pytest.fixture(scope="function")
-async def otp_dao(session) -> OneTimePassDAO:
-    otp_dao = OneTimePassDAO(session)
-    return otp_dao
-
-
-@pytest.fixture(scope="function")
-async def comment_dao(session) -> CommentDAO:
-    comment_dao = CommentDAO(session)
-    return comment_dao
-
-
-@pytest.fixture(scope="class")
 async def ac():
     async with AsyncClient(transport=ASGITransport(fastapi_app), base_url="http://test/") as async_client:
         yield async_client
 
 
-@pytest.fixture(scope="class")
+@pytest.fixture(scope="function")
 async def auth_ac():
     async with AsyncClient(transport=ASGITransport(fastapi_app), base_url="http://test") as ac:
         await ac.post("/app/v1/auth/login/", json={"email": "user1@test.com", "password": "password"})
@@ -98,6 +74,12 @@ async def authenticated_super():
                 user_refresh_token=ac.cookies.get("user_refresh_token"),
             ),
         )
+
+
+@pytest.fixture(autouse=True)
+def setup_yookassa_config():
+    Configuration.account_id = settings.YOOKASSA_TEST_SHOP_ID
+    Configuration.secret_key = settings.YOOKASSA_TEST_SECRET_KEY
 
 
 async def auth_by(ac: AsyncClient, user: User):
