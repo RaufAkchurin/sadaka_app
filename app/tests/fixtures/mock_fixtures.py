@@ -59,6 +59,11 @@ async def geo_fixture(load_mock):
     await load_mock("city")
 
 
+@pytest.fixture(scope="class")
+async def users_fixture(load_mock, geo_fixture):
+    await load_mock("user")
+
+
 # --- Полная загрузка всех моков (интеграционные тесты) ---
 @pytest.fixture(scope="session", autouse=False)
 async def prepare_all_mocks():

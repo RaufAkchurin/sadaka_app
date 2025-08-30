@@ -4,7 +4,7 @@ from tests.conftest import auth_by
 from app.v1.users.schemas import UserContactsSchema
 
 
-class TestApi:
+class TestRegistration:
     @pytest.mark.parametrize(
         "email, name, password, confirm_password, status_code, response_message",
         [
@@ -94,13 +94,16 @@ class TestApi:
         assert me_response.status_code == 200
         assert me_response.json()["is_active"]
 
+
+class TestLoginAnonymousUser:
     @pytest.mark.asyncio(loop_scope="session")
+    @pytest.mark.usefixtures("geo_fixture")
     async def test_login_anonymous(self, ac, user_dao):
-        assert await user_dao.count() == 2
+        assert await user_dao.count() == 0
         response = await ac.post("/app/v1/auth/login_anonymous/")
         assert response.status_code == 200
         assert response.json() == {"message": "Анонимный пользователь добавлен"}
-        assert await user_dao.count() == 3
+        assert await user_dao.count() == 1
 
         users = await user_dao.find_all()
         last_user = users[0]
@@ -109,6 +112,9 @@ class TestApi:
         assert response.cookies.get("user_access_token")
         assert response.cookies.get("user_refresh_token")
 
+
+class TestLogin:
+    @pytest.mark.usefixtures("users_fixture")
     @pytest.mark.parametrize(
         "email, password, status_code, response_message",
         [
@@ -178,8 +184,8 @@ class TestApi:
     @pytest.mark.parametrize(
         "email, status_code, users_count, response_message",
         [  # AUTHORIZED USERS
-            ("superadmin@test.com", 200, 8, None),
-            ("admin@test.com", 200, 8, None),
+            ("superadmin@test.com", 200, 5, None),
+            ("admin@test.com", 200, 5, None),
             ("moderator@test.com", 403, None, {"detail": "Недостаточно прав"}),
             ("user1@test.com", 403, None, {"detail": "Недостаточно прав"}),
             # NOT AUTHORIZED USERS
