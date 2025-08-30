@@ -42,7 +42,6 @@ class YooCallbackSuccessUseCaseImpl:
                     captured_at=webhook_object.captured_at.replace(tzinfo=None),  # and we save without
                 )
             )
-        print(123)
 
     async def __yookassa_client_ip_security_checker(self) -> None:
         def check_ip():

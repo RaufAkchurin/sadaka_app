@@ -29,7 +29,7 @@ async def load_mock():
             stmt = insert(model).values(data).returning(model)
             result = await session.execute(stmt)
             await session.commit()
-            return result.fetchall()
+            return result.unique().fetchall()
 
         yield _load_mock
 
