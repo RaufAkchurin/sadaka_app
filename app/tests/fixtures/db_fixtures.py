@@ -34,3 +34,6 @@ async def reset_database():
 
     # применяем все миграции
     apply_migration()
+
+    # сбрасываем все соединения и prepared statements
+    await engine.dispose()
