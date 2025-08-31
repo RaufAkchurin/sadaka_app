@@ -37,7 +37,7 @@ class TestDAO:
         }
 
         new_user = await user_dao.add(values=UserAddWithPasswordSchema(**user_data_dict))
-        assert new_user.id == 6
+        assert new_user.id == 1
 
         user = await user_dao.find_one_or_none_by_id(new_user.id)
         assert user.email == "1test@test.com"
@@ -57,11 +57,10 @@ class TestDAO:
         user = await user_dao.find_one_or_none(filters=UserContactsSchema(email="nonexistent@test.com"))
         assert user is None
 
-    @pytest.mark.usefixtures("users_fixture")
     @pytest.mark.asyncio(loop_scope="session")
     async def test_find_all(self, user_dao):
         users = await user_dao.find_all()
-        assert len(users) == 5
+        assert len(users) == 2
 
     @pytest.mark.asyncio(loop_scope="session")
     async def test_add_many(self, user_dao):
@@ -112,8 +111,7 @@ class TestDAO:
         deleted_user = await user_dao.find_one_or_none_by_id(new_user.id)
         assert deleted_user is None
 
-    @pytest.mark.usefixtures("users_fixture")
     @pytest.mark.asyncio(loop_scope="session")
     async def test_count(self, user_dao):
         count = await user_dao.count()
-        assert count == 18
+        assert count == 13

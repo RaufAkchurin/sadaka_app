@@ -7,6 +7,7 @@ from app.v1.users.schemas import UserContactsSchema
 
 class TestUsers:
     @pytest.mark.usefixtures("users_fixture")
+    @pytest.mark.usefixtures("files_fixture")
     @pytest.mark.asyncio(loop_scope="session")
     @pytest.mark.parametrize(
         "is_authorized, status_code, response_message",
@@ -29,8 +30,6 @@ class TestUsers:
             (False, 400, {"detail": "Токен отсутствует в заголовке"}),
         ],
     )
-    @pytest.mark.usefixtures("users_fixture")
-    @pytest.mark.asyncio(loop_scope="session")
     async def test_me_200(self, ac, auth_ac, is_authorized, status_code, response_message) -> None:
         if is_authorized:
             response = await auth_ac.client.get("/app/v1/users/me", cookies=auth_ac.cookies.dict())
@@ -71,6 +70,8 @@ class TestUsers:
         if response_message:
             assert response.json() == response_message
 
+    @pytest.mark.asyncio(loop_scope="session")
+    @pytest.mark.usefixtures("files_fixture")
     @pytest.mark.parametrize(
         "is_authorized, file_name, content, status_code, response_expected",
         [
@@ -149,6 +150,8 @@ class TestUsers:
             assert response.status_code == status_code
             assert response.json() == response_expected
 
+    @pytest.mark.asyncio(loop_scope="session")
+    @pytest.mark.usefixtures("users_fixture")
     @pytest.mark.parametrize(
         "authorized, status_code, response_message",
         [  # AUTHORIZED USERS
@@ -184,6 +187,8 @@ class TestUsers:
         assert response.status_code == status_code
         assert response.json() == response_message
 
+    @pytest.mark.asyncio(loop_scope="session")
+    @pytest.mark.usefixtures("users_fixture")
     @pytest.mark.parametrize(
         "status_code, response_message",
         [
@@ -197,6 +202,8 @@ class TestUsers:
         assert response.status_code == status_code
         assert response.json() == response_message
 
+    @pytest.mark.asyncio(loop_scope="session")
+    @pytest.mark.usefixtures("users_fixture")
     @pytest.mark.parametrize(
         "status_code, response_message",
         [
@@ -223,6 +230,8 @@ class TestUsers:
         assert response.status_code == status_code
         assert response.json() == response_message
 
+    @pytest.mark.asyncio(loop_scope="session")
+    @pytest.mark.usefixtures("users_fixture")
     @pytest.mark.parametrize(
         "status_code, input_data, response_message",
         [  # AUTHORIZED USERS
@@ -283,6 +292,8 @@ class TestUsers:
         assert response.status_code == status_code
         assert response.json() == response_message
 
+    @pytest.mark.asyncio(loop_scope="session")
+    @pytest.mark.usefixtures("users_fixture")
     async def test_delete_authorized_user(self, ac, auth_ac) -> None:
         me_response_before_deleting = await auth_ac.client.get("/app/v1/users/me", cookies=auth_ac.cookies.dict())
         assert me_response_before_deleting.status_code == 200
@@ -300,6 +311,8 @@ class TestUsers:
         assert me_response.status_code == 200
         assert not me_response.json()["is_active"]
 
+    @pytest.mark.asyncio(loop_scope="session")
+    @pytest.mark.usefixtures("users_fixture")
     async def test_delete_not_authorized_user(self, ac, auth_ac) -> None:
         response = await ac.delete("/app/v1/users/me")
 

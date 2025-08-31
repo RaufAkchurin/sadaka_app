@@ -28,7 +28,7 @@ class TestFundDetail:
         assert response.status_code == 404
 
     @pytest.mark.usefixtures("users_fixture")
-    @pytest.mark.usefixtures("funds_fixture")
+    @pytest.mark.usefixtures("projects_fixture")
     async def test_detail(self, auth_ac) -> None:
         response = await auth_ac.client.get("/app/v1/funds/detail/1", cookies=auth_ac.cookies.dict())
         assert response.status_code == 200

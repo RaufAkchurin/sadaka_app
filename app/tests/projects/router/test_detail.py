@@ -31,6 +31,8 @@ class TestProjectDetail:
         response = await auth_ac.client.get("/app/v1/projects/detail/99", cookies=auth_ac.cookies.dict())
         assert response.status_code == 404
 
+    @pytest.mark.usefixtures("projects_fixture")
+    @pytest.mark.usefixtures("files_fixture")
     @pytest.mark.usefixtures("users_fixture")
     @pytest.mark.asyncio(loop_scope="session")
     async def test_list_active(self, auth_ac) -> None:

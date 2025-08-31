@@ -65,9 +65,15 @@ async def users_fixture(load_mock, geo_fixture):
 
 
 @pytest.fixture(scope="class")
+async def files_fixture(load_mock):
+    await load_mock("file")
+
+
+@pytest.fixture(scope="class")
 async def projects_fixture(load_mock, geo_fixture):
     await load_mock("fund")
     await load_mock("project")
+    await load_mock("stage")
 
 
 @pytest.fixture(scope="class")

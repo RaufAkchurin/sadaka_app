@@ -11,6 +11,7 @@ from app.v1.comment.schemas import (
 
 @pytest.mark.usefixtures("users_fixture")
 class TestCommentsAPI:
+    @pytest.mark.usefixtures("projects_fixture")
     @pytest.mark.asyncio(loop_scope="session")
     @pytest.mark.parametrize(
         "payload, status_code",
@@ -34,6 +35,7 @@ class TestCommentsAPI:
         rows = await comment_dao.find_all(filters=CommentProjectFilterSchema(project_id=payload["project_id"]))
         assert any(r.content == payload["content"] for r in rows)
 
+    @pytest.mark.usefixtures("projects_fixture")
     @pytest.mark.asyncio(loop_scope="session")
     async def test_delete_comment_success(self, auth_ac, comment_dao):
         created = await auth_ac.client.post(
@@ -53,6 +55,7 @@ class TestCommentsAPI:
         deleted = await comment_dao.find_one_or_none_by_id(comment_id)
         assert deleted is None
 
+    @pytest.mark.usefixtures("projects_fixture")
     @pytest.mark.asyncio(loop_scope="session")
     async def test_delete_comment_not_found(self, auth_ac):
         resp = await auth_ac.client.delete(
@@ -62,6 +65,7 @@ class TestCommentsAPI:
         assert resp.status_code == 404  # CommentNotFoundByIdException
 
     @pytest.mark.asyncio(loop_scope="session")
+    @pytest.mark.usefixtures("projects_fixture")
     async def test_delete_comment_forbidden(self, auth_ac, comment_dao):
         foreign = await comment_dao.add_and_commit(values=CommentSchema(user_id=1, project_id=1, content="foreign"))
         resp = await auth_ac.client.delete(
@@ -74,6 +78,7 @@ class TestCommentsAPI:
         assert still_there is not None
 
     @pytest.mark.asyncio(loop_scope="session")
+    @pytest.mark.usefixtures("projects_fixture")
     async def test_edit_comment_success(self, auth_ac, comment_dao):
         created = await auth_ac.client.post(
             "/app/v1/comments/",
@@ -96,6 +101,7 @@ class TestCommentsAPI:
         assert updated.content == "new content"
 
     @pytest.mark.asyncio(loop_scope="session")
+    @pytest.mark.usefixtures("projects_fixture")
     async def test_edit_comment_not_found(self, auth_ac):
         resp = await auth_ac.client.patch(
             "/app/v1/comments/99999999",
@@ -105,6 +111,7 @@ class TestCommentsAPI:
         assert resp.status_code == 404  # CommentNotFoundByIdException
 
     @pytest.mark.asyncio(loop_scope="session")
+    @pytest.mark.usefixtures("projects_fixture")
     async def test_edit_comment_forbidden(self, auth_ac, comment_dao):
         foreign = await comment_dao.add_and_commit(values=CommentSchema(user_id=1, project_id=1, content="locked"))
         await comment_dao._session.commit()
@@ -120,6 +127,7 @@ class TestCommentsAPI:
         assert same.content == "locked"
 
     @pytest.mark.asyncio(loop_scope="session")
+    @pytest.mark.usefixtures("projects_fixture")
     async def test_get_comments_by_project_id_empty(self, auth_ac):
         project_id = 1
         resp = await auth_ac.client.get(
@@ -135,6 +143,7 @@ class TestCommentsAPI:
         assert data.get("state").get("total_items") == 4
 
     @pytest.mark.asyncio(loop_scope="session")
+    @pytest.mark.usefixtures("projects_fixture")
     async def test_get_comments_by_project_id_paginated(self, auth_ac, comment_dao):
         project_id = 1
         for i in range(11):

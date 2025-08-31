@@ -10,6 +10,7 @@ class TestProjectList:
         assert response.json() == {"detail": "Токен отсутствует в заголовке"}
 
     @pytest.mark.usefixtures("users_fixture")
+    @pytest.mark.usefixtures("projects_fixture")
     @pytest.mark.asyncio(loop_scope="session")
     async def test_list_active(self, auth_ac) -> None:
         response = await auth_ac.client.get("/app/v1/projects/all/active", cookies=auth_ac.cookies.dict())
@@ -82,6 +83,7 @@ class TestProjectList:
         }
 
     @pytest.mark.usefixtures("users_fixture")
+    @pytest.mark.usefixtures("projects_fixture")
     @pytest.mark.asyncio(loop_scope="session")
     async def test_list_finished(self, auth_ac) -> None:
         response = await auth_ac.client.get("/app/v1/projects/all/finished", cookies=auth_ac.cookies.dict())
@@ -154,6 +156,7 @@ class TestProjectList:
         }
 
     @pytest.mark.usefixtures("users_fixture")
+    @pytest.mark.usefixtures("projects_fixture")
     @pytest.mark.asyncio(loop_scope="session")
     async def test_list_all(self, auth_ac) -> None:
         response = await auth_ac.client.get("/app/v1/projects/all/all", cookies=auth_ac.cookies.dict())
@@ -226,6 +229,7 @@ class TestProjectList:
         }
 
     @pytest.mark.usefixtures("users_fixture")
+    @pytest.mark.usefixtures("projects_fixture")
     @pytest.mark.asyncio(loop_scope="session")
     async def test_list_by_fund_id(self, auth_ac) -> None:
         response = await auth_ac.client.get(
@@ -300,6 +304,7 @@ class TestProjectList:
         }
 
     @pytest.mark.usefixtures("users_fixture")
+    @pytest.mark.usefixtures("projects_fixture")
     @pytest.mark.asyncio(loop_scope="session")
     async def test_list_active_and_fund_id(self, auth_ac) -> None:
         response = await auth_ac.client.get(
