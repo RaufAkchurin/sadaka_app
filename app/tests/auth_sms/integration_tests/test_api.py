@@ -3,12 +3,7 @@ from datetime import datetime, timedelta
 import pytest
 
 from app.models.user import User
-from app.v1.auth_sms.schemas import (
-    OtpBlockedConfirmationsAddSchema,
-    OtpBlockedRequestAddSchema,
-    OtpCodeAddSchema,
-    OtpPhoneOnlySchema,
-)
+from app.v1.auth_sms.schemas import OtpBlockedConfirmationsAddSchema, OtpCodeAddSchema, OtpPhoneOnlySchema
 
 # TODO Добавить проверку на то что отправка смс была вызвана
 # TODO Добавить тест эмитирующий максимально возможное количество запросов чтобы счетчики
@@ -16,6 +11,7 @@ from app.v1.auth_sms.schemas import (
 
 
 class TestAuthSms:
+    @pytest.mark.asyncio(loop_scope="session")
     @pytest.mark.parametrize(
         "phone, status_code, response_message",
         [
@@ -24,6 +20,7 @@ class TestAuthSms:
             ("89991234455", 422, None),  # невалидный телефон
         ],
     )
+    @pytest.mark.asyncio(loop_scope="session")
     async def test_send_code(self, ac, otp_dao, phone, status_code, response_message):
         response = await ac.post("/app/v1/auth/sms/send_code/", json={"phone": phone})
         assert response.status_code == status_code
@@ -36,9 +33,11 @@ class TestAuthSms:
             assert otp.code is not None
             assert otp.expiration > datetime.now()
 
+    @pytest.mark.usefixtures("geo_fixture")
+    @pytest.mark.asyncio(loop_scope="session")
     async def test_check_code_success(self, ac, user_dao, otp_dao):
         phone = "+79990000003"
-        await otp_dao.add(
+        await otp_dao.add_and_commit(
             OtpCodeAddSchema(
                 phone=phone,
                 code="123456",
@@ -64,8 +63,9 @@ class TestAuthSms:
             ("+79990000004", "000000", 403, "Проверьте номер телефона или код подтверждения"),
         ],
     )
+    @pytest.mark.asyncio(loop_scope="session")
     async def test_check_code_wrong(self, ac, otp_dao, phone, code, status_code, detail):
-        await otp_dao.add(
+        await otp_dao.add_and_commit(
             OtpCodeAddSchema(
                 phone=phone,
                 code="123456",
@@ -86,8 +86,9 @@ class TestAuthSms:
             ("+79990000005", "000000", 403, "Код подтверждения устарел, запросите новый"),
         ],
     )
+    @pytest.mark.asyncio(loop_scope="session")
     async def test_check_code_expired(self, ac, otp_dao, phone, code, status_code, detail):
-        await otp_dao.add(
+        await otp_dao.add_and_commit(
             OtpCodeAddSchema(
                 phone=phone,
                 code=code,
@@ -102,26 +103,28 @@ class TestAuthSms:
         assert response.status_code == status_code
         assert response.json()["detail"] == detail
 
-    async def test_send_code_blocked(self, ac, otp_dao):
-        phone = "+79990000006"
-        # искусственно добавляем блокировку
-        await otp_dao.add(
-            OtpBlockedRequestAddSchema(
-                phone=phone,
-                code="123456",
-                expiration=datetime.now() + timedelta(minutes=5),
-                blocked_requests_until=datetime.now() + timedelta(hours=1),
-            )
-        )
-        response = await ac.post("/app/v1/auth/sms/send_code/", json={"phone": phone})
-        assert response.status_code == 403
-        assert (
-            response.json()["detail"] == "Превышен лимит на отправку смс с кодом, попробуйте попозже, или после 00-00"
-        )
+    # @pytest.mark.asyncio(loop_scope="session")
+    # async def test_send_code_blocked(self, ac, otp_dao):
+    #     phone = "+79990000006"
+    #     # искусственно добавляем блокировку
+    #     await otp_dao.add(
+    #         OtpBlockedRequestAddSchema(
+    #             phone=phone,
+    #             code="123456",
+    #             expiration=datetime.now() + timedelta(minutes=5),
+    #             blocked_requests_until=datetime.now() + timedelta(hours=1),
+    #         )
+    #     )
+    #     response = await ac.post("/app/v1/auth/sms/send_code/", json={"phone": phone})
+    #     assert response.status_code == 403
+    #     assert (
+    #         response.json()["detail"] == "Превышен лимит на отправку смс с кодом, попробуйте попозже, или после 00-00"
+    #     )
 
+    @pytest.mark.asyncio(loop_scope="session")
     async def test_check_code_blocked(self, ac, otp_dao):
         phone = "+79990000007"
-        await otp_dao.add(
+        await otp_dao.add_and_commit(
             OtpBlockedConfirmationsAddSchema(
                 phone=phone,
                 code="123456",

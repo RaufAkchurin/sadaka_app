@@ -1,9 +1,12 @@
+import pytest
 from tests.factory.factories_polyfactory import faker
 
 from app.v1.users.schemas import UserAddWithPasswordSchema, UserBaseSchema, UserContactsSchema
 
 
 class TestDAO:
+    @pytest.mark.usefixtures("geo_fixture")
+    @pytest.mark.asyncio(loop_scope="session")
     async def test_bulk_update(self, user_dao):  # DONT MOVE FROM HERE !!!
         users = await user_dao.find_all()
         for user in users:
@@ -24,6 +27,8 @@ class TestDAO:
         for user in updated_users:
             assert user.name.startswith("updated_")
 
+    @pytest.mark.usefixtures("geo_fixture")
+    @pytest.mark.asyncio(loop_scope="session")
     async def test_add_user_and_find_by_id(self, user_dao):
         user_data_dict = {
             "email": "1test@test.com",
@@ -32,11 +37,12 @@ class TestDAO:
         }
 
         new_user = await user_dao.add(values=UserAddWithPasswordSchema(**user_data_dict))
-        assert new_user.id == 6
+        assert new_user.id == 1
 
         user = await user_dao.find_one_or_none_by_id(new_user.id)
         assert user.email == "1test@test.com"
 
+    @pytest.mark.asyncio(loop_scope="session")
     async def test_find_one_or_none(self, user_dao):
         user_data_dict = {
             "email": "2test@test.com",
@@ -51,10 +57,12 @@ class TestDAO:
         user = await user_dao.find_one_or_none(filters=UserContactsSchema(email="nonexistent@test.com"))
         assert user is None
 
+    @pytest.mark.asyncio(loop_scope="session")
     async def test_find_all(self, user_dao):
         users = await user_dao.find_all()
-        assert len(users) == 7
+        assert len(users) == 2
 
+    @pytest.mark.asyncio(loop_scope="session")
     async def test_add_many(self, user_dao):
         users = [
             {
@@ -68,6 +76,7 @@ class TestDAO:
         new_users = await user_dao.add_many([UserAddWithPasswordSchema(**user_data) for user_data in users])
         assert len(new_users) == 10
 
+    @pytest.mark.asyncio(loop_scope="session")
     async def test_update(self, user_dao):
         user_data_dict = {
             "email": "3test@test.com",
@@ -86,6 +95,7 @@ class TestDAO:
         updated_user = await user_dao.find_one_or_none_by_id(new_user.id)
         assert updated_user.name == "updated_name"
 
+    @pytest.mark.asyncio(loop_scope="session")
     async def test_delete(self, user_dao):
         user_data_dict = {
             "email": "4test@test.com",
@@ -101,6 +111,7 @@ class TestDAO:
         deleted_user = await user_dao.find_one_or_none_by_id(new_user.id)
         assert deleted_user is None
 
+    @pytest.mark.asyncio(loop_scope="session")
     async def test_count(self, user_dao):
         count = await user_dao.count()
-        assert count == 18
+        assert count == 13

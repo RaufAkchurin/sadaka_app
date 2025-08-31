@@ -13,7 +13,7 @@ class CommentSchema(BaseModel):
 
 
 class CommentCreateDataSchema(BaseModel):
-    project_id: int
+    project_id: int = Field(ge=1)
     content: str = Field(min_length=1, max_length=250)
 
     model_config = ConfigDict(from_attributes=True)

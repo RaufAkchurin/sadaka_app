@@ -6,6 +6,8 @@ from app.settings import settings
 
 
 class TestS3Storage:
+    @pytest.mark.usefixtures("users_fixture")
+    @pytest.mark.asyncio(loop_scope="session")
     @pytest.mark.parametrize(
         "is_authorized, status_code, response_message",
         [
@@ -47,6 +49,8 @@ class TestS3Storage:
         else:
             assert response.json()["detail"] == "Токен отсутствует в заголовке"
 
+    @pytest.mark.usefixtures("users_fixture")
+    @pytest.mark.asyncio(loop_scope="session")
     @pytest.mark.parametrize(
         "file_size, is_authorized, status_code, response_message",
         [
@@ -68,6 +72,8 @@ class TestS3Storage:
             (2 * 1024 * 1024, False, 400, {"detail": "Токен отсутствует в заголовке"}),
         ],
     )
+    @pytest.mark.usefixtures("users_fixture")
+    @pytest.mark.asyncio(loop_scope="session")
     async def test_upload_file_size(self, ac, auth_ac, file_size, is_authorized, status_code, response_message):
         file_content = b"a" * file_size  # Создаем файл с указанным размером
         file_name = "test_file.png"
@@ -113,6 +119,8 @@ class TestS3Storage:
             ("exe", False, 400, {"detail": "Токен отсутствует в заголовке"}),
         ],
     )
+    @pytest.mark.usefixtures("users_fixture")
+    @pytest.mark.asyncio(loop_scope="session")
     async def test_upload_file_type(self, ac, auth_ac, file_type, is_authorized, status_code, response_message):
         invalid_file_content = b"Invalid file content"
         file_name = f"test_file.{file_type}"
@@ -144,6 +152,8 @@ class TestS3Storage:
         assert response.status_code == status_code
         assert response.json() == response_message
 
+    @pytest.mark.usefixtures("users_fixture")
+    @pytest.mark.asyncio(loop_scope="session")
     @pytest.mark.parametrize(
         "is_authorized, status_code, response_message",
         [
@@ -173,6 +183,8 @@ class TestS3Storage:
         else:
             assert response.json() == response_message
 
+    @pytest.mark.usefixtures("users_fixture")
+    @pytest.mark.asyncio(loop_scope="session")
     @pytest.mark.parametrize(
         "is_authorized, file_name, status_code, response_message",
         [
@@ -180,6 +192,8 @@ class TestS3Storage:
             (False, f"{uuid4()}.png", 400, {"detail": "Токен отсутствует в заголовке"}),
         ],
     )
+    @pytest.mark.usefixtures("users_fixture")
+    @pytest.mark.asyncio(loop_scope="session")
     async def test_download_file_not_found(self, ac, auth_ac, is_authorized, file_name, status_code, response_message):
         if is_authorized:
             response = await auth_ac.client.get(f"/app/v1/s3_storage/{file_name}", cookies=auth_ac.cookies.dict())

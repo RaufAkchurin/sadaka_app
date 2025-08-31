@@ -74,6 +74,12 @@ class BaseDAO(Generic[T]):
             logger.error(f"Ошибка при добавлении записи: {e}")
             raise
 
+    async def add_and_commit(self, values: BaseModel) -> T:
+        obj = await self.add(values)
+        obj_id = obj.id
+        await self._session.commit()
+        return obj_id
+
     async def add_many(self, instances: List[BaseModel]):
         values_list = [item.model_dump(exclude_unset=True) for item in instances]
         logger.info(f"Добавление нескольких записей {self.model.__name__}. Количество: {len(values_list)}")
@@ -86,6 +92,10 @@ class BaseDAO(Generic[T]):
         except SQLAlchemyError as e:
             logger.error(f"Ошибка при добавлении нескольких записей: {e}")
             raise
+
+    async def add_many_with_commit(self, values: BaseModel):
+        await self.add_many([values])
+        await self._session.commit()
 
     async def update(self, filters: BaseModel, values: BaseModel):
         filter_dict = filters.model_dump(exclude_unset=True)

@@ -1,4 +1,8 @@
+import pytest
+
+
 class TestGoogle:
+    @pytest.mark.asyncio(loop_scope="session")
     async def test_login(self, ac):
         url = (
             "https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=82940823785-f0042dda793mqu66np8a"

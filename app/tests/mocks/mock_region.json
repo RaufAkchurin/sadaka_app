@@ -2,19 +2,16 @@
   {
     "id": 1,
     "name": "Tatarstan",
-    "country_id": 1,
-    "picture_id": 14
+    "country_id": 1
   },
     {
     "id": 2,
     "name": "Bashkortostan",
-    "country_id": 1,
-    "picture_id": 15
+    "country_id": 1
   },
     {
     "id": 3,
     "name": "Aktobe obl",
-    "country_id": 2,
-    "picture_id": 16
+    "country_id": 2
   }
 ]

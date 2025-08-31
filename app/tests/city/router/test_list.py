@@ -1,9 +1,15 @@
+import pytest
+
+
 class TestCityList:
+    @pytest.mark.asyncio(loop_scope="session")
     async def test_400_authorization(self, ac) -> None:
         response = await ac.get("/app/v1/cities/all")
         assert response.status_code == 400
         assert response.json() == {"detail": "Токен отсутствует в заголовке"}
 
+    @pytest.mark.usefixtures("users_fixture")
+    @pytest.mark.asyncio(loop_scope="session")
     async def test_list(self, auth_ac) -> None:
         response = await auth_ac.client.get("/app/v1/cities/all", cookies=auth_ac.cookies.dict())
         assert response.status_code == 200

@@ -4,7 +4,7 @@ from tests.conftest import auth_by
 from app.v1.users.schemas import UserContactsSchema
 
 
-class TestApi:
+class TestRegistration:
     @pytest.mark.parametrize(
         "email, name, password, confirm_password, status_code, response_message",
         [
@@ -27,8 +27,11 @@ class TestApi:
             ("abcde", "string", "password", "password", 422, None),  # email validation
         ],
     )
+    @pytest.mark.asyncio(loop_scope="session")
+    @pytest.mark.usefixtures("geo_fixture")
     async def test_register_by_email(
         self,
+        load_mock,
         user_dao,
         ac,
         email,
@@ -39,7 +42,7 @@ class TestApi:
         response_message,
     ):
         if status_code == 200:
-            assert await user_dao.count() == 5
+            assert await user_dao.count() == 0
 
         user_data = {
             "email": email,
@@ -53,10 +56,11 @@ class TestApi:
             assert response.json() == response_message
 
         if status_code == 200:
-            assert await user_dao.count() == 6
+            assert await user_dao.count() == 1
 
-    async def test_register_by_email_after_deleting(self, session, user_dao, ac):
-        assert await user_dao.count() == 6
+    @pytest.mark.asyncio(loop_scope="session")
+    async def test_register_by_email_after_deleting(self, user_dao, ac):
+        assert await user_dao.count() == 1
         user_data = {
             "email": "user_after_deleting@gmail.com",
             "name": "string",
@@ -66,7 +70,7 @@ class TestApi:
 
         # Создаем пользака
         await ac.post("/app/v1/auth/register/", json=user_data)
-        assert await user_dao.count() == 7
+        assert await user_dao.count() == 2
         current_user = await user_dao.find_one_or_none(
             filters=UserContactsSchema(email="user_after_deleting@gmail.com")
         )
@@ -90,20 +94,27 @@ class TestApi:
         assert me_response.status_code == 200
         assert me_response.json()["is_active"]
 
+
+class TestLoginAnonymousUser:
+    @pytest.mark.asyncio(loop_scope="session")
+    @pytest.mark.usefixtures("geo_fixture")
     async def test_login_anonymous(self, ac, user_dao):
-        assert await user_dao.count() == 7
+        assert await user_dao.count() == 0
         response = await ac.post("/app/v1/auth/login_anonymous/")
         assert response.status_code == 200
         assert response.json() == {"message": "Анонимный пользователь добавлен"}
-        assert await user_dao.count() == 8
+        assert await user_dao.count() == 1
 
         users = await user_dao.find_all()
-        last_user = users[-1]
+        last_user = users[0]
         assert last_user.is_anonymous
 
         assert response.cookies.get("user_access_token")
         assert response.cookies.get("user_refresh_token")
 
+
+class TestLogin:
+    @pytest.mark.usefixtures("users_fixture")
     @pytest.mark.parametrize(
         "email, password, status_code, response_message",
         [
@@ -121,6 +132,7 @@ class TestApi:
             ),
         ],
     )
+    @pytest.mark.asyncio(loop_scope="session")
     async def test_login(self, ac, email, password, status_code, response_message):
         user_data = {"email": email, "password": password}
         response = await ac.post("/app/v1/auth/login/", json=user_data)
@@ -156,6 +168,7 @@ class TestApi:
             (False, 400, {"detail": "Токен отсутствует в заголовке"}),
         ],
     )
+    @pytest.mark.asyncio(loop_scope="session")
     async def test_refresh_token(self, ac, auth_ac, is_authorized, status_code, response_message):
         if is_authorized:
             client = auth_ac.client
@@ -168,7 +181,6 @@ class TestApi:
         assert response.status_code == status_code
         assert response.json() == response_message
 
-    @pytest.mark.usefixtures("prepare_database_manually")
     @pytest.mark.parametrize(
         "email, status_code, users_count, response_message",
         [  # AUTHORIZED USERS
@@ -180,6 +192,7 @@ class TestApi:
             (None, 400, None, {"detail": "Токен отсутствует в заголовке"}),
         ],
     )
+    @pytest.mark.asyncio(loop_scope="session")
     async def test_all_users(self, ac, user_dao, email, status_code, users_count, response_message):
         if email:
             current_user = await user_dao.find_one_or_none(filters=UserContactsSchema(email=email))
