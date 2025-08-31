@@ -75,6 +75,7 @@ class TestPaymentCallback:
         assert len(payments) == 0  # sum of mocked data without new
 
     @pytest.mark.usefixtures("projects_fixture")
+    @pytest.mark.usefixtures("payments_fixture")
     @pytest.mark.asyncio(loop_scope="session")
     @patch("fastapi.Request.client", Address("185.71.76.1", 1234))  # For ip_security checker
     async def test_callback_success(self, ac) -> None:

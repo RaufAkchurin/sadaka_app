@@ -23,7 +23,7 @@ async def prepare_database():
 
 
 # --- каждая функция теста получает свою сессию ---
-@pytest.fixture(scope="class")
+@pytest.fixture(scope="function")
 async def session():
     async with async_session_maker() as session:
         try:

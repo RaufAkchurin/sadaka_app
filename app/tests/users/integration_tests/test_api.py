@@ -6,6 +6,8 @@ from app.v1.users.schemas import UserContactsSchema
 
 
 class TestUsers:
+    @pytest.mark.usefixtures("users_fixture")
+    @pytest.mark.asyncio(loop_scope="session")
     @pytest.mark.parametrize(
         "is_authorized, status_code, response_message",
         [
@@ -27,6 +29,8 @@ class TestUsers:
             (False, 400, {"detail": "Токен отсутствует в заголовке"}),
         ],
     )
+    @pytest.mark.usefixtures("users_fixture")
+    @pytest.mark.asyncio(loop_scope="session")
     async def test_me_200(self, ac, auth_ac, is_authorized, status_code, response_message) -> None:
         if is_authorized:
             response = await auth_ac.client.get("/app/v1/users/me", cookies=auth_ac.cookies.dict())
@@ -37,7 +41,8 @@ class TestUsers:
         assert response.status_code == status_code
         assert response.json() == response_message
 
-    @pytest.mark.usefixtures("prepare_database_manually")
+    @pytest.mark.usefixtures("users_fixture")
+    @pytest.mark.asyncio(loop_scope="session")
     @pytest.mark.parametrize(
         "email, status_code, users_count, response_message",
         [  # AUTHORIZED USERS

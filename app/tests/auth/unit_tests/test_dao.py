@@ -5,6 +5,7 @@ from app.v1.users.schemas import UserAddWithPasswordSchema, UserBaseSchema, User
 
 
 class TestDAO:
+    @pytest.mark.usefixtures("geo_fixture")
     @pytest.mark.asyncio(loop_scope="session")
     async def test_bulk_update(self, user_dao):  # DONT MOVE FROM HERE !!!
         users = await user_dao.find_all()
@@ -26,6 +27,7 @@ class TestDAO:
         for user in updated_users:
             assert user.name.startswith("updated_")
 
+    @pytest.mark.usefixtures("geo_fixture")
     @pytest.mark.asyncio(loop_scope="session")
     async def test_add_user_and_find_by_id(self, user_dao):
         user_data_dict = {
@@ -55,10 +57,11 @@ class TestDAO:
         user = await user_dao.find_one_or_none(filters=UserContactsSchema(email="nonexistent@test.com"))
         assert user is None
 
+    @pytest.mark.usefixtures("users_fixture")
     @pytest.mark.asyncio(loop_scope="session")
     async def test_find_all(self, user_dao):
         users = await user_dao.find_all()
-        assert len(users) == 7
+        assert len(users) == 5
 
     @pytest.mark.asyncio(loop_scope="session")
     async def test_add_many(self, user_dao):
@@ -109,6 +112,7 @@ class TestDAO:
         deleted_user = await user_dao.find_one_or_none_by_id(new_user.id)
         assert deleted_user is None
 
+    @pytest.mark.usefixtures("users_fixture")
     @pytest.mark.asyncio(loop_scope="session")
     async def test_count(self, user_dao):
         count = await user_dao.count()

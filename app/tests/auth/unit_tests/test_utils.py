@@ -48,6 +48,8 @@ class TestUtils:
         assert decoded_refresh["type"] == "refresh"
         assert decoded_refresh["exp"] == int(refresh_expire.timestamp())
 
+    @pytest.mark.usefixtures("geo_fixture")
+    @pytest.mark.asyncio(loop_scope="session")
     async def test_authenticate_user(self, user_dao):
         user_data_dict = {
             "email": "test12@test.com",

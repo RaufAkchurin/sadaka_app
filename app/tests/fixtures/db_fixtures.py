@@ -26,14 +26,13 @@ def apply_migration():
 
 
 async def reset_database():
+    # сначала чистим схему
     async with engine.begin() as conn:
-        # удаляем схему public со всеми объектами
         await conn.execute(text("DROP SCHEMA public CASCADE;"))
-        # создаём схему заново
         await conn.execute(text("CREATE SCHEMA public;"))
 
-    # применяем все миграции
-    apply_migration()
-
-    # сбрасываем все соединения и prepared statements
+    # сбрасываем коннекты ДО миграций
     await engine.dispose()
+
+    # потом уже применяем миграции (создастся новый engine)
+    apply_migration()

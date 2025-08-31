@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
@@ -15,10 +15,19 @@ from app.v1.comment.schemas import (
 )
 from app.v1.dependencies.auth_dep import get_current_user
 from app.v1.dependencies.dao_dep import get_session_with_commit
-from app.v1.users.dao import CommentDAO
+from app.v1.users.dao import CommentDAO, ProjectDAO
 from app.v1.users.schemas import IdSchema
 
 v1_comment_router = APIRouter()
+
+
+async def project_id_validator(project_id: int, session: AsyncSession) -> int | None:
+    project_dao = ProjectDAO(session=session)
+    project = await project_dao.find_one_or_none_by_id(data_id=project_id)
+    if project is None:
+        raise HTTPException(status_code=422, detail="Нет проекта с данным project_id.")
+    else:
+        return project_id
 
 
 @v1_comment_router.post("/", response_model=CommentInfoSchema, status_code=status.HTTP_201_CREATED)
@@ -26,10 +35,16 @@ async def create_comment(
     payload: CommentCreateDataSchema,
     user_data: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session_with_commit),
-) -> CommentInfoSchema:
+) -> CommentInfoSchema | None:
+    await project_id_validator(payload.project_id, session=session)
+
     comment_dao = CommentDAO(session=session)
     new_comment: Comment = await comment_dao.add(
-        values=CommentSchema(user_id=user_data.id, project_id=payload.project_id, content=payload.content)
+        values=CommentSchema(
+            user_id=user_data.id,
+            project_id=payload.project_id,
+            content=payload.content,
+        )
     )
 
     return CommentInfoSchema.model_validate(new_comment)
@@ -81,6 +96,8 @@ async def get_comments_by_project_id(
     user_data: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session_with_commit),
 ) -> PaginationResponseSchema[CommentInfoSchema] | None:
+    await project_id_validator(project_id, session=session)
+
     comments = await CommentDAO(session=session).find_all(filters=CommentProjectFilterSchema(project_id=project_id))
     serialized_comments = [CommentInfoSchema.model_validate(c) for c in comments]
 

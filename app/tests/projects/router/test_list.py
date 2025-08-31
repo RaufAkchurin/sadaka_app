@@ -1,9 +1,16 @@
+import pytest
+
+
 class TestProjectList:
+    @pytest.mark.usefixtures("users_fixture")
+    @pytest.mark.asyncio(loop_scope="session")
     async def test_400_authorization(self, ac) -> None:
         response = await ac.get("/app/v1/projects/all/active")
         assert response.status_code == 400
         assert response.json() == {"detail": "Токен отсутствует в заголовке"}
 
+    @pytest.mark.usefixtures("users_fixture")
+    @pytest.mark.asyncio(loop_scope="session")
     async def test_list_active(self, auth_ac) -> None:
         response = await auth_ac.client.get("/app/v1/projects/all/active", cookies=auth_ac.cookies.dict())
         assert response.status_code == 200
@@ -74,6 +81,8 @@ class TestProjectList:
             "state": {"page": 1, "size": 5, "total_items": 20, "total_pages": 4},
         }
 
+    @pytest.mark.usefixtures("users_fixture")
+    @pytest.mark.asyncio(loop_scope="session")
     async def test_list_finished(self, auth_ac) -> None:
         response = await auth_ac.client.get("/app/v1/projects/all/finished", cookies=auth_ac.cookies.dict())
 
@@ -144,6 +153,8 @@ class TestProjectList:
             "state": {"page": 1, "size": 5, "total_items": 10, "total_pages": 2},
         }
 
+    @pytest.mark.usefixtures("users_fixture")
+    @pytest.mark.asyncio(loop_scope="session")
     async def test_list_all(self, auth_ac) -> None:
         response = await auth_ac.client.get("/app/v1/projects/all/all", cookies=auth_ac.cookies.dict())
 
@@ -214,6 +225,8 @@ class TestProjectList:
             "state": {"page": 1, "size": 5, "total_items": 30, "total_pages": 6},
         }
 
+    @pytest.mark.usefixtures("users_fixture")
+    @pytest.mark.asyncio(loop_scope="session")
     async def test_list_by_fund_id(self, auth_ac) -> None:
         response = await auth_ac.client.get(
             "/app/v1/projects/all/all", cookies=auth_ac.cookies.dict(), params={"fund_id": 1}
@@ -286,6 +299,8 @@ class TestProjectList:
             "state": {"page": 1, "size": 5, "total_items": 10, "total_pages": 2},
         }
 
+    @pytest.mark.usefixtures("users_fixture")
+    @pytest.mark.asyncio(loop_scope="session")
     async def test_list_active_and_fund_id(self, auth_ac) -> None:
         response = await auth_ac.client.get(
             "/app/v1/projects/all/active", cookies=auth_ac.cookies.dict(), params={"fund_id": 1}
