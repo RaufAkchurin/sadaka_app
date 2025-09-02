@@ -38,7 +38,7 @@ class TestAuthSms:
 
     async def test_check_code_success(self, ac, user_dao, otp_dao):
         phone = "+79990000003"
-        await otp_dao.add_and_commit(
+        await otp_dao.add_and_commit_for_tests(
             OtpCodeAddSchema(
                 phone=phone,
                 code="123456",
@@ -65,7 +65,7 @@ class TestAuthSms:
         ],
     )
     async def test_check_code_wrong(self, ac, otp_dao, phone, code, status_code, detail):
-        await otp_dao.add_and_commit(
+        await otp_dao.add_and_commit_for_tests(
             OtpCodeAddSchema(
                 phone=phone,
                 code="123456",
@@ -87,7 +87,7 @@ class TestAuthSms:
         ],
     )
     async def test_check_code_expired(self, ac, otp_dao, phone, code, status_code, detail):
-        await otp_dao.add_and_commit(
+        await otp_dao.add_and_commit_for_tests(
             OtpCodeAddSchema(
                 phone=phone,
                 code=code,
@@ -105,7 +105,7 @@ class TestAuthSms:
     async def test_send_code_blocked(self, ac, otp_dao):
         phone = "+79990000006"
         # искусственно добавляем блокировку
-        await otp_dao.add_and_commit(
+        await otp_dao.add_and_commit_for_tests(
             OtpBlockedRequestAddSchema(
                 phone=phone,
                 code="123456",
@@ -121,12 +121,29 @@ class TestAuthSms:
 
     async def test_check_code_blocked(self, ac, otp_dao):
         phone = "+79990000007"
-        await otp_dao.add_and_commit(
+        await otp_dao.add_and_commit_for_tests(
             OtpBlockedConfirmationsAddSchema(
                 phone=phone,
                 code="123456",
                 expiration=datetime.now() + timedelta(minutes=5),
                 blocked_confirmations_until=datetime.now() + timedelta(hours=1),
+            )
+        )
+        response = await ac.post(
+            "/app/v1/auth/sms/check_code/",
+            json={"phone": phone, "code": "123456"},
+        )
+        assert response.status_code == 403
+        assert response.json()["detail"] == "Превышен лимит на подтверждение кода, попробуйте попозже, или после 00-00"
+
+    async def test_check_code_block_expired(self, ac, otp_dao):
+        phone = "+79990000007"
+        await otp_dao.add_and_commit_for_tests(
+            OtpBlockedConfirmationsAddSchema(
+                phone=phone,
+                code="123456",
+                expiration=datetime.now() + timedelta(minutes=5),
+                blocked_confirmations_until=datetime.now() - timedelta(seconds=1),
             )
         )
         response = await ac.post(

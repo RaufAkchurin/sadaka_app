@@ -74,7 +74,7 @@ class BaseDAO(Generic[T]):
             logger.error(f"Ошибка при добавлении записи: {e}")
             raise
 
-    async def add_and_commit(self, values: BaseModel) -> T:
+    async def add_and_commit_for_tests(self, values: BaseModel) -> T:
         obj = await self.add(values)
         obj_id = obj.id
         await self._session.commit()

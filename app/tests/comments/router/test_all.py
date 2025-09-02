@@ -58,7 +58,7 @@ class TestCommentsAPI:
         assert resp.status_code == 404  # CommentNotFoundByIdException
 
     async def test_delete_comment_forbidden(self, auth_ac, comment_dao):
-        foreign = await comment_dao.add_and_commit(
+        foreign = await comment_dao.add_and_commit_for_tests(
             values=CommentSchema(user_id=999999, project_id=301, content="foreign")
         )
         resp = await auth_ac.client.delete(
@@ -100,7 +100,7 @@ class TestCommentsAPI:
         assert resp.status_code == 404  # CommentNotFoundByIdException
 
     async def test_edit_comment_forbidden(self, auth_ac, comment_dao):
-        foreign = await comment_dao.add_and_commit(
+        foreign = await comment_dao.add_and_commit_for_tests(
             values=CommentSchema(user_id=999999, project_id=501, content="locked")
         )
         resp = await auth_ac.client.patch(
@@ -131,7 +131,9 @@ class TestCommentsAPI:
     async def test_get_comments_by_project_id_paginated(self, auth_ac, comment_dao):
         project_id = 1
         for i in range(15):
-            await comment_dao.add_and_commit(values=CommentSchema(user_id=1, project_id=project_id, content=f"c{i}"))
+            await comment_dao.add_and_commit_for_tests(
+                values=CommentSchema(user_id=1, project_id=project_id, content=f"c{i}")
+            )
 
         resp1 = await auth_ac.client.get(
             f"/app/v1/comments/{project_id}",
