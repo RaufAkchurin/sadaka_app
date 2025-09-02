@@ -2,13 +2,10 @@ from datetime import datetime, timedelta
 
 import pytest
 
+from app.models.one_time_pass import OneTimePass
 from app.models.user import User
-from app.v1.auth_sms.schemas import (
-    OtpBlockedConfirmationsAddSchema,
-    OtpBlockedRequestAddSchema,
-    OtpCodeAddSchema,
-    OtpPhoneOnlySchema,
-)
+from app.tests.auth_sms.integration_tests.schemas import OtpBlockedConfirmationsAddSchema, OtpBlockedRequestAddSchema
+from app.v1.auth_sms.schemas import OtpCodeAddSchema, OtpPhoneOnlySchema
 
 # TODO Добавить проверку на то что отправка смс была вызвана
 # TODO Добавить тест эмитирующий максимально возможное количество запросов чтобы счетчики
@@ -38,7 +35,7 @@ class TestAuthSms:
 
     async def test_check_code_success(self, ac, user_dao, otp_dao):
         phone = "+79990000003"
-        await otp_dao.add(
+        await otp_dao.add_and_commit_for_tests(
             OtpCodeAddSchema(
                 phone=phone,
                 code="123456",
@@ -65,7 +62,7 @@ class TestAuthSms:
         ],
     )
     async def test_check_code_wrong(self, ac, otp_dao, phone, code, status_code, detail):
-        await otp_dao.add(
+        await otp_dao.add_and_commit_for_tests(
             OtpCodeAddSchema(
                 phone=phone,
                 code="123456",
@@ -87,7 +84,7 @@ class TestAuthSms:
         ],
     )
     async def test_check_code_expired(self, ac, otp_dao, phone, code, status_code, detail):
-        await otp_dao.add(
+        await otp_dao.add_and_commit_for_tests(
             OtpCodeAddSchema(
                 phone=phone,
                 code=code,
@@ -105,12 +102,13 @@ class TestAuthSms:
     async def test_send_code_blocked(self, ac, otp_dao):
         phone = "+79990000006"
         # искусственно добавляем блокировку
-        await otp_dao.add(
+        await otp_dao.add_and_commit_for_tests(
             OtpBlockedRequestAddSchema(
                 phone=phone,
                 code="123456",
                 expiration=datetime.now() + timedelta(minutes=5),
                 blocked_requests_until=datetime.now() + timedelta(hours=1),
+                count_of_request=3,  # не важно
             )
         )
         response = await ac.post("/app/v1/auth/sms/send_code/", json={"phone": phone})
@@ -119,14 +117,34 @@ class TestAuthSms:
             response.json()["detail"] == "Превышен лимит на отправку смс с кодом, попробуйте попозже, или после 00-00"
         )
 
-    async def test_check_code_blocked(self, ac, otp_dao):
+    async def test_send_code_block_expired(self, ac, otp_dao):
         phone = "+79990000007"
-        await otp_dao.add(
+        # искусственно добавляем блокировку
+        otp_id = await otp_dao.add_and_commit_for_tests(
+            OtpBlockedRequestAddSchema(
+                phone=phone,
+                code="123456",
+                expiration=datetime.now() + timedelta(minutes=5),
+                blocked_requests_until=datetime.now() - timedelta(hours=1),
+                count_of_request=3,
+            )
+        )
+        response = await ac.post("/app/v1/auth/sms/send_code/", json={"phone": phone})
+        assert response.status_code == 200
+
+        actual_otp: OneTimePass = await otp_dao.find_one_or_none_by_id(data_id=otp_id)
+        assert actual_otp.count_of_confirmation == 0
+        assert actual_otp.count_of_request == 1
+
+    async def test_check_code_blocked(self, ac, otp_dao):
+        phone = "+79990000008"
+        await otp_dao.add_and_commit_for_tests(
             OtpBlockedConfirmationsAddSchema(
                 phone=phone,
                 code="123456",
                 expiration=datetime.now() + timedelta(minutes=5),
                 blocked_confirmations_until=datetime.now() + timedelta(hours=1),
+                count_of_confirmation=3,
             )
         )
         response = await ac.post(
@@ -135,3 +153,24 @@ class TestAuthSms:
         )
         assert response.status_code == 403
         assert response.json()["detail"] == "Превышен лимит на подтверждение кода, попробуйте попозже, или после 00-00"
+
+    async def test_check_code_block_expired(self, ac, otp_dao):
+        phone = "+79990000009"
+        otp_id = await otp_dao.add_and_commit_for_tests(
+            OtpBlockedConfirmationsAddSchema(
+                phone=phone,
+                code="123456",
+                expiration=datetime.now() + timedelta(minutes=5),
+                blocked_confirmations_until=datetime.now() - timedelta(seconds=1),
+                count_of_confirmation=3,
+            )
+        )
+        response = await ac.post(
+            "/app/v1/auth/sms/check_code/",
+            json={"phone": phone, "code": "123456"},
+        )
+        assert response.status_code == 200
+
+        actual_otp: OneTimePass = await otp_dao.find_one_or_none_by_id(data_id=otp_id)
+        assert actual_otp.count_of_confirmation == 0
+        assert actual_otp.count_of_request == 0

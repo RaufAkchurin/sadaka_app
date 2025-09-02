@@ -13,7 +13,7 @@ class TestCommentsAPI:
     @pytest.mark.parametrize(
         "payload, status_code",
         [
-            ({"project_id": 101, "content": "hello world"}, 201),
+            ({"project_id": 1, "content": "hello world"}, 201),
         ],
     )
     async def test_create_comment(self, auth_ac, comment_dao, payload, status_code):
@@ -58,14 +58,16 @@ class TestCommentsAPI:
         assert resp.status_code == 404  # CommentNotFoundByIdException
 
     async def test_delete_comment_forbidden(self, auth_ac, comment_dao):
-        foreign = await comment_dao.add(values=CommentSchema(user_id=999999, project_id=301, content="foreign"))
+        foreign = await comment_dao.add_and_commit_for_tests(
+            values=CommentSchema(user_id=999999, project_id=301, content="foreign")
+        )
         resp = await auth_ac.client.delete(
-            f"/app/v1/comments/{foreign.id}",
+            f"/app/v1/comments/{foreign}",
             cookies=auth_ac.cookies.dict(),
         )
         assert resp.status_code == 403  # CommentNotPermissionsException
 
-        still_there = await comment_dao.find_one_or_none_by_id(foreign.id)
+        still_there = await comment_dao.find_one_or_none_by_id(foreign)
         assert still_there is not None
 
     async def test_edit_comment_success(self, auth_ac, comment_dao):
@@ -98,54 +100,63 @@ class TestCommentsAPI:
         assert resp.status_code == 404  # CommentNotFoundByIdException
 
     async def test_edit_comment_forbidden(self, auth_ac, comment_dao):
-        foreign = await comment_dao.add(values=CommentSchema(user_id=999999, project_id=501, content="locked"))
+        foreign = await comment_dao.add_and_commit_for_tests(
+            values=CommentSchema(user_id=999999, project_id=501, content="locked")
+        )
         resp = await auth_ac.client.patch(
-            f"/app/v1/comments/{foreign.id}",
+            f"/app/v1/comments/{foreign}",
             json=CommentContentSchema(content="try edit").model_dump(),
             cookies=auth_ac.cookies.dict(),
         )
         assert resp.status_code == 403  # CommentNotPermissionsException
 
-        same: Comment = await comment_dao.find_one_or_none_by_id(data_id=foreign.id)
+        same: Comment = await comment_dao.find_one_or_none_by_id(data_id=foreign)
         assert same is not None
         assert same.content == "locked"
 
     async def test_get_comments_by_project_id_empty(self, auth_ac):
-        project_id = 601
+        project_id = 1
         resp = await auth_ac.client.get(
-            "/app/v1/comments/",
+            f"/app/v1/comments/{project_id}",
             params={"project_id": project_id, "page": 1, "limit": 10},
             cookies=auth_ac.cookies.dict(),
         )
         assert resp.status_code == 200
         data = resp.json()
-        assert data["page"] == 1
-        assert data["limit"] == 10
-        assert data["items"] == []
+        assert data.get("state").get("page") == 1
+        assert data.get("state").get("size") == 10
+        assert data.get("state").get("total_pages") == 1
+        assert data.get("state").get("total_items") == 1
 
     async def test_get_comments_by_project_id_paginated(self, auth_ac, comment_dao):
-        project_id = 701
+        project_id = 1
         for i in range(15):
-            await comment_dao.add(values=CommentSchema(user_id=888888, project_id=project_id, content=f"c{i}"))
+            await comment_dao.add_and_commit_for_tests(
+                values=CommentSchema(user_id=1, project_id=project_id, content=f"c{i}")
+            )
 
         resp1 = await auth_ac.client.get(
-            "/app/v1/comments/",
+            f"/app/v1/comments/{project_id}",
             params={"project_id": project_id, "page": 1, "limit": 10},
             cookies=auth_ac.cookies.dict(),
         )
         assert resp1.status_code == 200
         data1 = resp1.json()
-        assert data1["page"] == 1
-        assert data1["limit"] == 10
+        assert data1.get("state").get("page") == 1
+        assert data1.get("state").get("size") == 10
+        assert data1.get("state").get("total_pages") == 2
+        assert data1.get("state").get("total_items") == 16
         assert len(data1["items"]) == 10
 
         resp2 = await auth_ac.client.get(
-            "/app/v1/comments/",
+            f"/app/v1/comments/{project_id}",
             params={"project_id": project_id, "page": 2, "limit": 10},
             cookies=auth_ac.cookies.dict(),
         )
         assert resp2.status_code == 200
         data2 = resp2.json()
-        assert data2["page"] == 2
-        assert data2["limit"] == 10
-        assert len(data2["items"]) == 5
+        assert data2.get("state").get("page") == 2
+        assert data2.get("state").get("size") == 10
+        assert data2.get("state").get("total_pages") == 2
+        assert data2.get("state").get("total_items") == 16
+        assert len(data2["items"]) == 6

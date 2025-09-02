@@ -74,6 +74,12 @@ class BaseDAO(Generic[T]):
             logger.error(f"Ошибка при добавлении записи: {e}")
             raise
 
+    async def add_and_commit_for_tests(self, values: BaseModel) -> T:
+        obj = await self.add(values)
+        obj_id = obj.id
+        await self._session.commit()
+        return obj_id
+
     async def add_many(self, instances: List[BaseModel]):
         values_list = [item.model_dump(exclude_unset=True) for item in instances]
         logger.info(f"Добавление нескольких записей {self.model.__name__}. Количество: {len(values_list)}")
