@@ -33,7 +33,7 @@ class UserContactsSchema(BaseModel):
         # Если оба поля присутствуют, можно делать дополнительные проверки
         if self.email:
             try:
-                validate_email(str(self.email))
+                validate_email(str(self.email), check_deliverability=False)
             except EmailNotValidError as e:
                 raise ValueError(f"Невалидный email: {e}")
 
@@ -54,6 +54,7 @@ class UserPhoneOnlySchema(BaseModel):
 
 class AnonymousUserAddSchema(UserBaseSchema):
     is_anonymous: bool
+
 
 class UserEmailRegisterSchema(UserBaseSchema):
     password: str = Field(min_length=5, max_length=50, description="Пароль, от 5 до 50 знаков")
