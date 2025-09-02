@@ -38,7 +38,7 @@ class TestAuthSms:
 
     async def test_check_code_success(self, ac, user_dao, otp_dao):
         phone = "+79990000003"
-        await otp_dao.add(
+        await otp_dao.add_and_commit(
             OtpCodeAddSchema(
                 phone=phone,
                 code="123456",
@@ -65,7 +65,7 @@ class TestAuthSms:
         ],
     )
     async def test_check_code_wrong(self, ac, otp_dao, phone, code, status_code, detail):
-        await otp_dao.add(
+        await otp_dao.add_and_commit(
             OtpCodeAddSchema(
                 phone=phone,
                 code="123456",
@@ -87,7 +87,7 @@ class TestAuthSms:
         ],
     )
     async def test_check_code_expired(self, ac, otp_dao, phone, code, status_code, detail):
-        await otp_dao.add(
+        await otp_dao.add_and_commit(
             OtpCodeAddSchema(
                 phone=phone,
                 code=code,
@@ -105,7 +105,7 @@ class TestAuthSms:
     async def test_send_code_blocked(self, ac, otp_dao):
         phone = "+79990000006"
         # искусственно добавляем блокировку
-        await otp_dao.add(
+        await otp_dao.add_and_commit(
             OtpBlockedRequestAddSchema(
                 phone=phone,
                 code="123456",
@@ -121,7 +121,7 @@ class TestAuthSms:
 
     async def test_check_code_blocked(self, ac, otp_dao):
         phone = "+79990000007"
-        await otp_dao.add(
+        await otp_dao.add_and_commit(
             OtpBlockedConfirmationsAddSchema(
                 phone=phone,
                 code="123456",
