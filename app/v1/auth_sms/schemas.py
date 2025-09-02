@@ -25,11 +25,3 @@ class OtpCodeAddSchema(OtpPhoneOnlySchema):
 
 class OtpCodeCheckSchema(OtpPhoneOnlySchema):
     code: str = Field(min_length=6, max_length=6, pattern=r"^\d{6}$", description="Код подтверждения в формате 123456")
-
-
-class OtpBlockedRequestAddSchema(OtpCodeAddSchema):
-    blocked_requests_until: datetime = Field()
-
-
-class OtpBlockedConfirmationsAddSchema(OtpCodeAddSchema):
-    blocked_confirmations_until: datetime = Field()
