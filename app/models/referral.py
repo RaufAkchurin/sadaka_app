@@ -11,7 +11,7 @@ from app.v1.dao.database import Base
 
 
 def generate_short_key():
-    return secrets.token_urlsafe(6)  # например: "aZ8kPq1L"
+    return secrets.token_urlsafe(6)  # например:"aZ8kPq1L"
 
 
 class ReferralTypeEnum(str, enum.Enum):
