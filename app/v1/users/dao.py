@@ -1,3 +1,5 @@
+from sqlalchemy import func, select
+
 from app.models.city import City
 from app.models.comment import Comment
 from app.models.country import Country
@@ -50,6 +52,10 @@ class FileDAO(BaseDAO):
 
 class PaymentDAO(BaseDAO):
     model = Payment
+
+    async def get_total_income(self) -> float:
+        result = await self._session.execute(select(func.sum(self.model.income_amount)))
+        return result.scalar() or 0
 
 
 class CommentDAO(BaseDAO):

@@ -9,7 +9,7 @@ from yookassa import Configuration
 from app.models.user import User
 from app.settings import settings
 from app.v1.dao.database import async_session_maker
-from app.v1.users.dao import CommentDAO, OneTimePassDAO, UserDAO
+from app.v1.users.dao import CommentDAO, OneTimePassDAO, PaymentDAO, UserDAO
 
 
 @pytest.fixture(autouse=True)
@@ -58,6 +58,12 @@ async def otp_dao(session) -> OneTimePassDAO:
 async def comment_dao(session) -> CommentDAO:
     comment_dao = CommentDAO(session)
     return comment_dao
+
+
+@pytest.fixture(scope="function")
+async def payment_dao(session) -> PaymentDAO:
+    payment_dao = PaymentDAO(session)
+    return payment_dao
 
 
 @pytest.fixture(scope="class")
