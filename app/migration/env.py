@@ -6,12 +6,14 @@ from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
-from app.models.one_time_pass import OneTimePass  # noqa: F401
 from app.models.city import City  # noqa: F401
+from app.models.comment import Comment  # noqa: F401
 from app.models.country import Country  # noqa: F401
 from app.models.file import File  # noqa: F401
 from app.models.fund import Fund  # noqa: F401
+from app.models.one_time_pass import OneTimePass  # noqa: F401
 from app.models.project import Project  # noqa: F401
+from app.models.referral import Referral  # noqa: F401
 from app.models.region import Region  # noqa: F401
 from app.models.stage import Stage  # noqa: F401
 from app.models.user import User  # noqa: F401

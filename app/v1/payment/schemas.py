@@ -52,6 +52,10 @@ class YooMetadataInputSchema(BaseModel):
 class YooMetadataCallbackSchema(BaseModel):
     project_id: int
     user_id: int
+    referral_key: str | None = None
+
+    # TODO Do you need add here info about referrals ?
+    # or in extract it from user.referrals only?
 
 
 class YooWebhookDataSchema(BaseModel):
