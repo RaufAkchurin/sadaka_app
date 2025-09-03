@@ -37,5 +37,8 @@ class Payment(Base):
     stage_id: Mapped[int] = mapped_column(ForeignKey("stages.id"), nullable=False)
     stage: Mapped["Stage"] = relationship("Stage", back_populates="payments", lazy="joined")  # noqa F821
 
+    referral_id: Mapped[int] = mapped_column(ForeignKey("referral.id"), nullable=True, default=None)
+    refferal: Mapped["Refferal"] = relationship("Referral", back_populates="payments", lazy="joined")  # noqa F821
+
     def __str__(self):
         return f"{self.project.name}, {self.income_amount}, {self.status}, test - {self.test}"
