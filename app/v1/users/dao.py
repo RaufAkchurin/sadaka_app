@@ -1,4 +1,4 @@
-from sqlalchemy import func, select
+from sqlalchemy import desc, func, select
 
 from app.models.city import City
 from app.models.comment import Comment
@@ -16,6 +16,25 @@ from app.v1.dao.base import BaseDAO
 
 class UserDAO(BaseDAO):
     model = User
+
+    async def get_users_ordered_by_payments(self, limit: int | None = None):
+        query = (
+            select(User, func.coalesce(func.sum(Payment.income_amount), 0.0).label("total_income"))
+            .join(Payment, Payment.user_id == User.id, isouter=True)
+            .group_by(User.id)
+            .order_by(desc("total_income"))
+        )
+        if limit:
+            query = query.limit(limit)
+
+        result = await self._session.execute(query)
+        rows = result.all()
+
+        users = []
+        for user, total in rows:
+            setattr(user, "total_income", total)
+            users.append(user)
+        return users
 
 
 class OneTimePassDAO(BaseDAO):
@@ -53,8 +72,18 @@ class FileDAO(BaseDAO):
 class PaymentDAO(BaseDAO):
     model = Payment
 
-    async def get_total_income(self) -> float:
+    async def count_payments_total_income(self) -> float:
         result = await self._session.execute(select(func.sum(self.model.income_amount)))
+        return result.scalar() or 0
+
+    async def count_payment_cities(self) -> int:
+        query = (
+            select(func.count(func.distinct(City.id)))
+            .select_from(Payment)
+            .join(User, User.id == Payment.user_id)  # тащим всех юзеров, которые есть в платежах
+            .join(City, City.id == User.city_id)  # тащим города, которые есть у пользователей
+        )
+        result = await self._session.execute(query)
         return result.scalar() or 0
 
 

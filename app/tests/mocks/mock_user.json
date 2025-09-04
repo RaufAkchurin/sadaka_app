@@ -5,7 +5,8 @@
     "name": "superadmin",
     "password": "$2b$12$rm7Bu.bjhNHKU25th37EFO6tpnvjz5EiB2s7QyJX/BKx9aOsIwEKm",
     "role": "SUPERUSER",
-    "picture_id": 9
+    "picture_id": 9,
+    "city_id": 1
   },
     {
     "id": 2,
@@ -13,14 +14,16 @@
     "name": "admin",
     "password": "$2b$12$rm7Bu.bjhNHKU25th37EFO6tpnvjz5EiB2s7QyJX/BKx9aOsIwEKm",
     "role": "FUND_ADMIN",
-    "picture_id": 10
+    "picture_id": 10,
+    "city_id": 2
   },
     {
     "id": 3,
     "email": "moderator@test.com",
     "name": "moderator",
     "password": "$2b$12$rm7Bu.bjhNHKU25th37EFO6tpnvjz5EiB2s7QyJX/BKx9aOsIwEKm",
-    "picture_id": 11
+    "picture_id": 11,
+    "city_id": 3
   },
   {
     "id": 4,
