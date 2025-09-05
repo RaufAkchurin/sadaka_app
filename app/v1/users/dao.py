@@ -37,12 +37,12 @@ class UserDAO(BaseDAO):
         result = await self._session.execute(query)
         rows = result.all()
 
-        users: list[User] = []
+        target_users: list[User] = []
         for user, total in rows:
             setattr(user, "total_income", total)
-            users.append(user)
+            target_users.append(user)
 
-        return users
+        return target_users
 
 
 class OneTimePassDAO(BaseDAO):
