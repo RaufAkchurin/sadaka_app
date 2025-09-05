@@ -1,4 +1,3 @@
-from loguru import logger
 from sqlalchemy import desc, func, select
 from sqlalchemy.orm import selectinload
 
@@ -34,9 +33,6 @@ class UserDAO(BaseDAO):
 
         if limit:
             query = query.limit(limit)
-
-        sql = str(query.compile(compile_kwargs={"literal_binds": True}))
-        logger.info(f"SQL being executed:\n{sql}")
 
         result = await self._session.execute(query)
         rows = result.all()
