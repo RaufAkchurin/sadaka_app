@@ -24,10 +24,10 @@ class UserModelTotalIncomeSchema(BaseModel):
 class RegionModelTotalIncomeSchema(BaseModel):
     id: int
     name: str
+    url: str | None = Field(default=None, alias="picture_url")
     total_income: float = 0
-    picture_url: str | None = None
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
 
 class RatingTotalInfoResponseSchema(BaseModel):

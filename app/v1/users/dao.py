@@ -14,6 +14,18 @@ from app.models.user import User
 from app.v1.dao.base import BaseDAO
 
 
+class OneTimePassDAO(BaseDAO):
+    model = OneTimePass
+
+
+class CountryDAO(BaseDAO):
+    model = Country
+
+
+class CityDAO(BaseDAO):
+    model = City
+
+
 class UserDAO(BaseDAO):
     model = User
 
@@ -33,72 +45,55 @@ class UserDAO(BaseDAO):
         return result.unique().mappings().all()
 
 
-class OneTimePassDAO(BaseDAO):
-    model = OneTimePass
-
-
-class CountryDAO(BaseDAO):
-    model = Country
-
-
-class CityDAO(BaseDAO):
-    model = City
-
-
 class RegionDAO(BaseDAO):
     model = Region
 
-    async def get_regions_ordered_by_payments(self, limit: int | None = None) -> list[Region]:
-        total_income_expr = func.coalesce(func.sum(Payment.income_amount), 0.0).label("total_income")
+    async def get_regions_ordered_by_payments(self):
+        total_income = func.coalesce(
+            func.sum(Payment.income_amount).over(partition_by=Region.id),
+            0.0,
+        ).label("total_income")
 
         query = (
-            select(Region, total_income_expr)
-            .join(City, City.region_id == Region.id)
-            .join(User, User.city_id == City.id)
-            .join(Payment, Payment.user_id == User.id)
-            .group_by(Region.id)
+            select(Region.id, Region.name, File.url, total_income)
+            .outerjoin(City, City.region_id == Region.id)
+            .outerjoin(User, User.city_id == City.id)
+            .outerjoin(Payment, Payment.user_id == User.id)
+            .outerjoin(File, File.id == Region.picture_id)
             .order_by(desc("total_income"))
         )
-        if limit:
-            query = query.limit(limit)
 
         result = await self._session.execute(query)
-        rows = result.all()
-
-        regions = []
-        for region, total in rows:
-            setattr(region, "total_income", total)
-            regions.append(region)
-        return regions
-
-
-class FundDAO(BaseDAO):
-    model = Fund
+        return result.unique().mappings().all()
 
 
 class ProjectDAO(BaseDAO):
     model = Project
 
-    async def get_projects_ordered_by_payments(self, limit: int | None = None) -> list[Project]:
-        total_income_expr = func.coalesce(func.sum(Payment.income_amount), 0.0).label("total_income")
+    async def get_projects_ordered_by_payments(self):
+        total_income = func.coalesce(func.sum(Payment.income_amount), 0.0).label("total_income")
+        pictures = func.array_remove(func.array_agg(File.url), None).label("pictures")
 
         query = (
-            select(Project, total_income_expr)
-            .join(Payment, Payment.project_id == Project.id)
-            .group_by(Project.id)
+            select(
+                Project.id,
+                Project.status,
+                Project.name,
+                total_income,
+                pictures,
+            )
+            .outerjoin(Payment, Payment.project_id == Project.id)
+            .outerjoin(File, File.project_picture_id == Project.id)
+            .group_by(Project.id, Project.status, Project.name)
             .order_by(desc("total_income"))
         )
-        if limit:
-            query = query.limit(limit)
 
         result = await self._session.execute(query)
-        rows = result.unique().all()
+        return result.mappings().all()
 
-        projects = []
-        for project, total in rows:
-            setattr(project, "total_income", total)
-            projects.append(project)
-        return projects
+
+class FundDAO(BaseDAO):
+    model = Fund
 
 
 class StageDAO(BaseDAO):

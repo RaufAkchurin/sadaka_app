@@ -110,17 +110,25 @@ class TestRatingAPI:
         assert data == {
             "items": [
                 {
+                    "id": 2,
                     "name": "Bashkortostan",
                     "picture_url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/tests%2Fdigits%2F5.png",
                     "total_income": 7000.0,
                 },
                 {
+                    "id": 1,
                     "name": "Tatarstan",
                     "picture_url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/tests%2Fdigits%2F4.png",
                     "total_income": 2000.0,
                 },
+                {
+                    "id": 3,
+                    "name": "Aktobe obl",
+                    "picture_url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/tests%2Fdigits%2F6.png",
+                    "total_income": 0.0,
+                },
             ],
-            "state": {"page": 1, "size": 5, "total_items": 2, "total_pages": 1},
+            "state": {"page": 1, "size": 5, "total_items": 3, "total_pages": 1},
         }
 
     async def test_projects(self, auth_ac, payment_dao, query_counter) -> None:
