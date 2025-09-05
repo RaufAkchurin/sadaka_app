@@ -4,11 +4,13 @@ from sqladmin import Admin
 from app.admin.views.auth import MyAuthenticationBackend
 from app.admin.views.city import CityAdmin
 from app.admin.views.comment import CommentAdmin
+from app.admin.views.country import CountryAdmin
 from app.admin.views.file import FileAdmin
 from app.admin.views.fund import FundAdmin
 from app.admin.views.one_time_pass import OneTimePassAdmin
 from app.admin.views.payment import PaymentAdmin
 from app.admin.views.project import ProjectAdmin
+from app.admin.views.referral import ReferralAdmin
 from app.admin.views.region import RegionAdmin
 from app.admin.views.stage import StageAdmin
 from app.admin.views.user import UserAdmin
@@ -26,7 +28,7 @@ def create_admin_panel(app: FastAPI):
         debug=True,  # Enable debug mode for better error reporting
     )
 
-    # admin.add_view(CountryAdmin)
+    admin.add_view(CountryAdmin)
     admin.add_view(RegionAdmin)
     admin.add_view(CityAdmin)
 
@@ -40,3 +42,4 @@ def create_admin_panel(app: FastAPI):
     admin.add_view(PaymentAdmin)
     admin.add_view(OneTimePassAdmin)
     admin.add_view(CommentAdmin)
+    admin.add_view(ReferralAdmin)

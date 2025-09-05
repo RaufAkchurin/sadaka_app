@@ -60,7 +60,7 @@ class TestProjectDetail:
             "stages": [
                 {
                     "collected": 2000,
-                    "goal": 1000,
+                    "goal": 4000,
                     "name": "proj1 stage1",
                     "number": 1,
                     "reports": [
@@ -84,8 +84,8 @@ class TestProjectDetail:
                     "status": "finished",
                 },
                 {
-                    "collected": 2000,
-                    "goal": 2000,
+                    "collected": 3000,
+                    "goal": 5000,
                     "name": "proj1 stage2",
                     "number": 2,
                     "reports": [

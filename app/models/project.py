@@ -97,7 +97,7 @@ class Project(Base):
 
     @property
     def total_collected(self) -> int:
-        return sum(payment.amount for payment in self.payments)
+        return sum(payment.income_amount for payment in self.payments)
 
     @property
     def collected_percentage(self) -> int:

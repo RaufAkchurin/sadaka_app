@@ -24,26 +24,26 @@ class TestProjectList:
                 },
                 {
                     "active_stage_number": 2,
-                    "collected_percentage": 10,
+                    "collected_percentage": 15,
                     "fund": {"id": 2, "name": "fund2", "picture_url": None},
                     "goal": 20000,
                     "id": 2,
                     "name": "project2",
                     "pictures_list": [],
                     "status": "active",
-                    "total_collected": 2000,
+                    "total_collected": 3000,
                     "unique_sponsors": 1,
                 },
                 {
                     "active_stage_number": None,
-                    "collected_percentage": 6,
+                    "collected_percentage": 13,
                     "fund": {"id": 3, "name": "fund3", "picture_url": None},
                     "goal": 30000,
                     "id": 3,
                     "name": "project3",
                     "pictures_list": [],
                     "status": "active",
-                    "total_collected": 2000,
+                    "total_collected": 4000,
                     "unique_sponsors": 1,
                 },
                 {
@@ -164,26 +164,26 @@ class TestProjectList:
                 },
                 {
                     "active_stage_number": 2,
-                    "collected_percentage": 10,
+                    "collected_percentage": 15,
                     "fund": {"id": 2, "name": "fund2", "picture_url": None},
                     "goal": 20000,
                     "id": 2,
                     "name": "project2",
                     "pictures_list": [],
                     "status": "active",
-                    "total_collected": 2000,
+                    "total_collected": 3000,
                     "unique_sponsors": 1,
                 },
                 {
                     "active_stage_number": None,
-                    "collected_percentage": 6,
+                    "collected_percentage": 13,
                     "fund": {"id": 3, "name": "fund3", "picture_url": None},
                     "goal": 30000,
                     "id": 3,
                     "name": "project3",
                     "pictures_list": [],
                     "status": "active",
-                    "total_collected": 2000,
+                    "total_collected": 4000,
                     "unique_sponsors": 1,
                 },
                 {
@@ -213,6 +213,28 @@ class TestProjectList:
             ],
             "state": {"page": 1, "size": 5, "total_items": 30, "total_pages": 6},
         }
+
+    # @pytest.mark.parametrize("num_requests", [20])
+    # async def test_rps(self, auth_ac, num_requests) -> None:
+    #     url = "/app/v1/projects/all/all"
+    #     cookies = auth_ac.cookies.dict()
+    #
+    #     async def make_request():
+    #         response = await auth_ac.client.get(url, cookies=cookies, params={"fund_id": 1})
+    #         assert response.status_code == 200
+    #         return response
+    #
+    #     tasks = [make_request() for _ in range(num_requests)]
+    #
+    #     start = time.perf_counter()
+    #     await asyncio.gather(*tasks)
+    #     elapsed = time.perf_counter() - start
+    #
+    #     rps = num_requests / elapsed
+    #     logger.info(f"⚡ {num_requests} requests in {elapsed:.2f}s → {rps:.2f} RPS")
+    #
+    #     # необязательная проверка минимального порога
+    #     assert rps > 80
 
     async def test_list_by_fund_id(self, auth_ac) -> None:
         response = await auth_ac.client.get(

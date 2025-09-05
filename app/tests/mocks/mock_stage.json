@@ -4,7 +4,7 @@
     "number": 1,
     "name": "proj1 stage1",
     "status": "FINISHED",
-    "goal": 1000,
+    "goal": 4000,
     "project_id": 1
   },
     {
@@ -12,7 +12,7 @@
     "number": 2,
     "name": "proj1 stage2",
     "status": "ACTIVE",
-    "goal": 2000,
+    "goal": 5000,
     "project_id": 1
   },
     {
@@ -20,7 +20,7 @@
     "number": 1,
     "name": "proj2 stage1",
     "status": "FINISHED",
-    "goal": 3000,
+    "goal": 6000,
     "project_id": 2
   },
       {
@@ -28,7 +28,7 @@
     "number": 2,
     "name": "proj2 stage2",
     "status": "ACTIVE",
-    "goal": 4000,
+    "goal": 7000,
     "project_id": 2
   }
 ]

@@ -8,6 +8,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models.city import City
 from app.models.comment import Comment
 from app.models.payment import Payment
+from app.models.referral import Referral
 from app.v1.auth.service_jwt import hash_password_in_signal
 from app.v1.dao.database import Base
 from app.v1.users.enums import LanguageEnum, RoleEnum
@@ -68,6 +69,7 @@ class User(Base):
     # RELATIONS
     payments: Mapped[list["Payment"]] = relationship(back_populates="user")
     comments: Mapped[list["Comment"]] = relationship(back_populates="user")
+    referrals: Mapped[list["Referral"]] = relationship(back_populates="sharer")
 
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.id}, name={self.name})"
