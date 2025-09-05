@@ -1,5 +1,4 @@
 from sqlalchemy import desc, func, select
-from sqlalchemy.orm import selectinload
 
 from app.models.city import City
 from app.models.comment import Comment
@@ -18,20 +17,15 @@ from app.v1.dao.base import BaseDAO
 class UserDAO(BaseDAO):
     model = User
 
-    async def get_users_ordered_by_payments(self, limit: int | None = None) -> list[User]:
-        # sum(...) OVER (...) и сразу coalesce
+    async def get_users_ordered_by_payments(self, limit: int | None = None):
         total_income = func.coalesce(
             func.sum(Payment.income_amount).over(partition_by=User.id),
             0.0,
         ).label("total_income")
 
         query = (
-            select(User, total_income)
+            select(User.id, User.name, total_income)
             .outerjoin(Payment, Payment.user_id == User.id)
-            .options(
-                selectinload(User.picture),
-                selectinload(User.city).selectinload(City.region).selectinload(Region.country),
-            )
             .order_by(desc("total_income"))
         )
 
@@ -39,19 +33,7 @@ class UserDAO(BaseDAO):
             query = query.limit(limit)
 
         result = await self._session.execute(query)
-        rows = result.all()
-
-        seen_ids: set[int] = set()
-        target_users: list[User] = []
-
-        for user, total in rows:
-            if user.id in seen_ids:  # защита от дублей
-                continue
-            seen_ids.add(user.id)
-            setattr(user, "total_income", total)
-            target_users.append(user)
-
-        return target_users
+        return result.all()
 
 
 class OneTimePassDAO(BaseDAO):
