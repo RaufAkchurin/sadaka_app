@@ -17,7 +17,7 @@ from app.v1.dao.base import BaseDAO
 class UserDAO(BaseDAO):
     model = User
 
-    async def get_users_ordered_by_payments(self, limit: int | None = None):
+    async def get_users_ordered_by_payments(self, limit: int | None = None) -> list[User]:
         query = (
             select(User, func.coalesce(func.sum(Payment.income_amount), 0.0).label("total_income"))
             .join(Payment, Payment.user_id == User.id, isouter=True)
@@ -52,7 +52,7 @@ class CityDAO(BaseDAO):
 class RegionDAO(BaseDAO):
     model = Region
 
-    async def get_regions_ordered_by_payments(self, limit: int | None = None):
+    async def get_regions_ordered_by_payments(self, limit: int | None = None) -> list[Region]:
         total_income_expr = func.coalesce(func.sum(Payment.income_amount), 0.0).label("total_income")
 
         query = (
@@ -83,7 +83,7 @@ class FundDAO(BaseDAO):
 class ProjectDAO(BaseDAO):
     model = Project
 
-    async def get_projects_ordered_by_payments(self, limit: int | None = None):
+    async def get_projects_ordered_by_payments(self, limit: int | None = None) -> list[Project]:
         total_income_expr = func.coalesce(func.sum(Payment.income_amount), 0.0).label("total_income")
 
         query = (

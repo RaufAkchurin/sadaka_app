@@ -23,7 +23,7 @@ class UserModelTotalIncomeSchema(BaseModel):
 class RegionModelTotalIncomeSchema(BaseModel):
     name: str
     total_income: float = 0
-    picture_url: str
+    picture_url: str | None = None
 
     model_config = ConfigDict(from_attributes=True)
 
