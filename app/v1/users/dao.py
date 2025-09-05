@@ -33,7 +33,7 @@ class UserDAO(BaseDAO):
             query = query.limit(limit)
 
         result = await self._session.execute(query)
-        return result.all()
+        return result.unique().all()
 
 
 class OneTimePassDAO(BaseDAO):
