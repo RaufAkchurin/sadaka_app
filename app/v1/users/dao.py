@@ -1,4 +1,5 @@
 from sqlalchemy import desc, func, select
+from sqlalchemy.orm import selectinload
 
 from app.models.city import City
 from app.models.comment import Comment
@@ -18,22 +19,29 @@ class UserDAO(BaseDAO):
     model = User
 
     async def get_users_ordered_by_payments(self, limit: int | None = None) -> list[User]:
+        total_income = func.coalesce(func.sum(Payment.income_amount), 0.0).over(partition_by=User.id)
+
         query = (
-            select(User, func.coalesce(func.sum(Payment.income_amount), 0.0).label("total_income"))
-            .join(Payment, Payment.user_id == User.id, isouter=True)
-            .group_by(User.id)
+            select(User, total_income.label("total_income"))
+            .outerjoin(Payment, Payment.user_id == User.id)
+            .options(
+                selectinload(User.picture),
+                selectinload(User.city).selectinload(City.region).selectinload(Region.country),
+            )
             .order_by(desc("total_income"))
         )
+
         if limit:
             query = query.limit(limit)
 
         result = await self._session.execute(query)
         rows = result.all()
 
-        users = []
+        users: list[User] = []
         for user, total in rows:
             setattr(user, "total_income", total)
             users.append(user)
+
         return users
 
 
