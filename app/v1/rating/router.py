@@ -13,8 +13,9 @@ v1_rating_router = APIRouter()
 
 
 class UserModelTotalIncomeSchema(BaseModel):
-    name: str
+    name: str | None = None
     total_income: float = 0
+    picture_url: str | None = None
 
     model_config = ConfigDict(from_attributes=True)
 
