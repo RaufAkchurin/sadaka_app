@@ -1,5 +1,3 @@
-import enum
-
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -8,21 +6,24 @@ from app.models.user import User
 from app.v1.api_utils.pagination import Pagination, PaginationParams, PaginationResponseSchema
 from app.v1.dependencies.auth_dep import get_current_user
 from app.v1.dependencies.dao_dep import get_session_with_commit
-from app.v1.users.dao import PaymentDAO, ProjectDAO, UserDAO
+from app.v1.project.schemas import ProjectForListAPISchema
+from app.v1.users.dao import PaymentDAO, ProjectDAO, RegionDAO, UserDAO
 
 v1_rating_router = APIRouter()
-
-
-class RatingTypeEnum(str, enum.Enum):
-    DONORS = "donors"
-    REFERRALS = "referrals"
-    REGIONS = "regions"
-    PROJECTS = "projects"
 
 
 class UserModelTotalIncomeSchema(BaseModel):
     name: str
     total_income: float = 0
+    picture_url: str
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class RegionModelTotalIncomeSchema(BaseModel):
+    name: str
+    total_income: float = 0
+    picture_url: str
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -37,7 +38,6 @@ class RatingTotalInfoResponseSchema(BaseModel):
 
 @v1_rating_router.get("/total_info")
 async def get_total_info(
-    pagination: PaginationParams = Depends(),
     user_data: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session_with_commit),
 ) -> RatingTotalInfoResponseSchema:
@@ -60,7 +60,7 @@ async def get_total_info(
 
 
 @v1_rating_router.get("/donors")
-async def get_projects_list(
+async def get_donors_rating(
     pagination: PaginationParams = Depends(),
     user_data: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session_with_commit),
@@ -70,3 +70,29 @@ async def get_projects_list(
     serialized_users = [UserModelTotalIncomeSchema.model_validate(c) for c in users_ordered_by_payments]
 
     return await Pagination.execute(serialized_users, pagination.page, pagination.limit)
+
+
+@v1_rating_router.get("/regions")
+async def get_regions_rating(
+    pagination: PaginationParams = Depends(),
+    user_data: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_session_with_commit),
+) -> PaginationResponseSchema[RegionModelTotalIncomeSchema]:
+    region_dao = RegionDAO(session=session)
+    regions_ordered_by_payments = await region_dao.get_regions_ordered_by_payments()
+    serialized_regions = [RegionModelTotalIncomeSchema.model_validate(c) for c in regions_ordered_by_payments]
+
+    return await Pagination.execute(serialized_regions, pagination.page, pagination.limit)
+
+
+@v1_rating_router.get("/projects")
+async def get_projects_rating(
+    pagination: PaginationParams = Depends(),
+    user_data: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_session_with_commit),
+) -> PaginationResponseSchema[ProjectForListAPISchema]:
+    project_dao = ProjectDAO(session=session)
+    projects_ordered_by_payments = await project_dao.get_projects_ordered_by_payments()
+    serialized_regions = [ProjectForListAPISchema.model_validate(c) for c in projects_ordered_by_payments]
+
+    return await Pagination.execute(serialized_regions, pagination.page, pagination.limit)

@@ -52,6 +52,29 @@ class CityDAO(BaseDAO):
 class RegionDAO(BaseDAO):
     model = Region
 
+    async def get_regions_ordered_by_payments(self, limit: int | None = None):
+        total_income_expr = func.coalesce(func.sum(Payment.income_amount), 0.0).label("total_income")
+
+        query = (
+            select(Region, total_income_expr)
+            .join(City, City.region_id == Region.id)
+            .join(User, User.city_id == City.id)
+            .join(Payment, Payment.user_id == User.id)
+            .group_by(Region.id)
+            .order_by(desc("total_income"))
+        )
+        if limit:
+            query = query.limit(limit)
+
+        result = await self._session.execute(query)
+        rows = result.all()
+
+        regions = []
+        for region, total in rows:
+            setattr(region, "total_income", total)
+            regions.append(region)
+        return regions
+
 
 class FundDAO(BaseDAO):
     model = Fund
@@ -59,6 +82,27 @@ class FundDAO(BaseDAO):
 
 class ProjectDAO(BaseDAO):
     model = Project
+
+    async def get_projects_ordered_by_payments(self, limit: int | None = None):
+        total_income_expr = func.coalesce(func.sum(Payment.income_amount), 0.0).label("total_income")
+
+        query = (
+            select(Project, total_income_expr)
+            .join(Payment, Payment.project_id == Project.id)
+            .group_by(Project.id)
+            .order_by(desc("total_income"))
+        )
+        if limit:
+            query = query.limit(limit)
+
+        result = await self._session.execute(query)
+        rows = result.unique().all()
+
+        projects = []
+        for project, total in rows:
+            setattr(project, "total_income", total)
+            projects.append(project)
+        return projects
 
 
 class StageDAO(BaseDAO):
