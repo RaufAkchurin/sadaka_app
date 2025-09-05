@@ -19,7 +19,7 @@ class UserDAO(BaseDAO):
     model = User
 
     async def get_users_ordered_by_payments(self, limit: int | None = None) -> list[User]:
-        # Оконная функция + coalesce
+        # sum(...) OVER (...) и сразу coalesce
         total_income = func.coalesce(
             func.sum(Payment.income_amount).over(partition_by=User.id),
             0.0,
@@ -33,7 +33,6 @@ class UserDAO(BaseDAO):
                 selectinload(User.city).selectinload(City.region).selectinload(Region.country),
             )
             .order_by(desc("total_income"))
-            .distinct(User.id)  # чтобы убрать дубликаты одного юзера
         )
 
         if limit:
@@ -42,11 +41,11 @@ class UserDAO(BaseDAO):
         result = await self._session.execute(query)
         rows = result.all()
 
-        target_users: list[User] = []
         seen_ids: set[int] = set()
+        target_users: list[User] = []
 
         for user, total in rows:
-            if user.id in seen_ids:  # доп. защита от дублей
+            if user.id in seen_ids:  # защита от дублей
                 continue
             seen_ids.add(user.id)
             setattr(user, "total_income", total)
