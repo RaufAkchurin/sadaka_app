@@ -57,33 +57,38 @@ class TestRatingAPI:
         assert response.status_code == 200
         assert response.json() is not None
 
-        assert len(query_counter) <= 4, f"Слишком много SQL-запросов: {len(query_counter)}"
+        assert len(query_counter) <= 3, f"Слишком много SQL-запросов: {len(query_counter)}"
 
         data = response.json()
 
         assert data == {
             "items": [
                 {
+                    "id": 3,
                     "name": "moderator",
                     "picture_url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/tests%2Fdigits%2F1.png",
                     "total_income": 4000.0,
                 },
                 {
+                    "id": 2,
                     "name": "admin",
                     "picture_url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/tests%2Fdigits%2F0.png",
                     "total_income": 3000.0,
                 },
                 {
+                    "id": 1,
                     "name": "superadmin",
                     "picture_url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/tests%2Fdigits%2F9.png",
                     "total_income": 2000.0,
                 },
                 {
+                    "id": 4,
                     "name": "user1",
                     "picture_url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/tests%2Fdigits%2F2.png",
                     "total_income": 0.0,
                 },
                 {
+                    "id": 5,
                     "name": "user2",
                     "picture_url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/tests%2Fdigits%2F3.png",
                     "total_income": 0.0,

@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.user import User
@@ -13,14 +13,16 @@ v1_rating_router = APIRouter()
 
 
 class UserModelTotalIncomeSchema(BaseModel):
+    id: int
     name: str | None = None
+    url: str | None = Field(default=None, alias="picture_url")
     total_income: float = 0
-    picture_url: str | None = None
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
 
 class RegionModelTotalIncomeSchema(BaseModel):
+    id: int
     name: str
     total_income: float = 0
     picture_url: str | None = None

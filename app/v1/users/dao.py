@@ -17,23 +17,20 @@ from app.v1.dao.base import BaseDAO
 class UserDAO(BaseDAO):
     model = User
 
-    async def get_users_ordered_by_payments(self, limit: int | None = None):
+    async def get_users_ordered_by_payments(self):
         total_income = func.coalesce(
             func.sum(Payment.income_amount).over(partition_by=User.id),
             0.0,
         ).label("total_income")
-
         query = (
-            select(User.id, User.name, total_income)
+            select(User.id, User.name, File.url, total_income)
             .outerjoin(Payment, Payment.user_id == User.id)
+            .outerjoin(File, File.id == User.picture_id)
             .order_by(desc("total_income"))
         )
 
-        if limit:
-            query = query.limit(limit)
-
         result = await self._session.execute(query)
-        return result.unique().all()
+        return result.unique().mappings().all()
 
 
 class OneTimePassDAO(BaseDAO):
