@@ -19,10 +19,14 @@ class UserDAO(BaseDAO):
     model = User
 
     async def get_users_ordered_by_payments(self, limit: int | None = None) -> list[User]:
-        total_income = func.coalesce(func.sum(Payment.income_amount), 0.0).over(partition_by=User.id)
+        # Оконная функция: sum(...) OVER (PARTITION BY user.id), а coalesce уже сверху
+        total_income = func.coalesce(
+            func.sum(Payment.income_amount).over(partition_by=User.id),
+            0.0,
+        ).label("total_income")
 
         query = (
-            select(User, total_income.label("total_income"))
+            select(User, total_income)
             .outerjoin(Payment, Payment.user_id == User.id)
             .options(
                 selectinload(User.picture),
