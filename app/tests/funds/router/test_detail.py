@@ -60,7 +60,7 @@ class TestFundDetail:
                     "name": "project1",
                     "pictures_list": [],
                     "status": "active",
-                    "total_collected": 2000,
+                    "total_income": 2000,
                     "unique_sponsors": 1,
                 },
                 {
@@ -72,7 +72,7 @@ class TestFundDetail:
                     "name": "project10",
                     "pictures_list": [],
                     "status": "active",
-                    "total_collected": 0,
+                    "total_income": 0,
                     "unique_sponsors": 0,
                 },
                 {
@@ -84,7 +84,7 @@ class TestFundDetail:
                     "name": "project13",
                     "pictures_list": [],
                     "status": "active",
-                    "total_collected": 0,
+                    "total_income": 0,
                     "unique_sponsors": 0,
                 },
                 {
@@ -96,7 +96,7 @@ class TestFundDetail:
                     "name": "project16",
                     "pictures_list": [],
                     "status": "active",
-                    "total_collected": 0,
+                    "total_income": 0,
                     "unique_sponsors": 0,
                 },
                 {
@@ -108,7 +108,7 @@ class TestFundDetail:
                     "name": "project19",
                     "pictures_list": [],
                     "status": "active",
-                    "total_collected": 0,
+                    "total_income": 0,
                     "unique_sponsors": 0,
                 },
                 {
@@ -120,7 +120,7 @@ class TestFundDetail:
                     "name": "project22",
                     "pictures_list": [],
                     "status": "finished",
-                    "total_collected": 0,
+                    "total_income": 0,
                     "unique_sponsors": 0,
                 },
                 {
@@ -132,7 +132,7 @@ class TestFundDetail:
                     "name": "project25",
                     "pictures_list": [],
                     "status": "finished",
-                    "total_collected": 0,
+                    "total_income": 0,
                     "unique_sponsors": 0,
                 },
                 {
@@ -144,7 +144,7 @@ class TestFundDetail:
                     "name": "project28",
                     "pictures_list": [],
                     "status": "finished",
-                    "total_collected": 0,
+                    "total_income": 0,
                     "unique_sponsors": 0,
                 },
                 {
@@ -156,7 +156,7 @@ class TestFundDetail:
                     "name": "project4",
                     "pictures_list": [],
                     "status": "active",
-                    "total_collected": 0,
+                    "total_income": 0,
                     "unique_sponsors": 0,
                 },
                 {
@@ -168,11 +168,11 @@ class TestFundDetail:
                     "name": "project7",
                     "pictures_list": [],
                     "status": "active",
-                    "total_collected": 0,
+                    "total_income": 0,
                     "unique_sponsors": 0,
                 },
             ],
             "projects_count": 10,
             "region_name": "Tatarstan",
-            "total_collected": 2000,
+            "total_income": 2000,
         }

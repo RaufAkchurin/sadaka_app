@@ -97,12 +97,12 @@ class Project(Base):
         return urls_list
 
     @property
-    def total_collected(self) -> int:
+    def total_income(self) -> int:
         return sum(payment.income_amount for payment in self.payments)
 
     @property
     def collected_percentage(self) -> int:
-        collected_percentage = int((self.total_collected / self.goal) * 100) if self.goal > 0 else 0
+        collected_percentage = int((self.total_income / self.goal) * 100) if self.goal > 0 else 0
         return collected_percentage
 
     @property

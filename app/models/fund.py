@@ -79,7 +79,7 @@ class Fund(Base):
         return len(self.projects)
 
     @property
-    def total_collected(self) -> int:
+    def total_income(self) -> int:
         projects = self.projects
-        total_collected = sum([project.total_collected for project in projects])
-        return total_collected
+        total_income = sum([project.total_income for project in projects])
+        return total_income

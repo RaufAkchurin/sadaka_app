@@ -110,6 +110,6 @@ class TestProjectDetail:
                 },
             ],
             "status": "active",
-            "total_collected": 2000,
+            "total_income": 2000,
             "unique_sponsors": 1,
         }
