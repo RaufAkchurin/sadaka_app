@@ -115,7 +115,7 @@ class TestCommentsAPI:
         assert same.content == "locked"
 
     async def test_get_comments_by_project_id_empty(self, auth_ac):
-        project_id = 1
+        project_id = 2
         resp = await auth_ac.client.get(
             f"/app/v1/comments/{project_id}",
             params={"project_id": project_id, "page": 1, "limit": 10},
@@ -126,7 +126,7 @@ class TestCommentsAPI:
         assert data.get("state").get("page") == 1
         assert data.get("state").get("size") == 10
         assert data.get("state").get("total_pages") == 1
-        assert data.get("state").get("total_items") == 1
+        assert data.get("state").get("total_items") == 2
 
     async def test_get_comments_by_project_id_paginated(self, auth_ac, comment_dao):
         project_id = 1
@@ -145,7 +145,7 @@ class TestCommentsAPI:
         assert data1.get("state").get("page") == 1
         assert data1.get("state").get("size") == 10
         assert data1.get("state").get("total_pages") == 2
-        assert data1.get("state").get("total_items") == 16
+        assert data1.get("state").get("total_items") == 17
         assert len(data1["items"]) == 10
 
         resp2 = await auth_ac.client.get(
@@ -158,5 +158,5 @@ class TestCommentsAPI:
         assert data2.get("state").get("page") == 2
         assert data2.get("state").get("size") == 10
         assert data2.get("state").get("total_pages") == 2
-        assert data2.get("state").get("total_items") == 16
-        assert len(data2["items"]) == 6
+        assert data2.get("state").get("total_items") == 17
+        assert len(data2["items"]) == 7
