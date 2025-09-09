@@ -36,7 +36,7 @@ class ProjectRatingSchema(BaseModel):
     status: AbstractStatusEnum
     fund_name: str
     picture_url: str | None = None
-    total_income: int
+    total_income: float = 0
     unique_sponsors: int
     count_comments: int
 
