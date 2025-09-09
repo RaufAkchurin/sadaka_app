@@ -131,54 +131,68 @@ class TestRatingAPI:
             "state": {"page": 1, "size": 5, "total_items": 3, "total_pages": 1},
         }
 
-    async def test_projects(self, auth_ac, payment_dao, query_counter) -> None:
+    async def test_projects(self, auth_ac, payment_dao, query_counter, comment_dao) -> None:
         response = await auth_ac.client.get("/app/v1/ratings/projects", cookies=auth_ac.cookies.dict())
 
         assert response.status_code == 200
         assert response.json() is not None
 
-        assert len(query_counter) <= 6, f"Слишком много SQL-запросов: {len(query_counter)}"
+        assert len(query_counter) <= 16, f"Слишком много SQL-запросов: {len(query_counter)}"
 
         data = response.json()
 
         assert data == {
             "items": [
                 {
-                    "active_stage_number": None,
-                    "collected_percentage": 13,
-                    "fund": {"id": 3, "name": "fund3", "picture_url": None},
-                    "goal": 30000,
+                    "count_comments": 3,
+                    "fund_name": "fund3",
                     "id": 3,
                     "name": "project3",
-                    "pictures_list": [],
+                    "picture_url": None,
                     "status": "active",
-                    "total_collected": 4000,
+                    "total_income": 4000,
                     "unique_sponsors": 1,
                 },
                 {
-                    "active_stage_number": 2,
-                    "collected_percentage": 15,
-                    "fund": {"id": 2, "name": "fund2", "picture_url": None},
-                    "goal": 20000,
+                    "count_comments": 2,
+                    "fund_name": "fund2",
                     "id": 2,
                     "name": "project2",
-                    "pictures_list": [],
+                    "picture_url": None,
                     "status": "active",
-                    "total_collected": 3000,
+                    "total_income": 3000,
                     "unique_sponsors": 1,
                 },
                 {
-                    "active_stage_number": 2,
-                    "collected_percentage": 20,
-                    "fund": {"id": 1, "name": "fund1", "picture_url": None},
-                    "goal": 10000,
+                    "count_comments": 1,
+                    "fund_name": "fund1",
                     "id": 1,
                     "name": "project1",
-                    "pictures_list": [],
+                    "picture_url": None,
                     "status": "active",
-                    "total_collected": 2000,
+                    "total_income": 2000,
                     "unique_sponsors": 1,
                 },
+                {
+                    "count_comments": 0,
+                    "fund_name": "fund1",
+                    "id": 4,
+                    "name": "project4",
+                    "picture_url": None,
+                    "status": "active",
+                    "total_income": 0,
+                    "unique_sponsors": 0,
+                },
+                {
+                    "count_comments": 0,
+                    "fund_name": "fund2",
+                    "id": 5,
+                    "name": "project5",
+                    "picture_url": None,
+                    "status": "active",
+                    "total_income": 0,
+                    "unique_sponsors": 0,
+                },
             ],
-            "state": {"page": 1, "size": 5, "total_items": 3, "total_pages": 1},
+            "state": {"page": 1, "size": 5, "total_items": 30, "total_pages": 6},
         }

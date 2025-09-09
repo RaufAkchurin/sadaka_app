@@ -6,7 +6,7 @@ from app.models.user import User
 from app.v1.api_utils.pagination import Pagination, PaginationParams, PaginationResponseSchema
 from app.v1.dependencies.auth_dep import get_current_user
 from app.v1.dependencies.dao_dep import get_session_with_commit
-from app.v1.project.schemas import ProjectForListAPISchema
+from app.v1.project.enums import AbstractStatusEnum
 from app.v1.users.dao import PaymentDAO, ProjectDAO, RegionDAO, UserDAO
 
 v1_rating_router = APIRouter()
@@ -28,6 +28,19 @@ class RegionModelTotalIncomeSchema(BaseModel):
     total_income: float = 0
 
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
+
+
+class ProjectRatingSchema(BaseModel):
+    id: int
+    name: str
+    status: AbstractStatusEnum
+    fund_name: str
+    picture_url: str | None = None
+    total_income: int
+    unique_sponsors: int
+    count_comments: int
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class RatingTotalInfoResponseSchema(BaseModel):
@@ -92,9 +105,10 @@ async def get_projects_rating(
     pagination: PaginationParams = Depends(),
     user_data: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session_with_commit),
-) -> PaginationResponseSchema[ProjectForListAPISchema]:
+) -> PaginationResponseSchema[ProjectRatingSchema]:
     project_dao = ProjectDAO(session=session)
+
     projects_ordered_by_payments = await project_dao.get_projects_ordered_by_payments()
-    serialized_regions = [ProjectForListAPISchema.model_validate(c) for c in projects_ordered_by_payments]
+    serialized_regions = [ProjectRatingSchema.model_validate(c) for c in projects_ordered_by_payments]
 
     return await Pagination.execute(serialized_regions, pagination.page, pagination.limit)
