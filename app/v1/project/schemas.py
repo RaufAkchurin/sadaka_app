@@ -56,7 +56,7 @@ class ProjectForListAPISchema(BaseModel):
     active_stage_number: int | None = None
     name: str
     goal: int
-    total_collected: int
+    total_income: int
     unique_sponsors: int
     collected_percentage: int = 0
 

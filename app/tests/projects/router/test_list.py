@@ -19,7 +19,7 @@ class TestProjectList:
                     "name": "project1",
                     "pictures_list": [],
                     "status": "active",
-                    "total_collected": 2000,
+                    "total_income": 2000,
                     "unique_sponsors": 1,
                 },
                 {
@@ -31,7 +31,7 @@ class TestProjectList:
                     "name": "project2",
                     "pictures_list": [],
                     "status": "active",
-                    "total_collected": 3000,
+                    "total_income": 3000,
                     "unique_sponsors": 1,
                 },
                 {
@@ -43,7 +43,7 @@ class TestProjectList:
                     "name": "project3",
                     "pictures_list": [],
                     "status": "active",
-                    "total_collected": 4000,
+                    "total_income": 4000,
                     "unique_sponsors": 1,
                 },
                 {
@@ -55,7 +55,7 @@ class TestProjectList:
                     "name": "project4",
                     "pictures_list": [],
                     "status": "active",
-                    "total_collected": 0,
+                    "total_income": 0,
                     "unique_sponsors": 0,
                 },
                 {
@@ -67,7 +67,7 @@ class TestProjectList:
                     "name": "project5",
                     "pictures_list": [],
                     "status": "active",
-                    "total_collected": 0,
+                    "total_income": 0,
                     "unique_sponsors": 0,
                 },
             ],
@@ -89,7 +89,7 @@ class TestProjectList:
                     "name": "project21",
                     "pictures_list": [],
                     "status": "finished",
-                    "total_collected": 0,
+                    "total_income": 0,
                     "unique_sponsors": 0,
                 },
                 {
@@ -101,7 +101,7 @@ class TestProjectList:
                     "name": "project22",
                     "pictures_list": [],
                     "status": "finished",
-                    "total_collected": 0,
+                    "total_income": 0,
                     "unique_sponsors": 0,
                 },
                 {
@@ -113,7 +113,7 @@ class TestProjectList:
                     "name": "project23",
                     "pictures_list": [],
                     "status": "finished",
-                    "total_collected": 0,
+                    "total_income": 0,
                     "unique_sponsors": 0,
                 },
                 {
@@ -125,7 +125,7 @@ class TestProjectList:
                     "name": "project24",
                     "pictures_list": [],
                     "status": "finished",
-                    "total_collected": 0,
+                    "total_income": 0,
                     "unique_sponsors": 0,
                 },
                 {
@@ -137,7 +137,7 @@ class TestProjectList:
                     "name": "project25",
                     "pictures_list": [],
                     "status": "finished",
-                    "total_collected": 0,
+                    "total_income": 0,
                     "unique_sponsors": 0,
                 },
             ],
@@ -159,7 +159,7 @@ class TestProjectList:
                     "name": "project1",
                     "pictures_list": [],
                     "status": "active",
-                    "total_collected": 2000,
+                    "total_income": 2000,
                     "unique_sponsors": 1,
                 },
                 {
@@ -171,7 +171,7 @@ class TestProjectList:
                     "name": "project2",
                     "pictures_list": [],
                     "status": "active",
-                    "total_collected": 3000,
+                    "total_income": 3000,
                     "unique_sponsors": 1,
                 },
                 {
@@ -183,7 +183,7 @@ class TestProjectList:
                     "name": "project3",
                     "pictures_list": [],
                     "status": "active",
-                    "total_collected": 4000,
+                    "total_income": 4000,
                     "unique_sponsors": 1,
                 },
                 {
@@ -195,7 +195,7 @@ class TestProjectList:
                     "name": "project4",
                     "pictures_list": [],
                     "status": "active",
-                    "total_collected": 0,
+                    "total_income": 0,
                     "unique_sponsors": 0,
                 },
                 {
@@ -207,7 +207,7 @@ class TestProjectList:
                     "name": "project5",
                     "pictures_list": [],
                     "status": "active",
-                    "total_collected": 0,
+                    "total_income": 0,
                     "unique_sponsors": 0,
                 },
             ],
@@ -253,7 +253,7 @@ class TestProjectList:
                     "name": "project1",
                     "pictures_list": [],
                     "status": "active",
-                    "total_collected": 2000,
+                    "total_income": 2000,
                     "unique_sponsors": 1,
                 },
                 {
@@ -265,7 +265,7 @@ class TestProjectList:
                     "name": "project4",
                     "pictures_list": [],
                     "status": "active",
-                    "total_collected": 0,
+                    "total_income": 0,
                     "unique_sponsors": 0,
                 },
                 {
@@ -277,7 +277,7 @@ class TestProjectList:
                     "name": "project7",
                     "pictures_list": [],
                     "status": "active",
-                    "total_collected": 0,
+                    "total_income": 0,
                     "unique_sponsors": 0,
                 },
                 {
@@ -289,7 +289,7 @@ class TestProjectList:
                     "name": "project10",
                     "pictures_list": [],
                     "status": "active",
-                    "total_collected": 0,
+                    "total_income": 0,
                     "unique_sponsors": 0,
                 },
                 {
@@ -301,7 +301,7 @@ class TestProjectList:
                     "name": "project13",
                     "pictures_list": [],
                     "status": "active",
-                    "total_collected": 0,
+                    "total_income": 0,
                     "unique_sponsors": 0,
                 },
             ],
@@ -325,7 +325,7 @@ class TestProjectList:
                     "name": "project1",
                     "pictures_list": [],
                     "status": "active",
-                    "total_collected": 2000,
+                    "total_income": 2000,
                     "unique_sponsors": 1,
                 },
                 {
@@ -337,7 +337,7 @@ class TestProjectList:
                     "name": "project4",
                     "pictures_list": [],
                     "status": "active",
-                    "total_collected": 0,
+                    "total_income": 0,
                     "unique_sponsors": 0,
                 },
                 {
@@ -349,7 +349,7 @@ class TestProjectList:
                     "name": "project7",
                     "pictures_list": [],
                     "status": "active",
-                    "total_collected": 0,
+                    "total_income": 0,
                     "unique_sponsors": 0,
                 },
                 {
@@ -361,7 +361,7 @@ class TestProjectList:
                     "name": "project10",
                     "pictures_list": [],
                     "status": "active",
-                    "total_collected": 0,
+                    "total_income": 0,
                     "unique_sponsors": 0,
                 },
                 {
@@ -373,7 +373,7 @@ class TestProjectList:
                     "name": "project13",
                     "pictures_list": [],
                     "status": "active",
-                    "total_collected": 0,
+                    "total_income": 0,
                     "unique_sponsors": 0,
                 },
             ],
