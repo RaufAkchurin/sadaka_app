@@ -12,6 +12,9 @@ from app.v1.payment.enums import PaymentStatusEnum
 
 @dataclass
 class Payment(Base):
+    # TODO При добавлении других провайдеров оплаты помимо юкассы - наследоваться от пеймента
+    # и делать отдельную модель, затем уже добавлять новые поля при необходимости!!!
+
     # Base info
     id: Mapped[UUID] = mapped_column(UUID, primary_key=True)
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP)
@@ -36,6 +39,11 @@ class Payment(Base):
 
     stage_id: Mapped[int] = mapped_column(ForeignKey("stages.id"), nullable=False)
     stage: Mapped["Stage"] = relationship("Stage", back_populates="payments", lazy="joined")  # noqa F821
+
+    referral_id: Mapped[int | None] = mapped_column(
+        ForeignKey("referrals.id", name="fk_payments_referral_id"), nullable=True, default=None
+    )
+    referral: Mapped["Referral"] = relationship("Referral", back_populates="payments", lazy="joined")  # noqa F821
 
     def __str__(self):
         return f"{self.project.name}, {self.income_amount}, {self.status}, test - {self.test}"

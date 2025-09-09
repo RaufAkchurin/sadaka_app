@@ -41,7 +41,7 @@ class Stage(Base):
 
     @property
     def collected(self):
-        collected: int = sum(payment.amount for payment in self.payments)
+        collected: int = sum(payment.income_amount for payment in self.payments)
         return collected
 
     # TODO Add validation as active stage only one for project!

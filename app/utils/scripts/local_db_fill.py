@@ -7,6 +7,7 @@ from datetime import datetime
 from sqlalchemy import insert
 
 from app.models.city import City
+from app.models.comment import Comment
 from app.models.country import Country
 from app.models.file import File
 from app.models.fund import Fund
@@ -30,6 +31,7 @@ MODELS_MAP = {
     "stage": Stage,
     "file": File,
     "payment": Payment,
+    "comment": Comment,
 }
 
 

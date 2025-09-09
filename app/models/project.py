@@ -2,6 +2,7 @@ from sqlalchemy import Enum as SqlEnum
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
 
+from app.models.file import File
 from app.models.fund import Fund
 from app.v1.dao.database import Base
 from app.v1.project.enums import AbstractStatusEnum
@@ -35,7 +36,7 @@ class Project(Base):
         "File",
         back_populates="project_picture",
         cascade="all, delete-orphan",
-        foreign_keys="[File.project_picture_id]",
+        foreign_keys=[File.project_picture_id],
         lazy="joined",
     )
 
@@ -97,7 +98,7 @@ class Project(Base):
 
     @property
     def total_collected(self) -> int:
-        return sum(payment.amount for payment in self.payments)
+        return sum(payment.income_amount for payment in self.payments)
 
     @property
     def collected_percentage(self) -> int:

@@ -2,6 +2,8 @@ import httpx
 import pytest
 from httpx import ASGITransport, AsyncClient
 from main import app as fastapi_app
+from sqlalchemy import event
+from sqlalchemy.engine import Engine
 from tests.schemas import AuthorizedClientModel, CookiesModel
 from utils.scripts.local_db_fill import prepare_database_core
 from yookassa import Configuration
@@ -9,7 +11,21 @@ from yookassa import Configuration
 from app.models.user import User
 from app.settings import settings
 from app.v1.dao.database import async_session_maker
-from app.v1.users.dao import CommentDAO, OneTimePassDAO, UserDAO
+from app.v1.users.dao import CommentDAO, OneTimePassDAO, PaymentDAO, UserDAO
+
+
+@pytest.fixture
+def query_counter():
+    queries = []
+
+    def before_cursor_execute(conn, cursor, statement, parameters, context, executemany):
+        queries.append(statement)
+
+    event.listen(Engine, "before_cursor_execute", before_cursor_execute)
+
+    yield queries  # отдаём список запросов в тест
+
+    event.remove(Engine, "before_cursor_execute", before_cursor_execute)
 
 
 @pytest.fixture(autouse=True)
@@ -58,6 +74,12 @@ async def otp_dao(session) -> OneTimePassDAO:
 async def comment_dao(session) -> CommentDAO:
     comment_dao = CommentDAO(session)
     return comment_dao
+
+
+@pytest.fixture(scope="function")
+async def payment_dao(session) -> PaymentDAO:
+    payment_dao = PaymentDAO(session)
+    return payment_dao
 
 
 @pytest.fixture(scope="class")
