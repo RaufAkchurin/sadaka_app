@@ -70,21 +70,87 @@ class RegionDAO(BaseDAO):
 class ProjectDAO(BaseDAO):
     model = Project
 
-    async def get_projects_ordered_by_payments(self):
-        total_income = func.coalesce(func.sum(Payment.income_amount), 0.0).label("total_income")
-        pictures = func.array_remove(func.array_agg(File.url), None).label("pictures")
+    # async def get_projects_ordered_by_payments(self):  16 запросов вместо 8, но короче
+    #     query = (
+    #         select(Project)
+    #         .options(
+    #             selectinload(Project.fund),
+    #             selectinload(Project.payments),
+    #             selectinload(Project.comments),
+    #             selectinload(Project.pictures),
+    #         )
+    #     )
+    #
+    #     result = await self._session.execute(query)
+    #     projects = result.unique().scalars().all()
+    #
+    #     # Доп. агрегаты считаем уже на питоне
+    #     result_data = []
+    #     for project in projects:
+    #         total_income = sum(p.income_amount for p in project.payments)
+    #         unique_sponsors = len({p.user_id for p in project.payments})
+    #         count_comments = len(project.comments)
+    #         first_picture = project.pictures[0].url if project.pictures else None
+    #
+    #         result_data.append({
+    #             "id": project.id,
+    #             "name": project.name,
+    #             "status": project.status,
+    #             "fund_name": project.fund.name if project.fund else None,
+    #             "total_income": total_income,
+    #             "unique_sponsors": unique_sponsors,
+    #             "count_comments": count_comments,
+    #             "picture_url": first_picture,
+    #         })
+    #
+    #     # сортируем по total_income
+    #     return sorted(result_data, key=lambda x: x["total_income"], reverse=True)
 
+    async def get_projects_ordered_by_payments(self):
+        # Подзапрос по платежам
+        payments_subq = (
+            select(
+                Payment.project_id,
+                func.coalesce(func.sum(Payment.income_amount), 0).label("total_income"),
+                func.count(func.distinct(Payment.user_id)).label("unique_sponsors"),
+            )
+            .group_by(Payment.project_id)
+            .subquery()
+        )
+
+        # Подзапрос по комментариям
+        comments_subq = (
+            select(Comment.project_id, func.count(Comment.id).label("count_comments"))
+            .group_by(Comment.project_id)
+            .subquery()
+        )
+
+        # Основной запрос
         query = (
             select(
                 Project.id,
-                Project.status,
                 Project.name,
-                total_income,
-                pictures,
+                Project.status,
+                Fund.name.label("fund_name"),
+                func.coalesce(payments_subq.c.total_income, 0).label("total_income"),
+                func.coalesce(payments_subq.c.unique_sponsors, 0).label("unique_sponsors"),
+                func.coalesce(comments_subq.c.count_comments, 0).label("count_comments"),
+                func.min(File.url).label("picture_url"),
             )
-            .outerjoin(Payment, Payment.project_id == Project.id)
+            .join(Fund, Fund.id == Project.fund_id)
             .outerjoin(File, File.project_picture_id == Project.id)
-            .group_by(Project.id, Project.status, Project.name)
+            .outerjoin(payments_subq, payments_subq.c.project_id == Project.id)
+            .outerjoin(comments_subq, comments_subq.c.project_id == Project.id)
+            .group_by(
+                Project.id,
+                Project.name,
+                Project.status,
+                Fund.id,
+                Fund.name,
+                payments_subq.c.total_income,
+                payments_subq.c.unique_sponsors,
+                comments_subq.c.count_comments,
+            )
             .order_by(desc("total_income"))
         )
 
