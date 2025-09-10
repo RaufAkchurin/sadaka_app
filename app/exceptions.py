@@ -88,3 +88,9 @@ CommentNotFoundByIdException = HTTPException(
 CommentNotPermissionsException = HTTPException(
     status_code=status.HTTP_403_FORBIDDEN, detail="Недостаточно прав для изменения комментария"
 )
+
+# Рефералы
+
+ReferralGenPayloadException = HTTPException(
+    status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Передайте айди в entity_id"
+)
