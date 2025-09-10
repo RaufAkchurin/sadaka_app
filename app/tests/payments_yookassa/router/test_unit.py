@@ -3,7 +3,7 @@ from unittest.mock import AsyncMock
 import pytest
 from fastapi import HTTPException
 
-from app.v1.payment.use_cases.callback import YooCallbackSuccessUseCaseImpl
+from app.v1.payment_yookassa.use_cases.callback import YooCallbackSuccessUseCaseImpl
 
 
 class TestYookassaClientIpSecurityChecker:

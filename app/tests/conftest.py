@@ -91,26 +91,7 @@ async def ac():
 @pytest.fixture(scope="class")
 async def auth_ac():
     async with AsyncClient(transport=ASGITransport(fastapi_app), base_url="http://test") as ac:
-        await ac.post("/app/v1/auth/login/", json={"email": "user1@test.com", "password": "password"})
-        assert ac.cookies["user_access_token"]
-
-        yield AuthorizedClientModel(
-            client=ac,
-            cookies=CookiesModel(
-                user_access_token=ac.cookies.get("user_access_token"),
-                user_refresh_token=ac.cookies.get("user_refresh_token"),
-            ),
-        )
-
-
-@pytest.fixture(scope="class")
-async def authenticated_super():
-    async with AsyncClient(transport=ASGITransport(fastapi_app), base_url="http://test") as ac:
-        response = await ac.post(
-            "/app/v1/auth/login/",
-            json={"email": "superadmin@test.com", "password": "password"},
-        )
-        assert response.status_code == 200
+        await ac.post("/app/v1/auth/login/", json={"email": "superadmin@test.com", "password": "password"})
         assert ac.cookies["user_access_token"]
 
         yield AuthorizedClientModel(
