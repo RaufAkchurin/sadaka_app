@@ -28,6 +28,6 @@ class Referral(Base):
     key: Mapped[str] = mapped_column(String(6), unique=True, default=generate_short_key, nullable=False)
 
     sharer_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
-    sharer: Mapped["User"] = relationship("User", back_populates="referrals", lazy="joined")  # noqa F821
+    sharer: Mapped["User"] = relationship("User", back_populates="referrals", lazy="joined")  # noqa
 
     payments: Mapped[list["Payment"]] = relationship("Payment", back_populates="referral")  # noqa F821
