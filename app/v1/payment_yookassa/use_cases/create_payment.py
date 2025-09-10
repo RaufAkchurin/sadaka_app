@@ -9,8 +9,8 @@ from yookassa.domain.request.payment_request_builder import PaymentRequestBuilde
 
 from app.models.project import Project
 from app.models.user import User
-from app.v1.payment.schemas import YooMetadataInputSchema, YooPaymentUrlSchema
-from app.v1.payment.validators import project_id_validator
+from app.v1.payment_core.validators import project_id_validator
+from app.v1.payment_yookassa.schemas import YooMetadataInputSchema, YooPaymentUrlSchema
 from app.v1.users.dao import ProjectDAO
 
 

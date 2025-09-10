@@ -7,8 +7,8 @@ from starlette.requests import Request
 
 from app.exceptions import YookassaCallbackForbiddenException
 from app.models.project import Project
-from app.v1.payment.enums import PaymentStatusEnum
-from app.v1.payment.schemas import PaymentCreateSchema, YooWebhookDataSchema
+from app.v1.payment_yookassa.enums import PaymentStatusEnum
+from app.v1.payment_yookassa.schemas import PaymentCreateSchema, YooWebhookDataSchema
 from app.v1.users.dao import PaymentDAO, ProjectDAO
 
 

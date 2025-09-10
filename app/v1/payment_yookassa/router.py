@@ -6,15 +6,15 @@ from starlette.requests import Request
 from app.models.user import User
 from app.v1.dependencies.auth_dep import get_current_user
 from app.v1.dependencies.dao_dep import get_session_with_commit
-from app.v1.payment.schemas import YooPaymentUrlSchema
-from app.v1.payment.use_cases.callback import YooCallbackSuccessUseCaseImpl
-from app.v1.payment.use_cases.create_payment import CreateYooPaymentUseCaseImpl
+from app.v1.payment_yookassa.schemas import YooPaymentUrlSchema
+from app.v1.payment_yookassa.use_cases.callback import YooCallbackSuccessUseCaseImpl
+from app.v1.payment_yookassa.use_cases.create_payment import CreateYooPaymentUseCaseImpl
 
-v1_payments_router = APIRouter()
+v1_yookassa_router = APIRouter()
 
 
-@v1_payments_router.post("/{project_id}/{amount}", response_model=YooPaymentUrlSchema)
-async def create_payment(
+@v1_yookassa_router.post("/{project_id}/{amount}", response_model=YooPaymentUrlSchema)
+async def yookassa_create_payment(
     session: AsyncSession = Depends(get_session_with_commit),
     project_id: int = Path(gt=0, description="ID проекта"),
     amount: int = Path(gt=0, description="Сумма платежа"),
@@ -32,7 +32,7 @@ async def create_payment(
     return redirect_url
 
 
-@v1_payments_router.post("/yookassa_callback")
+@v1_yookassa_router.post("/callback")
 async def yookassa_success_callback(
     request: Request,
     session: AsyncSession = Depends(get_session_with_commit),

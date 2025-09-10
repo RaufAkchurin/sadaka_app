@@ -7,7 +7,7 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.v1.dao.database import Base
-from app.v1.payment.enums import PaymentStatusEnum
+from app.v1.payment_yookassa.enums import PaymentStatusEnum
 
 
 @dataclass
@@ -47,3 +47,7 @@ class Payment(Base):
 
     def __str__(self):
         return f"{self.project.name}, {self.income_amount}, {self.status}, test - {self.test}"
+
+    @property
+    def project_name(self) -> str | None:
+        return self.project.name if self.project else None
