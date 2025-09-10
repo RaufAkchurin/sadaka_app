@@ -10,11 +10,11 @@ from app.v1.payment.schemas import YooPaymentUrlSchema
 from app.v1.payment.use_cases.callback import YooCallbackSuccessUseCaseImpl
 from app.v1.payment.use_cases.create_payment import CreateYooPaymentUseCaseImpl
 
-v1_payments_router = APIRouter()
+v1_yookassa_router = APIRouter()
 
 
-@v1_payments_router.post("/{project_id}/{amount}", response_model=YooPaymentUrlSchema)
-async def create_payment(
+@v1_yookassa_router.post("/yookassa/{project_id}/{amount}", response_model=YooPaymentUrlSchema)
+async def yookassa_create_payment(
     session: AsyncSession = Depends(get_session_with_commit),
     project_id: int = Path(gt=0, description="ID проекта"),
     amount: int = Path(gt=0, description="Сумма платежа"),
@@ -32,7 +32,7 @@ async def create_payment(
     return redirect_url
 
 
-@v1_payments_router.post("/yookassa_callback")
+@v1_yookassa_router.post("/yookassa/callback")
 async def yookassa_success_callback(
     request: Request,
     session: AsyncSession = Depends(get_session_with_commit),
