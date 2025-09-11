@@ -40,7 +40,7 @@ class Referral(Base):
     referees: Mapped[list["User"]] = relationship(  # noqa
         "User",
         secondary=referral_referees,
-        back_populates="referral_links",
+        back_populates="referral_uses",
         lazy="selectin",
     )
 

@@ -71,7 +71,7 @@ class User(Base):
     comments: Mapped[list["Comment"]] = relationship(back_populates="user")
 
     referral_gens: Mapped[list["Referral"]] = relationship(back_populates="sharer")  # ссылки, которые сгенерил
-    referral_links: Mapped[list["Referral"]] = relationship(
+    referral_uses: Mapped[list["Referral"]] = relationship(
         "Referral",
         secondary=referral_referees,
         back_populates="referees",
