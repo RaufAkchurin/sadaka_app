@@ -3,7 +3,7 @@ import secrets
 from dataclasses import dataclass
 
 from sqlalchemy import Column, Enum, ForeignKey, String, Table
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
 
 from app.v1.dao.database import Base
 
@@ -18,7 +18,6 @@ class ReferralTypeEnum(str, enum.Enum):
     PROJECT = "project"
 
 
-# 🔑 Ассоциативная таблица для многие-ко-многим
 referral_referees = Table(
     "referral_referees",
     Base.metadata,
@@ -52,4 +51,14 @@ class Referral(Base):
 
     payments: Mapped[list["Payment"]] = relationship("Payment", back_populates="referral", lazy="selectin")  # noqa F821
 
-    # если тай то соответствующий инстанс наличие проверяем и от
+    @validates("entity_type")
+    def validate_entity_type(self, key, value):
+        if value == "FUND":
+            if not self.fund_id and not self.fund:
+                raise ValueError("Для FUND нужно указать fund или fund_id")
+
+        elif value == "PROJECT":
+            if not self.project_id and not self.project:
+                raise ValueError("Для PROJECT нужно указать project или project_id")
+
+        return value
