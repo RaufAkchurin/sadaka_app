@@ -1,8 +1,8 @@
 """referral relations
 
-Revision ID: 28e0b299b2e6
+Revision ID: 6bb39d0849e0
 Revises: 156c69e70d07
-Create Date: 2025-09-11 17:22:47.377676
+Create Date: 2025-09-11 17:32:29.978979
 
 """
 from typing import Sequence, Union
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = "28e0b299b2e6"
+revision: str = "6bb39d0849e0"
 down_revision: Union[str, None] = "156c69e70d07"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
