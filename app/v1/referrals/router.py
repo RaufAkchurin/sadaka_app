@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.referral import ReferralTypeEnum
 from app.models.user import User
+from app.settings import settings
 from app.v1.dependencies.auth_dep import get_current_user
 from app.v1.dependencies.dao_dep import get_session_with_commit
 from app.v1.users.dao import ReferralDAO
@@ -24,14 +25,14 @@ class ReferralAddSchema(BaseModel):
     project_id: int | None = None
 
 
-@v1_referral_router.post("/generate_code")
-async def get_referral_code(
+@v1_referral_router.get("/generate_link")
+async def get_referral_link(
     ref_type: ReferralTypeEnum,
     fund_id: int = Query(default=None, alias="fund_id"),
     project_id: int = Query(default=None, alias="project_id"),
     user_data: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session_with_commit),
-) -> ReferralKeyResponseSchema | None:
+):
     referral_dao = ReferralDAO(session=session)
 
     referral = await referral_dao.add(
@@ -42,4 +43,16 @@ async def get_referral_code(
             project_id=project_id,
         )
     )
-    return ReferralKeyResponseSchema(key=referral.key)
+
+    url = ""
+
+    if ref_type == ReferralTypeEnum.FUND:
+        url = f"{settings.get_base_url}app/v1/funds/detail/{fund_id}"
+
+    elif ref_type == ReferralTypeEnum.PROJECT:
+        url = f"{settings.get_base_url}app/v1/projects/detail/{project_id}"
+
+    elif ref_type == ReferralTypeEnum.JOIN:
+        url = "ADD URL TO DOWNLOAD APP IN BACKEND PLEASE"
+
+    return url + f"?ref={referral.key}"

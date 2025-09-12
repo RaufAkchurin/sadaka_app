@@ -51,6 +51,15 @@ class Settings(BaseSettings):
             f"&redirect_uri={self.GOOGLE_CALLBACK_URI}&scope=openid%20profile%20email&access_type=offline"
         )
 
+    @property
+    def get_base_url(self) -> str | None:
+        if self.MODE == "DEV":
+            return "http://127.0.0.1:8000/"
+        elif self.MODE == "STAGE":
+            return "https://sadaka.pro/"
+        elif self.MODE == "PROD":
+            return "https://YOU_NEED_PRODUCTION_BASE_URL_ON_STTINGS.PY_FILE/"
+
 
 # Получаем параметры для загрузки переменных среды
 settings = Settings()
