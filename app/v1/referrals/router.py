@@ -2,7 +2,6 @@ from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.exceptions import ReferralGenPayloadException
 from app.models.referral import ReferralTypeEnum
 from app.models.user import User
 from app.v1.dependencies.auth_dep import get_current_user
@@ -18,32 +17,29 @@ class ReferralKeyResponseSchema(BaseModel):
 
 
 class ReferralAddSchema(BaseModel):
-    entity_type: ReferralTypeEnum
-    entity_id: int | None
+    type: ReferralTypeEnum
     sharer_id: int
 
-
-async def referral_generation_payload_validator(entity_type: ReferralTypeEnum, entity_id: int | None) -> None:
-    if entity_type.value in ["fund", "project"] and entity_id is None:
-        raise ReferralGenPayloadException
+    fund_id: int | None = None
+    project_id: int | None = None
 
 
-@v1_referral_router.get("/generate_code")
+@v1_referral_router.post("/generate_code")
 async def get_referral_code(
-    entity_type: ReferralTypeEnum,
-    entity_id: int = Query(default=None, alias="entity_id"),
+    ref_type: ReferralTypeEnum,
+    fund_id: int = Query(default=None, alias="fund_id"),
+    project_id: int = Query(default=None, alias="project_id"),
     user_data: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session_with_commit),
 ) -> ReferralKeyResponseSchema | None:
-    await referral_generation_payload_validator(entity_type, entity_id)
-
     referral_dao = ReferralDAO(session=session)
-    if entity_type == ReferralTypeEnum.JOIN:
-        referral = await referral_dao.add(
-            values=ReferralAddSchema(
-                entity_type=entity_type,
-                entity_id=entity_id,
-                sharer_id=user_data.id,
-            )
+
+    referral = await referral_dao.add(
+        values=ReferralAddSchema(
+            type=ref_type,
+            sharer_id=user_data.id,
+            fund_id=fund_id,
+            project_id=project_id,
         )
-        return ReferralKeyResponseSchema(key=referral.key)
+    )
+    return ReferralKeyResponseSchema(key=referral.key)

@@ -89,8 +89,16 @@ CommentNotPermissionsException = HTTPException(
     status_code=status.HTTP_403_FORBIDDEN, detail="Недостаточно прав для изменения комментария"
 )
 
-# Рефералы
+# Реверралы
 
-ReferralGenPayloadException = HTTPException(
-    status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Передайте айди в entity_id"
+ReferralsFundValidationException = HTTPException(
+    status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Для FUND нужен fund_id"
+)
+
+ReferralsProjectValidationException = HTTPException(
+    status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Для PROJECT нужен project_id"
+)
+
+ReferralsJoinValidationException = HTTPException(
+    status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Для JOIN НЕ требуется fund_id или project_id"
 )

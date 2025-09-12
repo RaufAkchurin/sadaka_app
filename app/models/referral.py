@@ -2,9 +2,14 @@ import enum
 import secrets
 from dataclasses import dataclass
 
-from sqlalchemy import Column, Enum, ForeignKey, String, Table
-from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
+from sqlalchemy import Column, Enum, ForeignKey, String, Table, event
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from app.exceptions import (
+    ReferralsFundValidationException,
+    ReferralsJoinValidationException,
+    ReferralsProjectValidationException,
+)
 from app.v1.dao.database import Base
 
 
@@ -31,7 +36,7 @@ class Referral(Base):
     __tablename__ = "referrals"
     key: Mapped[str] = mapped_column(String(6), unique=True, default=generate_short_key, nullable=False)
 
-    entity_type: Mapped[ReferralTypeEnum] = mapped_column(Enum(ReferralTypeEnum), nullable=False)
+    type: Mapped[ReferralTypeEnum] = mapped_column(Enum(ReferralTypeEnum), nullable=False)
 
     sharer_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
     sharer: Mapped["User"] = relationship("User", back_populates="referral_gens", lazy="selectin")  # noqa F821
@@ -51,14 +56,16 @@ class Referral(Base):
 
     payments: Mapped[list["Payment"]] = relationship("Payment", back_populates="referral", lazy="selectin")  # noqa F821
 
-    @validates("entity_type")
-    def validate_entity_type(self, key, value):
-        if value == "FUND":
-            if not self.fund_id and not self.fund:
-                raise ValueError("Для FUND нужно указать fund или fund_id")
 
-        elif value == "PROJECT":
-            if not self.project_id and not self.project:
-                raise ValueError("Для PROJECT нужно указать project или project_id")
+@event.listens_for(Referral, "before_insert")
+@event.listens_for(Referral, "before_update")
+def validate_before_insert(mapper, connection, target):
+    if target.type == ReferralTypeEnum.FUND and not target.fund_id:
+        raise ReferralsFundValidationException
 
-        return value
+    if target.type == ReferralTypeEnum.PROJECT and not target.project_id:
+        raise ReferralsProjectValidationException
+
+    if target.type == ReferralTypeEnum.JOIN:
+        if target.project_id or target.fund_id:
+            raise ReferralsJoinValidationException
