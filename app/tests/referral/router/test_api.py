@@ -1,10 +1,13 @@
-class TestReferrals:
-    async def test_validator(self, ac, auth_ac, query_counter) -> None:
-        response = await auth_ac.client.get("/app/v1/payments/my_donations", cookies=auth_ac.cookies.dict())
+class TestReferralGenerateLink:
+    async def test_generate_project_not_valid(self, auth_ac, query_counter):
+        response = await auth_ac.client.get(
+            "/app/v1/referral/generate_link?" "ref_type=project" "&fund_id=1", cookies=auth_ac.cookies.dict()
+        )
+        assert response.status_code == 422
+
+    async def test_generate_project_200(self, auth_ac, query_counter):
+        response = await auth_ac.client.get(
+            "/app/v1/referral/generate_link?" "ref_type=project" "&project_id=1", cookies=auth_ac.cookies.dict()
+        )
         assert response.status_code == 200
-
-        assert len(query_counter) <= 11, f"Слишком много SQL-запросов: {len(query_counter)}"
-
-        data = response.json()
-
-        assert data is not None
+        assert "/v1/projects/detail/1?ref=" in response.json()
