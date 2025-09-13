@@ -1,32 +1,45 @@
-class TestProjectDetail:
-    async def test_400_authorization(self, ac) -> None:
-        response = await ac.get("/app/v1/projects/detail/1")
-        assert response.status_code == 400
-        assert response.json() == {"detail": "Токен отсутствует в заголовке"}
+from app.models.referral import ReferralTypeEnum
 
-    async def test_id_validate(self, auth_ac_super) -> None:
-        response = await auth_ac_super.client.get("/app/v1/projects/detail/hob", cookies=auth_ac_super.cookies.dict())
+
+class TestReferralProjectLink:
+    async def test_generate_project_not_valid(self, auth_ac_super, referral_dao, query_counter):
+        response = await auth_ac_super.client.get(
+            "/app/v1/referral/generate_link?" "ref_type=project" "&fund_id=1", cookies=auth_ac_super.cookies.dict()
+        )
         assert response.status_code == 422
-        assert response.json() == {
-            "detail": [
-                {
-                    "input": "hob",
-                    "loc": ["path", "project_id"],
-                    "msg": "Input should be a valid integer, unable to parse string as an integer",
-                    "type": "int_parsing",
-                }
-            ]
-        }
 
-    async def test_id_not_exist(self, auth_ac_super) -> None:
-        response = await auth_ac_super.client.get("/app/v1/projects/detail/99", cookies=auth_ac_super.cookies.dict())
-        assert response.status_code == 404
+        all_referrals = await referral_dao.count()
+        assert all_referrals == 0
 
-    async def test_list_active(self, auth_ac_super) -> None:
-        response = await auth_ac_super.client.get("/app/v1/projects/detail/1", cookies=auth_ac_super.cookies.dict())
+    async def test_generate_ref_project_200(
+        self, ac, auth_ac_super, auth_ac_admin, referral_dao, user_dao, query_counter
+    ):
+        # CHECK 200 status
+        response = await auth_ac_super.client.get(
+            "/app/v1/referral/generate_link?" "ref_type=project" "&project_id=1", cookies=auth_ac_super.cookies.dict()
+        )
         assert response.status_code == 200
+        assert "/v1/projects/detail/1?ref=" in response.json()
+        self.ref_link = response.json()
 
-        assert response.json() == {
+        # CHECK queries
+        assert len(query_counter) <= 6, f"Слишком много SQL-запросов: {len(query_counter)}"
+
+        # CHECK new instance exist
+        all_referrals = await referral_dao.count()
+        assert all_referrals == 1
+
+        referrals = await referral_dao.find_all()
+        last_referral = referrals[-1]
+
+        assert last_referral.type == ReferralTypeEnum.PROJECT.value
+        assert last_referral.sharer_id == 1
+        assert last_referral.sharer_id == last_referral.sharer_id
+
+        # CHECK response from referral_link with NEW USER (current_user)
+        ref_link_response = await auth_ac_super.client.get(self.ref_link, cookies=auth_ac_super.cookies.dict())
+        assert ref_link_response.status_code == 200
+        assert ref_link_response.json() == {
             "active_stage_number": 2,
             "collected_percentage": 20,
             "description": "desc1",

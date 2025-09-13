@@ -4,8 +4,8 @@ class TestFundDetail:
         assert response.status_code == 400
         assert response.json() == {"detail": "Токен отсутствует в заголовке"}
 
-    async def test_id_validate(self, auth_ac) -> None:
-        response = await auth_ac.client.get("/app/v1/funds/detail/hob", cookies=auth_ac.cookies.dict())
+    async def test_id_validate(self, auth_ac_super) -> None:
+        response = await auth_ac_super.client.get("/app/v1/funds/detail/hob", cookies=auth_ac_super.cookies.dict())
         assert response.status_code == 422
         assert response.json() == {
             "detail": [
@@ -18,12 +18,12 @@ class TestFundDetail:
             ]
         }
 
-    async def test_id_not_exist(self, auth_ac) -> None:
-        response = await auth_ac.client.get("/app/v1/funds/detail/99", cookies=auth_ac.cookies.dict())
+    async def test_id_not_exist(self, auth_ac_super) -> None:
+        response = await auth_ac_super.client.get("/app/v1/funds/detail/99", cookies=auth_ac_super.cookies.dict())
         assert response.status_code == 404
 
-    async def test_detail(self, auth_ac) -> None:
-        response = await auth_ac.client.get("/app/v1/funds/detail/1", cookies=auth_ac.cookies.dict())
+    async def test_detail(self, auth_ac_super) -> None:
+        response = await auth_ac_super.client.get("/app/v1/funds/detail/1", cookies=auth_ac_super.cookies.dict())
         assert response.status_code == 200
 
         assert response.json() == {

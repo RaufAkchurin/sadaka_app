@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.referral import ReferralTypeEnum
+from app.models.referral import Referral, ReferralTypeEnum
 from app.models.user import User
 from app.settings import settings
 from app.v1.dependencies.auth_dep import get_current_user
@@ -25,6 +25,21 @@ class ReferralAddSchema(BaseModel):
     project_id: int | None = None
 
 
+async def generate_referral_link(referral: Referral):
+    url = ""
+
+    if referral.type == ReferralTypeEnum.FUND:
+        url = f"{settings.get_base_url}app/v1/funds/detail/{referral.fund_id}"
+
+    elif referral.type == ReferralTypeEnum.PROJECT:
+        url = f"{settings.get_base_url}app/v1/projects/detail/{referral.project_id}"
+
+    elif referral.type == ReferralTypeEnum.JOIN:
+        url = "ADD URL TO DOWNLOAD APP IN BACKEND PLEASE"
+
+    return url
+
+
 @v1_referral_router.get("/generate_link")
 async def get_referral_link(
     ref_type: ReferralTypeEnum,
@@ -44,15 +59,4 @@ async def get_referral_link(
         )
     )
 
-    url = ""
-
-    if ref_type == ReferralTypeEnum.FUND:
-        url = f"{settings.get_base_url}app/v1/funds/detail/{fund_id}"
-
-    elif ref_type == ReferralTypeEnum.PROJECT:
-        url = f"{settings.get_base_url}app/v1/projects/detail/{project_id}"
-
-    elif ref_type == ReferralTypeEnum.JOIN:
-        url = "ADD URL TO DOWNLOAD APP IN BACKEND PLEASE"
-
-    return url + f"?ref={referral.key}"
+    return await generate_referral_link(referral=referral) + f"?ref={referral.key}"

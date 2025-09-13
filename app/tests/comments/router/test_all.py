@@ -16,11 +16,11 @@ class TestCommentsAPI:
             ({"project_id": 1, "content": "hello world"}, 201),
         ],
     )
-    async def test_create_comment(self, auth_ac, comment_dao, payload, status_code):
-        resp = await auth_ac.client.post(
+    async def test_create_comment(self, auth_ac_super, comment_dao, payload, status_code):
+        resp = await auth_ac_super.client.post(
             "/app/v1/comments/",
             json=payload,
-            cookies=auth_ac.cookies.dict(),
+            cookies=auth_ac_super.cookies.dict(),
         )
         assert resp.status_code == status_code
 
@@ -32,58 +32,58 @@ class TestCommentsAPI:
         rows = await comment_dao.find_all(filters=CommentProjectFilterSchema(project_id=payload["project_id"]))
         assert any(r.content == payload["content"] for r in rows)
 
-    async def test_delete_comment_success(self, auth_ac, comment_dao):
-        created = await auth_ac.client.post(
+    async def test_delete_comment_success(self, auth_ac_super, comment_dao):
+        created = await auth_ac_super.client.post(
             "/app/v1/comments/",
             json=CommentCreateDataSchema(project_id=201, content="to be deleted").model_dump(),
-            cookies=auth_ac.cookies.dict(),
+            cookies=auth_ac_super.cookies.dict(),
         )
         assert created.status_code == 201
         comment_id = created.json()["id"]
 
-        resp = await auth_ac.client.delete(
+        resp = await auth_ac_super.client.delete(
             f"/app/v1/comments/{comment_id}",
-            cookies=auth_ac.cookies.dict(),
+            cookies=auth_ac_super.cookies.dict(),
         )
         assert resp.status_code == 204
 
         deleted = await comment_dao.find_one_or_none_by_id(comment_id)
         assert deleted is None
 
-    async def test_delete_comment_not_found(self, auth_ac):
-        resp = await auth_ac.client.delete(
+    async def test_delete_comment_not_found(self, auth_ac_super):
+        resp = await auth_ac_super.client.delete(
             "/app/v1/comments/99999999",
-            cookies=auth_ac.cookies.dict(),
+            cookies=auth_ac_super.cookies.dict(),
         )
         assert resp.status_code == 404  # CommentNotFoundByIdException
 
-    async def test_delete_comment_forbidden(self, auth_ac, comment_dao):
+    async def test_delete_comment_forbidden(self, auth_ac_super, comment_dao):
         foreign = await comment_dao.add_and_commit_for_tests(
             values=CommentSchema(user_id=999999, project_id=301, content="foreign")
         )
-        resp = await auth_ac.client.delete(
+        resp = await auth_ac_super.client.delete(
             f"/app/v1/comments/{foreign}",
-            cookies=auth_ac.cookies.dict(),
+            cookies=auth_ac_super.cookies.dict(),
         )
         assert resp.status_code == 403  # CommentNotPermissionsException
 
         still_there = await comment_dao.find_one_or_none_by_id(foreign)
         assert still_there is not None
 
-    async def test_edit_comment_success(self, auth_ac, comment_dao):
-        created = await auth_ac.client.post(
+    async def test_edit_comment_success(self, auth_ac_super, comment_dao):
+        created = await auth_ac_super.client.post(
             "/app/v1/comments/",
             json=CommentCreateDataSchema(project_id=401, content="old").model_dump(),
-            cookies=auth_ac.cookies.dict(),
+            cookies=auth_ac_super.cookies.dict(),
         )
         assert created.status_code == 201
         comment_id = created.json()["id"]
 
         payload = CommentContentSchema(content="new content")
-        resp = await auth_ac.client.patch(
+        resp = await auth_ac_super.client.patch(
             f"/app/v1/comments/{comment_id}",
             json=payload.model_dump(),
-            cookies=auth_ac.cookies.dict(),
+            cookies=auth_ac_super.cookies.dict(),
         )
         assert resp.status_code == 200
 
@@ -91,22 +91,22 @@ class TestCommentsAPI:
         assert updated is not None
         assert updated.content == "new content"
 
-    async def test_edit_comment_not_found(self, auth_ac):
-        resp = await auth_ac.client.patch(
+    async def test_edit_comment_not_found(self, auth_ac_super):
+        resp = await auth_ac_super.client.patch(
             "/app/v1/comments/99999999",
             json=CommentContentSchema(content="x").model_dump(),
-            cookies=auth_ac.cookies.dict(),
+            cookies=auth_ac_super.cookies.dict(),
         )
         assert resp.status_code == 404  # CommentNotFoundByIdException
 
-    async def test_edit_comment_forbidden(self, auth_ac, comment_dao):
+    async def test_edit_comment_forbidden(self, auth_ac_super, comment_dao):
         foreign = await comment_dao.add_and_commit_for_tests(
             values=CommentSchema(user_id=999999, project_id=501, content="locked")
         )
-        resp = await auth_ac.client.patch(
+        resp = await auth_ac_super.client.patch(
             f"/app/v1/comments/{foreign}",
             json=CommentContentSchema(content="try edit").model_dump(),
-            cookies=auth_ac.cookies.dict(),
+            cookies=auth_ac_super.cookies.dict(),
         )
         assert resp.status_code == 403  # CommentNotPermissionsException
 
@@ -114,12 +114,12 @@ class TestCommentsAPI:
         assert same is not None
         assert same.content == "locked"
 
-    async def test_get_comments_by_project_id_empty(self, auth_ac):
+    async def test_get_comments_by_project_id_empty(self, auth_ac_super):
         project_id = 2
-        resp = await auth_ac.client.get(
+        resp = await auth_ac_super.client.get(
             f"/app/v1/comments/{project_id}",
             params={"project_id": project_id, "page": 1, "limit": 10},
-            cookies=auth_ac.cookies.dict(),
+            cookies=auth_ac_super.cookies.dict(),
         )
         assert resp.status_code == 200
         data = resp.json()
@@ -128,17 +128,17 @@ class TestCommentsAPI:
         assert data.get("state").get("total_pages") == 1
         assert data.get("state").get("total_items") == 2
 
-    async def test_get_comments_by_project_id_paginated(self, auth_ac, comment_dao):
+    async def test_get_comments_by_project_id_paginated(self, auth_ac_super, comment_dao):
         project_id = 1
         for i in range(15):
             await comment_dao.add_and_commit_for_tests(
                 values=CommentSchema(user_id=1, project_id=project_id, content=f"c{i}")
             )
 
-        resp1 = await auth_ac.client.get(
+        resp1 = await auth_ac_super.client.get(
             f"/app/v1/comments/{project_id}",
             params={"project_id": project_id, "page": 1, "limit": 10},
-            cookies=auth_ac.cookies.dict(),
+            cookies=auth_ac_super.cookies.dict(),
         )
         assert resp1.status_code == 200
         data1 = resp1.json()
@@ -148,10 +148,10 @@ class TestCommentsAPI:
         assert data1.get("state").get("total_items") == 17
         assert len(data1["items"]) == 10
 
-        resp2 = await auth_ac.client.get(
+        resp2 = await auth_ac_super.client.get(
             f"/app/v1/comments/{project_id}",
             params={"project_id": project_id, "page": 2, "limit": 10},
-            cookies=auth_ac.cookies.dict(),
+            cookies=auth_ac_super.cookies.dict(),
         )
         assert resp2.status_code == 200
         data2 = resp2.json()

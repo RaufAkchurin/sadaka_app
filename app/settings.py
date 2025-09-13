@@ -57,6 +57,8 @@ class Settings(BaseSettings):
             return "http://127.0.0.1:8000/"
         elif self.MODE == "STAGE":
             return "https://sadaka.pro/"
+        elif self.MODE == "TEST":
+            return "https://test/"
         elif self.MODE == "PROD":
             return "https://YOU_NEED_PRODUCTION_BASE_URL_ON_STTINGS.PY_FILE/"
 
