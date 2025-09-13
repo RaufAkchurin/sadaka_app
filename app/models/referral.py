@@ -2,9 +2,14 @@ import enum
 import secrets
 from dataclasses import dataclass
 
-from sqlalchemy import Enum, ForeignKey, String
+from sqlalchemy import Column, Enum, ForeignKey, String, Table, event
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from app.exceptions import (
+    ReferralsFundValidationException,
+    ReferralsJoinValidationException,
+    ReferralsProjectValidationException,
+)
 from app.v1.dao.database import Base
 
 
@@ -18,16 +23,49 @@ class ReferralTypeEnum(str, enum.Enum):
     PROJECT = "project"
 
 
+referral_referees = Table(
+    "referral_referees",
+    Base.metadata,
+    Column("referral_id", ForeignKey("referrals.id"), primary_key=True),
+    Column("user_id", ForeignKey("users.id"), primary_key=True),
+)
+
+
 @dataclass
 class Referral(Base):
     __tablename__ = "referrals"
-
-    entity_type: Mapped[ReferralTypeEnum] = mapped_column(Enum(ReferralTypeEnum), nullable=False)
-    entity_id: Mapped[int] = mapped_column(nullable=True)
-
     key: Mapped[str] = mapped_column(String(6), unique=True, default=generate_short_key, nullable=False)
 
-    sharer_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
-    sharer: Mapped["User"] = relationship("User", back_populates="referrals", lazy="joined")  # noqa F821
+    type: Mapped[ReferralTypeEnum] = mapped_column(Enum(ReferralTypeEnum), nullable=False)
 
-    payments: Mapped[list["Payment"]] = relationship("Payment", back_populates="referral")  # noqa F821
+    sharer_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    sharer: Mapped["User"] = relationship("User", back_populates="referral_gens", lazy="selectin")  # noqa F821
+
+    referees: Mapped[list["User"]] = relationship(  # noqa
+        "User",
+        secondary=referral_referees,
+        back_populates="referral_uses",
+        lazy="selectin",
+    )
+
+    fund_id: Mapped[int] = mapped_column(ForeignKey("funds.id"), nullable=True)
+    fund: Mapped["Fund"] = relationship("Fund", back_populates="referrals", lazy="selectin")  # noqa F821
+
+    project_id: Mapped[int] = mapped_column(ForeignKey("projects.id"), nullable=True)
+    project: Mapped["Project"] = relationship("Project", back_populates="referrals", lazy="selectin")  # noqa F821
+
+    payments: Mapped[list["Payment"]] = relationship("Payment", back_populates="referral", lazy="selectin")  # noqa F821
+
+
+@event.listens_for(Referral, "before_insert")
+@event.listens_for(Referral, "before_update")
+def validate_before_insert(mapper, connection, target):
+    if target.type == ReferralTypeEnum.FUND and not target.fund_id:
+        raise ReferralsFundValidationException
+
+    if target.type == ReferralTypeEnum.PROJECT and not target.project_id:
+        raise ReferralsProjectValidationException
+
+    if target.type == ReferralTypeEnum.JOIN:
+        if target.project_id or target.fund_id:
+            raise ReferralsJoinValidationException

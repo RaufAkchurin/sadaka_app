@@ -4,6 +4,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
 
 from app.models.file import File
 from app.models.fund import Fund
+from app.models.referral import Referral
 from app.v1.dao.database import Base
 from app.v1.project.enums import AbstractStatusEnum
 from app.v1.project.schemas import RegionInfoSchema
@@ -50,6 +51,10 @@ class Project(Base):
 
     comments: Mapped[list["Comment"]] = relationship(  # noqa: F821
         "Comment", back_populates="project", cascade="all, delete-orphan", lazy="joined"
+    )
+
+    referrals: Mapped[list["Referral"]] = relationship(  # noqa: F821
+        "Referral", back_populates="project", cascade="all, delete-orphan", lazy="joined"
     )
 
     def __repr__(self):
