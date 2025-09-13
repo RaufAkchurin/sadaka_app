@@ -1,8 +1,10 @@
 from app.models.referral import ReferralTypeEnum
+from app.models.user import User
+from app.v1.users.schemas import EmailFilterSchema
 
 
 class TestReferralProjectLink:
-    async def test_generate_project_not_valid(self, auth_ac_super, referral_dao, query_counter):
+    async def test_generate_project_not_valid(self, auth_ac_super, auth_ac_admin, referral_dao, query_counter):
         response = await auth_ac_super.client.get(
             "/app/v1/referral/generate_link?" "ref_type=project" "&fund_id=1", cookies=auth_ac_super.cookies.dict()
         )
@@ -12,7 +14,7 @@ class TestReferralProjectLink:
         assert all_referrals == 0
 
     async def test_generate_ref_project_200(
-        self, ac, auth_ac_super, auth_ac_admin, referral_dao, user_dao, query_counter
+        self, ac, auth_ac_super, auth_ac_admin, referral_dao, user_dao, query_counter, session
     ):
         # CHECK 200 status
         response = await auth_ac_super.client.get(
@@ -34,10 +36,9 @@ class TestReferralProjectLink:
 
         assert last_referral.type == ReferralTypeEnum.PROJECT.value
         assert last_referral.sharer_id == 1
-        assert last_referral.sharer_id == last_referral.sharer_id
 
         # CHECK response from referral_link with NEW USER (current_user)
-        ref_link_response = await auth_ac_super.client.get(self.ref_link, cookies=auth_ac_super.cookies.dict())
+        ref_link_response = await auth_ac_admin.client.get(self.ref_link, cookies=auth_ac_admin.cookies.dict())
         assert ref_link_response.status_code == 200
         assert ref_link_response.json() == {
             "active_stage_number": 2,
@@ -126,3 +127,13 @@ class TestReferralProjectLink:
             "total_income": 2000,
             "unique_sponsors": 1,
         }
+
+        # CHECK referees updated referral_uses and referees
+        user_admin: User = await user_dao.find_one_or_none(filters=EmailFilterSchema(email="admin@test.com"))
+        assert len(user_admin.referral_uses) == 1
+        assert user_admin.referral_uses[0] == last_referral
+
+        await referral_dao.refresh(last_referral)
+        referral_updated = await referral_dao.find_one_or_none_by_id(data_id=last_referral.id)
+        assert referral_updated.referees is not None
+        assert referral_updated.referees[-1].id == user_admin.id
