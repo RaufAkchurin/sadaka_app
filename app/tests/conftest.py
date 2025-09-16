@@ -1,3 +1,4 @@
+import httpx
 import pytest
 from httpx import ASGITransport, AsyncClient
 from main import app as fastapi_app
@@ -7,6 +8,7 @@ from tests.schemas import AuthorizedClientModel, CookiesModel
 from utils.scripts.local_db_fill import prepare_database_core
 from yookassa import Configuration
 
+from app.models.user import User
 from app.settings import settings
 from app.v1.dao.database import async_session_maker
 from app.v1.users.dao import CommentDAO, OneTimePassDAO, PaymentDAO, ReferralDAO, UserDAO
@@ -122,18 +124,18 @@ async def auth_ac_admin():
         )
 
 
-# @pytest.fixture(scope="class")
-# async def auth_by(ac: AsyncClient, user: User):
-#     logout_response = await ac.post("/app/v1/auth/logout/")
-#     assert logout_response.status_code == 307
-#
-#     login_response = await ac.post("/app/v1/auth/login/", json={"email": user.email, "password": "password"})
-#     assert login_response.status_code == 200
-#     assert isinstance(ac.cookies, httpx.Cookies)
-#     return AuthorizedClientModel(
-#         client=ac,
-#         cookies=CookiesModel(
-#             user_access_token=ac.cookies.get("user_access_token"),
-#             user_refresh_token=ac.cookies.get("user_refresh_token"),
-#         ),
-#     )
+@pytest.fixture(scope="class")
+async def auth_by(ac: AsyncClient, user: User):
+    logout_response = await ac.post("/app/v1/auth/logout/")
+    assert logout_response.status_code == 307
+
+    login_response = await ac.post("/app/v1/auth/login/", json={"email": user.email, "password": "password"})
+    assert login_response.status_code == 200
+    assert isinstance(ac.cookies, httpx.Cookies)
+    return AuthorizedClientModel(
+        client=ac,
+        cookies=CookiesModel(
+            user_access_token=ac.cookies.get("user_access_token"),
+            user_refresh_token=ac.cookies.get("user_refresh_token"),
+        ),
+    )
