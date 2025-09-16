@@ -48,6 +48,8 @@ async def get_referral_link(
     user_data: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session_with_commit),
 ):
+    # TODO добавить проерку что инстанс с айдишником вообще существует
+
     referral_dao = ReferralDAO(session=session)
 
     referral = await referral_dao.add(
