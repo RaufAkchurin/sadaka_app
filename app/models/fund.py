@@ -59,10 +59,6 @@ class Fund(Base):
         lazy="joined",
     )  # imported in __init__.py
 
-    referrals: Mapped[list["Referral"]] = relationship(  # noqa: F821
-        "Referral", back_populates="fund", cascade="all, delete-orphan", lazy="joined"
-    )
-
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.id}, name={self.name})"
 

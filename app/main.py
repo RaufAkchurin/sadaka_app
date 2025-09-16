@@ -21,7 +21,6 @@ from app.v1.payment_core.router import v1_payments_core_router
 from app.v1.payment_yookassa.router import v1_yookassa_router
 from app.v1.project.router import v1_projects_router
 from app.v1.rating.router import v1_rating_router
-from app.v1.referrals.router import v1_referral_router
 from app.v1.s3_storage.router import v1_s3_router
 from app.v1.users.router import v1_users_router
 
@@ -92,7 +91,6 @@ def register_routers(app: FastAPI) -> None:
     app.include_router(v1_cities_router, prefix="/app/v1/cities", tags=["Cities v1"])
     app.include_router(v1_comment_router, prefix="/app/v1/comments", tags=["Comments v1"])
     app.include_router(v1_rating_router, prefix="/app/v1/ratings", tags=["Ratings v1"])
-    app.include_router(v1_referral_router, prefix="/app/v1/referral", tags=["Referral v1"])
 
     # Payments
     app.include_router(v1_payments_core_router, prefix="/app/v1/payments", tags=["Payments v1"])

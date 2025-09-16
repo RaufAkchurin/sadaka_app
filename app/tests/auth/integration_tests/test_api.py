@@ -132,8 +132,8 @@ class TestApi:
             assert response.cookies.get("user_access_token")
             assert response.cookies.get("user_refresh_token")
 
-    async def test_logout(self, auth_ac_super):
-        client = auth_ac_super.client
+    async def test_logout(self, auth_ac):
+        client = auth_ac.client
 
         user_access_token = client.cookies.get("user_access_token")
         user_refresh_token = client.cookies.get("user_refresh_token")
@@ -156,10 +156,10 @@ class TestApi:
             (False, 400, {"detail": "Токен отсутствует в заголовке"}),
         ],
     )
-    async def test_refresh_token(self, ac, auth_ac_super, is_authorized, status_code, response_message):
+    async def test_refresh_token(self, ac, auth_ac, is_authorized, status_code, response_message):
         if is_authorized:
-            client = auth_ac_super.client
-            response = await client.post("/app/v1/auth/refresh", cookies=auth_ac_super.cookies.dict())
+            client = auth_ac.client
+            response = await client.post("/app/v1/auth/refresh", cookies=auth_ac.cookies.dict())
 
         else:
             client = ac

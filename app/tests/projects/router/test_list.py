@@ -4,8 +4,8 @@ class TestProjectList:
         assert response.status_code == 400
         assert response.json() == {"detail": "Токен отсутствует в заголовке"}
 
-    async def test_list_active(self, auth_ac_super) -> None:
-        response = await auth_ac_super.client.get("/app/v1/projects/all/active", cookies=auth_ac_super.cookies.dict())
+    async def test_list_active(self, auth_ac) -> None:
+        response = await auth_ac.client.get("/app/v1/projects/all/active", cookies=auth_ac.cookies.dict())
         assert response.status_code == 200
 
         assert response.json() == {
@@ -74,8 +74,8 @@ class TestProjectList:
             "state": {"page": 1, "size": 5, "total_items": 20, "total_pages": 4},
         }
 
-    async def test_list_finished(self, auth_ac_super) -> None:
-        response = await auth_ac_super.client.get("/app/v1/projects/all/finished", cookies=auth_ac_super.cookies.dict())
+    async def test_list_finished(self, auth_ac) -> None:
+        response = await auth_ac.client.get("/app/v1/projects/all/finished", cookies=auth_ac.cookies.dict())
 
         assert response.status_code == 200
         assert response.json() == {
@@ -144,8 +144,8 @@ class TestProjectList:
             "state": {"page": 1, "size": 5, "total_items": 10, "total_pages": 2},
         }
 
-    async def test_list_all(self, auth_ac_super) -> None:
-        response = await auth_ac_super.client.get("/app/v1/projects/all/all", cookies=auth_ac_super.cookies.dict())
+    async def test_list_all(self, auth_ac) -> None:
+        response = await auth_ac.client.get("/app/v1/projects/all/all", cookies=auth_ac.cookies.dict())
 
         assert response.status_code == 200
         assert response.json() == {
@@ -236,9 +236,9 @@ class TestProjectList:
     #     # необязательная проверка минимального порога
     #     assert rps > 80
 
-    async def test_list_by_fund_id(self, auth_ac_super) -> None:
-        response = await auth_ac_super.client.get(
-            "/app/v1/projects/all/all", cookies=auth_ac_super.cookies.dict(), params={"fund_id": 1}
+    async def test_list_by_fund_id(self, auth_ac) -> None:
+        response = await auth_ac.client.get(
+            "/app/v1/projects/all/all", cookies=auth_ac.cookies.dict(), params={"fund_id": 1}
         )
 
         assert response.status_code == 200
@@ -308,9 +308,9 @@ class TestProjectList:
             "state": {"page": 1, "size": 5, "total_items": 10, "total_pages": 2},
         }
 
-    async def test_list_active_and_fund_id(self, auth_ac_super) -> None:
-        response = await auth_ac_super.client.get(
-            "/app/v1/projects/all/active", cookies=auth_ac_super.cookies.dict(), params={"fund_id": 1}
+    async def test_list_active_and_fund_id(self, auth_ac) -> None:
+        response = await auth_ac.client.get(
+            "/app/v1/projects/all/active", cookies=auth_ac.cookies.dict(), params={"fund_id": 1}
         )
 
         assert response.status_code == 200

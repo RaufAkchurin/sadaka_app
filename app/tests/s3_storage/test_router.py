@@ -25,15 +25,15 @@ class TestS3Storage:
             (False, 400, {"detail": "Токен отсутствует в заголовке"}),
         ],
     )
-    async def test_upload_file(self, ac, auth_ac_super, is_authorized, status_code, response_message):
+    async def test_upload_file(self, ac, auth_ac, is_authorized, status_code, response_message):
         file_content = b"Test file content"
         file_name = "test_file.png"
 
         if is_authorized:
-            response = await auth_ac_super.client.post(
+            response = await auth_ac.client.post(
                 "/app/v1/s3_storage/upload",
                 files={"file": (file_name, file_content, "image/png")},
-                cookies=auth_ac_super.cookies.dict(),
+                cookies=auth_ac.cookies.dict(),
             )
         else:
             response = await ac.post(
@@ -68,15 +68,15 @@ class TestS3Storage:
             (2 * 1024 * 1024, False, 400, {"detail": "Токен отсутствует в заголовке"}),
         ],
     )
-    async def test_upload_file_size(self, ac, auth_ac_super, file_size, is_authorized, status_code, response_message):
+    async def test_upload_file_size(self, ac, auth_ac, file_size, is_authorized, status_code, response_message):
         file_content = b"a" * file_size  # Создаем файл с указанным размером
         file_name = "test_file.png"
 
         if is_authorized:
-            response = await auth_ac_super.client.post(
+            response = await auth_ac.client.post(
                 "/app/v1/s3_storage/upload",
                 files={"file": (file_name, file_content, "image/png")},
-                cookies=auth_ac_super.cookies.dict(),
+                cookies=auth_ac.cookies.dict(),
             )
         else:
             response = await ac.post(
@@ -113,12 +113,12 @@ class TestS3Storage:
             ("exe", False, 400, {"detail": "Токен отсутствует в заголовке"}),
         ],
     )
-    async def test_upload_file_type(self, ac, auth_ac_super, file_type, is_authorized, status_code, response_message):
+    async def test_upload_file_type(self, ac, auth_ac, file_type, is_authorized, status_code, response_message):
         invalid_file_content = b"Invalid file content"
         file_name = f"test_file.{file_type}"
 
         if is_authorized:
-            response = await auth_ac_super.client.post(
+            response = await auth_ac.client.post(
                 "/app/v1/s3_storage/upload",
                 files={
                     "file": (
@@ -127,7 +127,7 @@ class TestS3Storage:
                         "application/octet-stream",
                     )
                 },
-                cookies=auth_ac_super.cookies.dict(),
+                cookies=auth_ac.cookies.dict(),
             )
         else:
             response = await ac.post(
@@ -151,21 +151,19 @@ class TestS3Storage:
             (False, 400, {"detail": "Токен отсутствует в заголовке"}),
         ],
     )
-    async def test_download_file(self, ac, auth_ac_super, is_authorized, status_code, response_message):
+    async def test_download_file(self, ac, auth_ac, is_authorized, status_code, response_message):
         file_name = "test_file.png"
         file_content = b"Test file content"
 
         # Сначала загрузим файл
-        await auth_ac_super.client.post(
+        await auth_ac.client.post(
             "/app/v1/s3_storage/upload",
             files={"file": (file_name, file_content, "image/png")},
-            cookies=auth_ac_super.cookies.dict(),
+            cookies=auth_ac.cookies.dict(),
         )
 
         if is_authorized:
-            response = await auth_ac_super.client.get(
-                f"/app/v1/s3_storage/{file_name}", cookies=auth_ac_super.cookies.dict()
-            )
+            response = await auth_ac.client.get(f"/app/v1/s3_storage/{file_name}", cookies=auth_ac.cookies.dict())
         else:
             response = await ac.get(f"/app/v1/s3_storage/{file_name}")
 
@@ -182,13 +180,9 @@ class TestS3Storage:
             (False, f"{uuid4()}.png", 400, {"detail": "Токен отсутствует в заголовке"}),
         ],
     )
-    async def test_download_file_not_found(
-        self, ac, auth_ac_super, is_authorized, file_name, status_code, response_message
-    ):
+    async def test_download_file_not_found(self, ac, auth_ac, is_authorized, file_name, status_code, response_message):
         if is_authorized:
-            response = await auth_ac_super.client.get(
-                f"/app/v1/s3_storage/{file_name}", cookies=auth_ac_super.cookies.dict()
-            )
+            response = await auth_ac.client.get(f"/app/v1/s3_storage/{file_name}", cookies=auth_ac.cookies.dict())
         else:
             response = await ac.get(f"/app/v1/s3_storage/{file_name}")
 
