@@ -3,11 +3,12 @@ from typing import Generic, List, Type, TypeVar
 from loguru import logger
 from pydantic import BaseModel
 from sqlalchemy import delete as sqlalchemy_delete
-from sqlalchemy import func
+from sqlalchemy import func, inspect
 from sqlalchemy import update as sqlalchemy_update
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from sqlalchemy.orm import Mapper
 
 from .database import Base
 
@@ -21,6 +22,16 @@ class BaseDAO(Generic[T]):
         self._session = session
         if self.model is None:
             raise ValueError("Модель должна быть указана в дочернем классе")
+
+    async def refresh(self, instance):
+        # Полностью обновляет все поля и связи модели instance.
+        mapper: Mapper = inspect(instance).mapper
+
+        # Берём все имена колонок и всех relationships
+        attrs = [col.key for col in mapper.columns] + [rel.key for rel in mapper.relationships]
+
+        await self._session.refresh(instance, attribute_names=attrs)
+        return instance
 
     async def find_one_or_none_by_id(self, data_id: int):
         try:
