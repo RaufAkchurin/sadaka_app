@@ -83,7 +83,7 @@ class Fund(Base):
         return len(self.projects)
 
     @property
-    def total_income(self) -> int:
+    def total_income(self) -> float:
         projects = self.projects
         total_income = sum([project.total_income for project in projects])
         return total_income

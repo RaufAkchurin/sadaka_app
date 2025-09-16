@@ -24,7 +24,7 @@ class FundDetailAPISchema(BaseModel):
     id: int
     name: str
     region_name: str
-    total_income: int
+    total_income: float
     projects_count: int
     description: str
     hot_line: str
