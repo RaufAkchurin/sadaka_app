@@ -3,7 +3,7 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Annotated
 
-from sqlalchemy import TIMESTAMP, Integer, MetaData, func, inspect
+from sqlalchemy import TIMESTAMP, Integer, MetaData, NullPool, func, inspect
 from sqlalchemy.ext.asyncio import AsyncAttrs, AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase, Mapped, declared_attr, mapped_column
 
@@ -20,16 +20,16 @@ if settings.MODE == "STAGE":
     DATABASE_PARAMS = {"pool_size": 5, "max_overflow": 10}
 
 elif settings.MODE == "TEST":
-    DB_DRIVER = "postgresql+asyncpg"
-    DATABASE_URL = (
-        f"{DB_DRIVER}://{settings.POSTGRES_TEST_USER}:{settings.POSTGRES_TEST_PASSWORD}"
-        f"@{settings.POSTGRES_TEST_HOST}/{settings.POSTGRES_TEST_DB_NAME}"
-    )
-    DATABASE_PARAMS = {"pool_size": 5, "max_overflow": 10}
+    # DB_DRIVER = "postgresql+asyncpg"
+    # DATABASE_URL = (
+    #     f"{DB_DRIVER}://{settings.POSTGRES_TEST_USER}:{settings.POSTGRES_TEST_PASSWORD}"
+    #     f"@{settings.POSTGRES_TEST_HOST}/{settings.POSTGRES_TEST_DB_NAME}"
+    # )
+    # DATABASE_PARAMS = {"pool_size": 5, "max_overflow": 10}
 
-    # DB_DRIVER = "sqlite+aiosqlite"
-    # DATABASE_URL = f"{DB_DRIVER}:///{settings.BASE_DIR}/data/db_test.sqlite3"
-    # DATABASE_PARAMS = {"echo": True, "poolclass": NullPool}
+    DB_DRIVER = "sqlite+aiosqlite"
+    DATABASE_URL = f"{DB_DRIVER}:///{settings.BASE_DIR}/data/db_test.sqlite3"
+    DATABASE_PARAMS = {"echo": True, "poolclass": NullPool}
 
 elif settings.MODE == "DEV":
     DB_DRIVER = "postgresql+asyncpg"

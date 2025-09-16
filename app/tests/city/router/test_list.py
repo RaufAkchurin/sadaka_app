@@ -11,7 +11,7 @@ class TestCityList:
         assert response.status_code == 400
         assert response.json() == {"detail": "Токен отсутствует в заголовке"}
 
-    @pytest.mark.parametrize("num_requests, expected_rps", [(1000, 130)])
+    @pytest.mark.parametrize("num_requests, expected_rps", [(1000, 280)])
     async def test_rps(self, auth_ac_super, num_requests, expected_rps) -> None:
         url = "/app/v1/cities/all"
         cookies = auth_ac_super.cookies.dict()
