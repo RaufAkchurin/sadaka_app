@@ -57,14 +57,14 @@ class User(Base):
     picture: Mapped["File | None"] = relationship(  # noqa F821
         "File",  # noqa F821
         back_populates="user_picture",
-        lazy="joined",
+        lazy="selectin",
         cascade="all, delete-orphan",
         single_parent=True,
     )
 
     # Связь с городом
     city_id: Mapped[int] = mapped_column(ForeignKey("citys.id"), default=1, server_default=text("1"))
-    city: Mapped["City"] = relationship("City", back_populates="users", lazy="joined")
+    city: Mapped["City"] = relationship("City", back_populates="users", lazy="selectin")
 
     # RELATIONS
     payments: Mapped[list["Payment"]] = relationship(back_populates="user")

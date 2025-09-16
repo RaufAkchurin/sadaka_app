@@ -46,7 +46,15 @@ class UserDAO(BaseDAO):
         return result.unique().mappings().all()
 
     async def get_light_user_by_id(self, user_id: int) -> User | None:
-        stmt = select(User.id, User.role, User.is_active).where(User.id == user_id)
+        stmt = select(
+            User.id,
+            User.role,
+            User.is_active,
+            User.email,
+            User.name,
+            User.is_anonymous,
+            User.language,
+        ).where(User.id == user_id)
         result = await self._session.execute(stmt)
         return result.first()
 
