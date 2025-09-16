@@ -102,7 +102,7 @@ class Project(Base):
         return urls_list
 
     @property
-    def total_income(self) -> int:
+    def total_income(self) -> float:
         return sum(payment.income_amount for payment in self.payments)
 
     @property
