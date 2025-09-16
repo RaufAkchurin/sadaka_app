@@ -8,7 +8,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models.city import City
 from app.models.comment import Comment
 from app.models.payment import Payment
-from app.models.referral import Referral, referral_referees
+from app.models.referral import Referral
 from app.v1.auth.service_jwt import hash_password_in_signal
 from app.v1.dao.database import Base
 from app.v1.users.enums import LanguageEnum, RoleEnum
@@ -57,26 +57,19 @@ class User(Base):
     picture: Mapped["File | None"] = relationship(  # noqa F821
         "File",  # noqa F821
         back_populates="user_picture",
-        lazy="selectin",
+        lazy="joined",
         cascade="all, delete-orphan",
         single_parent=True,
     )
 
     # Связь с городом
     city_id: Mapped[int] = mapped_column(ForeignKey("citys.id"), default=1, server_default=text("1"))
-    city: Mapped["City"] = relationship("City", back_populates="users", lazy="selectin")
+    city: Mapped["City"] = relationship("City", back_populates="users", lazy="joined")
 
     # RELATIONS
     payments: Mapped[list["Payment"]] = relationship(back_populates="user")
     comments: Mapped[list["Comment"]] = relationship(back_populates="user")
-
-    referral_gens: Mapped[list["Referral"]] = relationship(back_populates="sharer")  # ссылки, которые сгенерил
-    referral_uses: Mapped[list["Referral"]] = relationship(  # WHEN USER USED REFF WE NOT SEE IT HERE(( BUG
-        "Referral",
-        secondary=referral_referees,
-        back_populates="referees",
-        lazy="selectin",
-    )
+    referrals: Mapped[list["Referral"]] = relationship(back_populates="sharer")
 
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.id}, name={self.name})"
