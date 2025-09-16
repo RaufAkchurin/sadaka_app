@@ -45,6 +45,11 @@ class UserDAO(BaseDAO):
         result = await self._session.execute(query)
         return result.unique().mappings().all()
 
+    async def get_light_user_by_id(self, user_id: int) -> User | None:
+        stmt = select(User.id, User.role, User.is_active).where(User.id == user_id)
+        result = await self._session.execute(stmt)
+        return result.first()
+
 
 class RegionDAO(BaseDAO):
     model = Region
