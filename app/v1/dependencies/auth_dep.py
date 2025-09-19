@@ -84,8 +84,8 @@ async def get_current_user(
     if not user_id:
         raise NoUserIdException
 
-    user = await UserDAO(session).find_one_or_none_by_id(data_id=int(user_id))
-    # user = await UserDAO(session).get_light_user_by_id(user_id=int(user_id))
+    # user = await UserDAO(session).find_one_or_none_by_id(data_id=int(user_id))
+    user = await UserDAO(session).get_light_user_by_id(user_id=int(user_id))
     if user is None:
         raise UserNotFoundException
     return user
