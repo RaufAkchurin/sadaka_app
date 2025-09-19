@@ -8,6 +8,7 @@ from app.settings import settings
 from app.v1.dependencies.auth_dep import get_current_user
 from app.v1.dependencies.dao_dep import get_session_with_commit
 from app.v1.users.dao import ReferralDAO
+from app.v1.utils_core.id_validators import fund_id_validator, project_id_validator
 
 v1_referral_router = APIRouter()
 
@@ -48,7 +49,10 @@ async def get_referral_link(
     user_data: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session_with_commit),
 ):
-    # TODO добавить проерку что инстанс с айдишником вообще существует
+    if fund_id is not None:
+        await fund_id_validator(project_id, session)
+    if project_id is not None:
+        await project_id_validator(project_id, session)
 
     referral_dao = ReferralDAO(session=session)
 
