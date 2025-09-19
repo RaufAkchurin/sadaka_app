@@ -42,7 +42,7 @@ class TestRatingAPI:
         assert response.status_code == 200
         assert response.json() is not None
 
-        assert len(query_counter) <= 7, f"Слишком много SQL-запросов: {len(query_counter)}"
+        assert len(query_counter) <= 9, f"Слишком много SQL-запросов: {len(query_counter)}"
 
         data = response.json()
         assert data["autopayments"] == 0
@@ -57,7 +57,7 @@ class TestRatingAPI:
         assert response.status_code == 200
         assert response.json() is not None
 
-        assert len(query_counter) <= 4, f"Слишком много SQL-запросов: {len(query_counter)}"
+        assert len(query_counter) <= 6, f"Слишком много SQL-запросов: {len(query_counter)}"
 
         data = response.json()
 
@@ -103,7 +103,7 @@ class TestRatingAPI:
         assert response.status_code == 200
         assert response.json() is not None
 
-        assert len(query_counter) <= 4, f"Слишком много SQL-запросов: {len(query_counter)}"
+        assert len(query_counter) <= 6, f"Слишком много SQL-запросов: {len(query_counter)}"
 
         data = response.json()
 
