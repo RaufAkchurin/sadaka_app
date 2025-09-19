@@ -4,7 +4,7 @@ import os
 import uuid
 from datetime import datetime
 
-from sqlalchemy import insert, text
+from sqlalchemy import insert
 
 from app.models.city import City
 from app.models.comment import Comment
@@ -19,7 +19,7 @@ from app.models.user import User
 
 # Мапа: имя модели в JSON → (модель SQLAlchemy, имя файла без расширения)
 from app.settings import settings
-from app.v1.dao.database import async_session_maker
+from app.v1.dao.database import Base, async_session_maker, engine
 
 MODELS_MAP = {
     "country": Country,
@@ -45,49 +45,37 @@ def open_mock_json(model_name: str):
 async def prepare_database_core(session):
     try:
         # Очистка и пересоздание таблиц
-        for model_name, model_class in MODELS_MAP.items():
-            try:
-                data = open_mock_json(model_name)
-                if not data:
-                    continue
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.drop_all)
+            await conn.run_sync(Base.metadata.create_all)
 
-                else:
-                    if model_name == "payment":
-                        for item in data:
-                            uuid_raw = item["id"]
-                            item["id"] = uuid.UUID(uuid_raw)
-                            item["created_at"] = datetime.now()
-                            item["captured_at"] = datetime.now()
+            for model_name, model_class in MODELS_MAP.items():
+                try:
+                    data = open_mock_json(model_name)
+                    if not data:
+                        continue
 
-                stmt = insert(model_class).values(data)
-                await session.execute(stmt)
-            except Exception as e:
-                print(f"❌ Ошибка при вставке данных для '{model_name}': {e}")
-                raise
+                    else:
+                        if model_name == "payment":
+                            for item in data:
+                                uuid_raw = item["id"]
+                                item["id"] = uuid.UUID(uuid_raw)
+                                item["created_at"] = datetime.now()
+                                item["captured_at"] = datetime.now()
 
-            # --- синхронизируем только int/bigint PK ---
-        for model_class in MODELS_MAP.values():
-            table = model_class.__tablename__
-            pk_col = list(model_class.__table__.primary_key)[0]
-            if pk_col.type.python_type in (int,):  # только числа
-                seq_sql = text(
-                    f"""
-                            SELECT setval(
-                                pg_get_serial_sequence('{table}', 'id'),
-                                COALESCE((SELECT MAX(id) FROM {table}), 1),
-                                true
-                            );
-                        """
-                )
-                await session.execute(seq_sql)
-        await session.commit()
+                    stmt = insert(model_class).values(data)
+                    await session.execute(stmt)
+                except Exception as e:
+                    print(f"❌ Ошибка при вставке данных для '{model_name}': {e}")
+                    raise
 
+            await session.commit()
     except Exception as e:
         await session.rollback()
         print(f"‼️ Общая ошибка в prepare_database_core: {e}")
         raise
-    # finally:
-    #     await session.close()
+    finally:
+        await session.close()
 
 
 if __name__ == "__main__":
