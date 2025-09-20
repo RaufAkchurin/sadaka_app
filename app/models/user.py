@@ -57,7 +57,7 @@ class User(Base):
     picture: Mapped["File | None"] = relationship(  # noqa F821
         "File",  # noqa F821
         back_populates="user_picture",
-        lazy="selectin",
+        lazy="noload",
         cascade="all, delete-orphan",
         single_parent=True,
     )
@@ -75,7 +75,7 @@ class User(Base):
         "Referral",
         secondary=referral_referees,
         back_populates="referees",
-        lazy="selectin",
+        lazy="noload",
     )
 
     def __repr__(self):
