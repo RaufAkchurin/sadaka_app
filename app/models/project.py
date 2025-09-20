@@ -4,6 +4,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
 
 from app.models.file import File
 from app.models.fund import Fund
+from app.models.referral import Referral
 from app.v1.dao.database import Base
 from app.v1.project.enums import AbstractStatusEnum
 from app.v1.project.schemas import RegionInfoSchema
@@ -15,13 +16,14 @@ class Project(Base):
     status: Mapped[AbstractStatusEnum] = mapped_column(
         SqlEnum(AbstractStatusEnum, name="project_status_enum"),
         nullable=False,
+        index=True,
     )
 
     # TODO add chars max value
     description: Mapped[str | None]
     goal: Mapped[int]
 
-    fund_id: Mapped[int] = mapped_column(ForeignKey("funds.id"), nullable=False)
+    fund_id: Mapped[int] = mapped_column(ForeignKey("funds.id"), nullable=False, index=True)
     fund: Mapped["Fund"] = relationship("Fund", back_populates="projects", lazy="joined")
 
     documents: Mapped[list["File"]] = relationship(  # noqa: F821
@@ -50,6 +52,10 @@ class Project(Base):
 
     comments: Mapped[list["Comment"]] = relationship(  # noqa: F821
         "Comment", back_populates="project", cascade="all, delete-orphan", lazy="joined"
+    )
+
+    referrals: Mapped[list["Referral"]] = relationship(  # noqa: F821
+        "Referral", back_populates="project", cascade="all, delete-orphan", lazy="joined"
     )
 
     def __repr__(self):
@@ -97,7 +103,7 @@ class Project(Base):
         return urls_list
 
     @property
-    def total_income(self) -> int:
+    def total_income(self) -> float:
         return sum(payment.income_amount for payment in self.payments)
 
     @property

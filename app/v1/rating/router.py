@@ -1,54 +1,19 @@
 from fastapi import APIRouter, Depends
-from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.user import User
 from app.v1.api_utils.pagination import Pagination, PaginationParams, PaginationResponseSchema
 from app.v1.dependencies.auth_dep import get_current_user
 from app.v1.dependencies.dao_dep import get_session_with_commit
-from app.v1.project.enums import AbstractStatusEnum
+from app.v1.rating.schemas import (
+    ProjectRatingSchema,
+    RatingTotalInfoResponseSchema,
+    RegionModelTotalIncomeSchema,
+    UserModelTotalIncomeSchema,
+)
 from app.v1.users.dao import PaymentDAO, ProjectDAO, RegionDAO, UserDAO
 
 v1_rating_router = APIRouter()
-
-
-class UserModelTotalIncomeSchema(BaseModel):
-    id: int
-    name: str | None = None
-    url: str | None = Field(default=None, alias="picture_url")
-    total_income: float = 0
-
-    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
-
-
-class RegionModelTotalIncomeSchema(BaseModel):
-    id: int
-    name: str
-    url: str | None = Field(default=None, alias="picture_url")
-    total_income: float = 0
-
-    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
-
-
-class ProjectRatingSchema(BaseModel):
-    id: int
-    name: str
-    status: AbstractStatusEnum
-    fund_name: str
-    picture_url: str | None = None
-    total_income: float = 0
-    unique_sponsors: int
-    count_comments: int
-
-    model_config = ConfigDict(from_attributes=True)
-
-
-class RatingTotalInfoResponseSchema(BaseModel):
-    payments: int = 0
-    autopayments: int = 0
-    cities: int = 0
-    projects: int = 0
-    total_income: float = 0
 
 
 @v1_rating_router.get("/total_info")
@@ -67,7 +32,7 @@ async def get_total_info(
 
     return RatingTotalInfoResponseSchema(
         payments=payments_count,
-        autopayments=0,
+        autopayments=0,  # TODO after adding payment system change it
         cities=cities_count,
         projects=projects,
         total_income=total_income,

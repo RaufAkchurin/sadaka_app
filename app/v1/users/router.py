@@ -10,7 +10,7 @@ from app.v1.dependencies.dao_dep import get_session_with_commit
 from app.v1.dependencies.s3 import get_s3_client
 from app.v1.file.schemas import UploadedFileDataSchema
 from app.v1.users.dao import UserDAO
-from app.v1.users.schemas import UserInfoSchema, UserDataUpdateSchema
+from app.v1.users.schemas import UserDataUpdateSchema, UserInfoSchema
 from app.v1.users.use_cases.delete_user import DeleteUserUseCase
 from app.v1.users.use_cases.get_all_users import GetAllUsersUseCase
 from app.v1.users.use_cases.update_data import UserDataUpdateUseCase
@@ -20,8 +20,12 @@ v1_users_router = APIRouter()
 
 
 @v1_users_router.get("/me")
-async def get_me(user_data: User = Depends(get_current_user)) -> UserInfoSchema:
-    return UserInfoSchema.model_validate(user_data)
+async def get_me(
+    user_data: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_session_with_commit),
+) -> UserInfoSchema:
+    user = await UserDAO(session).find_one_or_none_by_id(data_id=int(user_data.id))
+    return UserInfoSchema.model_validate(user)
 
 
 @v1_users_router.put("/update_logo")
@@ -31,6 +35,7 @@ async def update_user_logo(
     user: User = Depends(get_current_user),
     s3_client: S3ClientUseCaseProtocol = Depends(get_s3_client),
 ) -> UploadedFileDataSchema:
+    user = await UserDAO(session).find_one_or_none_by_id(data_id=int(user.id))
     use_case = UserLogoUpdateUseCaseImpl(session=session, s3_client=s3_client)
     updated_logo_url = await use_case(user=user, picture=picture)
 

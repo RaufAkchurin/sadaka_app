@@ -3,7 +3,7 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Annotated
 
-from sqlalchemy import TIMESTAMP, Integer, NullPool, func, inspect
+from sqlalchemy import TIMESTAMP, Integer, MetaData, NullPool, func, inspect
 from sqlalchemy.ext.asyncio import AsyncAttrs, AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase, Mapped, declared_attr, mapped_column
 
@@ -17,7 +17,7 @@ if settings.MODE == "STAGE":
         f"{DB_DRIVER}://{settings.POSTGRES_STAGE_USER}:{settings.POSTGRES_STAGE_PASSWORD}"
         f"@{settings.POSTGRES_STAGE_HOST}/{settings.POSTGRES_STAGE_DB_NAME}"
     )
-    DATABASE_PARAMS = {"pool_size": 5, "max_overflow": 10}
+    DATABASE_PARAMS = {"pool_size": 10, "max_overflow": 20, "pool_timeout": 30}
 
 elif settings.MODE == "TEST":
     # DB_DRIVER = "postgresql+asyncpg"
@@ -43,9 +43,21 @@ engine = create_async_engine(url=DATABASE_URL, **DATABASE_PARAMS)
 async_session_maker = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 str_uniq = Annotated[str, mapped_column(unique=True, nullable=False)]
 
+# конвенция имён для связей
+convention = {
+    "ix": "ix_%(table_name)s_%(column_0_name)s",
+    "uq": "uq_%(table_name)s_%(column_0_name)s",
+    "ck": "ck_%(table_name)s_%(constraint_name)s",
+    "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
+    "pk": "pk_%(table_name)s",
+}
+
+metadata = MetaData(naming_convention=convention)
+
 
 class Base(AsyncAttrs, DeclarativeBase):
     __abstract__ = True
+    metadata = metadata
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP, server_default=func.now())

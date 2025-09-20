@@ -31,24 +31,24 @@ class File(Base):
     )
 
     # OneToMany
-    fund_document_id: Mapped[int | None] = mapped_column(ForeignKey("funds.id"), nullable=True)
+    fund_document_id: Mapped[int | None] = mapped_column(ForeignKey("funds.id"), nullable=True, index=True)
     fund_document: Mapped["Fund"] = relationship(  # noqa F821
         "Fund",
         back_populates="documents",
         foreign_keys=[fund_document_id],
     )
 
-    project_document_id: Mapped[int | None] = mapped_column(ForeignKey("projects.id"), nullable=True)
+    project_document_id: Mapped[int | None] = mapped_column(ForeignKey("projects.id"), nullable=True, index=True)
     project_document: Mapped["Project"] = relationship(  # noqa F821
         "Project", back_populates="documents", foreign_keys="[File.project_document_id]"
     )
 
-    project_picture_id: Mapped[int | None] = mapped_column(ForeignKey("projects.id"), nullable=True)
+    project_picture_id: Mapped[int | None] = mapped_column(ForeignKey("projects.id"), nullable=True, index=True)
     project_picture: Mapped["Project"] = relationship(  # noqa F821
         "Project", back_populates="pictures", foreign_keys=[project_picture_id]
     )
 
-    stage_id: Mapped[int | None] = mapped_column(ForeignKey("stages.id"), nullable=True)
+    stage_id: Mapped[int | None] = mapped_column(ForeignKey("stages.id"), nullable=True, index=True)
     stage: Mapped["Stage"] = relationship("Stage", back_populates="reports")  # noqa F821
 
     def __repr__(self):

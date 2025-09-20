@@ -18,7 +18,7 @@ class Stage(Base):
     )
 
     # project:
-    project_id: Mapped[int] = mapped_column(ForeignKey("projects.id"), nullable=False)
+    project_id: Mapped[int] = mapped_column(ForeignKey("projects.id"), nullable=False, index=True)
     project: Mapped["Project"] = relationship("Project", back_populates="stages", lazy="selectin")
 
     # file:

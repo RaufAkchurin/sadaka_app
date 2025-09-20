@@ -11,7 +11,7 @@ from yookassa import Configuration
 from app.models.user import User
 from app.settings import settings
 from app.v1.dao.database import async_session_maker
-from app.v1.users.dao import CommentDAO, OneTimePassDAO, PaymentDAO, UserDAO
+from app.v1.users.dao import CommentDAO, OneTimePassDAO, PaymentDAO, ReferralDAO, UserDAO
 
 
 @pytest.fixture
@@ -82,6 +82,12 @@ async def payment_dao(session) -> PaymentDAO:
     return payment_dao
 
 
+@pytest.fixture(scope="function")
+async def referral_dao(session) -> ReferralDAO:
+    referral_dao = ReferralDAO(session)
+    return referral_dao
+
+
 @pytest.fixture(scope="class")
 async def ac():
     async with AsyncClient(transport=ASGITransport(fastapi_app), base_url="http://test/") as async_client:
@@ -89,9 +95,24 @@ async def ac():
 
 
 @pytest.fixture(scope="class")
-async def auth_ac():
+async def auth_ac_super():
     async with AsyncClient(transport=ASGITransport(fastapi_app), base_url="http://test") as ac:
         await ac.post("/app/v1/auth/login/", json={"email": "superadmin@test.com", "password": "password"})
+        assert ac.cookies["user_access_token"]
+
+        yield AuthorizedClientModel(
+            client=ac,
+            cookies=CookiesModel(
+                user_access_token=ac.cookies.get("user_access_token"),
+                user_refresh_token=ac.cookies.get("user_refresh_token"),
+            ),
+        )
+
+
+@pytest.fixture(scope="class")
+async def auth_ac_admin():
+    async with AsyncClient(transport=ASGITransport(fastapi_app), base_url="http://test") as ac:
+        await ac.post("/app/v1/auth/login/", json={"email": "admin@test.com", "password": "password"})
         assert ac.cookies["user_access_token"]
 
         yield AuthorizedClientModel(

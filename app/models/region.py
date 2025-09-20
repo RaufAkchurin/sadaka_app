@@ -26,7 +26,7 @@ class Region(Base):
     )
 
     # Внешний ключ для страны
-    country_id: Mapped[int] = mapped_column(ForeignKey("countrys.id"), nullable=False)
+    country_id: Mapped[int] = mapped_column(ForeignKey("countrys.id"), nullable=False, index=True)
     country: Mapped["Country"] = relationship("Country", back_populates="regions", lazy="joined")  # noqa F821
 
     # Связь с городами

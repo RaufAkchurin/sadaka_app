@@ -13,6 +13,10 @@ class IdSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class EmailFilterSchema(BaseModel):
+    email: str
+
+
 class UserContactsSchema(BaseModel):
     email: Optional[EmailStr] = Field(default=None, description="Электронная почта")
     phone: Optional[str] = Field(

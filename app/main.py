@@ -10,17 +10,20 @@ from loguru import logger
 from yookassa import Configuration as YookassaConfiguration
 
 from app.admin.register import create_admin_panel
+from app.profiler import TimingMiddleware, setup_pool_logging, setup_sql_logging
 from app.settings import settings
 from app.v1.auth.router import v1_auth_router, v2_auth_router
 from app.v1.auth_google.router import v1_google_router
 from app.v1.auth_sms.router import v1_auth_sms_router
 from app.v1.city.router import v1_cities_router
 from app.v1.comment.router import v1_comment_router
+from app.v1.dao.database import engine
 from app.v1.fund.router import v1_funds_router
 from app.v1.payment_core.router import v1_payments_core_router
 from app.v1.payment_yookassa.router import v1_yookassa_router
 from app.v1.project.router import v1_projects_router
 from app.v1.rating.router import v1_rating_router
+from app.v1.referrals.router import v1_referral_router
 from app.v1.s3_storage.router import v1_s3_router
 from app.v1.users.router import v1_users_router
 
@@ -66,6 +69,13 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
+    # включаем middleware
+    app.add_middleware(TimingMiddleware)
+
+    # включаем логирование SQL и пула
+    setup_sql_logging(engine)
+    setup_pool_logging(engine)
+
     # Монтирование статических файлов
     # app.mount(
     #     '/static',
@@ -91,6 +101,7 @@ def register_routers(app: FastAPI) -> None:
     app.include_router(v1_cities_router, prefix="/app/v1/cities", tags=["Cities v1"])
     app.include_router(v1_comment_router, prefix="/app/v1/comments", tags=["Comments v1"])
     app.include_router(v1_rating_router, prefix="/app/v1/ratings", tags=["Ratings v1"])
+    app.include_router(v1_referral_router, prefix="/app/v1/referral", tags=["Referral v1"])
 
     # Payments
     app.include_router(v1_payments_core_router, prefix="/app/v1/payments", tags=["Payments v1"])
