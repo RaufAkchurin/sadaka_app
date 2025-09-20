@@ -1,4 +1,5 @@
 from sqlalchemy import desc, func, select
+from sqlalchemy.orm import selectinload
 
 from app.models.city import City
 from app.models.comment import Comment
@@ -13,6 +14,8 @@ from app.models.region import Region
 from app.models.stage import Stage
 from app.models.user import User
 from app.v1.dao.base import BaseDAO
+from app.v1.fund.schemas import FundDetailAPISchema
+from app.v1.project.schemas import FileBaseSchema, ProjectForListAPISchema
 
 
 class OneTimePassDAO(BaseDAO):
@@ -84,42 +87,6 @@ class RegionDAO(BaseDAO):
 class ProjectDAO(BaseDAO):
     model = Project
 
-    # async def get_projects_ordered_by_payments(self):  16 запросов вместо 8, но короче
-    #     query = (
-    #         select(Project)
-    #         .options(
-    #             selectinload(Project.fund),
-    #             selectinload(Project.payments),
-    #             selectinload(Project.comments),
-    #             selectinload(Project.pictures),
-    #         )
-    #     )
-    #
-    #     result = await self._session.execute(query)
-    #     projects = result.unique().scalars().all()
-    #
-    #     # Доп. агрегаты считаем уже на питоне
-    #     result_data = []
-    #     for project in projects:
-    #         total_income = sum(p.income_amount for p in project.payments)
-    #         unique_sponsors = len({p.user_id for p in project.payments})
-    #         count_comments = len(project.comments)
-    #         first_picture = project.pictures[0].url if project.pictures else None
-    #
-    #         result_data.append({
-    #             "id": project.id,
-    #             "name": project.name,
-    #             "status": project.status,
-    #             "fund_name": project.fund.name if project.fund else None,
-    #             "total_income": total_income,
-    #             "unique_sponsors": unique_sponsors,
-    #             "count_comments": count_comments,
-    #             "picture_url": first_picture,
-    #         })
-    #
-    #     # сортируем по total_income
-    #     return sorted(result_data, key=lambda x: x["total_income"], reverse=True)
-
     async def get_projects_ordered_by_payments(self):
         # Подзапрос по платежам
         payments_subq = (
@@ -174,6 +141,53 @@ class ProjectDAO(BaseDAO):
 
 class FundDAO(BaseDAO):
     model = Fund
+
+    async def get_fund_detail(self, fund_id: int):
+        # агрегаты по платежам для фонда
+        payments_subq = (
+            select(
+                Project.fund_id.label("fund_id"),
+                func.coalesce(func.sum(Payment.income_amount), 0).label("total_income"),
+                func.count(Project.id.distinct()).label("projects_count"),
+            )
+            .join(Project, Project.id == Payment.project_id, isouter=True)
+            .group_by(Project.fund_id)
+            .subquery()
+        )
+
+        query = (
+            select(Fund)
+            .options(
+                # тянем регион
+                selectinload(Fund.region),
+                # тянем документы
+                selectinload(Fund.documents),
+                # тянем проекты + их вложенные данные
+                selectinload(Fund.projects).selectinload(Project.pictures),
+                selectinload(Fund.projects).selectinload(Project.stages),
+            )
+            .join(payments_subq, payments_subq.c.fund_id == Fund.id, isouter=True)
+            .where(Fund.id == fund_id)
+        )
+
+        result = await self._session.execute(query)
+        fund: Fund = result.unique().scalar_one_or_none()
+        if not fund:
+            return None
+
+        # мапим в схему
+        return FundDetailAPISchema(
+            id=fund.id,
+            name=fund.name,
+            description=fund.description,
+            hot_line=fund.hot_line,
+            address=fund.address,
+            region_name=fund.region.name if fund.region else None,
+            documents=[FileBaseSchema.model_validate(doc) for doc in fund.documents],
+            projects=[ProjectForListAPISchema.model_validate(prj) for prj in fund.projects],
+            total_income=getattr(fund, "total_income", 0.0),
+            projects_count=getattr(fund, "projects_count", 0),
+        )
 
 
 class StageDAO(BaseDAO):

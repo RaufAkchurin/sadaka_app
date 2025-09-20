@@ -218,7 +218,7 @@ class TestReferralFundsLink:
         assert referral_updated.referees is not None
         assert referral_updated.referees[-1].id == user_admin.id
 
-    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(50, 3, 15)])
+    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(200, 70, 120)])
     async def test_rps(self, auth_ac_super, num_requests, expected_rps, max_rps) -> None:
         async def make_request():
             response = await auth_ac_super.client.get(

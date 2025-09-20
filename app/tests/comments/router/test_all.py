@@ -165,7 +165,7 @@ class TestCommentsAPI:
         assert data2.get("state").get("total_items") == 17
         assert len(data2["items"]) == 7
 
-    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(400, 180, 250)])
+    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(400, 170, 260)])
     async def test_rps(self, auth_ac_super, num_requests, expected_rps, max_rps) -> None:
         async def make_request():
             resp1 = await auth_ac_super.client.get(

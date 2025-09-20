@@ -51,7 +51,7 @@ class Project(Base):
     )
 
     comments: Mapped[list["Comment"]] = relationship(  # noqa: F821
-        "Comment", back_populates="project", cascade="all, delete-orphan", lazy="noload"
+        "Comment", back_populates="project", cascade="all, delete-orphan", lazy="joined"
     )
 
     referrals: Mapped[list["Referral"]] = relationship(  # noqa: F821

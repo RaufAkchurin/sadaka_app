@@ -20,7 +20,7 @@ async def get_fund_detail_by_id(
     user_data: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session_with_commit),
 ) -> FundDetailAPISchema:
-    fund = await FundDAO(session=session).find_one_or_none_by_id(data_id=fund_id)
+    fund = await FundDAO(session=session).get_fund_detail(fund_id=fund_id)
 
     if fund is not None:
         return FundDetailAPISchema.model_validate(fund)
