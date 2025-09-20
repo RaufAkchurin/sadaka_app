@@ -22,14 +22,14 @@ class Fund(Base):
     # region:
     region_id: Mapped[int] = mapped_column(ForeignKey("regions.id"), default=1, server_default=text("1"), index=True)
     region: Mapped["Region"] = relationship(  # noqa F821
-        "Region", back_populates="funds", lazy="joined"
+        "Region", back_populates="funds", lazy="noload"
     )  # imported in __init__.py
 
     # user:
     user_have_access: Mapped[list["User"]] = relationship(  # noqa F821
         secondary=user_fund_access,
         back_populates="funds_access",
-        lazy="selectin",
+        lazy="noload",
     )
 
     picture_id: Mapped[int | None] = mapped_column(ForeignKey("files.id"), nullable=True, unique=True)
@@ -39,7 +39,7 @@ class Fund(Base):
         foreign_keys=[picture_id],
         cascade="all, delete-orphan",
         single_parent=True,
-        lazy="joined",
+        lazy="noload",
     )
 
     # file:
@@ -48,7 +48,7 @@ class Fund(Base):
         back_populates="fund_document",
         cascade="all, delete-orphan",
         foreign_keys="[File.fund_document_id]",
-        lazy="joined",
+        lazy="noload",
     )
 
     # projects:
@@ -56,11 +56,11 @@ class Fund(Base):
         "Project",
         back_populates="fund",
         cascade="all, delete-orphan",
-        lazy="joined",
+        lazy="noload",
     )  # imported in __init__.py
 
     referrals: Mapped[list["Referral"]] = relationship(  # noqa: F821
-        "Referral", back_populates="fund", cascade="all, delete-orphan", lazy="joined"
+        "Referral", back_populates="fund", cascade="all, delete-orphan", lazy="noload"
     )
 
     def __repr__(self):
