@@ -17,7 +17,7 @@ if settings.MODE == "STAGE":
         f"{DB_DRIVER}://{settings.POSTGRES_STAGE_USER}:{settings.POSTGRES_STAGE_PASSWORD}"
         f"@{settings.POSTGRES_STAGE_HOST}/{settings.POSTGRES_STAGE_DB_NAME}"
     )
-    DATABASE_PARAMS = {"pool_size": 5, "max_overflow": 10}
+    DATABASE_PARAMS = {"pool_size": 10, "max_overflow": 20, "pool_timeout": 30}
 
 elif settings.MODE == "TEST":
     # DB_DRIVER = "postgresql+asyncpg"
