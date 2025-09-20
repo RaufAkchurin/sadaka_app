@@ -50,7 +50,7 @@ async def get_referral_link(
     session: AsyncSession = Depends(get_session_with_commit),
 ):
     if fund_id is not None:
-        await fund_id_validator(project_id, session)
+        await fund_id_validator(fund_id, session)
     if project_id is not None:
         await project_id_validator(project_id, session)
 

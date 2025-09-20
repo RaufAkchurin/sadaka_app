@@ -13,7 +13,7 @@ from app.v1.project.enums import AbstractStatusEnum
 from app.v1.project.schemas import ProjectDetailAPISchema, ProjectForListAPISchema
 from app.v1.project.use_cases.list import ProjectListUseCase
 from app.v1.referrals.router import ReferralKeyResponseSchema
-from app.v1.users.dao import ProjectDAO, ReferralDAO
+from app.v1.users.dao import ProjectDAO, ReferralDAO, UserDAO
 
 v1_projects_router = APIRouter()
 
@@ -40,10 +40,11 @@ async def check_referral(
         return None
 
     referral_dao = ReferralDAO(session=session)
+    user_dao = UserDAO(session=session)
 
     referral: Referral = await referral_dao.find_one_or_none(filters=ReferralKeyResponseSchema(key=ref))
     if referral is not None:
-        user = await session.merge(user_data)  # "перепривязали" к этой сессии
+        user = await user_dao.find_one_or_none_by_id(data_id=user_data.id)
         referral.referees.append(user)
 
         await session.commit()

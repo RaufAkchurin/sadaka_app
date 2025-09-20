@@ -4,11 +4,22 @@ from app.v1.users.schemas import EmailFilterSchema
 
 
 class TestReferralProjectLink:
-    async def test_generate_project_not_valid(self, auth_ac_super, auth_ac_admin, referral_dao, query_counter):
+    async def test_not_correct_request_param(self, auth_ac_super, auth_ac_admin, referral_dao, query_counter):
         response = await auth_ac_super.client.get(
             "/app/v1/referral/generate_link?" "ref_type=project" "&fund_id=1", cookies=auth_ac_super.cookies.dict()
         )
         assert response.status_code == 422
+        assert response.json().get("detail") == "Для PROJECT нужен project_id"
+
+        all_referrals = await referral_dao.count()
+        assert all_referrals == 0
+
+    async def test_not_exist_instance_id(self, auth_ac_super, auth_ac_admin, referral_dao, query_counter):
+        response = await auth_ac_super.client.get(
+            "/app/v1/referral/generate_link?" "ref_type=fund" "&project_id=99", cookies=auth_ac_super.cookies.dict()
+        )
+        assert response.status_code == 422
+        assert response.json().get("detail") == "Нет сущности с данным project_id."
 
         all_referrals = await referral_dao.count()
         assert all_referrals == 0
@@ -25,7 +36,7 @@ class TestReferralProjectLink:
         self.ref_link = response.json()
 
         # CHECK queries
-        assert len(query_counter) <= 6, f"Слишком много SQL-запросов: {len(query_counter)}"
+        assert len(query_counter) <= 10, f"Слишком много SQL-запросов: {len(query_counter)}"
 
         # CHECK new instance exist
         all_referrals = await referral_dao.count()

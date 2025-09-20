@@ -29,7 +29,7 @@ class Fund(Base):
     user_have_access: Mapped[list["User"]] = relationship(  # noqa F821
         secondary=user_fund_access,
         back_populates="funds_access",
-        lazy="noload",
+        lazy="selectin",
     )
 
     picture_id: Mapped[int | None] = mapped_column(ForeignKey("files.id"), nullable=True, unique=True)
@@ -39,7 +39,7 @@ class Fund(Base):
         foreign_keys=[picture_id],
         cascade="all, delete-orphan",
         single_parent=True,
-        lazy="noload",
+        lazy="joined",
     )
 
     # file:
@@ -48,7 +48,7 @@ class Fund(Base):
         back_populates="fund_document",
         cascade="all, delete-orphan",
         foreign_keys="[File.fund_document_id]",
-        lazy="noload",
+        lazy="joined",
     )
 
     # projects:
