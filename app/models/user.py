@@ -16,8 +16,8 @@ from app.v1.users.enums import LanguageEnum, RoleEnum
 user_fund_access = Table(
     "user_fund_access",
     Base.metadata,
-    Column("user_id", Integer, ForeignKey("users.id")),
-    Column("fund_id", Integer, ForeignKey("funds.id")),
+    Column("user_id", Integer, ForeignKey("users.id"), index=True),
+    Column("fund_id", Integer, ForeignKey("funds.id"), index=True),
 )
 
 
@@ -40,7 +40,7 @@ class User(Base):
     funds_access: Mapped[list["Fund"]] = relationship(  # noqa F821
         secondary=user_fund_access,
         back_populates="user_have_access",
-        lazy="selectin",
+        lazy="noload",
     )
 
     role: Mapped[RoleEnum] = mapped_column(
@@ -63,7 +63,7 @@ class User(Base):
     )
 
     # Связь с городом
-    city_id: Mapped[int] = mapped_column(ForeignKey("citys.id"), default=1, server_default=text("1"))
+    city_id: Mapped[int] = mapped_column(ForeignKey("citys.id"), default=1, server_default=text("1"), index=True)
     city: Mapped["City"] = relationship("City", back_populates="users", lazy="selectin")
 
     # RELATIONS

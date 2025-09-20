@@ -16,13 +16,14 @@ class Project(Base):
     status: Mapped[AbstractStatusEnum] = mapped_column(
         SqlEnum(AbstractStatusEnum, name="project_status_enum"),
         nullable=False,
+        index=True,
     )
 
     # TODO add chars max value
     description: Mapped[str | None]
     goal: Mapped[int]
 
-    fund_id: Mapped[int] = mapped_column(ForeignKey("funds.id"), nullable=False)
+    fund_id: Mapped[int] = mapped_column(ForeignKey("funds.id"), nullable=False, index=True)
     fund: Mapped["Fund"] = relationship("Fund", back_populates="projects", lazy="joined")
 
     documents: Mapped[list["File"]] = relationship(  # noqa: F821
@@ -50,7 +51,7 @@ class Project(Base):
     )
 
     comments: Mapped[list["Comment"]] = relationship(  # noqa: F821
-        "Comment", back_populates="project", cascade="all, delete-orphan", lazy="joined"
+        "Comment", back_populates="project", cascade="all, delete-orphan", lazy="noload"
     )
 
     referrals: Mapped[list["Referral"]] = relationship(  # noqa: F821

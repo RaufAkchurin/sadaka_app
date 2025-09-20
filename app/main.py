@@ -10,12 +10,14 @@ from loguru import logger
 from yookassa import Configuration as YookassaConfiguration
 
 from app.admin.register import create_admin_panel
+from app.profiler import TimingMiddleware, setup_pool_logging, setup_sql_logging
 from app.settings import settings
 from app.v1.auth.router import v1_auth_router, v2_auth_router
 from app.v1.auth_google.router import v1_google_router
 from app.v1.auth_sms.router import v1_auth_sms_router
 from app.v1.city.router import v1_cities_router
 from app.v1.comment.router import v1_comment_router
+from app.v1.dao.database import engine
 from app.v1.fund.router import v1_funds_router
 from app.v1.payment_core.router import v1_payments_core_router
 from app.v1.payment_yookassa.router import v1_yookassa_router
@@ -66,6 +68,13 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    # включаем middleware
+    app.add_middleware(TimingMiddleware)
+
+    # включаем логирование SQL и пула
+    setup_sql_logging(engine)
+    setup_pool_logging(engine)
 
     # Монтирование статических файлов
     # app.mount(

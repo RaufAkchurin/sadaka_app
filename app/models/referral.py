@@ -38,7 +38,7 @@ class Referral(Base):
 
     type: Mapped[ReferralTypeEnum] = mapped_column(Enum(ReferralTypeEnum), nullable=False)
 
-    sharer_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    sharer_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False, index=True)
     sharer: Mapped["User"] = relationship("User", back_populates="referral_gens", lazy="selectin")  # noqa F821
 
     referees: Mapped[list["User"]] = relationship(  # noqa
@@ -48,10 +48,10 @@ class Referral(Base):
         lazy="selectin",
     )
 
-    fund_id: Mapped[int] = mapped_column(ForeignKey("funds.id"), nullable=True)
+    fund_id: Mapped[int] = mapped_column(ForeignKey("funds.id"), nullable=True, index=True)
     fund: Mapped["Fund"] = relationship("Fund", back_populates="referrals", lazy="selectin")  # noqa F821
 
-    project_id: Mapped[int] = mapped_column(ForeignKey("projects.id"), nullable=True)
+    project_id: Mapped[int] = mapped_column(ForeignKey("projects.id"), nullable=True, index=True)
     project: Mapped["Project"] = relationship("Project", back_populates="referrals", lazy="selectin")  # noqa F821
 
     payments: Mapped[list["Payment"]] = relationship("Payment", back_populates="referral", lazy="selectin")  # noqa F821
