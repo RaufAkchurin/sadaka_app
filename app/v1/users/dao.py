@@ -138,6 +138,33 @@ class ProjectDAO(BaseDAO):
         result = await self._session.execute(query)
         return result.mappings().all()
 
+    async def get_fund_detail(self, data_id: int) -> tuple[Project, float, int] | None:
+        total_income = func.coalesce(func.sum(Payment.income_amount), 0).label("total_income")
+        unique_sponsors = func.count(func.distinct(Payment.user_id)).label("unique_sponsors")
+
+        stmt = (
+            select(Project, total_income, unique_sponsors)
+            .outerjoin(Payment, Payment.project_id == Project.id)
+            .where(Project.id == data_id)
+            .group_by(Project.id)
+            .options(
+                selectinload(Project.documents),
+                selectinload(Project.pictures),
+                selectinload(Project.stages),
+                selectinload(Project.comments),
+                selectinload(Project.referrals),
+                selectinload(Project.fund).selectinload(Fund.region).selectinload(Region.picture),
+            )
+        )
+
+        result = await self._session.execute(stmt)
+        row = result.first()
+        if row is None:
+            return None
+
+        project, total_income, unique_sponsors = row
+        return project, total_income, unique_sponsors
+
 
 class FundDAO(BaseDAO):
     model = Fund

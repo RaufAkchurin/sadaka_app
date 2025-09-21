@@ -24,14 +24,14 @@ class Project(Base):
     goal: Mapped[int]
 
     fund_id: Mapped[int] = mapped_column(ForeignKey("funds.id"), nullable=False, index=True)
-    fund: Mapped["Fund"] = relationship("Fund", back_populates="projects", lazy="joined")
+    fund: Mapped["Fund"] = relationship("Fund", back_populates="projects", lazy="noload")
 
     documents: Mapped[list["File"]] = relationship(  # noqa: F821
         "File",
         back_populates="project_document",
         cascade="all, delete-orphan",
         foreign_keys="[File.project_document_id]",
-        lazy="joined",
+        lazy="noload",
     )
 
     pictures: Mapped[list["File"]] = relationship(  # noqa: F821
@@ -39,23 +39,23 @@ class Project(Base):
         back_populates="project_picture",
         cascade="all, delete-orphan",
         foreign_keys=[File.project_picture_id],
-        lazy="joined",
+        lazy="noload",
     )
 
     stages: Mapped[list["Stage"]] = relationship(  # noqa: F821
-        "Stage", back_populates="project", cascade="all, delete-orphan", lazy="joined"
+        "Stage", back_populates="project", cascade="all, delete-orphan", lazy="noload"
     )
 
     payments: Mapped[list["Payment"]] = relationship(  # noqa: F821
-        "Payment", back_populates="project", cascade="all, delete-orphan", lazy="joined"
+        "Payment", back_populates="project", cascade="all, delete-orphan", lazy="noload"
     )
 
     comments: Mapped[list["Comment"]] = relationship(  # noqa: F821
-        "Comment", back_populates="project", cascade="all, delete-orphan", lazy="joined"
+        "Comment", back_populates="project", cascade="all, delete-orphan", lazy="noload"
     )
 
     referrals: Mapped[list["Referral"]] = relationship(  # noqa: F821
-        "Referral", back_populates="project", cascade="all, delete-orphan", lazy="joined"
+        "Referral", back_populates="project", cascade="all, delete-orphan", lazy="noload"
     )
 
     def __repr__(self):

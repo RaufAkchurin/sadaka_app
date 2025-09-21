@@ -7,7 +7,7 @@ from app.models.user import User
 from app.v1.dependencies.auth_dep import get_current_user
 from app.v1.dependencies.dao_dep import get_session_with_commit
 from app.v1.fund.schemas import FundDetailAPISchema
-from app.v1.project.router import check_referral
+from app.v1.referrals.depends import check_referral
 from app.v1.users.dao import FundDAO
 
 v1_funds_router = APIRouter()
