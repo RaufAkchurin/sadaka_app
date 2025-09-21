@@ -24,7 +24,7 @@ async def get_me(
     user_data: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session_with_commit),
 ) -> UserInfoSchema:
-    user = await UserDAO(session).find_one_or_none_by_id(data_id=int(user_data.id))
+    user = await UserDAO(session).get_light_user_with_picture_by_id(user_id=user_data.id)
     return UserInfoSchema.model_validate(user)
 
 

@@ -61,6 +61,32 @@ class UserDAO(BaseDAO):
         result = await self._session.execute(stmt)
         return result.first()
 
+    async def get_light_user_with_picture_by_id(self, user_id: int) -> User | None:
+        stmt = (
+            select(User)
+            .options(
+                selectinload(User.picture),  # подтянет File
+                selectinload(User.city),  # подтянет City
+            )
+            .where(User.id == user_id)
+        )
+
+        result = await self._session.execute(stmt)
+        return result.scalars().first()
+
+    async def get_user_with_referrals_by_email(self, user_email: str) -> User | None:
+        stmt = (
+            select(User)
+            .options(
+                selectinload(User.referral_gens),
+                selectinload(User.referral_uses),
+            )
+            .where(User.email == user_email)
+        )
+
+        result = await self._session.execute(stmt)
+        return result.scalars().first()
+
 
 class RegionDAO(BaseDAO):
     model = Region

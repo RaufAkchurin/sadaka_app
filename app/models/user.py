@@ -70,7 +70,10 @@ class User(Base):
     payments: Mapped[list["Payment"]] = relationship(back_populates="user")
     comments: Mapped[list["Comment"]] = relationship(back_populates="user")
 
-    referral_gens: Mapped[list["Referral"]] = relationship(back_populates="sharer")  # ссылки, которые сгенерил
+    referral_gens: Mapped[list["Referral"]] = relationship(
+        back_populates="sharer", lazy="noload"
+    )  # ссылки, которые сгенерил
+
     referral_uses: Mapped[list["Referral"]] = relationship(  # WHEN USER USED REFF WE NOT SEE IT HERE(( BUG
         "Referral",
         secondary=referral_referees,

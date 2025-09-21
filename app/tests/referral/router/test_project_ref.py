@@ -1,6 +1,5 @@
 from app.models.referral import ReferralTypeEnum
 from app.models.user import User
-from app.v1.users.schemas import EmailFilterSchema
 
 
 class TestReferralProjectLink:
@@ -140,7 +139,7 @@ class TestReferralProjectLink:
         }
 
         # CHECK referees updated referral_uses and referees
-        user_admin: User = await user_dao.find_one_or_none(filters=EmailFilterSchema(email="admin@test.com"))
+        user_admin: User = await user_dao.get_user_with_referrals_by_email(user_email="admin@test.com")
         assert len(user_admin.referral_uses) == 1
         assert user_admin.referral_uses[0] == last_referral
 
