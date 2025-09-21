@@ -233,6 +233,8 @@ class FundDAO(BaseDAO):
                 # тянем проекты + их вложенные данные
                 selectinload(Fund.projects).selectinload(Project.pictures),
                 selectinload(Fund.projects).selectinload(Project.stages),
+                selectinload(Fund.projects).selectinload(Project.fund),
+                selectinload(Fund.projects).selectinload(Project.payments),
             )
             .join(payments_subq, payments_subq.c.fund_id == Fund.id, isouter=True)
             .where(Fund.id == fund_id)
