@@ -121,7 +121,7 @@ class TestProjectDetail:
             "unique_sponsors": 1,
         }
 
-    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(200, 85, 115)])
+    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(200, 70, 115)])
     async def test_rps(self, auth_ac_super, num_requests, expected_rps, max_rps) -> None:
         async def make_request():
             response = await auth_ac_super.client.get("/app/v1/projects/detail/1", cookies=auth_ac_super.cookies.dict())

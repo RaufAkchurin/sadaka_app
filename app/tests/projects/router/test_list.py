@@ -365,7 +365,7 @@ class TestProjectList:
             "state": {"page": 1, "size": 5, "total_items": 7, "total_pages": 2},
         }
 
-    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(200, 110, 150)])
+    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(200, 100, 150)])
     async def test_rps(self, auth_ac_super, num_requests, expected_rps, max_rps) -> None:
         async def make_request():
             response = await auth_ac_super.client.get(

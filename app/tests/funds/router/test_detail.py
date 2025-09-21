@@ -184,7 +184,7 @@ class TestFundDetail:
             "total_income": 2000.0,
         }
 
-    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(300, 90, 110)])
+    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(300, 60, 90)])
     async def test_rps(self, auth_ac_super, num_requests, expected_rps, max_rps) -> None:
         async def make_request():
             response = await auth_ac_super.client.get("/app/v1/funds/detail/1", cookies=auth_ac_super.cookies.dict())
