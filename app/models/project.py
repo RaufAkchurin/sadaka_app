@@ -42,15 +42,15 @@ class Project(Base):
         lazy="noload",
     )
 
-    stages: Mapped[list["Stage"]] = relationship(  # noqa: F821
+    stages: Mapped[list["Stage"]] = relationship(  # noqa:
         "Stage", back_populates="project", cascade="all, delete-orphan", lazy="noload"
     )
 
-    payments: Mapped[list["Payment"]] = relationship(  # noqa: F821
+    payments: Mapped[list["Payment"]] = relationship(  # noqa:
         "Payment", back_populates="project", cascade="all, delete-orphan", lazy="noload"
     )
 
-    comments: Mapped[list["Comment"]] = relationship(  # noqa: F821
+    comments: Mapped[list["Comment"]] = relationship(  # noqa:
         "Comment", back_populates="project", cascade="all, delete-orphan", lazy="noload"
     )
 
@@ -77,13 +77,13 @@ class Project(Base):
         return region_info
 
     @validates("documents")
-    def validate_documents_count(self, key, document):
+    def validate_documents_count(self, document):
         if len(self.documents) >= 5:
             raise ValueError("You can't have more than 5 documents.")
         return document
 
     @property
-    def active_stage_number(self) -> Mapped[int] | None:
+    def active_stage_number(self) -> int | None:
         stages = self.stages
         active_stage = None
         for stage in stages:
