@@ -143,7 +143,7 @@ class TestReferralProjectLink:
         assert len(user_admin.referral_uses) == 1
         assert user_admin.referral_uses[0] == last_referral
 
-        await referral_dao.refresh(last_referral)
+        await session.refresh(last_referral)
         referral_updated = await referral_dao.find_one_or_none_by_id(data_id=last_referral.id)
         assert referral_updated.referees is not None
         assert referral_updated.referees[-1].id == user_admin.id
