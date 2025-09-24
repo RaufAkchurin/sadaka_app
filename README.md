@@ -196,7 +196,6 @@ CRUD-операций.
     ```bash
    alembic downgrade -1
    ```
----
 
 ## Деплой
 

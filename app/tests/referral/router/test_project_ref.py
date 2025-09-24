@@ -1,39 +1,56 @@
-import asyncio
-import time
-
-import pytest
-from loguru import logger
+from app.models.referral import ReferralTypeEnum
+from app.models.user import User
 
 
-class TestProjectDetail:
-    async def test_400_authorization(self, ac) -> None:
-        response = await ac.get("/app/v1/projects/detail/1")
-        assert response.status_code == 400
-        assert response.json() == {"detail": "Токен отсутствует в заголовке"}
-
-    async def test_id_validate(self, auth_ac_super) -> None:
-        response = await auth_ac_super.client.get("/app/v1/projects/detail/hob", cookies=auth_ac_super.cookies.dict())
+class TestReferralProjectLink:
+    async def test_not_correct_request_param(self, auth_ac_super, auth_ac_admin, referral_dao, query_counter):
+        response = await auth_ac_super.client.get(
+            "/app/v1/referral/generate_link?" "ref_type=project" "&fund_id=1", cookies=auth_ac_super.cookies.dict()
+        )
         assert response.status_code == 422
-        assert response.json() == {
-            "detail": [
-                {
-                    "input": "hob",
-                    "loc": ["path", "project_id"],
-                    "msg": "Input should be a valid integer, unable to parse string as an integer",
-                    "type": "int_parsing",
-                }
-            ]
-        }
+        assert response.json().get("detail") == "Для PROJECT нужен project_id"
 
-    async def test_id_not_exist(self, auth_ac_super) -> None:
-        response = await auth_ac_super.client.get("/app/v1/projects/detail/99", cookies=auth_ac_super.cookies.dict())
-        assert response.status_code == 404
+        all_referrals = await referral_dao.count()
+        assert all_referrals == 0
 
-    async def test_list_active(self, auth_ac_super) -> None:
-        response = await auth_ac_super.client.get("/app/v1/projects/detail/1", cookies=auth_ac_super.cookies.dict())
+    async def test_not_exist_instance_id(self, auth_ac_super, auth_ac_admin, referral_dao, query_counter):
+        response = await auth_ac_super.client.get(
+            "/app/v1/referral/generate_link?" "ref_type=fund" "&project_id=99", cookies=auth_ac_super.cookies.dict()
+        )
+        assert response.status_code == 422
+        assert response.json().get("detail") == "Нет сущности с данным project_id."
+
+        all_referrals = await referral_dao.count()
+        assert all_referrals == 0
+
+    async def test_generate_ref_project_200(
+        self, ac, auth_ac_super, auth_ac_admin, referral_dao, user_dao, query_counter, session
+    ):
+        # CHECK 200 status
+        response = await auth_ac_super.client.get(
+            "/app/v1/referral/generate_link?" "ref_type=project" "&project_id=1", cookies=auth_ac_super.cookies.dict()
+        )
         assert response.status_code == 200
+        assert "/v1/projects/detail/1?ref=" in response.json()
+        self.ref_link = response.json()
 
-        assert response.json() == {
+        # CHECK queries
+        assert len(query_counter) <= 10, f"Слишком много SQL-запросов: {len(query_counter)}"
+
+        # CHECK new instance exist
+        all_referrals = await referral_dao.count()
+        assert all_referrals == 1
+
+        referrals = await referral_dao.find_all()
+        last_referral = referrals[-1]
+
+        assert last_referral.type == ReferralTypeEnum.PROJECT.value
+        assert last_referral.sharer_id == 1
+
+        # CHECK response from referral_link with NEW USER (current_user)
+        ref_link_response = await auth_ac_admin.client.get(self.ref_link, cookies=auth_ac_admin.cookies.dict())
+        assert ref_link_response.status_code == 200
+        assert ref_link_response.json() == {
             "active_stage_number": 2,
             "collected_percentage": 20,
             "description": "desc1",
@@ -121,24 +138,12 @@ class TestProjectDetail:
             "unique_sponsors": 1,
         }
 
-    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(200, 70, 115)])
-    async def test_rps(self, auth_ac_super, num_requests, expected_rps, max_rps) -> None:
-        async def make_request():
-            response = await auth_ac_super.client.get("/app/v1/projects/detail/1", cookies=auth_ac_super.cookies.dict())
-            assert response.status_code == 200
-            return response
+        # CHECK referees updated referral_uses and referees
+        user_admin: User = await user_dao.get_user_with_referrals_by_email(user_email="admin@test.com")
+        assert len(user_admin.referral_uses) == 1
+        assert user_admin.referral_uses[0] == last_referral
 
-        tasks = [make_request() for _ in range(num_requests)]
-
-        start = time.perf_counter()
-        await asyncio.gather(*tasks)
-        elapsed = time.perf_counter() - start
-
-        rps = num_requests / elapsed
-        logger.info(f"⚡ {num_requests} requests in {elapsed:.2f}s → {rps:.2f} RPS")
-
-        # необязательная проверка минимального порога
-        assert rps > expected_rps
-
-        # необязательная проверка максимального порога
-        assert rps < max_rps
+        await session.refresh(last_referral)
+        referral_updated = await referral_dao.find_one_or_none_by_id(data_id=last_referral.id)
+        assert referral_updated.referees is not None
+        assert referral_updated.referees[-1].id == user_admin.id

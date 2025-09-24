@@ -11,11 +11,11 @@ class Comment(Base):
     content: Mapped[str]
 
     # Project relations
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
-    user: Mapped["User"] = relationship("User", back_populates="comments", lazy="joined")  # noqa F821
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False, index=True)
+    user: Mapped["User"] = relationship("User", back_populates="comments", lazy="noload")  # noqa F821
 
-    project_id: Mapped[int] = mapped_column(ForeignKey("projects.id"), nullable=False)
-    project: Mapped["Project"] = relationship("Project", back_populates="comments", lazy="joined")  # noqa F821
+    project_id: Mapped[int] = mapped_column(ForeignKey("projects.id"), nullable=False, index=True)
+    project: Mapped["Project"] = relationship("Project", back_populates="comments", lazy="noload")  # noqa F821
 
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.id}, project={self.project.name})"

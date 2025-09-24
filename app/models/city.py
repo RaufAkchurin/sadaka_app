@@ -14,8 +14,8 @@ class City(Base):
     users: Mapped[list["User"]] = relationship("User", back_populates="city")  # noqa F821
 
     # Внешний ключ для региона
-    region_id: Mapped[int] = mapped_column(ForeignKey("regions.id"), nullable=False)
-    region: Mapped["Region"] = relationship("Region", back_populates="citys", lazy="joined")  # noqa F821
+    region_id: Mapped[int] = mapped_column(ForeignKey("regions.id"), nullable=False, index=True)
+    region: Mapped["Region"] = relationship("Region", back_populates="citys", lazy="noload")  # noqa F821
 
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.id}, name={self.name})"

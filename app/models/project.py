@@ -4,6 +4,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
 
 from app.models.file import File
 from app.models.fund import Fund
+from app.models.referral import Referral
 from app.v1.dao.database import Base
 from app.v1.project.enums import AbstractStatusEnum
 from app.v1.project.schemas import RegionInfoSchema
@@ -15,21 +16,22 @@ class Project(Base):
     status: Mapped[AbstractStatusEnum] = mapped_column(
         SqlEnum(AbstractStatusEnum, name="project_status_enum"),
         nullable=False,
+        index=True,
     )
 
     # TODO add chars max value
     description: Mapped[str | None]
     goal: Mapped[int]
 
-    fund_id: Mapped[int] = mapped_column(ForeignKey("funds.id"), nullable=False)
-    fund: Mapped["Fund"] = relationship("Fund", back_populates="projects", lazy="joined")
+    fund_id: Mapped[int] = mapped_column(ForeignKey("funds.id"), nullable=False, index=True)
+    fund: Mapped["Fund"] = relationship("Fund", back_populates="projects", lazy="noload")
 
     documents: Mapped[list["File"]] = relationship(  # noqa: F821
         "File",
         back_populates="project_document",
         cascade="all, delete-orphan",
         foreign_keys="[File.project_document_id]",
-        lazy="joined",
+        lazy="noload",
     )
 
     pictures: Mapped[list["File"]] = relationship(  # noqa: F821
@@ -37,19 +39,23 @@ class Project(Base):
         back_populates="project_picture",
         cascade="all, delete-orphan",
         foreign_keys=[File.project_picture_id],
-        lazy="joined",
+        lazy="noload",
     )
 
-    stages: Mapped[list["Stage"]] = relationship(  # noqa: F821
-        "Stage", back_populates="project", cascade="all, delete-orphan", lazy="joined"
+    stages: Mapped[list["Stage"]] = relationship(  # noqa:
+        "Stage", back_populates="project", cascade="all, delete-orphan", lazy="noload"
     )
 
-    payments: Mapped[list["Payment"]] = relationship(  # noqa: F821
-        "Payment", back_populates="project", cascade="all, delete-orphan", lazy="joined"
+    payments: Mapped[list["Payment"]] = relationship(  # noqa:
+        "Payment", back_populates="project", cascade="all, delete-orphan", lazy="noload"
     )
 
-    comments: Mapped[list["Comment"]] = relationship(  # noqa: F821
-        "Comment", back_populates="project", cascade="all, delete-orphan", lazy="joined"
+    comments: Mapped[list["Comment"]] = relationship(  # noqa:
+        "Comment", back_populates="project", cascade="all, delete-orphan", lazy="noload"
+    )
+
+    referrals: Mapped[list["Referral"]] = relationship(  # noqa: F821
+        "Referral", back_populates="project", cascade="all, delete-orphan", lazy="noload"
     )
 
     def __repr__(self):
@@ -71,13 +77,13 @@ class Project(Base):
         return region_info
 
     @validates("documents")
-    def validate_documents_count(self, key, document):
+    def validate_documents_count(self, document):
         if len(self.documents) >= 5:
             raise ValueError("You can't have more than 5 documents.")
         return document
 
     @property
-    def active_stage_number(self) -> Mapped[int] | None:
+    def active_stage_number(self) -> int | None:
         stages = self.stages
         active_stage = None
         for stage in stages:
@@ -97,7 +103,7 @@ class Project(Base):
         return urls_list
 
     @property
-    def total_income(self) -> int:
+    def total_income(self) -> float:
         return sum(payment.income_amount for payment in self.payments)
 
     @property

@@ -8,7 +8,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models.city import City
 from app.models.comment import Comment
 from app.models.payment import Payment
-from app.models.referral import Referral
+from app.models.referral import Referral, referral_referees
 from app.v1.auth.service_jwt import hash_password_in_signal
 from app.v1.dao.database import Base
 from app.v1.users.enums import LanguageEnum, RoleEnum
@@ -16,8 +16,8 @@ from app.v1.users.enums import LanguageEnum, RoleEnum
 user_fund_access = Table(
     "user_fund_access",
     Base.metadata,
-    Column("user_id", Integer, ForeignKey("users.id")),
-    Column("fund_id", Integer, ForeignKey("funds.id")),
+    Column("user_id", Integer, ForeignKey("users.id"), index=True),
+    Column("fund_id", Integer, ForeignKey("funds.id"), index=True),
 )
 
 
@@ -40,7 +40,7 @@ class User(Base):
     funds_access: Mapped[list["Fund"]] = relationship(  # noqa F821
         secondary=user_fund_access,
         back_populates="user_have_access",
-        lazy="selectin",
+        lazy="noload",
     )
 
     role: Mapped[RoleEnum] = mapped_column(
@@ -57,19 +57,29 @@ class User(Base):
     picture: Mapped["File | None"] = relationship(  # noqa F821
         "File",  # noqa F821
         back_populates="user_picture",
-        lazy="joined",
+        lazy="noload",
         cascade="all, delete-orphan",
         single_parent=True,
     )
 
     # Связь с городом
-    city_id: Mapped[int] = mapped_column(ForeignKey("citys.id"), default=1, server_default=text("1"))
-    city: Mapped["City"] = relationship("City", back_populates="users", lazy="joined")
+    city_id: Mapped[int] = mapped_column(ForeignKey("citys.id"), default=1, server_default=text("1"), index=True)
+    city: Mapped["City"] = relationship("City", back_populates="users", lazy="selectin")
 
     # RELATIONS
     payments: Mapped[list["Payment"]] = relationship(back_populates="user")
     comments: Mapped[list["Comment"]] = relationship(back_populates="user")
-    referrals: Mapped[list["Referral"]] = relationship(back_populates="sharer")
+
+    referral_gens: Mapped[list["Referral"]] = relationship(
+        back_populates="sharer", lazy="noload"
+    )  # ссылки, которые сгенерил
+
+    referral_uses: Mapped[list["Referral"]] = relationship(  # WHEN USER USED REFF WE NOT SEE IT HERE(( BUG
+        "Referral",
+        secondary=referral_referees,
+        back_populates="referees",
+        lazy="noload",
+    )
 
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.id}, name={self.name})"
