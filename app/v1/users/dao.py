@@ -1,5 +1,5 @@
 from sqlalchemy import desc, func, select
-from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import aliased, selectinload
 
 from app.models.city import City
 from app.models.comment import Comment
@@ -165,6 +165,7 @@ class ProjectDAO(BaseDAO):
         return result.mappings().all()
 
     async def get_project_detail(self, data_id: int) -> tuple[Project, float, int] | None:
+        # TODO ПЕРЕДЕЛАТЬ чтобы возвращало проекты а не сырые данные?
         total_income = func.coalesce(func.sum(Payment.income_amount), 0).label("total_income")
         unique_sponsors = func.count(func.distinct(Payment.user_id)).label("unique_sponsors")
 
@@ -192,6 +193,7 @@ class ProjectDAO(BaseDAO):
         return project, total_income, unique_sponsors
 
     async def get_projects_list(
+        # TODO ПЕРЕДЕЛАТЬ чтобы возвращало проекты а не сырые данные?
         self,
         status: str | None = None,
         fund_id: int | None = None,
@@ -319,3 +321,26 @@ class CommentDAO(BaseDAO):
 
 class ReferralDAO(BaseDAO):
     model = Referral
+
+    async def get_users_sorted_by_income(self):
+        # алиас для платежей
+        payment_alias = aliased(Payment)
+
+        total_income = func.coalesce(func.sum(payment_alias.income_amount), 0).label("total_income")
+
+        stmt = (
+            select(User, total_income)
+            .outerjoin(Referral, Referral.sharer_id == User.id)  # юзер → его рефералки
+            .outerjoin(payment_alias, payment_alias.referral_id == Referral.id)  # рефералка → платежи
+            .group_by(User.id)
+            .order_by(total_income.desc())
+        )
+
+        result = await self._session.execute(stmt)
+
+        users = []
+        for user, income in result.all():
+            setattr(user, "income_amount", income)  # добавляем динамический атрибут
+            users.append(user)
+
+        return users
