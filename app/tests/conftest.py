@@ -11,7 +11,8 @@ from yookassa import Configuration
 from app.models.user import User
 from app.settings import settings
 from app.v1.dao.database import async_session_maker
-from app.v1.users.dao import CommentDAO, OneTimePassDAO, PaymentDAO, ReferralDAO, UserDAO
+from app.v1.referrals.dao import ReferralDAO
+from app.v1.users.dao import CommentDAO, OneTimePassDAO, PaymentDAO, UserDAO
 
 
 @pytest.fixture

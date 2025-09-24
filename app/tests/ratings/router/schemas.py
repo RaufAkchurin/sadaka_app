@@ -11,6 +11,6 @@ class TestPaymentAddSchema(BaseModel):
     stage_id: int
     referral_id: int
     income_amount: float = 0.0
-    created_at: datetime.datetime | None = datetime.datetime.now()
+    created_at: datetime.datetime | None = datetime.datetime.now()  # передавать значения всеравно приходится(
     updated_at: datetime.datetime | None = datetime.datetime.now()
     captured_at: datetime.datetime | None = datetime.datetime.now()

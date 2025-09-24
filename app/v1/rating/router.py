@@ -11,7 +11,8 @@ from app.v1.rating.schemas import (
     RegionModelTotalIncomeSchema,
     UserModelTotalIncomeSchema,
 )
-from app.v1.users.dao import PaymentDAO, ProjectDAO, ReferralDAO, RegionDAO, UserDAO
+from app.v1.referrals.dao import ReferralDAO
+from app.v1.users.dao import PaymentDAO, ProjectDAO, RegionDAO, UserDAO
 
 v1_rating_router = APIRouter()
 
@@ -80,12 +81,14 @@ async def get_projects_rating(
 
 
 @v1_rating_router.get("/referrals")
-async def get_referral_payments_rating(
+async def get_referred_payments_rating(
     pagination: PaginationParams = Depends(),
     user_data: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session_with_commit),
 ):
     referral_dao = ReferralDAO(session=session)
-
-    projects_ordered_by_payments = await referral_dao.get_users_sorted_by_income()
-    print(projects_ordered_by_payments)
+    projects_ordered_by_payments = await referral_dao.get_users_sorted_by_ref_income()
+    serialized_users_by_ref_payments = [
+        UserModelTotalIncomeSchema.model_validate(u) for u in projects_ordered_by_payments
+    ]
+    return await Pagination.execute(serialized_users_by_ref_payments, pagination.page, pagination.limit)

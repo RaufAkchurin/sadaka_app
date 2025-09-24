@@ -7,7 +7,7 @@ from app.models.user import User
 from app.settings import settings
 from app.v1.dependencies.auth_dep import get_current_user
 from app.v1.dependencies.dao_dep import get_session_with_commit
-from app.v1.users.dao import ReferralDAO
+from app.v1.referrals.dao import ReferralDAO
 from app.v1.utils_core.id_validators import fund_id_validator, project_id_validator
 
 v1_referral_router = APIRouter()

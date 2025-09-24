@@ -1,5 +1,5 @@
 from sqlalchemy import desc, func, select
-from sqlalchemy.orm import aliased, selectinload
+from sqlalchemy.orm import selectinload
 
 from app.models.city import City
 from app.models.comment import Comment
@@ -9,7 +9,6 @@ from app.models.fund import Fund
 from app.models.one_time_pass import OneTimePass
 from app.models.payment import Payment
 from app.models.project import Project
-from app.models.referral import Referral
 from app.models.region import Region
 from app.models.stage import Stage
 from app.models.user import User
@@ -317,30 +316,3 @@ class PaymentDAO(BaseDAO):
 
 class CommentDAO(BaseDAO):
     model = Comment
-
-
-class ReferralDAO(BaseDAO):
-    model = Referral
-
-    async def get_users_sorted_by_income(self):
-        # алиас для платежей
-        payment_alias = aliased(Payment)
-
-        total_income = func.coalesce(func.sum(payment_alias.income_amount), 0).label("total_income")
-
-        stmt = (
-            select(User, total_income)
-            .outerjoin(Referral, Referral.sharer_id == User.id)  # юзер → его рефералки
-            .outerjoin(payment_alias, payment_alias.referral_id == Referral.id)  # рефералка → платежи
-            .group_by(User.id)
-            .order_by(total_income.desc())
-        )
-
-        result = await self._session.execute(stmt)
-
-        users = []
-        for user, income in result.all():
-            setattr(user, "income_amount", income)  # добавляем динамический атрибут
-            users.append(user)
-
-        return users
