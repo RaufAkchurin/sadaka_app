@@ -48,6 +48,6 @@ class Payment(Base):
     def __str__(self):
         return f"{self.id}, {self.income_amount}, {self.status}, test - {self.test}"
 
-    @property
-    def project_name(self) -> str | None:
-        return self.project.name if self.project else None
+    # @property
+    # def project_name(self) -> str | None:
+    #     return self.project.name if self.project else None
