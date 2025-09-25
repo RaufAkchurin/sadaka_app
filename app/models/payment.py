@@ -46,7 +46,7 @@ class Payment(Base):
     referral: Mapped["Referral"] = relationship("Referral", back_populates="payments", lazy="noload")  # noqa F821
 
     def __str__(self):
-        return f"{self.project.name}, {self.income_amount}, {self.status}, test - {self.test}"
+        return f"{self.id}, {self.income_amount}, {self.status}, test - {self.test}"
 
     @property
     def project_name(self) -> str | None:
