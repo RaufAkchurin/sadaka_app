@@ -7,26 +7,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.referral import Referral, ReferralTypeEnum
 from app.models.user import User
 from app.settings import settings
-from app.v1.api_utils.pagination import Pagination, PaginationParams
+from app.v1.api_utils.pagination import Pagination, PaginationParams, PaginationResponseSchema
 from app.v1.dependencies.auth_dep import get_current_user
 from app.v1.dependencies.dao_dep import get_session_with_commit
 from app.v1.referrals.dao import ReferralDAO
 from app.v1.utils_core.id_validators import fund_id_validator, project_id_validator
 
 v1_referral_router = APIRouter()
-
-
-class ReferralKeyResponseSchema(BaseModel):
-    key: str
-    model_config = ConfigDict(from_attributes=True)
-
-
-class ReferralAddSchema(BaseModel):
-    type: ReferralTypeEnum
-    sharer_id: int
-
-    fund_id: int | None = None
-    project_id: int | None = None
 
 
 async def generate_referral_link(referral: Referral):
@@ -42,6 +29,20 @@ async def generate_referral_link(referral: Referral):
         url = "ADD URL TO DOWNLOAD APP IN BACKEND PLEASE"
 
     return url
+
+
+class ReferralKeyResponseSchema(BaseModel):
+    key: str
+    model_config = ConfigDict(from_attributes=True)
+
+
+class ReferralAddSchema(BaseModel):
+    type: ReferralTypeEnum
+    sharer_id: int
+
+    created_at: datetime.datetime | None = datetime.datetime.now()
+    fund_id: int | None = None
+    project_id: int | None = None
 
 
 @v1_referral_router.get("/generate_link")
@@ -75,8 +76,8 @@ class ReferralDonationsSchema(BaseModel):
     id: int
     referral_income: float
     referral_donors_count: int
-    created_at: datetime.datetime
 
+    created_at: datetime.datetime = Field(exclude=True)  # (для расчета количества дней)
     # raw related models (не сериализуются, нужны только для доступа)
     fund: object | None = Field(default=None, exclude=True)
     project: object | None = Field(default=None, exclude=True)
@@ -91,6 +92,13 @@ class ReferralDonationsSchema(BaseModel):
     def project_name(self) -> str | None:
         return self.project.name if self.project else None
 
+    @computed_field
+    @property
+    def days_after_created(self) -> int:
+        created_at_date = self.created_at
+        days_after_created = (datetime.datetime.now() - created_at_date).days
+        return days_after_created
+
     model_config = ConfigDict(from_attributes=True)
 
 
@@ -100,7 +108,7 @@ async def get_referrals_info(
     pagination: PaginationParams = Depends(),
     user_data: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session_with_commit),
-):
+) -> PaginationResponseSchema[ReferralDonationsSchema]:
     referral_dao = ReferralDAO(session=session)
 
     referrals: list[Referral] = await referral_dao.get_referral_list(user_id=user_data.id)

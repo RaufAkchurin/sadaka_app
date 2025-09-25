@@ -13,7 +13,6 @@ from app.models.file import File
 from app.models.fund import Fund
 from app.models.payment import Payment
 from app.models.project import Project
-from app.models.referral import Referral
 from app.models.region import Region
 from app.models.stage import Stage
 from app.models.user import User
@@ -33,7 +32,6 @@ MODELS_MAP = {
     "file": File,
     "payment": Payment,
     "comment": Comment,
-    "referral": Referral,
 }
 
 

@@ -22,7 +22,13 @@ class TestReferralListAPI:
         now = datetime.datetime.now()
 
         # JOIN TYPE
-        referral_1: Referral = await referral_dao.add(ReferralAddSchema(type=ReferralTypeEnum.JOIN, sharer_id=1))
+        referral_1: Referral = await referral_dao.add(
+            ReferralAddSchema(
+                type=ReferralTypeEnum.JOIN,
+                sharer_id=1,
+                created_at=datetime.datetime.now() - datetime.timedelta(days=1),
+            )
+        )
 
         for income_amount in [100, 200, 300]:
             uuid_num = uuid.uuid4()
@@ -46,6 +52,7 @@ class TestReferralListAPI:
                 type=ReferralTypeEnum.FUND,
                 sharer_id=1,
                 fund_id=1,
+                created_at=datetime.datetime.now() - datetime.timedelta(days=2),
             )
         )
 
@@ -71,6 +78,7 @@ class TestReferralListAPI:
                 type=ReferralTypeEnum.PROJECT,
                 sharer_id=1,
                 project_id=1,
+                created_at=datetime.datetime.now() - datetime.timedelta(days=3),
             )
         )
 
@@ -97,7 +105,40 @@ class TestReferralListAPI:
         )
         assert response.status_code == 200
 
-        assert response.json()["items"] == []
+        assert response.json()["items"] == [
+            {
+                "created_at": "2025-09-25T07:12:45",
+                "fund_name": None,
+                "id": 1,
+                "project_name": None,
+                "referral_donors_count": 0,
+                "referral_income": 0.0,
+            },
+            {
+                "created_at": "2025-09-25T07:12:45",
+                "fund_name": None,
+                "id": 3,
+                "project_name": None,
+                "referral_donors_count": 3,
+                "referral_income": 600.0,
+            },
+            {
+                "created_at": "2025-09-25T07:12:45",
+                "fund_name": "fund1",
+                "id": 4,
+                "project_name": None,
+                "referral_donors_count": 4,
+                "referral_income": 1900.0,
+            },
+            {
+                "created_at": "2025-09-25T07:12:45",
+                "fund_name": None,
+                "id": 5,
+                "project_name": "project1",
+                "referral_donors_count": 5,
+                "referral_income": 3500.0,
+            },
+        ]
 
         # TODO TEST RESPONSE DATA
 
