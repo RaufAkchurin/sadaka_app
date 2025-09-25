@@ -14,7 +14,7 @@ from app.v1.referrals.router import ReferralAddSchema
 class TestReferralListAPI:
     async def test_200(self, auth_ac_super, referral_dao) -> None:
         response = await auth_ac_super.client.get(
-            "/app/v1/referral/referral_list", cookies=auth_ac_super.cookies.dict()
+            "/app/v1/referral/my_referral_list", cookies=auth_ac_super.cookies.dict()
         )
         assert response.status_code == 200
 
@@ -101,39 +101,31 @@ class TestReferralListAPI:
         await session.commit()
 
         response = await auth_ac_super.client.get(
-            "/app/v1/referral/referral_list", cookies=auth_ac_super.cookies.dict()
+            "/app/v1/referral/my_referral_list", cookies=auth_ac_super.cookies.dict()
         )
         assert response.status_code == 200
 
         assert response.json()["items"] == [
             {
-                "created_at": "2025-09-25T07:12:45",
+                "days_after_created": 1,
                 "fund_name": None,
                 "id": 1,
-                "project_name": None,
-                "referral_donors_count": 0,
-                "referral_income": 0.0,
-            },
-            {
-                "created_at": "2025-09-25T07:12:45",
-                "fund_name": None,
-                "id": 3,
                 "project_name": None,
                 "referral_donors_count": 3,
                 "referral_income": 600.0,
             },
             {
-                "created_at": "2025-09-25T07:12:45",
+                "days_after_created": 2,
                 "fund_name": "fund1",
-                "id": 4,
+                "id": 2,
                 "project_name": None,
                 "referral_donors_count": 4,
                 "referral_income": 1900.0,
             },
             {
-                "created_at": "2025-09-25T07:12:45",
+                "days_after_created": 3,
                 "fund_name": None,
-                "id": 5,
+                "id": 3,
                 "project_name": "project1",
                 "referral_donors_count": 5,
                 "referral_income": 3500.0,
@@ -142,11 +134,11 @@ class TestReferralListAPI:
 
         # TODO TEST RESPONSE DATA
 
-    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(300, 170, 220)])
+    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(200, 100, 150)])
     async def test_rps(self, auth_ac_super, num_requests, expected_rps, max_rps) -> None:
         async def make_request():
             response = await auth_ac_super.client.get(
-                "/app/v1/referral/referral_list", cookies=auth_ac_super.cookies.dict()
+                "/app/v1/referral/my_referral_list", cookies=auth_ac_super.cookies.dict()
             )
 
             assert response.status_code == 200

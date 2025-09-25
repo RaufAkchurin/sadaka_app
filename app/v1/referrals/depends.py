@@ -8,7 +8,7 @@ from app.models.user import User
 from app.v1.dependencies.auth_dep import get_current_user
 from app.v1.dependencies.dao_dep import get_session_with_commit
 from app.v1.referrals.dao import ReferralDAO
-from app.v1.referrals.router import ReferralKeyResponseSchema
+from app.v1.referrals.schemas import ReferralKeyResponseSchema
 from app.v1.users.dao import UserDAO
 
 
