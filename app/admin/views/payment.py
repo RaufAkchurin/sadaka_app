@@ -18,5 +18,16 @@ class PaymentAdmin(FundAdminAccess, ModelView, model=Payment):
         Payment.created_at,
     ]
 
-    # column_exclude_list = ["id", "user", "captured_at", "updated_at", "project_id", "stage_id", "user_id"]
     column_searchable_list = [Payment.project_id]
+
+    column_details_list = [
+        Payment.id,
+        Payment.user,
+        Payment.project,
+        Payment.stage,
+        Payment.referral,
+        Payment.amount,
+        Payment.income_amount,
+        Payment.test,
+        Payment.status,
+    ]
