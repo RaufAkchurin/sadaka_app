@@ -1,10 +1,13 @@
+import datetime
+
 from fastapi import APIRouter, Depends, Query
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field, computed_field
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.referral import Referral, ReferralTypeEnum
 from app.models.user import User
 from app.settings import settings
+from app.v1.api_utils.pagination import Pagination, PaginationParams
 from app.v1.dependencies.auth_dep import get_current_user
 from app.v1.dependencies.dao_dep import get_session_with_commit
 from app.v1.referrals.dao import ReferralDAO
@@ -66,3 +69,42 @@ async def get_referral_link(
     )
 
     return await generate_referral_link(referral=referral) + f"?ref={referral.key}"
+
+
+class ReferralDonationsSchema(BaseModel):
+    id: int
+    referral_income: float
+    referral_donors_count: int
+    created_at: datetime.datetime
+
+    # raw related models (не сериализуются, нужны только для доступа)
+    fund: object | None = Field(default=None, exclude=True)
+    project: object | None = Field(default=None, exclude=True)
+
+    @computed_field
+    @property
+    def fund_name(self) -> str | None:
+        return self.fund.name if self.fund else None
+
+    @computed_field
+    @property
+    def project_name(self) -> str | None:
+        return self.project.name if self.project else None
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+# PaginationResponseSchema
+@v1_referral_router.get("/referral_list")
+async def get_referrals_info(
+    pagination: PaginationParams = Depends(),
+    user_data: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_session_with_commit),
+):
+    referral_dao = ReferralDAO(session=session)
+
+    referrals: list[Referral] = await referral_dao.get_referral_list(user_id=user_data.id)
+
+    ser_referrals = [ReferralDonationsSchema.model_validate(r) for r in referrals]
+
+    return await Pagination.execute(ser_referrals, pagination.page, pagination.limit)
