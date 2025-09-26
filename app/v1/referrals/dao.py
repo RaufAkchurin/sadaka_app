@@ -20,6 +20,7 @@ class ReferralDAO(BaseDAO):
             .outerjoin(Referral, Referral.sharer_id == User.id)
             .outerjoin(Payment, Payment.referral_id == Referral.id)
             .group_by(User.id)
+            .having(total_income > 0)
             .options(selectinload(User.picture))
             .order_by(total_income.desc())
         )

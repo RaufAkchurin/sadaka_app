@@ -72,24 +72,6 @@ class TestReferralsRatingAPI:
                 "picture_url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/tests%2Fdigits%2F9.png",
                 "total_income": 600.0,
             },
-            {
-                "id": 3,
-                "name": "moderator",
-                "picture_url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/tests%2Fdigits%2F1.png",
-                "total_income": 0.0,
-            },
-            {
-                "id": 4,
-                "name": "user1",
-                "picture_url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/tests%2Fdigits%2F2.png",
-                "total_income": 0.0,
-            },
-            {
-                "id": 5,
-                "name": "user2",
-                "picture_url": "https://b35fabb0-4ffa-4a15-9f0b-c3e80016c729.selstorage.ru/tests%2Fdigits%2F3.png",
-                "total_income": 0.0,
-            },
         ]
 
     @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(300, 180, 250)])
