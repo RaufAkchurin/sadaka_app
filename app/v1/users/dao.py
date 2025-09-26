@@ -9,7 +9,6 @@ from app.models.fund import Fund
 from app.models.one_time_pass import OneTimePass
 from app.models.payment import Payment
 from app.models.project import Project
-from app.models.referral import Referral
 from app.models.region import Region
 from app.models.stage import Stage
 from app.models.user import User
@@ -165,6 +164,7 @@ class ProjectDAO(BaseDAO):
         return result.mappings().all()
 
     async def get_project_detail(self, data_id: int) -> tuple[Project, float, int] | None:
+        # TODO ПЕРЕДЕЛАТЬ чтобы возвращало проекты а не сырые данные?
         total_income = func.coalesce(func.sum(Payment.income_amount), 0).label("total_income")
         unique_sponsors = func.count(func.distinct(Payment.user_id)).label("unique_sponsors")
 
@@ -192,6 +192,7 @@ class ProjectDAO(BaseDAO):
         return project, total_income, unique_sponsors
 
     async def get_projects_list(
+        # TODO ПЕРЕДЕЛАТЬ чтобы возвращало проекты а не сырые данные?
         self,
         status: str | None = None,
         fund_id: int | None = None,
@@ -315,7 +316,3 @@ class PaymentDAO(BaseDAO):
 
 class CommentDAO(BaseDAO):
     model = Comment
-
-
-class ReferralDAO(BaseDAO):
-    model = Referral
