@@ -44,7 +44,7 @@ class StageShortSchema(BaseModel):
 class StagePaymentsSchema(StageShortSchema):
     name: str
     goal: int
-    collected: int
+    collected: float
     reports: list[FileBaseSchema]
 
 
