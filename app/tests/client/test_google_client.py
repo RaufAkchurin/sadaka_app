@@ -2,7 +2,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from app.v1.auth import google_auth_service
+from app.v1.auth_google.service import google_auth_service
 from app.v1.users.schemas import UserActiveSchema, UserContactsSchema
 
 

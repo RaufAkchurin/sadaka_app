@@ -32,10 +32,10 @@ class Payment(Base):
 
     # Project relations
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False, index=True)
-    user: Mapped["User"] = relationship("User", back_populates="payments", lazy="noload")  # noqa F821
+    user: Mapped["User"] = relationship("User", back_populates="payments", lazy="selectin")  # noqa F821
 
     project_id: Mapped[int] = mapped_column(ForeignKey("projects.id"), nullable=False, index=True)
-    project: Mapped["Project"] = relationship("Project", back_populates="payments", lazy="noload")  # noqa F821
+    project: Mapped["Project"] = relationship("Project", back_populates="payments", lazy="selectin")  # noqa F821
 
     stage_id: Mapped[int] = mapped_column(ForeignKey("stages.id"), nullable=False, index=True)
     stage: Mapped["Stage"] = relationship("Stage", back_populates="payments", lazy="noload")  # noqa F821
@@ -48,6 +48,10 @@ class Payment(Base):
     def __str__(self):
         return f"{self.id}, {self.income_amount}, {self.status}, test - {self.test}"
 
-    # @property
-    # def project_name(self) -> str | None:
-    #     return self.project.name if self.project else None
+    @property
+    def project_name(self) -> str | None:
+        return self.project.name if self.project else None
+
+    @property
+    def donor_name(self) -> str | None:
+        return self.user.name if self.user else None

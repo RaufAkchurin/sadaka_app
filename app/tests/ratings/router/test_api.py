@@ -15,13 +15,11 @@ class TestRatingAPI:
         response = await auth_ac_super.client.get("/app/v1/ratings/total_info", cookies=auth_ac_super.cookies.dict())
         assert response.status_code == 200
 
-    @pytest.mark.parametrize("num_requests", [50, 100, 200])
-    async def test_rps(self, auth_ac_super, num_requests) -> None:
-        url = "/app/v1/ratings/donors"
-        cookies = auth_ac_super.cookies.dict()
-
+    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(400, 250, 350)])
+    async def test_rps(self, auth_ac_super, num_requests, expected_rps, max_rps) -> None:
         async def make_request():
-            response = await auth_ac_super.client.get(url, cookies=cookies)
+            response = await auth_ac_super.client.get("/app/v1/ratings/donors", cookies=auth_ac_super.cookies.dict())
+
             assert response.status_code == 200
             return response
 
@@ -35,7 +33,10 @@ class TestRatingAPI:
         logger.info(f"⚡ {num_requests} requests in {elapsed:.2f}s → {rps:.2f} RPS")
 
         # необязательная проверка минимального порога
-        assert rps > 55
+        assert rps > expected_rps
+
+        # необязательная проверка максимального порога
+        assert rps < max_rps
 
     async def test_total_info(self, auth_ac_super, payment_dao, user_dao, query_counter) -> None:
         response = await auth_ac_super.client.get("/app/v1/ratings/total_info", cookies=auth_ac_super.cookies.dict())
