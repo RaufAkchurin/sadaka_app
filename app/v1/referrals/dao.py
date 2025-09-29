@@ -34,7 +34,7 @@ class ReferralDAO(BaseDAO):
 
         return users
 
-    async def get_referral_list(self, user_id: int, offset: int = 0, limit: int = 5) -> list[Referral]:
+    async def get_referral_list(self, user_id: int, page: int, limit: int = 5) -> list[Referral]:
         referral_income = func.coalesce(func.sum(Payment.income_amount), 0).label("referral_income")
         referral_donors_count = func.coalesce(func.count(Payment.id), 0).label("referral_donors_count")
 
@@ -46,7 +46,7 @@ class ReferralDAO(BaseDAO):
             .outerjoin(Fund, Fund.id == Referral.fund_id)
             .group_by(Referral.id)
             .order_by(Referral.created_at.desc())
-            .offset(offset)
+            .offset((page - 1) * limit)
             .limit(limit + 1)
         )
 

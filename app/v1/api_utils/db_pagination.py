@@ -22,7 +22,7 @@ class DbPagination:
     async def execute(queryset: list[T], page: int, limit: int) -> DbPaginationResponseSchema[T]:
         len_queryset = len(queryset)
         has_more = len_queryset > limit
-        on_page = len_queryset
+        on_page = len_queryset if len_queryset <= limit else limit  # тк в выборке может быть больше на один от лимита
 
         return DbPaginationResponseSchema[T](
             items=queryset[:limit],

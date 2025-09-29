@@ -52,6 +52,6 @@ async def get_referrals_info(
     session: AsyncSession = Depends(get_session_with_commit),
 ) -> DbPaginationResponseSchema[ReferralDonationsSchema]:
     referral_dao = ReferralDAO(session=session)
-    referrals = await referral_dao.get_referral_list(user_id=user_data.id, limit=pagination.limit)
+    referrals = await referral_dao.get_referral_list(user_id=user_data.id, page=pagination.page, limit=pagination.limit)
     ser_referrals = [ReferralDonationsSchema.model_validate(r) for r in referrals]
     return await DbPagination.execute(ser_referrals, pagination.page, pagination.limit)
