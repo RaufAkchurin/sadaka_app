@@ -12,7 +12,7 @@ from app.models.user import User
 from app.settings import settings
 from app.v1.dao.database import async_session_maker
 from app.v1.referrals.dao import ReferralDAO
-from app.v1.users.dao import CommentDAO, OneTimePassDAO, PaymentDAO, UserDAO
+from app.v1.users.dao import CityDAO, CommentDAO, OneTimePassDAO, PaymentDAO, RegionDAO, UserDAO
 
 
 @pytest.fixture
@@ -57,6 +57,18 @@ async def session():
             raise
         finally:
             await session.close()
+
+
+@pytest.fixture(scope="function")
+async def region_dao(session) -> RegionDAO:
+    region_dao = RegionDAO(session)
+    return region_dao
+
+
+@pytest.fixture(scope="function")
+async def city_dao(session) -> CityDAO:
+    city_dao = CityDAO(session)
+    return city_dao
 
 
 @pytest.fixture(scope="function")
