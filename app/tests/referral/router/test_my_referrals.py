@@ -30,7 +30,9 @@ class TestReferralListAPI:
             )
         )
 
-        for income_amount in [100, 200, 300]:
+        income_amount = 100
+        for income_amount in range(50):
+            income_amount += 10.0
             uuid_num = uuid.uuid4()
             await payment_dao.add(
                 TestPaymentAddSchema(
@@ -56,7 +58,9 @@ class TestReferralListAPI:
             )
         )
 
-        for income_amount in [200, 400, 600, 700]:
+        income_amount = 100
+        for income_amount in range(50):
+            income_amount += 10.0
             uuid_num = uuid.uuid4()
             await payment_dao.add(
                 TestPaymentAddSchema(
@@ -82,7 +86,9 @@ class TestReferralListAPI:
             )
         )
 
-        for income_amount in [300, 500, 700, 900, 1100]:
+        income_amount = 100
+        for income_amount in range(50):
+            income_amount += 10.0
             uuid_num = uuid.uuid4()
             await payment_dao.add(
                 TestPaymentAddSchema(
@@ -139,6 +145,31 @@ class TestReferralListAPI:
         async def make_request():
             response = await auth_ac_super.client.get(
                 "/app/v1/referral/my_referral_list", cookies=auth_ac_super.cookies.dict()
+            )
+
+            assert response.status_code == 200
+            return response
+
+        tasks = [make_request() for _ in range(num_requests)]
+
+        start = time.perf_counter()
+        await asyncio.gather(*tasks)
+        elapsed = time.perf_counter() - start
+
+        rps = num_requests / elapsed
+        logger.info(f"⚡ {num_requests} requests in {elapsed:.2f}s → {rps:.2f} RPS")
+
+        # необязательная проверка минимального порога
+        assert rps > expected_rps
+
+        # необязательная проверка максимального порога
+        assert rps < max_rps
+
+    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(200, 100, 150)])
+    async def test_rps_db(self, auth_ac_super, num_requests, expected_rps, max_rps) -> None:
+        async def make_request():
+            response = await auth_ac_super.client.get(
+                "/app/v1/referral/my_referral_list_DB_PAGINATION", cookies=auth_ac_super.cookies.dict()
             )
 
             assert response.status_code == 200
