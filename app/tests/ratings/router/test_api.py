@@ -99,7 +99,7 @@ class TestRatingAPI:
         }
 
     async def test_regions(self, auth_ac_super, payment_dao, query_counter) -> None:
-        response = await auth_ac_super.client.get("/app/v1/ratings/regions", cookies=auth_ac_super.cookies.dict())
+        response = await auth_ac_super.client.get("/app/v1/ratings/regions_all", cookies=auth_ac_super.cookies.dict())
 
         assert response.status_code == 200
         assert response.json() is not None

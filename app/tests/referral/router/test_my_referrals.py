@@ -59,7 +59,7 @@ class TestReferralListAPI:
         )
 
         income_amount = 100
-        for income_amount in range(50):
+        for income_amount in range(70):
             income_amount += 10.0
             uuid_num = uuid.uuid4()
             await payment_dao.add(
@@ -87,7 +87,7 @@ class TestReferralListAPI:
         )
 
         income_amount = 100
-        for income_amount in range(50):
+        for income_amount in range(100):
             income_amount += 10.0
             uuid_num = uuid.uuid4()
             await payment_dao.add(
@@ -117,30 +117,30 @@ class TestReferralListAPI:
                 "fund_name": None,
                 "id": 1,
                 "project_name": None,
-                "referral_donors_count": 3,
-                "referral_income": 600.0,
+                "referral_donations_count": 50,
+                "referral_income": 1725.0,
             },
             {
                 "days_after_created": 2,
                 "fund_name": "fund1",
                 "id": 2,
                 "project_name": None,
-                "referral_donors_count": 4,
-                "referral_income": 1900.0,
+                "referral_donations_count": 70,
+                "referral_income": 3115.0,
             },
             {
                 "days_after_created": 3,
                 "fund_name": None,
                 "id": 3,
                 "project_name": "project1",
-                "referral_donors_count": 5,
-                "referral_income": 3500.0,
+                "referral_donations_count": 100,
+                "referral_income": 5950.0,
             },
         ]
 
         # TODO TEST RESPONSE DATA
 
-    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(200, 100, 150)])
+    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(100, 30, 50)])
     async def test_rps(self, auth_ac_super, num_requests, expected_rps, max_rps) -> None:
         async def make_request():
             response = await auth_ac_super.client.get(
@@ -165,7 +165,7 @@ class TestReferralListAPI:
         # необязательная проверка максимального порога
         assert rps < max_rps
 
-    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(200, 100, 150)])
+    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(100, 30, 50)])
     async def test_rps_db(self, auth_ac_super, num_requests, expected_rps, max_rps) -> None:
         async def make_request():
             response = await auth_ac_super.client.get(

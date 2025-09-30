@@ -36,10 +36,10 @@ class ReferralDAO(BaseDAO):
 
     async def get_referral_list_DB_PAGINATION_FIRST(self, user_id: int, page: int, limit: int = 5) -> list[Referral]:
         referral_income = func.coalesce(func.sum(Payment.income_amount), 0).label("referral_income")
-        referral_donors_count = func.coalesce(func.count(Payment.id), 0).label("referral_donors_count")
+        referral_donations_count = func.coalesce(func.count(Payment.id), 0).label("referral_donors_count")
 
         stmt = (
-            select(Referral, referral_income, referral_donors_count)
+            select(Referral, referral_income, referral_donations_count)
             .where(Referral.sharer_id == user_id)
             .outerjoin(Payment, Payment.referral_id == Referral.id)
             .outerjoin(Project, Project.id == Referral.project_id)
@@ -55,17 +55,17 @@ class ReferralDAO(BaseDAO):
         referrals = []
         for referral, income, donors_count in result.all():
             setattr(referral, "referral_income", income)
-            setattr(referral, "referral_donors_count", donors_count)
+            setattr(referral, "referral_donations_count", donors_count)
             referrals.append(referral)
 
         return referrals
 
     async def get_referral_list(self, user_id: int) -> list[Referral]:
         referral_income = func.coalesce(func.sum(Payment.income_amount), 0).label("referral_income")
-        referral_donors_count = func.coalesce(func.count(Payment.id), 0).label("referral_donors_count")
+        referral_donations_count = func.coalesce(func.count(Payment.id), 0).label("referral_donors_count")
 
         stmt = (
-            select(Referral, referral_income, referral_donors_count)
+            select(Referral, referral_income, referral_donations_count)
             .where(Referral.sharer_id == user_id)
             .outerjoin(Payment, Payment.referral_id == Referral.id)
             .outerjoin(Project, Project.id == Referral.project_id)
@@ -79,7 +79,7 @@ class ReferralDAO(BaseDAO):
         referrals = []
         for referral, income, donors_count in result.unique().all():
             setattr(referral, "referral_income", income)
-            setattr(referral, "referral_donors_count", donors_count)
+            setattr(referral, "referral_donations_count", donors_count)
             referrals.append(referral)
 
         return referrals
