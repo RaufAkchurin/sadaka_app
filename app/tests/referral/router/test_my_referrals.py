@@ -7,7 +7,7 @@ import pytest
 from loguru import logger
 
 from app.models.referral import Referral, ReferralTypeEnum
-from app.tests.ratings.router.schemas import TestPaymentAddSchema
+from app.tests.schemas import TestPaymentAddSchema
 from app.v1.referrals.router import ReferralAddSchema
 
 

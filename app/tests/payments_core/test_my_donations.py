@@ -6,7 +6,7 @@ import uuid
 import pytest
 from loguru import logger
 
-from app.tests.ratings.router.schemas import TestPaymentAddSchema
+from app.tests.schemas import TestPaymentAddSchema
 
 
 class TestMyDonations:
