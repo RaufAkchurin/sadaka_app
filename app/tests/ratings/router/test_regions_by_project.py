@@ -6,8 +6,7 @@ import uuid
 import pytest
 from loguru import logger
 
-from app.tests.ratings.router.schemas import TestPaymentAddSchema
-from app.tests.schemas import TestCityAddSchema, TestRegionAddSchema, TestUserAddSchema
+from app.tests.schemas import TestCityAddSchema, TestPaymentAddSchema, TestRegionAddSchema, TestUserAddSchema
 
 
 class TestRatingRegionPaymentsByProjectIdAPI:
