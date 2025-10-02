@@ -109,6 +109,8 @@ class TestProjectsAPI:
         project_ids = [num for num in range(100, 110)]
         user_ids = [num for num in range(10, 15)]
 
+        # Всего 48 тысяч на каждый проект
+
         for project_id in project_ids:
             # создаем 30 платежей от каждого пользователя
             for _ in range(30):
@@ -155,7 +157,9 @@ class TestProjectsAPI:
         await session.commit()
 
     async def test_projects(self, auth_ac_super, payment_dao, query_counter, comment_dao) -> None:
-        response = await auth_ac_super.client.get("/app/v1/ratings/projects", cookies=auth_ac_super.cookies.dict())
+        response = await auth_ac_super.client.get(
+            "/app/v1/ratings/projects?page=1&limit=10", cookies=auth_ac_super.cookies.dict()
+        )
 
         assert response.status_code == 200
         assert response.json() is not None
@@ -165,57 +169,107 @@ class TestProjectsAPI:
         assert data == {
             "items": [
                 {
-                    "count_comments": 3,
-                    "fund_name": "fund3",
-                    "id": 3,
-                    "name": "project3",
+                    "count_comments": 15,
+                    "fund_name": "Без фонда",
+                    "id": 100,
+                    "name": "project100",
                     "picture_url": None,
                     "status": "active",
-                    "total_income": 4000,
-                    "unique_sponsors": 1,
+                    "total_income": 48000.0,
+                    "unique_sponsors": 5,
                 },
                 {
-                    "count_comments": 2,
-                    "fund_name": "fund2",
-                    "id": 2,
-                    "name": "project2",
+                    "count_comments": 15,
+                    "fund_name": "Без фонда",
+                    "id": 101,
+                    "name": "project101",
                     "picture_url": None,
                     "status": "active",
-                    "total_income": 3000,
-                    "unique_sponsors": 1,
+                    "total_income": 48000.0,
+                    "unique_sponsors": 5,
                 },
                 {
-                    "count_comments": 1,
-                    "fund_name": "fund1",
-                    "id": 1,
-                    "name": "project1",
+                    "count_comments": 15,
+                    "fund_name": "Без фонда",
+                    "id": 102,
+                    "name": "project102",
                     "picture_url": None,
                     "status": "active",
-                    "total_income": 2000,
-                    "unique_sponsors": 1,
+                    "total_income": 48000.0,
+                    "unique_sponsors": 5,
                 },
                 {
-                    "count_comments": 0,
-                    "fund_name": "fund1",
-                    "id": 4,
-                    "name": "project4",
+                    "count_comments": 15,
+                    "fund_name": "Без фонда",
+                    "id": 103,
+                    "name": "project103",
                     "picture_url": None,
                     "status": "active",
-                    "total_income": 0,
-                    "unique_sponsors": 0,
+                    "total_income": 48000.0,
+                    "unique_sponsors": 5,
                 },
                 {
-                    "count_comments": 0,
-                    "fund_name": "fund2",
-                    "id": 5,
-                    "name": "project5",
+                    "count_comments": 15,
+                    "fund_name": "Без фонда",
+                    "id": 104,
+                    "name": "project104",
                     "picture_url": None,
                     "status": "active",
-                    "total_income": 0,
-                    "unique_sponsors": 0,
+                    "total_income": 48000.0,
+                    "unique_sponsors": 5,
+                },
+                {
+                    "count_comments": 15,
+                    "fund_name": "Без фонда",
+                    "id": 105,
+                    "name": "project105",
+                    "picture_url": None,
+                    "status": "active",
+                    "total_income": 48000.0,
+                    "unique_sponsors": 5,
+                },
+                {
+                    "count_comments": 15,
+                    "fund_name": "Без фонда",
+                    "id": 106,
+                    "name": "project106",
+                    "picture_url": None,
+                    "status": "active",
+                    "total_income": 48000.0,
+                    "unique_sponsors": 5,
+                },
+                {
+                    "count_comments": 15,
+                    "fund_name": "Без фонда",
+                    "id": 107,
+                    "name": "project107",
+                    "picture_url": None,
+                    "status": "active",
+                    "total_income": 48000.0,
+                    "unique_sponsors": 5,
+                },
+                {
+                    "count_comments": 15,
+                    "fund_name": "Без фонда",
+                    "id": 108,
+                    "name": "project108",
+                    "picture_url": None,
+                    "status": "active",
+                    "total_income": 48000.0,
+                    "unique_sponsors": 5,
+                },
+                {
+                    "count_comments": 15,
+                    "fund_name": "Без фонда",
+                    "id": 109,
+                    "name": "project109",
+                    "picture_url": None,
+                    "status": "active",
+                    "total_income": 48000.0,
+                    "unique_sponsors": 5,
                 },
             ],
-            "state": {"page": 1, "size": 5, "total_items": 30, "total_pages": 6},
+            "state": {"page": 1, "size": 10, "total_items": 40, "total_pages": 4},
         }
 
     @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(200, 150, 250)])

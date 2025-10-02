@@ -167,26 +167,17 @@ class ProjectDAO(BaseDAO):
                 Project.id,
                 Project.name,
                 Project.status,
-                Fund.name.label("fund_name"),
+                func.coalesce(Fund.name, "Без фонда").label("fund_name"),
                 func.coalesce(payments_subq.c.total_income, 0).label("total_income"),
                 func.coalesce(payments_subq.c.unique_sponsors, 0).label("unique_sponsors"),
                 func.coalesce(comments_subq.c.count_comments, 0).label("count_comments"),
                 func.min(File.url).label("picture_url"),
             )
-            .join(Fund, Fund.id == Project.fund_id)
+            .outerjoin(Fund, Fund.id == Project.fund_id)
             .outerjoin(File, File.project_picture_id == Project.id)
             .outerjoin(payments_subq, payments_subq.c.project_id == Project.id)
             .outerjoin(comments_subq, comments_subq.c.project_id == Project.id)
-            .group_by(
-                Project.id,
-                Project.name,
-                Project.status,
-                Fund.id,
-                Fund.name,
-                payments_subq.c.total_income,
-                payments_subq.c.unique_sponsors,
-                comments_subq.c.count_comments,
-            )
+            .group_by(Project.id)
             .order_by(desc("total_income"))
         )
 
