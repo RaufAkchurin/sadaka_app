@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.referral import Referral, ReferralTypeEnum
 from app.models.user import User
+from app.v1.api_utils.db_pagination import DbPagination, DbPaginationResponseSchema
 from app.v1.api_utils.pagination import Pagination, PaginationParams, PaginationResponseSchema
 from app.v1.dependencies.auth_dep import get_current_user
 from app.v1.dependencies.dao_dep import get_session_with_commit
@@ -39,6 +40,20 @@ async def get_referral_link(
     )
 
     return await generate_referral_link(referral=referral) + f"?ref={referral.key}"
+
+
+@v1_referral_router.get("/my_referral_list_DB_PAGINATION")
+async def get_referrals_info_DB_PAGINATION(
+    pagination: PaginationParams = Depends(),
+    user_data: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_session_with_commit),
+) -> DbPaginationResponseSchema[ReferralDonationsSchema]:
+    referral_dao = ReferralDAO(session=session)
+    referrals = await referral_dao.get_referral_list_DB_PAGINATION_FIRST(
+        user_id=user_data.id, page=pagination.page, limit=pagination.limit
+    )
+    ser_referrals = [ReferralDonationsSchema.model_validate(r) for r in referrals]
+    return await DbPagination.execute(ser_referrals, pagination.page, pagination.limit)
 
 
 @v1_referral_router.get("/my_referral_list")

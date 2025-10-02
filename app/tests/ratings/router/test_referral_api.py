@@ -7,7 +7,7 @@ import pytest
 from loguru import logger
 
 from app.models.referral import Referral, ReferralTypeEnum
-from app.tests.ratings.router.schemas import TestPaymentAddSchema
+from app.tests.schemas import TestPaymentAddSchema
 from app.v1.referrals.router import ReferralAddSchema
 
 
@@ -74,7 +74,7 @@ class TestReferralsRatingAPI:
             },
         ]
 
-    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(300, 180, 250)])
+    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(300, 200, 270)])
     async def test_rps(self, auth_ac_super, num_requests, expected_rps, max_rps) -> None:
         async def make_request():
             response = await auth_ac_super.client.get("/app/v1/ratings/referrals", cookies=auth_ac_super.cookies.dict())

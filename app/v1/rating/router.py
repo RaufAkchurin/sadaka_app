@@ -53,14 +53,29 @@ async def get_donors_rating(
     return await Pagination.execute(serialized_users, pagination.page, pagination.limit)
 
 
-@v1_rating_router.get("/regions")
+@v1_rating_router.get("/regions_all")
 async def get_regions_rating(
+    project_id: int | None = None,
     pagination: PaginationParams = Depends(),
     user_data: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session_with_commit),
 ) -> PaginationResponseSchema[RegionModelTotalIncomeSchema]:
     region_dao = RegionDAO(session=session)
     regions_ordered_by_payments = await region_dao.get_regions_ordered_by_payments()
+    serialized_regions = [RegionModelTotalIncomeSchema.model_validate(c) for c in regions_ordered_by_payments]
+
+    return await Pagination.execute(serialized_regions, pagination.page, pagination.limit)
+
+
+@v1_rating_router.get("/regions/{project_id}")
+async def get_regions_rating_by_project_id(
+    project_id: int,
+    pagination: PaginationParams = Depends(),
+    user_data: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_session_with_commit),
+) -> PaginationResponseSchema[RegionModelTotalIncomeSchema]:
+    region_dao = RegionDAO(session=session)
+    regions_ordered_by_payments = await region_dao.get_regions_ordered_by_payments_for_project(project_id=project_id)
     serialized_regions = [RegionModelTotalIncomeSchema.model_validate(c) for c in regions_ordered_by_payments]
 
     return await Pagination.execute(serialized_regions, pagination.page, pagination.limit)

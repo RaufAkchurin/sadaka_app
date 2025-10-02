@@ -108,6 +108,36 @@ class RegionDAO(BaseDAO):
         result = await self._session.execute(query)
         return result.unique().mappings().all()
 
+    async def get_regions_ordered_by_payments_for_project(self, project_id: int):
+        # Сначала получим все платежи для данного проекта с информацией о регионах
+        payment_subquery = (
+            select(User.city_id, Payment.income_amount)
+            .select_from(Payment)
+            .join(User, User.id == Payment.user_id)
+            .join(City, City.id == User.city_id)
+            .where(Payment.project_id == project_id)
+            .subquery()
+        )
+
+        total_income = func.coalesce(func.sum(payment_subquery.c.income_amount), 0.0).label("total_income")
+
+        query = (
+            select(
+                Region.id,
+                Region.name,
+                File.url,
+                total_income,
+            )
+            .outerjoin(City, City.region_id == Region.id)  # регион → города
+            .outerjoin(payment_subquery, payment_subquery.c.city_id == City.id)  # города → платежи проекта
+            .outerjoin(File, File.id == Region.picture_id)  # картинка региона
+            .group_by(Region.id, Region.name, File.url)
+            .order_by(desc(total_income))
+        )
+
+        result = await self._session.execute(query)
+        return result.mappings().all()
+
 
 class ProjectDAO(BaseDAO):
     model = Project
@@ -137,26 +167,17 @@ class ProjectDAO(BaseDAO):
                 Project.id,
                 Project.name,
                 Project.status,
-                Fund.name.label("fund_name"),
+                func.coalesce(Fund.name, "Без фонда").label("fund_name"),
                 func.coalesce(payments_subq.c.total_income, 0).label("total_income"),
                 func.coalesce(payments_subq.c.unique_sponsors, 0).label("unique_sponsors"),
                 func.coalesce(comments_subq.c.count_comments, 0).label("count_comments"),
                 func.min(File.url).label("picture_url"),
             )
-            .join(Fund, Fund.id == Project.fund_id)
+            .outerjoin(Fund, Fund.id == Project.fund_id)
             .outerjoin(File, File.project_picture_id == Project.id)
             .outerjoin(payments_subq, payments_subq.c.project_id == Project.id)
             .outerjoin(comments_subq, comments_subq.c.project_id == Project.id)
-            .group_by(
-                Project.id,
-                Project.name,
-                Project.status,
-                Fund.id,
-                Fund.name,
-                payments_subq.c.total_income,
-                payments_subq.c.unique_sponsors,
-                comments_subq.c.count_comments,
-            )
+            .group_by(Project.id)
             .order_by(desc("total_income"))
         )
 

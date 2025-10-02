@@ -9,10 +9,17 @@ class InstanceIdFilterSchema(BaseModel):
     stage_id: int | None = None
 
 
-class MyDonationSchema(BaseModel):
-    project_name: str | None
+class BaseDonationSchema(BaseModel):
     amount: float
     created_at: datetime
-    # type: str                 #TODO after adding payment system change it
 
+    # TODO type: str                 #TODO after adding payment system change it
     model_config = ConfigDict(from_attributes=True)
+
+
+class UserDonationSchema(BaseDonationSchema):
+    project_name: str | None
+
+
+class ProjectDonationSchema(BaseDonationSchema):
+    donor_name: str

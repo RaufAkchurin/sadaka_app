@@ -4,7 +4,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
 
 from app.models.project import Project
 from app.v1.dao.database import Base
-from app.v1.project.enums import AbstractStatusEnum
+from app.v1.project.enums import ProjectStatusEnum
 
 
 class Stage(Base):
@@ -12,8 +12,8 @@ class Stage(Base):
     number: Mapped[int] = mapped_column(Integer, nullable=False)
     name: Mapped[str]
     goal: Mapped[int]
-    status: Mapped[AbstractStatusEnum] = mapped_column(
-        SqlEnum(AbstractStatusEnum, name="stage_status_enum"),
+    status: Mapped[ProjectStatusEnum] = mapped_column(
+        SqlEnum(ProjectStatusEnum, name="stage_status_enum"),
         nullable=False,
     )
 

@@ -1,7 +1,7 @@
 import enum
 
 
-class AbstractStatusEnum(str, enum.Enum):
+class ProjectStatusEnum(str, enum.Enum):
     ACTIVE = "active"
     FINISHED = "finished"
     ALL = "all"

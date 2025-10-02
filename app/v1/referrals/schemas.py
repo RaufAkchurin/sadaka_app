@@ -22,7 +22,7 @@ class ReferralAddSchema(BaseModel):
 class ReferralDonationsSchema(BaseModel):
     id: int
     referral_income: float
-    referral_donors_count: int
+    referral_donations_count: int
 
     created_at: datetime.datetime = Field(exclude=True)  # (для расчета количества дней)
     # raw related models (не сериализуются, нужны только для доступа)

@@ -8,7 +8,7 @@ from app.models.user import User
 from app.v1.api_utils.pagination import PaginationParams, PaginationResponseSchema
 from app.v1.dependencies.auth_dep import get_current_user
 from app.v1.dependencies.dao_dep import get_session_with_commit
-from app.v1.project.enums import AbstractStatusEnum
+from app.v1.project.enums import ProjectStatusEnum
 from app.v1.project.schemas import ProjectDetailAPISchema, ProjectForListAPISchema
 from app.v1.project.service import ProjectService
 from app.v1.project.use_cases.list import ProjectListUseCase
@@ -23,7 +23,7 @@ v1_projects_router = APIRouter()
     status_code=status.HTTP_200_OK,
 )
 async def get_projects_list(
-    status_of_project: AbstractStatusEnum,
+    status_of_project: ProjectStatusEnum,
     fund_id: int | None = Query(default=None, alias="fund_id"),
     pagination: PaginationParams = Depends(),
     user_data: User = Depends(get_current_user),

@@ -12,7 +12,7 @@ from app.models.user import User
 from app.settings import settings
 from app.v1.dao.database import async_session_maker
 from app.v1.referrals.dao import ReferralDAO
-from app.v1.users.dao import CommentDAO, OneTimePassDAO, PaymentDAO, UserDAO
+from app.v1.users.dao import CityDAO, CommentDAO, OneTimePassDAO, PaymentDAO, ProjectDAO, RegionDAO, UserDAO
 
 
 @pytest.fixture
@@ -60,6 +60,18 @@ async def session():
 
 
 @pytest.fixture(scope="function")
+async def region_dao(session) -> RegionDAO:
+    region_dao = RegionDAO(session)
+    return region_dao
+
+
+@pytest.fixture(scope="function")
+async def city_dao(session) -> CityDAO:
+    city_dao = CityDAO(session)
+    return city_dao
+
+
+@pytest.fixture(scope="function")
 async def user_dao(session) -> UserDAO:
     user_dao = UserDAO(session)
     return user_dao
@@ -69,6 +81,12 @@ async def user_dao(session) -> UserDAO:
 async def otp_dao(session) -> OneTimePassDAO:
     otp_dao = OneTimePassDAO(session)
     return otp_dao
+
+
+@pytest.fixture(scope="function")
+async def project_dao(session) -> ProjectDAO:
+    project_dao = ProjectDAO(session)
+    return project_dao
 
 
 @pytest.fixture(scope="function")
