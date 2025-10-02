@@ -1,11 +1,11 @@
 from pydantic import BaseModel, ConfigDict
 
 from app.v1.file.enums import FileTypeEnum, MimeEnum
-from app.v1.project.enums import AbstractStatusEnum
+from app.v1.project.enums import ProjectStatusEnum
 
 
 class StatusFilter(BaseModel):
-    status: AbstractStatusEnum | None = None
+    status: ProjectStatusEnum | None = None
 
 
 class FundIdFilter(StatusFilter):
@@ -37,7 +37,7 @@ class FundShortSchema(BaseModel):
 
 class StageShortSchema(BaseModel):
     number: int
-    status: AbstractStatusEnum
+    status: ProjectStatusEnum
     model_config = ConfigDict(from_attributes=True)
 
 
@@ -50,7 +50,7 @@ class StagePaymentsSchema(StageShortSchema):
 
 class ProjectForListAPISchema(BaseModel):
     id: int
-    status: AbstractStatusEnum
+    status: ProjectStatusEnum
     pictures_list: list[str]
     fund: FundShortSchema
     active_stage_number: int | None = None

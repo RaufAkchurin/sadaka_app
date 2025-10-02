@@ -4,6 +4,8 @@ import uuid
 from httpx import AsyncClient
 from pydantic import BaseModel
 
+from app.v1.project.enums import ProjectStatusEnum
+
 
 class TestRegionAddSchema(BaseModel):
     id: int
@@ -15,6 +17,15 @@ class TestCityAddSchema(BaseModel):
     id: int
     name: str
     region_id: int
+
+
+class TestProjectAddSchema(BaseModel):
+    id: int
+    name: str
+    status: ProjectStatusEnum
+    description: str
+    fund_id: int
+    goal: int
 
 
 class TestUserAddSchema(BaseModel):

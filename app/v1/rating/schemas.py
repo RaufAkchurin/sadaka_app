@@ -1,6 +1,6 @@
 from pydantic import BaseModel, ConfigDict, Field
 
-from app.v1.project.enums import AbstractStatusEnum
+from app.v1.project.enums import ProjectStatusEnum
 
 
 class UserModelTotalIncomeSchema(BaseModel):
@@ -24,7 +24,7 @@ class RegionModelTotalIncomeSchema(BaseModel):
 class ProjectRatingSchema(BaseModel):
     id: int
     name: str
-    status: AbstractStatusEnum
+    status: ProjectStatusEnum
     fund_name: str
     picture_url: str | None = None
     total_income: float = 0

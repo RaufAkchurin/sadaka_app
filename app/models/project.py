@@ -6,15 +6,15 @@ from app.models.file import File
 from app.models.fund import Fund
 from app.models.referral import Referral
 from app.v1.dao.database import Base
-from app.v1.project.enums import AbstractStatusEnum
+from app.v1.project.enums import ProjectStatusEnum
 from app.v1.project.schemas import RegionInfoSchema
 
 
 class Project(Base):
     # TODO имей ввиду что нигде нет проверки на наличие картинок у проекта, валидации не работают
     name: Mapped[str]
-    status: Mapped[AbstractStatusEnum] = mapped_column(
-        SqlEnum(AbstractStatusEnum, name="project_status_enum"),
+    status: Mapped[ProjectStatusEnum] = mapped_column(
+        SqlEnum(ProjectStatusEnum, name="project_status_enum"),
         nullable=False,
         index=True,
     )
