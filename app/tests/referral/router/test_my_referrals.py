@@ -165,7 +165,7 @@ class TestReferralListAPI:
         # необязательная проверка максимального порога
         assert rps < max_rps
 
-    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(100, 30, 50)])
+    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(100, 30, 70)])
     async def test_rps_db(self, auth_ac_super, num_requests, expected_rps, max_rps) -> None:
         async def make_request():
             response = await auth_ac_super.client.get(

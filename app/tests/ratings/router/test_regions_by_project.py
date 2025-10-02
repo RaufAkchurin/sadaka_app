@@ -164,7 +164,7 @@ class TestRatingRegionPaymentsByProjectIdAPI:
             "state": {"page": 1, "size": 5, "total_items": 5, "total_pages": 1},
         }
 
-    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(400, 240, 280)])
+    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(400, 300, 370)])
     async def test_rps(self, auth_ac_super, num_requests, expected_rps, max_rps) -> None:
         async def make_request():
             response = await auth_ac_super.client.get("/app/v1/ratings/regions/1", cookies=auth_ac_super.cookies.dict())

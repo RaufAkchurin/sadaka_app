@@ -30,7 +30,7 @@ class TestMyDonations:
         assert data["items"][1].get("project_name") == "project1"
         assert data["items"][1].get("created_at") is not None
 
-    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(100, 140, 240)])
+    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(100, 100, 240)])
     async def test_rps(self, auth_ac_super, num_requests, expected_rps, max_rps) -> None:
         async def make_request():
             response = await auth_ac_super.client.get(

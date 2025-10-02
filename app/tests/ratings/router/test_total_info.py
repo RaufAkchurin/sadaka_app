@@ -83,7 +83,7 @@ class TestTotalInfoAPI:
         assert data["projects"] == 30
         assert data["total_income"] == 309000.0
 
-    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(300, 180, 260)])
+    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(300, 250, 320)])
     async def test_rps(self, auth_ac_super, num_requests, expected_rps, max_rps) -> None:
         async def make_request():
             response = await auth_ac_super.client.get(

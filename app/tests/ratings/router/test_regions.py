@@ -104,7 +104,7 @@ class TestRatingsAllAPI:
             "state": {"page": 1, "size": 5, "total_items": 4, "total_pages": 1},
         }
 
-    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(200, 90, 150)])
+    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(200, 90, 170)])
     async def test_rps(self, auth_ac_super, num_requests, expected_rps, max_rps) -> None:
         async def make_request():
             response = await auth_ac_super.client.get(

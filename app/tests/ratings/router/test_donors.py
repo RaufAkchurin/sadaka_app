@@ -123,7 +123,7 @@ class TestDonorsAPI:
             "state": {"page": 1, "size": 15, "total_items": 10, "total_pages": 1},
         }
 
-    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(200, 70, 110)])
+    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(200, 120, 170)])
     async def test_rps(self, auth_ac_super, num_requests, expected_rps, max_rps) -> None:
         async def make_request():
             response = await auth_ac_super.client.get("/app/v1/ratings/donors", cookies=auth_ac_super.cookies.dict())
