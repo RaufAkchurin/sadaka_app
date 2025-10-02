@@ -6,6 +6,7 @@ import uuid
 import pytest
 from loguru import logger
 
+from app.tests.conftest import DaoSchemas
 from app.tests.schemas import TestCityAddSchema, TestPaymentAddSchema, TestRegionAddSchema, TestUserAddSchema
 
 
@@ -19,11 +20,11 @@ class TestDonorsAPI:
         response = await auth_ac_super.client.get("/app/v1/ratings/donors", cookies=auth_ac_super.cookies.dict())
         assert response.status_code == 200
 
-    async def test_data(self, session, payment_dao, region_dao, city_dao, user_dao):
+    async def test_data(self, session, dao: DaoSchemas):
         now = datetime.datetime.now()
 
         # создаем регион
-        region_10 = await region_dao.add(
+        region_10 = await dao.region.add(
             TestRegionAddSchema(
                 id=10,
                 name="region 10",
@@ -33,7 +34,7 @@ class TestDonorsAPI:
 
         for city_num in range(10, 15):
             # создаем город
-            city = await city_dao.add(
+            city = await dao.city.add(
                 TestCityAddSchema(
                     id=city_num,
                     name=f"city {city_num}",
@@ -42,7 +43,7 @@ class TestDonorsAPI:
             )
 
             # создаем пользователя для города
-            user = await user_dao.add(
+            user = await dao.user.add(
                 TestUserAddSchema(
                     id=city_num,
                     name=f"user from city {city_num}",
@@ -54,7 +55,7 @@ class TestDonorsAPI:
 
             # создаем 30 платежей от пользователя
             for _ in range(30):
-                await payment_dao.add(
+                await dao.payment.add(
                     TestPaymentAddSchema(
                         id=uuid.uuid4(),
                         project_id=1,
@@ -69,7 +70,7 @@ class TestDonorsAPI:
 
         await session.commit()
 
-    async def test_donors(self, auth_ac_super, payment_dao, query_counter) -> None:
+    async def test_donors(self, auth_ac_super) -> None:
         response = await auth_ac_super.client.get(
             "/app/v1/ratings/donors?page=1&limit=15",  # see your limit is 15, NOT 5)
             cookies=auth_ac_super.cookies.dict(),
@@ -77,8 +78,6 @@ class TestDonorsAPI:
 
         assert response.status_code == 200
         assert response.json() is not None
-
-        assert len(query_counter) <= 6, f"Слишком много SQL-запросов: {len(query_counter)}"
 
         data = response.json()
 

@@ -13,6 +13,7 @@ from app.v1.rating.schemas import (
 )
 from app.v1.referrals.dao import ReferralDAO
 from app.v1.users.dao import PaymentDAO, ProjectDAO, RegionDAO, UserDAO
+from app.v1.utils_core.id_validators import project_id_validator
 
 v1_rating_router = APIRouter()
 
@@ -74,6 +75,7 @@ async def get_regions_rating_by_project_id(
     user_data: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session_with_commit),
 ) -> PaginationResponseSchema[RegionModelTotalIncomeSchema]:
+    await project_id_validator(project_id=project_id, session=session)
     region_dao = RegionDAO(session=session)
     regions_ordered_by_payments = await region_dao.get_regions_ordered_by_payments_for_project(project_id=project_id)
     serialized_regions = [RegionModelTotalIncomeSchema.model_validate(c) for c in regions_ordered_by_payments]
