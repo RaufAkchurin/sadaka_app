@@ -28,6 +28,12 @@ class TestProjectAddSchema(BaseModel):
     goal: int
 
 
+class TestCommentAddSchema(BaseModel):
+    project_id: int
+    content: str
+    user_id: int
+
+
 class TestUserAddSchema(BaseModel):
     id: int
     name: str
