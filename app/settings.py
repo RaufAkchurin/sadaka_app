@@ -21,9 +21,6 @@ class Settings(BaseSettings):
     S3_ENDPOINT_URL: str
     S3_FILE_BASE_URL: str
 
-    YOOKASSA_TEST_SECRET_KEY: str
-    YOOKASSA_TEST_SHOP_ID: int
-
     POSTGRES_STAGE_USER: str
     POSTGRES_STAGE_PASSWORD: str
     POSTGRES_STAGE_HOST: str
@@ -38,6 +35,17 @@ class Settings(BaseSettings):
     POSTGRES_TEST_PASSWORD: str
     POSTGRES_TEST_HOST: str
     POSTGRES_TEST_DB_NAME: str
+
+    # YOOKASSA PAYMENTS
+    YOOKASSA_TEST_SECRET_KEY: str
+    YOOKASSA_TEST_SHOP_ID: int
+
+    # T_BANK PAYMENTS V1
+    # TBANK_BASE_URL: str = "https://developer.tbank.ru/eacq/api"
+    # TBANK_TEST_MERCHANT_ID: str
+    # TBANK_TEST_TERMINAL_ID: str
+    # TBANK_TEST_SECRET_KEY: str
+    # TBNANK_WEBHOOK_SECRET: str = "YOU_WEBHOOK_SECRET"
 
     SMSC_LOGIN: str
     SMSC_PASSWORD: str
