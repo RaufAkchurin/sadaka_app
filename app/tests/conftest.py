@@ -1,18 +1,15 @@
-import httpx
 import pytest
 from httpx import ASGITransport, AsyncClient
-from main import app as fastapi_app
+from main import app as fastapi_app  # noqa
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
-from tests.schemas import AuthorizedClientModel, CookiesModel
-from utils.scripts.local_db_fill import prepare_database_core
+from tests.fixtures.auth import *  # noqa
+from tests.fixtures.dao import *  # noqa
+from utils.scripts.local_db_fill import prepare_database_core  # noqa
 from yookassa import Configuration
 
-from app.models.user import User
 from app.settings import settings
 from app.v1.dao.database import async_session_maker
-from app.v1.referrals.dao import ReferralDAO
-from app.v1.users.dao import CityDAO, CommentDAO, OneTimePassDAO, PaymentDAO, ProjectDAO, RegionDAO, UserDAO
 
 
 @pytest.fixture
@@ -59,101 +56,7 @@ async def session():
             await session.close()
 
 
-@pytest.fixture(scope="function")
-async def region_dao(session) -> RegionDAO:
-    region_dao = RegionDAO(session)
-    return region_dao
-
-
-@pytest.fixture(scope="function")
-async def city_dao(session) -> CityDAO:
-    city_dao = CityDAO(session)
-    return city_dao
-
-
-@pytest.fixture(scope="function")
-async def user_dao(session) -> UserDAO:
-    user_dao = UserDAO(session)
-    return user_dao
-
-
-@pytest.fixture(scope="function")
-async def otp_dao(session) -> OneTimePassDAO:
-    otp_dao = OneTimePassDAO(session)
-    return otp_dao
-
-
-@pytest.fixture(scope="function")
-async def project_dao(session) -> ProjectDAO:
-    project_dao = ProjectDAO(session)
-    return project_dao
-
-
-@pytest.fixture(scope="function")
-async def comment_dao(session) -> CommentDAO:
-    comment_dao = CommentDAO(session)
-    return comment_dao
-
-
-@pytest.fixture(scope="function")
-async def payment_dao(session) -> PaymentDAO:
-    payment_dao = PaymentDAO(session)
-    return payment_dao
-
-
-@pytest.fixture(scope="function")
-async def referral_dao(session) -> ReferralDAO:
-    referral_dao = ReferralDAO(session)
-    return referral_dao
-
-
 @pytest.fixture(scope="class")
 async def ac():
     async with AsyncClient(transport=ASGITransport(fastapi_app), base_url="http://test/") as async_client:
         yield async_client
-
-
-@pytest.fixture(scope="class")
-async def auth_ac_super():
-    async with AsyncClient(transport=ASGITransport(fastapi_app), base_url="http://test") as ac:
-        await ac.post("/app/v1/auth/login/", json={"email": "superadmin@test.com", "password": "password"})
-        assert ac.cookies["user_access_token"]
-
-        yield AuthorizedClientModel(
-            client=ac,
-            cookies=CookiesModel(
-                user_access_token=ac.cookies.get("user_access_token"),
-                user_refresh_token=ac.cookies.get("user_refresh_token"),
-            ),
-        )
-
-
-@pytest.fixture(scope="class")
-async def auth_ac_admin():
-    async with AsyncClient(transport=ASGITransport(fastapi_app), base_url="http://test") as ac:
-        await ac.post("/app/v1/auth/login/", json={"email": "admin@test.com", "password": "password"})
-        assert ac.cookies["user_access_token"]
-
-        yield AuthorizedClientModel(
-            client=ac,
-            cookies=CookiesModel(
-                user_access_token=ac.cookies.get("user_access_token"),
-                user_refresh_token=ac.cookies.get("user_refresh_token"),
-            ),
-        )
-
-
-async def auth_by(ac: AsyncClient, user: User):
-    logout_response = await ac.post("/app/v1/auth/logout/")
-    assert logout_response.status_code == 307
-
-    login_response = await ac.post("/app/v1/auth/login/", json={"email": user.email, "password": "password"})
-    assert login_response.status_code == 200
-    assert isinstance(ac.cookies, httpx.Cookies)
-    return AuthorizedClientModel(
-        client=ac,
-        cookies=CookiesModel(
-            user_access_token=ac.cookies.get("user_access_token"),
-            user_refresh_token=ac.cookies.get("user_refresh_token"),
-        ),
-    )

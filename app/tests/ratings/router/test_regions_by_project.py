@@ -6,13 +6,14 @@ import uuid
 import pytest
 from loguru import logger
 
+from app.tests.conftest import DaoSchemas
 from app.tests.schemas import TestCityAddSchema, TestPaymentAddSchema, TestRegionAddSchema, TestUserAddSchema
 
 
 class TestRatingRegionPaymentsByProjectIdAPI:
-    async def test_data_region_10(self, session, payment_dao, region_dao, city_dao, user_dao):
+    async def test_data_region_10(self, session, dao: DaoSchemas):
         now = datetime.datetime.now()
-        region_10 = await region_dao.add(
+        region_10 = await dao.region.add(
             TestRegionAddSchema(
                 id=10,
                 name="region 10",
@@ -20,7 +21,7 @@ class TestRatingRegionPaymentsByProjectIdAPI:
             )
         )
 
-        city_for_10 = await city_dao.add(
+        city_for_10 = await dao.city.add(
             TestCityAddSchema(
                 id=10,
                 name="city 10",
@@ -28,7 +29,7 @@ class TestRatingRegionPaymentsByProjectIdAPI:
             )
         )
 
-        user_from_region_10 = await user_dao.add(
+        user_from_region_10 = await dao.user.add(
             TestUserAddSchema(
                 id=10, name="user from city 10", email="user10@gmail.com", password="12345", city_id=city_for_10.id
             )
@@ -37,7 +38,7 @@ class TestRatingRegionPaymentsByProjectIdAPI:
         # Valid data for test
         for income_amount in range(100):
             uuid_num = uuid.uuid4()
-            await payment_dao.add(
+            await dao.payment.add(
                 TestPaymentAddSchema(
                     id=uuid_num,
                     project_id=1,
@@ -51,9 +52,9 @@ class TestRatingRegionPaymentsByProjectIdAPI:
             )
         await session.commit()
 
-    async def test_data_region_20_user_first(self, session, payment_dao, region_dao, city_dao, user_dao):
+    async def test_data_region_20_user_first(self, session, dao: DaoSchemas):
         now = datetime.datetime.now()
-        region_20 = await region_dao.add(
+        region_20 = await dao.region.add(
             TestRegionAddSchema(
                 id=20,
                 name="region 20",
@@ -61,7 +62,7 @@ class TestRatingRegionPaymentsByProjectIdAPI:
             )
         )
 
-        city_for_20 = await city_dao.add(
+        city_for_20 = await dao.city.add(
             TestCityAddSchema(
                 id=20,
                 name="city 20",
@@ -69,7 +70,7 @@ class TestRatingRegionPaymentsByProjectIdAPI:
             )
         )
 
-        user_from_region_20 = await user_dao.add(
+        user_from_region_20 = await dao.user.add(
             TestUserAddSchema(
                 id=21,
                 name="user from city 20 first",
@@ -82,7 +83,7 @@ class TestRatingRegionPaymentsByProjectIdAPI:
         # Valid data for test
         for income_amount in range(100):
             uuid_num = uuid.uuid4()
-            await payment_dao.add(
+            await dao.payment.add(
                 TestPaymentAddSchema(
                     id=uuid_num,
                     project_id=1,
@@ -96,9 +97,9 @@ class TestRatingRegionPaymentsByProjectIdAPI:
             )
         await session.commit()
 
-    async def test_data_region_20_user_second(self, session, payment_dao, region_dao, city_dao, user_dao):
+    async def test_data_region_20_user_second(self, session, dao: DaoSchemas):
         now = datetime.datetime.now()
-        user_from_region_20 = await user_dao.add(
+        user_from_region_20 = await dao.user.add(
             TestUserAddSchema(
                 id=22, name="user from city 20 second", email="user202@gmail.com", password="12345", city_id=20
             )
@@ -107,7 +108,7 @@ class TestRatingRegionPaymentsByProjectIdAPI:
         # Valid data for test
         for income_amount in range(100):
             uuid_num = uuid.uuid4()
-            await payment_dao.add(
+            await dao.payment.add(
                 TestPaymentAddSchema(
                     id=uuid_num,
                     project_id=1,
@@ -130,7 +131,7 @@ class TestRatingRegionPaymentsByProjectIdAPI:
         response = await auth_ac_super.client.get("/app/v1/ratings/regions/1", cookies=auth_ac_super.cookies.dict())
         assert response.status_code == 200
 
-    async def test_regions(self, auth_ac_super, payment_dao, query_counter) -> None:
+    async def test_regions(self, auth_ac_super) -> None:
         response = await auth_ac_super.client.get("/app/v1/ratings/regions/1", cookies=auth_ac_super.cookies.dict())
 
         assert response.status_code == 200

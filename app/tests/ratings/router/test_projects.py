@@ -7,6 +7,7 @@ import uuid
 import pytest
 from loguru import logger
 
+from app.tests.conftest import DaoSchemas
 from app.tests.schemas import (
     TestCityAddSchema,
     TestCommentAddSchema,
@@ -28,10 +29,10 @@ class TestProjectsAPI:
         response = await auth_ac_super.client.get("/app/v1/ratings/projects", cookies=auth_ac_super.cookies.dict())
         assert response.status_code == 200
 
-    async def test_prepare_users(self, session, payment_dao, region_dao, city_dao, user_dao, project_dao):
-        assert await user_dao.count() == 5
+    async def test_prepare_users(self, session, dao: DaoSchemas):
+        assert await dao.user.count() == 5
         # создаем регион
-        region_10 = await region_dao.add(
+        region_10 = await dao.region.add(
             TestRegionAddSchema(
                 id=10,
                 name="region 10",
@@ -42,7 +43,7 @@ class TestProjectsAPI:
         # города для пользователей
         for city_num in range(10, 15):
             # создаем город
-            city = await city_dao.add(
+            city = await dao.city.add(
                 TestCityAddSchema(
                     id=city_num,
                     name=f"city {city_num}",
@@ -51,7 +52,7 @@ class TestProjectsAPI:
             )
 
             # создаем пользователя для города
-            await user_dao.add(
+            await dao.user.add(
                 TestUserAddSchema(
                     id=city_num,
                     name=f"user from city {city_num}",
@@ -62,15 +63,15 @@ class TestProjectsAPI:
             )
 
         await session.commit()
-        assert await user_dao.count() == 10
+        assert await dao.user.count() == 10
 
-    async def test_prepare_projects(self, session, comment_dao, project_dao, user_dao):
+    async def test_prepare_projects(self, session, dao: DaoSchemas):
         # перед созданием сверяемся
-        assert await project_dao.count() == 30
+        assert await dao.project.count() == 30
 
         # создаем проекты
         for project_num in range(100, 110):
-            await project_dao.add(
+            await dao.project.add(
                 TestProjectAddSchema(
                     id=project_num,
                     name=f"project{project_num}",
@@ -82,10 +83,10 @@ class TestProjectsAPI:
             )
             await session.commit()
 
-        assert await project_dao.count() == 40
+        assert await dao.project.count() == 40
 
-    async def test_prepare_comments(self, session, comment_dao, project_dao, user_dao):
-        assert await comment_dao.count() == 6
+    async def test_prepare_comments(self, session, dao: DaoSchemas):
+        assert await dao.comment.count() == 6
 
         project_ids = [num for num in range(100, 110)]
         user_ids = [num for num in range(10, 15)]
@@ -93,7 +94,7 @@ class TestProjectsAPI:
         for project_id in project_ids:
             for user_id in user_ids:
                 for _ in range(3):
-                    await comment_dao.add(
+                    await dao.comment.add(
                         TestCommentAddSchema(
                             project_id=project_id,
                             user_id=user_id,
@@ -102,7 +103,7 @@ class TestProjectsAPI:
                     )
         await session.commit()
 
-        assert await comment_dao.count() == 156
+        assert await dao.comment.count() == 156
 
     async def test_prepare_payments(self, session, payment_dao):
         now = datetime.datetime.now()
