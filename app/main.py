@@ -20,6 +20,7 @@ from app.v1.comment.router import v1_comment_router
 from app.v1.dao.database import engine
 from app.v1.fund.router import v1_funds_router
 from app.v1.payment_core.router import v1_payments_core_router
+from app.v1.payment_t_bank2.router import v1_t_bank_router_2
 from app.v1.payment_yookassa.router import v1_yookassa_router
 from app.v1.project.router import v1_projects_router
 from app.v1.rating.router import v1_rating_router
@@ -90,6 +91,7 @@ def create_app() -> FastAPI:
 
 
 def register_routers(app: FastAPI) -> None:
+    app.include_router(v1_t_bank_router_2, prefix="/app/v1/payments/t_bank", tags=["Payments t_bank v1"])
     app.include_router(v1_auth_router, prefix="/app/v1/auth", tags=["Auth v1"])
     app.include_router(v1_auth_sms_router, prefix="/app/v1/auth/sms", tags=["Auth sms v1"])
     app.include_router(v2_auth_router, prefix="/app/v2/auth", tags=["Auth v2"])
