@@ -47,6 +47,11 @@ class Settings(BaseSettings):
     # TBANK_TEST_SECRET_KEY: str
     # TBNANK_WEBHOOK_SECRET: str = "YOU_WEBHOOK_SECRET"
 
+    T_BANK_API_URL: str = "https://securepay.tinkoff.ru/v2"
+    T_BANK_WEBHOOK_URL: str = "https://45a2db004fa3.ngrok-free.app/app/v1/payments/tinkoff/callback"
+    T_BANK_TERMINAL_KEY: str = "1752237644677DEMO"
+    T_BANK_PASSWORD: str = "bniUwpLIsj1^VkGC"
+
     SMSC_LOGIN: str
     SMSC_PASSWORD: str
 

@@ -77,7 +77,12 @@ FundNotFoundException = HTTPException(status_code=status.HTTP_404_NOT_FOUND, det
 
 # Юкасса
 
-YookassaCallbackForbiddenException = HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+YookassaCallbackForbiddenException = HTTPException(status_code=status.HTTP_200_OK)
+
+# ТИнькофф
+
+TinkoffCallbackForbiddenException = HTTPException(status_code=status.HTTP_200_OK)
+
 
 # Комменты
 

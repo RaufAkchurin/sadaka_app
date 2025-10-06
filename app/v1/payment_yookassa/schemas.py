@@ -7,7 +7,7 @@ from pydantic_core import Url
 from app.v1.payment_yookassa.enums import PaymentStatusEnum
 
 
-class PaymentCreateSchema(BaseModel):
+class YooPaymentCreateSchema(BaseModel):
     id: uuid.UUID
     amount: float
     income_amount: float

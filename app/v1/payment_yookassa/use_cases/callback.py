@@ -8,7 +8,7 @@ from starlette.requests import Request
 from app.exceptions import YookassaCallbackForbiddenException
 from app.models.project import Project
 from app.v1.payment_yookassa.enums import PaymentStatusEnum
-from app.v1.payment_yookassa.schemas import PaymentCreateSchema, YooWebhookDataSchema
+from app.v1.payment_yookassa.schemas import YooPaymentCreateSchema, YooWebhookDataSchema
 from app.v1.users.dao import PaymentDAO, ProjectDAO
 
 
@@ -29,7 +29,7 @@ class YooCallbackSuccessUseCaseImpl:
         payment_dao = PaymentDAO(session=self.session)
         if webhook_object.status == PaymentStatusEnum.SUCCEEDED:
             await payment_dao.add(
-                values=PaymentCreateSchema(
+                values=YooPaymentCreateSchema(
                     id=webhook_object.id,
                     amount=webhook_object.amount.value,
                     income_amount=webhook_object.income_amount.value,
