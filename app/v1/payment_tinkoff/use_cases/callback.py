@@ -8,7 +8,8 @@ from app.exceptions import TinkoffCallbackForbiddenException
 from app.models.project import Project
 from app.v1.payment_tinkoff.schemas import TBankCallbackSchema, TBankPaymentCreateSchema
 from app.v1.payment_yookassa.enums import PaymentStatusEnum
-from app.v1.users.dao import PaymentDAO, ProjectDAO
+from app.v1.project.dao import ProjectDAO
+from app.v1.users.dao import PaymentDAO
 
 
 class TinkoffCallbackSuccessUseCaseImpl:
@@ -45,7 +46,7 @@ class TinkoffCallbackSuccessUseCaseImpl:
             ip = ip_address(self.request.client.host)
             is_in_range = any(ip in network for network in ip_networks)
             if not is_in_range:
-                print("SECURITY CHECKER ERROR: IP NOT IN RANGE")
+                print("TBANK CALLBACK SECURITY CHECKER ERROR: IP NOT IN RANGE")
                 raise TinkoffCallbackForbiddenException
 
         await asyncio.to_thread(check_ip)

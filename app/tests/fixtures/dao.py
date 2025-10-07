@@ -1,8 +1,9 @@
 import pytest
 from pydantic import BaseModel
 
+from app.v1.project.dao import ProjectDAO
 from app.v1.referrals.dao import ReferralDAO
-from app.v1.users.dao import CityDAO, CommentDAO, OneTimePassDAO, PaymentDAO, ProjectDAO, RegionDAO, UserDAO
+from app.v1.users.dao import CityDAO, CommentDAO, OneTimePassDAO, PaymentDAO, RegionDAO, UserDAO
 
 
 @pytest.fixture(scope="function")
