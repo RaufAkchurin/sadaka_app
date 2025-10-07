@@ -36,7 +36,7 @@ class TestReferralListAPI:
             uuid_num = uuid.uuid4()
             await payment_dao.add(
                 TestPaymentAddSchema(
-                    id=uuid_num,
+                    provider_payment_id=str(uuid_num),
                     project_id=2,
                     user_id=4,
                     income_amount=income_amount,
@@ -64,7 +64,7 @@ class TestReferralListAPI:
             uuid_num = uuid.uuid4()
             await payment_dao.add(
                 TestPaymentAddSchema(
-                    id=uuid_num,
+                    provider_payment_id=str(uuid_num),
                     project_id=2,
                     user_id=5,
                     income_amount=income_amount,
@@ -92,7 +92,7 @@ class TestReferralListAPI:
             uuid_num = uuid.uuid4()
             await payment_dao.add(
                 TestPaymentAddSchema(
-                    id=uuid_num,
+                    provider_payment_id=str(uuid_num),
                     project_id=2,
                     user_id=5,
                     income_amount=income_amount,

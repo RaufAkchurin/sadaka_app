@@ -26,7 +26,7 @@ class TestReferralsRatingAPI:
             uuid_num = uuid.uuid4()
             await dao.payment.add(
                 TestPaymentAddSchema(
-                    id=uuid_num,
+                    provider_payment_id=str(uuid_num),
                     project_id=2,
                     user_id=1,
                     income_amount=income_amount,
@@ -44,7 +44,7 @@ class TestReferralsRatingAPI:
             uuid_num = uuid.uuid4()
             await dao.payment.add(
                 TestPaymentAddSchema(
-                    id=uuid_num,
+                    provider_payment_id=str(uuid_num),
                     project_id=2,
                     user_id=2,
                     income_amount=income_amount,

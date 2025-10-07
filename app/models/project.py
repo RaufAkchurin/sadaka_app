@@ -89,13 +89,14 @@ class Project(Base):
         for stage in stages:
             if stage.status.value == "active":
                 active_stage = stage
-                break
-        if active_stage is None:
+                return active_stage.number
+
+        if active_stage is None and len(stages) > 0:
             return self.stages[-1].number
         # TODO а если вообще не будет ни одной стадии у проекта?
         # TODO надо как то валидировать проекты перед тем как они попадут к людям на оплату и делать проверку
         # по флагу валидации в выборке проект лист
-        return active_stage.number
+        return active_stage
 
     @property
     def pictures_list(self) -> list[str]:

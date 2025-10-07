@@ -57,7 +57,7 @@ class TestDonorsAPI:
             for _ in range(30):
                 await dao.payment.add(
                     TestPaymentAddSchema(
-                        id=uuid.uuid4(),
+                        provider_payment_id=str(uuid.uuid4()),
                         project_id=1,
                         user_id=user.id,
                         income_amount=1000,

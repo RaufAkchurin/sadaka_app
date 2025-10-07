@@ -117,7 +117,7 @@ class TestProjectsAPI:
             for _ in range(30):
                 await payment_dao.add(
                     TestPaymentAddSchema(
-                        id=uuid.uuid4(),
+                        provider_payment_id=str(uuid.uuid4()),
                         project_id=project_id,
                         user_id=random.choice(user_ids),
                         income_amount=1000,
@@ -131,7 +131,7 @@ class TestProjectsAPI:
             for _ in range(30):
                 await payment_dao.add(
                     TestPaymentAddSchema(
-                        id=uuid.uuid4(),
+                        provider_payment_id=str(uuid.uuid4()),
                         project_id=project_id,
                         user_id=random.choice(user_ids),
                         income_amount=500,
@@ -145,7 +145,7 @@ class TestProjectsAPI:
             for _ in range(30):
                 await payment_dao.add(
                     TestPaymentAddSchema(
-                        id=uuid.uuid4(),
+                        provider_payment_id=str(uuid.uuid4()),
                         project_id=project_id,
                         user_id=random.choice(user_ids),
                         income_amount=100,

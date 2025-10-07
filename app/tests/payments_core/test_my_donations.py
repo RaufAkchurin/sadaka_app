@@ -67,7 +67,7 @@ class TestProjectDonations:
             uuid_num = uuid.uuid4()
             await payment_dao.add(
                 TestPaymentAddSchema(
-                    id=uuid_num,
+                    provider_payment_id=str(uuid_num),
                     project_id=1,
                     user_id=1,
                     amount=income_amount,

@@ -40,7 +40,7 @@ class TestRatingRegionPaymentsByProjectIdAPI:
             uuid_num = uuid.uuid4()
             await dao.payment.add(
                 TestPaymentAddSchema(
-                    id=uuid_num,
+                    provider_payment_id=str(uuid_num),
                     project_id=1,
                     user_id=user_from_region_10.id,
                     income_amount=1000,
@@ -85,7 +85,7 @@ class TestRatingRegionPaymentsByProjectIdAPI:
             uuid_num = uuid.uuid4()
             await dao.payment.add(
                 TestPaymentAddSchema(
-                    id=uuid_num,
+                    provider_payment_id=str(uuid_num),
                     project_id=1,
                     user_id=user_from_region_20.id,
                     income_amount=1000,
@@ -110,7 +110,7 @@ class TestRatingRegionPaymentsByProjectIdAPI:
             uuid_num = uuid.uuid4()
             await dao.payment.add(
                 TestPaymentAddSchema(
-                    id=uuid_num,
+                    provider_payment_id=str(uuid_num),
                     project_id=1,
                     user_id=user_from_region_20.id,
                     income_amount=1000,
