@@ -40,13 +40,7 @@ class Settings(BaseSettings):
     YOOKASSA_TEST_SECRET_KEY: str
     YOOKASSA_TEST_SHOP_ID: int
 
-    # T_BANK PAYMENTS V1
-    # TBANK_BASE_URL: str = "https://developer.tbank.ru/eacq/api"
-    # TBANK_TEST_MERCHANT_ID: str
-    # TBANK_TEST_TERMINAL_ID: str
-    # TBANK_TEST_SECRET_KEY: str
-    # TBNANK_WEBHOOK_SECRET: str = "YOU_WEBHOOK_SECRET"
-
+    # T_BANK PAYMENTS
     T_BANK_API_URL: str = "https://securepay.tinkoff.ru/v2"
     T_BANK_WEBHOOK_URL: str = "https://45a2db004fa3.ngrok-free.app/app/v1/payments/tinkoff/callback"
     T_BANK_TERMINAL_KEY: str = "1752237644677DEMO"

@@ -17,6 +17,10 @@ class TinkoffCallbackSuccessUseCaseImpl:
         self.session = session
 
     async def execute(self):
+        request = await self.request.json()
+        request_object = request.get("object")
+        if not request_object or request_object.get("Status") != "CONFIRMED":
+            return
         await self.__tinkoff_client_ip_security_checker()
         await self.__create_payment_in_db()
 
@@ -34,23 +38,26 @@ class TinkoffCallbackSuccessUseCaseImpl:
                 "212.233.82.0/24",
                 "212.233.83.0/24",
                 "91.194.226.181",
+                "127.0.0.1",
             ]
 
             ip_networks = [ip_network(range) for range in ip_ranges]
             ip = ip_address(self.request.client.host)
             is_in_range = any(ip in network for network in ip_networks)
             if not is_in_range:
+                print("SECURITY CHECKER ERROR: IP NOT IN RANGE")
                 raise TinkoffCallbackForbiddenException
 
         await asyncio.to_thread(check_ip)
 
     async def __get_webhook_data_object(self) -> TBankCallbackSchema:
         body = await self.request.json()
-        return TBankCallbackSchema(**body)
+        obj = body.get("object")
+        return TBankCallbackSchema(**obj)
 
     async def __get_project(self) -> Project:
         project_dao = ProjectDAO(session=self.session)
-        project: Project = await project_dao.find_one_or_none_by_id(data_id=self.webhook_object.data.project_id)
+        project: Project = await project_dao.find_one_or_none_by_id(data_id=self.webhook_object.Data.project_id)
         return project
 
     async def __create_payment_in_db(self):
@@ -67,14 +74,11 @@ class TinkoffCallbackSuccessUseCaseImpl:
             values=TBankPaymentCreateSchema(
                 id=webhook_object.PaymentId,
                 amount=webhook_object.Amount,
-                income_amount=webhook_object.income_amount.value,
-                test=webhook_object.test,
-                status=PaymentStatusEnum.SUCCEEDED,
-                user_id=webhook_object.metadata.user_id,
-                project_id=webhook_object.metadata.project_id,
+                income_amount=webhook_object.Amount,
+                user_id=1,  # TODO change to DATA
+                project_id=webhook_object.Data.project_id,
                 stage_id=project.active_stage_number,
-                created_at=webhook_object.created_at.replace(tzinfo=None),  # because yukassa give with timezone
-                captured_at=webhook_object.captured_at.replace(tzinfo=None),  # and we save without
+                status=PaymentStatusEnum.SUCCEEDED,
             )
         )
 

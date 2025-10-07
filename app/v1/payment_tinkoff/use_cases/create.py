@@ -36,7 +36,14 @@ class TBankPaymentCreateUseCaseImpl:
             raise HTTPException(status_code=400, detail=data)
         return data
 
-    async def init_payment(self, order_id: str, amount: int, description: str, method: str = "card") -> dict:
+    async def init_payment(
+        self,
+        project_id: int,
+        order_id: str,
+        amount: int,
+        description: str,
+        method: str = "card",
+    ) -> dict:
         """Создание платежа"""
         payload = {
             "OrderId": order_id,
@@ -44,7 +51,7 @@ class TBankPaymentCreateUseCaseImpl:
             "Description": description,
             "NotificationURL": settings.T_BANK_WEBHOOK_URL,
             "DATA": {
-                "Project_id": "1",
+                "project_id": project_id,
             },
         }
 
