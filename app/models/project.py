@@ -91,7 +91,10 @@ class Project(Base):
                 active_stage = stage
                 break
         if active_stage is None:
-            return None
+            return self.stages[-1].number
+        # TODO а если вообще не будет ни одной стадии у проекта?
+        # TODO надо как то валидировать проекты перед тем как они попадут к людям на оплату и делать проверку
+        # по флагу валидации в выборке проект лист
         return active_stage.number
 
     @property

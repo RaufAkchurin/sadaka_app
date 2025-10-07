@@ -12,9 +12,6 @@ from app.v1.payment_yookassa.enums import PaymentStatusEnum
 
 @dataclass
 class Payment(Base):
-    # TODO При добавлении других провайдеров оплаты помимо юкассы - наследоваться от пеймента
-    # и делать отдельную модель, затем уже добавлять новые поля при необходимости!!!
-
     # Base info
     id: Mapped[UUID] = mapped_column(UUID, primary_key=True)
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP)
@@ -22,7 +19,7 @@ class Payment(Base):
 
     # Core data
     amount: Mapped[float | None] = mapped_column(default=None)
-    income_amount: Mapped[float | None] = mapped_column(default=None)
+    income_amount: Mapped[float | None] = mapped_column(default=None)  # Only for YOOKASSA
     test: Mapped[bool] = mapped_column(default=False)
 
     # With default values

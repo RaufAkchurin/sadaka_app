@@ -5,10 +5,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
 
 from app.exceptions import TinkoffCallbackForbiddenException
-from app.models.project import Project
 from app.v1.payment_tinkoff.schemas import TBankCallbackSchema, TBankPaymentCreateSchema
 from app.v1.payment_yookassa.enums import PaymentStatusEnum
-from app.v1.project.dao import ProjectDAO
+from app.v1.project.schemas import ProjectDetailAPISchema
+from app.v1.project.service import ProjectService
 from app.v1.users.dao import PaymentDAO
 
 
@@ -22,6 +22,7 @@ class TinkoffCallbackSuccessUseCaseImpl:
         request_object = request.get("object")
         if not request_object or request_object.get("Status") != "CONFIRMED":
             return
+
         await self.__tinkoff_client_ip_security_checker()
         await self.__create_payment_in_db()
 
@@ -56,10 +57,15 @@ class TinkoffCallbackSuccessUseCaseImpl:
         obj = body.get("object")
         return TBankCallbackSchema(**obj)
 
-    async def __get_project(self) -> Project:
-        project_dao = ProjectDAO(session=self.session)
-        project: Project = await project_dao.find_one_or_none_by_id(data_id=self.webhook_object.Data.project_id)
-        return project
+    async def __get_project(self):
+        service = ProjectService(session=self.session)
+        project = await service.get_project_detail_by_id(project_id=self.webhook_object.Data.project_id)
+        if project is not None:
+            return project
+
+        # project_dao = ProjectDAO(session=self.session)
+        # project: Project = await project_dao.find_one_or_none_by_id(data_id=self.webhook_object.Data.project_id)
+        # return project
 
     async def __create_payment_in_db(self):
         self.webhook_object = await self.__get_webhook_data_object()
@@ -68,14 +74,13 @@ class TinkoffCallbackSuccessUseCaseImpl:
         if not webhook_object.Success or webhook_object.Status != "CONFIRMED":
             return
 
-        project: Project = await self.__get_project()
+        project: ProjectDetailAPISchema = await self.__get_project()
 
         payment_dao = PaymentDAO(session=self.session)
         await payment_dao.add(
             values=TBankPaymentCreateSchema(
                 id=webhook_object.PaymentId,
                 amount=webhook_object.Amount,
-                income_amount=webhook_object.Amount,
                 user_id=1,  # TODO change to DATA
                 project_id=webhook_object.Data.project_id,
                 stage_id=project.active_stage_number,

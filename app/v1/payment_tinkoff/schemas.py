@@ -33,12 +33,9 @@ class TBankPaymentCreateSchema(BaseModel):
     stage_id: int
 
     amount: float
-    income_amount: float
-
     status: PaymentStatusEnum = PaymentStatusEnum.PENDING
     # created_at: datetime
     # captured_at: datetime
-    test: bool | None = False
 
     class Config:
         use_enum_values = True
