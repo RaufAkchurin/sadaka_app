@@ -5,8 +5,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
 
 from app.exceptions import TinkoffCallbackForbiddenException
-from app.v1.payment_tinkoff.schemas import TBankCallbackSchema, TBankSuccessPaymentCreateSchema
-from app.v1.payment_yookassa.enums import PaymentProviderEnum
+from app.v1.payment_tinkoff.schemas import PaymentByIdFilter, TBankCallbackSchema, TBankSuccessPaymentCreateSchema
+from app.v1.payment_yookassa.enums import PaymentProviderEnum, PaymentStatusEnum
 from app.v1.project.schemas import ProjectDetailAPISchema
 from app.v1.project.service import ProjectService
 from app.v1.users.dao import PaymentDAO
@@ -66,22 +66,31 @@ class TinkoffCallbackSuccessUseCaseImpl:
     async def __create_payment_in_db(self):
         self.webhook_object = await self.__get_webhook_data_object()
         webhook_object: TBankCallbackSchema = self.webhook_object
-
         if not webhook_object.Success or webhook_object.Status != "CONFIRMED":
             return
 
-        project: ProjectDetailAPISchema = await self.__get_project()
-
+        # check if payment already exists
         payment_dao = PaymentDAO(session=self.session)
-        await payment_dao.add(
-            values=TBankSuccessPaymentCreateSchema(
+        payment_with_id_exist = await payment_dao.find_one_or_none(
+            filters=PaymentByIdFilter(
+                status=PaymentStatusEnum.SUCCEEDED,
                 provider=PaymentProviderEnum.YOOKASSA,
                 provider_payment_id=str(webhook_object.PaymentId),
-                amount=webhook_object.Amount,
-                user_id=1,  # TODO change to DATA
-                project_id=webhook_object.Data.project_id,
-                stage_id=project.active_stage_number,
             )
         )
 
-        print(f"✅ TБанк Заказ {webhook_object.PaymentId} успешно оплачен {webhook_object.Amount}")
+        if payment_with_id_exist is None:
+            project: ProjectDetailAPISchema = await self.__get_project()
+            await payment_dao.add(
+                values=TBankSuccessPaymentCreateSchema(
+                    status=PaymentStatusEnum.SUCCEEDED,
+                    provider=PaymentProviderEnum.YOOKASSA,
+                    provider_payment_id=str(webhook_object.PaymentId),
+                    amount=webhook_object.Amount,
+                    user_id=1,  # TODO change to DATA
+                    project_id=webhook_object.Data.project_id,
+                    stage_id=project.active_stage_number,
+                )
+            )
+
+            print(f"✅ TБанк Заказ {webhook_object.PaymentId} успешно оплачен {webhook_object.Amount}")

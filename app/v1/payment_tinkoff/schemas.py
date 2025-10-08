@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from app.v1.payment_yookassa.enums import PaymentProviderEnum, PaymentStatusEnum
+from app.v1.payment_yookassa.enums import PaymentStatusEnum
 
 
 class TBankCreatePaymentRequest(BaseModel):
@@ -25,8 +25,17 @@ class TBankCallbackSchema(BaseModel):
     Data: TBankPayloadDataSchema
 
 
+class PaymentByIdFilter(BaseModel):
+    provider: str
+    provider_payment_id: str
+    status: PaymentStatusEnum
+
+    class Config:
+        use_enum_values = True
+
+
 class TBankSuccessPaymentCreateSchema(BaseModel):
-    provider: PaymentProviderEnum
+    provider: str
     provider_payment_id: str
 
     user_id: int
@@ -34,7 +43,7 @@ class TBankSuccessPaymentCreateSchema(BaseModel):
     stage_id: int
 
     amount: float
-    status: PaymentStatusEnum = PaymentStatusEnum.SUCCEEDED
+    status: PaymentStatusEnum
 
     class Config:
         use_enum_values = True
