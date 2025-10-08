@@ -1,32 +1,20 @@
 from dataclasses import dataclass
-from datetime import datetime
-from enum import Enum
 
-from sqlalchemy import TIMESTAMP
 from sqlalchemy import Enum as SqlEnum
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.v1.dao.database import Base
-from app.v1.payment_yookassa.enums import PaymentStatusEnum
-
-
-class PaymentProvider(str, Enum):
-    YOOKASSA = "yookassa"
-    TBANK = "tbank"
+from app.v1.payment_yookassa.enums import PaymentProvider, PaymentStatusEnum
 
 
 @dataclass
 class Payment(Base):
     # Provider specific data
     provider: Mapped[PaymentProvider] = mapped_column(
-        SqlEnum(PaymentProvider, name="payment_provider_enum"), default=PaymentProvider.TBANK, index=True
+        SqlEnum(PaymentProvider, name="payment_provider_enum"), default=PaymentProvider.TBANK.value, index=True
     )
     provider_payment_id: Mapped[str] = mapped_column(nullable=False)
-
-    # Base info
-    created_at: Mapped[datetime] = mapped_column(TIMESTAMP)
-    captured_at: Mapped[datetime] = mapped_column(TIMESTAMP)
 
     # Core data
     amount: Mapped[float | None] = mapped_column(default=None)

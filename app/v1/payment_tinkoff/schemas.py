@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel
 
 from app.v1.payment_yookassa.enums import PaymentStatusEnum
@@ -26,7 +28,7 @@ class TBankCallbackSchema(BaseModel):
 
 
 class TBankPaymentCreateSchema(BaseModel):
-    id: int
+    provider_payment_id: str
 
     user_id: int
     project_id: int
@@ -34,8 +36,8 @@ class TBankPaymentCreateSchema(BaseModel):
 
     amount: float
     status: PaymentStatusEnum = PaymentStatusEnum.PENDING
-    # created_at: datetime
-    # captured_at: datetime
+    created_at: datetime
+    captured_at: datetime
 
     class Config:
         use_enum_values = True

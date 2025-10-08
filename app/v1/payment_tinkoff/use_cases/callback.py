@@ -1,4 +1,5 @@
 import asyncio
+from datetime import datetime
 from ipaddress import ip_address, ip_network
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -63,10 +64,6 @@ class TinkoffCallbackSuccessUseCaseImpl:
         if project is not None:
             return project
 
-        # project_dao = ProjectDAO(session=self.session)
-        # project: Project = await project_dao.find_one_or_none_by_id(data_id=self.webhook_object.Data.project_id)
-        # return project
-
     async def __create_payment_in_db(self):
         self.webhook_object = await self.__get_webhook_data_object()
         webhook_object: TBankCallbackSchema = self.webhook_object
@@ -79,13 +76,15 @@ class TinkoffCallbackSuccessUseCaseImpl:
         payment_dao = PaymentDAO(session=self.session)
         await payment_dao.add(
             values=TBankPaymentCreateSchema(
-                id=webhook_object.PaymentId,
+                provider_payment_id=str(webhook_object.PaymentId),
                 amount=webhook_object.Amount,
-                user_id=1,  # TODO change to DATA
+                user_id=5,  # TODO change to DATA
                 project_id=webhook_object.Data.project_id,
                 stage_id=project.active_stage_number,
                 status=PaymentStatusEnum.SUCCEEDED,
+                created_at=datetime.now(),
+                captured_at=datetime.now(),
             )
         )
 
-        print(f"✅ TБанк Заказ {webhook_object.OrderId} успешно оплачен {webhook_object.Amount}")
+        print(f"✅ TБанк Заказ {webhook_object.PaymentId} успешно оплачен {webhook_object.Amount}")

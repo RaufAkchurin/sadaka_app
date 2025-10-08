@@ -6,3 +6,8 @@ class PaymentStatusEnum(str, Enum):
     CANCELED = "canceled"
     WAITING_FOR_CAPTURE = "waiting_for_capture"
     SUCCEEDED = "succeeded"
+
+
+class PaymentProvider(str, Enum):
+    YOOKASSA = "yookassa"
+    TBANK = "tbank"
