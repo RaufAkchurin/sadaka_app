@@ -5,14 +5,14 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.v1.dao.database import Base
-from app.v1.payment_yookassa.enums import PaymentProvider, PaymentStatusEnum
+from app.v1.payment_yookassa.enums import PaymentProviderEnum, PaymentStatusEnum
 
 
 @dataclass
 class Payment(Base):
     # Provider specific data
-    provider: Mapped[PaymentProvider] = mapped_column(
-        SqlEnum(PaymentProvider, name="payment_provider_enum"), default=PaymentProvider.TBANK.value, index=True
+    provider: Mapped[PaymentProviderEnum] = mapped_column(
+        SqlEnum(PaymentProviderEnum, name="payment_provider_enum"), default=PaymentProviderEnum.TBANK.value, index=True
     )
     provider_payment_id: Mapped[str] = mapped_column(nullable=False)
 
@@ -42,7 +42,7 @@ class Payment(Base):
     referral: Mapped["Referral"] = relationship("Referral", back_populates="payments", lazy="noload")  # noqa F821
 
     def __str__(self):
-        return f"{self.id}, {self.income_amount}, {self.status}, test - {self.test}"
+        return f"{self.id}, {self.amount}, {self.status}, test - {self.test}"
 
     @property
     def project_name(self) -> str | None:

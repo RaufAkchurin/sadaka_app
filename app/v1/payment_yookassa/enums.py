@@ -8,6 +8,6 @@ class PaymentStatusEnum(str, Enum):
     SUCCEEDED = "succeeded"
 
 
-class PaymentProvider(str, Enum):
+class PaymentProviderEnum(str, Enum):
     YOOKASSA = "yookassa"
     TBANK = "tbank"

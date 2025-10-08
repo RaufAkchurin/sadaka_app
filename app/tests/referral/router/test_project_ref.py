@@ -83,7 +83,7 @@ class TestReferralProjectLink:
             },
             "stages": [
                 {
-                    "collected": 2000,
+                    "collected": 2300.0,
                     "goal": 4000,
                     "name": "proj1 stage1",
                     "number": 1,
@@ -108,7 +108,7 @@ class TestReferralProjectLink:
                     "status": "finished",
                 },
                 {
-                    "collected": 3000,
+                    "collected": 3300.0,
                     "goal": 5000,
                     "name": "proj1 stage2",
                     "number": 2,
@@ -134,7 +134,7 @@ class TestReferralProjectLink:
                 },
             ],
             "status": "active",
-            "total_income": 2000,
+            "total_income": 2000.0,
             "unique_sponsors": 1,
         }
 

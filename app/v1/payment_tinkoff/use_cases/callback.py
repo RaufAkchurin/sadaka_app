@@ -1,13 +1,11 @@
 import asyncio
-from datetime import datetime
 from ipaddress import ip_address, ip_network
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
 
 from app.exceptions import TinkoffCallbackForbiddenException
-from app.v1.payment_tinkoff.schemas import TBankCallbackSchema, TBankPaymentCreateSchema
-from app.v1.payment_yookassa.enums import PaymentStatusEnum
+from app.v1.payment_tinkoff.schemas import TBankCallbackSchema, TBankSuccessPaymentCreateSchema
 from app.v1.project.schemas import ProjectDetailAPISchema
 from app.v1.project.service import ProjectService
 from app.v1.users.dao import PaymentDAO
@@ -75,15 +73,13 @@ class TinkoffCallbackSuccessUseCaseImpl:
 
         payment_dao = PaymentDAO(session=self.session)
         await payment_dao.add(
-            values=TBankPaymentCreateSchema(
+            values=TBankSuccessPaymentCreateSchema(
                 provider_payment_id=str(webhook_object.PaymentId),
                 amount=webhook_object.Amount,
-                user_id=5,  # TODO change to DATA
+                user_id=1,  # TODO change to DATA
                 project_id=webhook_object.Data.project_id,
                 stage_id=project.active_stage_number,
-                status=PaymentStatusEnum.SUCCEEDED,
-                created_at=datetime.now(),
-                captured_at=datetime.now(),
+                # created_at=datetime.now(),
             )
         )
 
