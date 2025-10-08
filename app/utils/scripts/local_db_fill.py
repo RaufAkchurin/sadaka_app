@@ -60,7 +60,6 @@ async def prepare_database_core(session):
                                 # uuid_raw = item["id"]
                                 # item["id"] = uuid.UUID(uuid_raw)
                                 item["created_at"] = datetime.now()
-                                item["captured_at"] = datetime.now()
 
                     stmt = insert(model_class).values(data)
                     await session.execute(stmt)

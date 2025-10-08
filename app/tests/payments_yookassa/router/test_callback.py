@@ -22,7 +22,6 @@ class TestPaymentCallback:
                 "method_completed": False,
             },
         },
-        "captured_at": "2025-05-26T09:59:37.989Z",
         "created_at": "2025-05-26T09:59:30.251Z",
         "description": "Проект Строительство мечети, айди 22",
         "id": "2fc64f42-000f-5000-8000-14945ca734f5",

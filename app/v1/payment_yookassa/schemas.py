@@ -57,7 +57,7 @@ class YooMetadataCallbackSchema(BaseModel):
 class YooWebhookDataSchema(BaseModel):
     amount: YooAmount
     authorization_details: YooAuthorizationDetails
-    captured_at: datetime
+    # captured_at: datetime
     created_at: datetime
     description: str
     id: uuid.UUID

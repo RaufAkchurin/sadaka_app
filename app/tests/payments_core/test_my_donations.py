@@ -75,7 +75,6 @@ class TestProjectDonations:
                     stage_id=1,
                     created_at=now,
                     updated_at=now,
-                    captured_at=now,
                     referral_id=None,
                 )
             )
