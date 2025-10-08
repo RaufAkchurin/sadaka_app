@@ -1,8 +1,8 @@
-"""fk tables
+"""fk and constraints
 
-Revision ID: 55e56381edfc
+Revision ID: bebad2a2d1f3
 Revises: e9142a3a3399
-Create Date: 2025-10-08 11:53:04.597005
+Create Date: 2025-10-08 16:51:21.280048
 
 """
 from typing import Sequence, Union
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = "55e56381edfc"
+revision: str = "bebad2a2d1f3"
 down_revision: Union[str, None] = "e9142a3a3399"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -79,6 +79,7 @@ def upgrade() -> None:
     op.create_index(op.f("ix_payments_stage_id"), "payments", ["stage_id"], unique=False)
     op.create_index(op.f("ix_payments_status"), "payments", ["status"], unique=False)
     op.create_index(op.f("ix_payments_user_id"), "payments", ["user_id"], unique=False)
+    op.create_unique_constraint("uq_payments_provider_payment_id", "payments", ["provider", "provider_payment_id"])
     op.create_index(op.f("ix_projects_fund_id"), "projects", ["fund_id"], unique=False)
     op.create_index(op.f("ix_projects_status"), "projects", ["status"], unique=False)
     op.create_index(op.f("ix_referrals_fund_id"), "referrals", ["fund_id"], unique=False)
@@ -100,6 +101,7 @@ def downgrade() -> None:
     op.drop_index(op.f("ix_referrals_fund_id"), table_name="referrals")
     op.drop_index(op.f("ix_projects_status"), table_name="projects")
     op.drop_index(op.f("ix_projects_fund_id"), table_name="projects")
+    op.drop_constraint("uq_payments_provider_payment_id", "payments", type_="unique")
     op.drop_index(op.f("ix_payments_user_id"), table_name="payments")
     op.drop_index(op.f("ix_payments_status"), table_name="payments")
     op.drop_index(op.f("ix_payments_stage_id"), table_name="payments")

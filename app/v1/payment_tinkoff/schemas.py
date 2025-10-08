@@ -26,7 +26,7 @@ class TBankCallbackSchema(BaseModel):
 
 
 class TBankSuccessPaymentCreateSchema(BaseModel):
-    provider: PaymentProviderEnum = PaymentProviderEnum.TBANK.value
+    provider: PaymentProviderEnum
     provider_payment_id: str
 
     user_id: int
@@ -35,8 +35,6 @@ class TBankSuccessPaymentCreateSchema(BaseModel):
 
     amount: float
     status: PaymentStatusEnum = PaymentStatusEnum.SUCCEEDED
-    # created_at: datetime
-    # captured_at: datetime
 
     class Config:
         use_enum_values = True

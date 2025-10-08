@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from sqlalchemy import Enum as SqlEnum
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.v1.dao.database import Base
@@ -10,6 +10,11 @@ from app.v1.payment_yookassa.enums import PaymentProviderEnum, PaymentStatusEnum
 
 @dataclass
 class Payment(Base):
+    # Constraints
+    __table_args__ = (
+        UniqueConstraint("provider", "provider_payment_id", name="uq_payments_provider_payment_id"),
+    )  # provider_payment_id unique for provider
+
     # Provider specific data
     provider: Mapped[PaymentProviderEnum] = mapped_column(
         SqlEnum(PaymentProviderEnum, name="payment_provider_enum"), default=PaymentProviderEnum.TBANK.value, index=True

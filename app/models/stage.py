@@ -8,7 +8,10 @@ from app.v1.project.enums import ProjectStatusEnum
 
 
 class Stage(Base):
+    # Constraints:
     __table_args__ = (UniqueConstraint("project_id", "number", name="unique_stage_number_per_project"),)
+
+    # Base columns:
     number: Mapped[int] = mapped_column(Integer, nullable=False)
     name: Mapped[str]
     goal: Mapped[int]
