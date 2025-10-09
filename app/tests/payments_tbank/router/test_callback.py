@@ -1,6 +1,9 @@
+import asyncio
+import time
 from io import StringIO
 from unittest.mock import patch
 
+import pytest
 from loguru import logger
 from starlette.datastructures import Address
 
@@ -125,3 +128,34 @@ class TestTbankPaymentCallback:
         assert "запись уже имеется" in logs or "callback пропущен" in logs, logs
 
         logger.remove()  # обязательно очистить sink
+
+    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(100, 40, 70)])
+    async def test_rps(self, ac, num_requests, expected_rps, max_rps, dao: DaoSchemas) -> None:
+        async def make_request():
+            # make all the payment_id is unique
+
+            payment_id = int(self.callback_mock_success["PaymentId"])
+            self.callback_mock_success["PaymentId"] = str(payment_id + 1)
+
+            response = await ac.post("/app/v1/payments/tbank/callback", json=self.callback_mock_success)
+
+            assert response.status_code == 200
+            return response
+
+        tasks = [make_request() for _ in range(num_requests)]
+
+        start = time.perf_counter()
+        await asyncio.gather(*tasks)
+        elapsed = time.perf_counter() - start
+
+        payments_count = await dao.payment.count()
+        assert payments_count == num_requests + 6
+
+        rps = num_requests / elapsed
+        logger.info(f"⚡ {num_requests} requests in {elapsed:.2f}s → {rps:.2f} RPS")
+
+        # необязательная проверка минимального порога
+        assert rps > expected_rps
+
+        # необязательная проверка максимального порога
+        assert rps < max_rps
