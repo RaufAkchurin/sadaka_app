@@ -1,4 +1,7 @@
+import json
+
 from fastapi import APIRouter, Depends, Request
+from loguru import logger
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.settings import settings
@@ -19,6 +22,7 @@ async def create_payment(data: TBankCreatePaymentRequest):
         description=data.description,
         method=data.method,
         project_id=data.project_id,
+        user_id=data.user_id,
     )
     # SBP → отдадим QR
     if data.method == "sbp":
@@ -32,5 +36,15 @@ async def create_payment(data: TBankCreatePaymentRequest):
 
 @v1_tinkoff_router.post("/callback")
 async def tinkoff_callback(request: Request, session: AsyncSession = Depends(get_session_with_commit)):
-    use_case = TinkoffCallbackSuccessUseCaseImpl(request=request, session=session)
-    await use_case.execute()
+    body = await request.body()
+    decoded_data = body.decode("utf-8")
+    object_data = json.loads(decoded_data)
+    status = object_data.get("object").get("Status")
+    payment_id = object_data.get("object").get("PaymentId")
+
+    if status == "CONFIRMED":
+        use_case = TinkoffCallbackSuccessUseCaseImpl(request=request, session=session)
+        await use_case.execute()
+
+    else:
+        logger.success(f"Не предусмотрена обработка для Tbank callback  status: {status}, payment_id: {payment_id}")

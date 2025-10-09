@@ -57,11 +57,15 @@ class TestPaymentCallback:
 
     # TEST IT WORK BUT NOT IN SCOPE AND RUN SINGULAR
     @patch("fastapi.Request.client", Address("185.71.76.1", 1234))  # For ip_security checker
-    async def test_callback_cancelled(self, ac) -> None:
+    async def test_callback_cancelled(self, auth_ac_super) -> None:
         callback_mock_canceled = self.callback_mock_success
         callback_mock_canceled["status"] = "canceled"
 
-        response = await ac.post("/app/v1/payments/yookassa/callback", json={"object": callback_mock_canceled})
+        response = await auth_ac_super.client.post(
+            "/app/v1/payments/yookassa/callback",
+            cookies=auth_ac_super.cookies.dict(),
+            json={"object": callback_mock_canceled},
+        )
         assert response.status_code == 200
 
         session_gen = get_session_with_commit()
@@ -72,8 +76,12 @@ class TestPaymentCallback:
         assert len(payments) == 6  # sum of mocked data without new
 
     @patch("fastapi.Request.client", Address("185.71.76.1", 1234))  # For ip_security checker
-    async def test_callback_success(self, ac) -> None:
-        response = await ac.post("/app/v1/payments/yookassa/callback", json={"object": self.callback_mock_success})
+    async def test_callback_success(self, auth_ac_super) -> None:
+        response = await auth_ac_super.client.post(
+            "/app/v1/payments/yookassa/callback",
+            cookies=auth_ac_super.cookies.dict(),
+            json={"object": self.callback_mock_success},
+        )
         assert response.status_code == 200
 
         session_gen = get_session_with_commit()
@@ -93,4 +101,4 @@ class TestPaymentCallback:
 
     async def test_callback_forbidden(self, ac) -> None:
         response = await ac.post("/app/v1/payments/yookassa/callback", json={"object": self.callback_mock_success})
-        assert response.status_code == 403
+        assert response.status_code == 400

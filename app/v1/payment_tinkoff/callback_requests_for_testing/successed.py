@@ -10,7 +10,6 @@ callback_mock_success = {
         "DeviceIframe": "false",
         "DeviceOs": "Mac OS",
         "DeviceWebView": "false",
-        "project_id": "1",  # TODO IN DATA
         "REDIRECT": "false",
         "SEND_EMAIL": "N",
         "SaveCard": "false",
@@ -22,17 +21,19 @@ callback_mock_success = {
         "isMIDSyncEnabled": "true",
         "order_id_unique_processed": "ignored",
         "payAction": "3DS",
-        "paymentUrl": "https://pay.tbank.ru/2plCcqMf",
+        "paymentUrl": "https://pay.tbank.ru/EdLymlTe",
+        "project_id": "1",
+        "user_id": "1",
     },
     "ErrorCode": "0",
     "ExpDate": "1230",
-    "OrderId": "53",
+    "OrderId": "63",
     "Pan": "430000******0777",
-    "PaymentId": 7152296588,
+    "PaymentId": 7160853973,
     "Status": "CONFIRMED",
     "Success": True,
     "TerminalKey": "1752237644677DEMO",
-    "Token": "ea7fd2744edd3b2fe99b6566f3d04cb0ebcb120a742754f0da508a32d8a6ca56",
+    "Token": "2794408b52ecc7d5b241935353269db2f511cc146418e9d3a63cf450f19e7235",
 }
 
 response = requests.post(url, json={"object": callback_mock_success})

@@ -39,12 +39,12 @@ class TBankPaymentCreateUseCaseImpl:
     async def init_payment(
         self,
         project_id: int,
+        user_id: int,
         order_id: str,
         amount: int,
         description: str,
         method: str = "card",
     ) -> dict:
-        """Создание платежа"""
         payload = {
             "OrderId": order_id,
             "Amount": amount,
@@ -52,6 +52,7 @@ class TBankPaymentCreateUseCaseImpl:
             "NotificationURL": settings.T_BANK_WEBHOOK_URL,
             "DATA": {
                 "project_id": project_id,
+                "user_id": user_id,
             },
         }
 

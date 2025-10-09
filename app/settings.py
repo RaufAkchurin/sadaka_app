@@ -42,7 +42,7 @@ class Settings(BaseSettings):
 
     # T_BANK PAYMENTS
     T_BANK_API_URL: str = "https://securepay.tinkoff.ru/v2"
-    T_BANK_WEBHOOK_URL: str = "https://45a2db004fa3.ngrok-free.app/app/v1/payments/tinkoff/callback"
+    T_BANK_WEBHOOK_URL: str = "https://c99783add95b.ngrok-free.app/app/v1/payments/tinkoff/callback"
     T_BANK_TERMINAL_KEY: str = "1752237644677DEMO"
     T_BANK_PASSWORD: str = "bniUwpLIsj1^VkGC"
 

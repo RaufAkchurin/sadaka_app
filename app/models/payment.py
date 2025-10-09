@@ -5,7 +5,7 @@ from sqlalchemy import ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.v1.dao.database import Base
-from app.v1.payment_yookassa.enums import PaymentProviderEnum, PaymentStatusEnum
+from app.v1.payment_yookassa.enums import ModelPaymentStatusEnum, PaymentProviderEnum
 
 
 @dataclass
@@ -27,8 +27,8 @@ class Payment(Base):
     test: Mapped[bool] = mapped_column(default=False)
 
     # With default values
-    status: Mapped[PaymentStatusEnum] = mapped_column(
-        SqlEnum(PaymentStatusEnum, name="payment_status_enum"), default=PaymentStatusEnum.PENDING, index=True
+    status: Mapped[ModelPaymentStatusEnum] = mapped_column(
+        SqlEnum(ModelPaymentStatusEnum, name="payment_status_enum"), default=ModelPaymentStatusEnum.PENDING, index=True
     )
 
     # Project relations

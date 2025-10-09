@@ -7,7 +7,7 @@ from starlette.requests import Request
 
 from app.exceptions import YookassaCallbackForbiddenException
 from app.models.project import Project
-from app.v1.payment_yookassa.enums import PaymentStatusEnum
+from app.v1.payment_yookassa.enums import ModelPaymentStatusEnum
 from app.v1.payment_yookassa.schemas import YooPaymentCreateSchema, YooWebhookDataSchema
 from app.v1.project.dao import ProjectDAO
 from app.v1.users.dao import PaymentDAO
@@ -28,19 +28,19 @@ class YooCallbackSuccessUseCaseImpl:
         project: Project = await self.__get_project()
 
         payment_dao = PaymentDAO(session=self.session)
-        if webhook_object.status == PaymentStatusEnum.SUCCEEDED:
+        if webhook_object.status == ModelPaymentStatusEnum.SUCCEEDED:
             await payment_dao.add(
                 values=YooPaymentCreateSchema(
                     id=webhook_object.id,
                     amount=webhook_object.amount.value,
                     income_amount=webhook_object.income_amount.value,
                     test=webhook_object.test,
-                    status=PaymentStatusEnum.SUCCEEDED,
+                    status=ModelPaymentStatusEnum.SUCCEEDED,
                     user_id=webhook_object.metadata.user_id,
                     project_id=webhook_object.metadata.project_id,
                     stage_id=project.active_stage_number,
                     created_at=webhook_object.created_at.replace(tzinfo=None),  # because yukassa give with timezone
-                    captured_at=webhook_object.captured_at.replace(tzinfo=None),  # and we save without
+                    # captured_at=webhook_object.captured_at.replace(tzinfo=None),  # and we save without
                 )
             )
         print(f"✅ Yookassa Заказ {webhook_object.id} успешно оплачен {webhook_object.amount.value}")
