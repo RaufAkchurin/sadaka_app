@@ -16,6 +16,7 @@ from app.v1.users.dao import PaymentDAO
 
 
 class YooCallbackSuccessUseCaseImpl:
+    # TODO add conditions for find existing payment id with status success as for TBANK callback use case
     def __init__(self, request: Request, session: AsyncSession):
         self.request = request
         self.session = session
@@ -27,6 +28,8 @@ class YooCallbackSuccessUseCaseImpl:
     async def __create_payment_in_db(self):
         self.webhook_object = await self.__get_webhook_data_object()
         webhook_object = self.webhook_object
+
+        # TODO see problem with await self.__get_project()
         project: Project = await self.__get_project()
 
         payment_dao = PaymentDAO(session=self.session)
