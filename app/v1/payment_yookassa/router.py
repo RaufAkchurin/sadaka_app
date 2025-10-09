@@ -36,7 +36,6 @@ async def yookassa_create_payment(
 async def yookassa_success_callback(
     request: Request,
     session: AsyncSession = Depends(get_session_with_commit),
-    user_data: User = Depends(get_current_user),
 ) -> Response:
     use_case = YooCallbackSuccessUseCaseImpl(request=request, session=session)
     await use_case.execute()
