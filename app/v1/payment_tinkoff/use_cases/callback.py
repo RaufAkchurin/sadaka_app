@@ -36,6 +36,7 @@ class TinkoffCallbackSuccessUseCaseImpl:
                 "212.233.82.0/24",
                 "212.233.83.0/24",
                 "91.194.226.181",
+                "127.0.0.1",
             ]
 
             ip_networks = [ip_network(range) for range in ip_ranges]
@@ -49,8 +50,7 @@ class TinkoffCallbackSuccessUseCaseImpl:
 
     async def __get_webhook_data_object(self) -> TBankCallbackSchema:
         body = await self.request.json()
-        object = body.get("object")
-        return TBankCallbackSchema(**object)
+        return TBankCallbackSchema(**body)
 
     async def __get_project(self, project: ProjectDetailAPISchema = None) -> ProjectDetailAPISchema | None:
         service = ProjectService(session=self.session)

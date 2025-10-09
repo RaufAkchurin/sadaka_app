@@ -4,13 +4,9 @@ from app.v1.payment_yookassa.enums import ModelPaymentStatusEnum
 
 
 class TBankCreatePaymentRequest(BaseModel):
-    order_id: str
     amount: int  # в копейках
-    description: str
     method: str | None = "card"  # card | sbp
-
     project_id: int
-    user_id: int
 
 
 class TBankPayloadDataSchema(BaseModel):

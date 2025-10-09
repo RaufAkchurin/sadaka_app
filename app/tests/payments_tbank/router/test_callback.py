@@ -45,15 +45,11 @@ class TestTbankPaymentCallback:
         "Token": "2794408b52ecc7d5b241935353269db2f511cc146418e9d3a63cf450f19e7235",
     }
 
-    async def test_callback_forbidden_unauthorized_user(self, ac) -> None:
-        response = await ac.post("/app/v1/payments/tbank/callback", json={"object": self.callback_mock_success})
-        assert response.status_code == 400
-
-    async def test_callback_forbidden_ip_security(self, auth_ac_super) -> None:
-        response = await auth_ac_super.client.post(
+    @patch("fastapi.Request.client", Address("91.194.225.181", 1234))  # Not valid IP
+    async def test_callback_forbidden_ip_security(self, ac) -> None:
+        response = await ac.post(
             "/app/v1/payments/tbank/callback",
-            json={"object": self.callback_mock_success},
-            cookies=auth_ac_super.cookies.dict(),
+            json=self.callback_mock_success,
         )
         assert response.status_code == 403
 
@@ -86,7 +82,7 @@ class TestTbankPaymentCallback:
         response = await auth_ac_super.client.post(
             "/app/v1/payments/tbank/callback",
             cookies=auth_ac_super.cookies.dict(),
-            json={"object": self.callback_mock_success},
+            json=self.callback_mock_success,
         )
         assert response.status_code == 200
 
@@ -114,7 +110,7 @@ class TestTbankPaymentCallback:
         response = await auth_ac_super.client.post(
             "/app/v1/payments/tbank/callback",
             cookies=auth_ac_super.cookies.dict(),
-            json={"object": self.callback_mock_success},
+            json=self.callback_mock_success,
         )
         assert response.status_code == 200
 

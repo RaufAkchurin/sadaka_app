@@ -1,6 +1,6 @@
 import requests
 
-url = "http://localhost:8000/app/v1/payments/tinkoff/callback"
+url = "http://localhost:8000/app/v1/payments/tbank/callback"
 callback_mock_success = {
     "Amount": 1000,
     "CardId": 610280382,
@@ -35,4 +35,4 @@ callback_mock_success = {
     "Token": "30db333980487c2d73167d6a68b706697d80b82b73ac31c23cba0611f45e1411",
 }
 
-response = requests.post(url, json={"object": callback_mock_success})
+response = requests.post(url, json=callback_mock_success)

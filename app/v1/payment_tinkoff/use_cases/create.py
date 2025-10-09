@@ -6,7 +6,7 @@ from fastapi import HTTPException
 from app.settings import settings
 
 
-class TBankPaymentCreateUseCaseImpl:
+class TBankClient:
     def __init__(self, terminal_key: str, password: str, base_url: str = settings.T_BANK_API_URL):
         self.terminal_key = terminal_key
         self.password = password
