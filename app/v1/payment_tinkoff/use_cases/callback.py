@@ -53,11 +53,10 @@ class TinkoffCallbackSuccessUseCaseImpl:
         object = body.get("object")
         return TBankCallbackSchema(**object)
 
-    async def __get_project(self):
+    async def __get_project(self, project: ProjectDetailAPISchema = None) -> ProjectDetailAPISchema | None:
         service = ProjectService(session=self.session)
         project = await service.get_project_detail_by_id(project_id=self.webhook_object.Data.project_id)
-        if project is not None:
-            return project
+        return project
 
     async def __create_payment_in_db(self):
         self.webhook_object = await self.__get_webhook_data_object()

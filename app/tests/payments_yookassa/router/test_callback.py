@@ -92,7 +92,7 @@ class TestPaymentCallback:
         assert len(payments) == 7
 
         current_payment = payments[-1]
-        assert current_payment.id == uuid.UUID("2fc64f42-000f-5000-8000-14945ca734f5")
+        assert current_payment.provider_payment_id == str(uuid.UUID("2fc64f42-000f-5000-8000-14945ca734f5"))
 
         assert current_payment.project_id == 1
         assert current_payment.user_id == 1

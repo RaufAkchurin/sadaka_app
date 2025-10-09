@@ -8,7 +8,7 @@ from app.v1.payment_yookassa.enums import ModelPaymentStatusEnum, TBankPaymentSt
 
 
 class YooPaymentCreateSchema(BaseModel):
-    id: uuid.UUID
+    provider_payment_id: str
     amount: float
     income_amount: float
     test: bool = True
