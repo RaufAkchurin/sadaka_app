@@ -93,8 +93,6 @@ class Project(Base):
 
         if active_stage is None and len(stages) > 0:
             return self.stages[-1].number
-        if active_stage is None and len(stages) == 0:  # а если вообще не будет ни одной стадии у проекта?
-            return 1
         # TODO надо как то валидировать проекты перед тем как они попадут к людям на оплату и делать проверку
         # по флагу валидации в выборке проект лист
         return active_stage

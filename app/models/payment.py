@@ -38,7 +38,7 @@ class Payment(Base):
     project_id: Mapped[int] = mapped_column(ForeignKey("projects.id"), nullable=False, index=True)
     project: Mapped["Project"] = relationship("Project", back_populates="payments", lazy="selectin")  # noqa F821
 
-    stage_id: Mapped[int] = mapped_column(ForeignKey("stages.id"), nullable=False, index=True)
+    stage_id: Mapped[int] = mapped_column(ForeignKey("stages.id"), nullable=True, index=True)
     stage: Mapped["Stage"] = relationship("Stage", back_populates="payments", lazy="noload")  # noqa F821
 
     referral_id: Mapped[int | None] = mapped_column(

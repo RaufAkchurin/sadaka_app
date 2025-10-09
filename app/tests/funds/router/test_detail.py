@@ -71,7 +71,7 @@ class TestFundDetail:
                     "unique_sponsors": 1,
                 },
                 {
-                    "active_stage_number": None,
+                    "active_stage_number": 1,
                     "collected_percentage": 0,
                     "fund": {"id": 1, "name": "fund1", "picture_url": None},
                     "goal": 40000,
@@ -83,7 +83,7 @@ class TestFundDetail:
                     "unique_sponsors": 0,
                 },
                 {
-                    "active_stage_number": None,
+                    "active_stage_number": 1,
                     "collected_percentage": 0,
                     "fund": {"id": 1, "name": "fund1", "picture_url": None},
                     "goal": 70000,
@@ -95,7 +95,7 @@ class TestFundDetail:
                     "unique_sponsors": 0,
                 },
                 {
-                    "active_stage_number": None,
+                    "active_stage_number": 1,
                     "collected_percentage": 0,
                     "fund": {"id": 1, "name": "fund1", "picture_url": None},
                     "goal": 100000,
@@ -107,7 +107,7 @@ class TestFundDetail:
                     "unique_sponsors": 0,
                 },
                 {
-                    "active_stage_number": None,
+                    "active_stage_number": 1,
                     "collected_percentage": 0,
                     "fund": {"id": 1, "name": "fund1", "picture_url": None},
                     "goal": 130000,
@@ -119,7 +119,7 @@ class TestFundDetail:
                     "unique_sponsors": 0,
                 },
                 {
-                    "active_stage_number": None,
+                    "active_stage_number": 1,
                     "collected_percentage": 0,
                     "fund": {"id": 1, "name": "fund1", "picture_url": None},
                     "goal": 160000,
@@ -131,7 +131,7 @@ class TestFundDetail:
                     "unique_sponsors": 0,
                 },
                 {
-                    "active_stage_number": None,
+                    "active_stage_number": 1,
                     "collected_percentage": 0,
                     "fund": {"id": 1, "name": "fund1", "picture_url": None},
                     "goal": 190000,
@@ -143,7 +143,7 @@ class TestFundDetail:
                     "unique_sponsors": 0,
                 },
                 {
-                    "active_stage_number": None,
+                    "active_stage_number": 1,
                     "collected_percentage": 0,
                     "fund": {"id": 1, "name": "fund1", "picture_url": None},
                     "goal": 220000,
@@ -155,7 +155,7 @@ class TestFundDetail:
                     "unique_sponsors": 0,
                 },
                 {
-                    "active_stage_number": None,
+                    "active_stage_number": 1,
                     "collected_percentage": 0,
                     "fund": {"id": 1, "name": "fund1", "picture_url": None},
                     "goal": 250000,
@@ -167,7 +167,7 @@ class TestFundDetail:
                     "unique_sponsors": 0,
                 },
                 {
-                    "active_stage_number": None,
+                    "active_stage_number": 1,
                     "collected_percentage": 0,
                     "fund": {"id": 1, "name": "fund1", "picture_url": None},
                     "goal": 280000,
