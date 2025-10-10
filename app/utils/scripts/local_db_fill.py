@@ -1,7 +1,6 @@
 import asyncio
 import json
 import os
-import uuid
 from datetime import datetime
 
 from sqlalchemy import insert
@@ -58,10 +57,9 @@ async def prepare_database_core(session):
                     else:
                         if model_name == "payment":
                             for item in data:
-                                uuid_raw = item["id"]
-                                item["id"] = uuid.UUID(uuid_raw)
+                                # uuid_raw = item["id"]
+                                # item["id"] = uuid.UUID(uuid_raw)
                                 item["created_at"] = datetime.now()
-                                item["captured_at"] = datetime.now()
 
                     stmt = insert(model_class).values(data)
                     await session.execute(stmt)

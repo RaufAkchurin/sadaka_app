@@ -40,14 +40,13 @@ class TestRatingRegionPaymentsByProjectIdAPI:
             uuid_num = uuid.uuid4()
             await dao.payment.add(
                 TestPaymentAddSchema(
-                    id=uuid_num,
+                    provider_payment_id=str(uuid_num),
                     project_id=1,
                     user_id=user_from_region_10.id,
                     income_amount=1000,
                     stage_id=1,
                     created_at=now,
                     updated_at=now,
-                    captured_at=now,
                 )
             )
         await session.commit()
@@ -85,14 +84,13 @@ class TestRatingRegionPaymentsByProjectIdAPI:
             uuid_num = uuid.uuid4()
             await dao.payment.add(
                 TestPaymentAddSchema(
-                    id=uuid_num,
+                    provider_payment_id=str(uuid_num),
                     project_id=1,
                     user_id=user_from_region_20.id,
                     income_amount=1000,
                     stage_id=1,
                     created_at=now,
                     updated_at=now,
-                    captured_at=now,
                 )
             )
         await session.commit()
@@ -110,14 +108,13 @@ class TestRatingRegionPaymentsByProjectIdAPI:
             uuid_num = uuid.uuid4()
             await dao.payment.add(
                 TestPaymentAddSchema(
-                    id=uuid_num,
+                    provider_payment_id=str(uuid_num),
                     project_id=1,
                     user_id=user_from_region_20.id,
                     income_amount=1000,
                     stage_id=1,
                     created_at=now,
                     updated_at=now,
-                    captured_at=now,
                 )
             )
         await session.commit()

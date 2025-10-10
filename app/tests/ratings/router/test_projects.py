@@ -117,42 +117,39 @@ class TestProjectsAPI:
             for _ in range(30):
                 await payment_dao.add(
                     TestPaymentAddSchema(
-                        id=uuid.uuid4(),
+                        provider_payment_id=str(uuid.uuid4()),
                         project_id=project_id,
                         user_id=random.choice(user_ids),
                         income_amount=1000,
                         stage_id=1,
                         created_at=now,
                         updated_at=now,
-                        captured_at=now,
                     )
                 )
 
             for _ in range(30):
                 await payment_dao.add(
                     TestPaymentAddSchema(
-                        id=uuid.uuid4(),
+                        provider_payment_id=str(uuid.uuid4()),
                         project_id=project_id,
                         user_id=random.choice(user_ids),
                         income_amount=500,
                         stage_id=1,
                         created_at=now,
                         updated_at=now,
-                        captured_at=now,
                     )
                 )
 
             for _ in range(30):
                 await payment_dao.add(
                     TestPaymentAddSchema(
-                        id=uuid.uuid4(),
+                        provider_payment_id=str(uuid.uuid4()),
                         project_id=project_id,
                         user_id=random.choice(user_ids),
                         income_amount=100,
                         stage_id=1,
                         created_at=now,
                         updated_at=now,
-                        captured_at=now,
                     )
                 )
         await session.commit()
