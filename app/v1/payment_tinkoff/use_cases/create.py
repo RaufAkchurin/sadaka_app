@@ -45,20 +45,25 @@ class TBankClient:
         description: str,
         method: str = "card",
     ) -> dict:
-        payload = {
-            "OrderId": order_id,
-            "Amount": amount,
-            "Description": description,
-            "NotificationURL": settings.T_BANK_WEBHOOK_URL,
-            "DATA": {
-                "project_id": project_id,
-                "user_id": user_id,
-            },
-        }
-
         if method == "sbp":
+            payload = {
+                "OrderId": order_id,
+                "Description": description,
+                "NotificationURL": settings.T_BANK_WEBHOOK_URL,
+            }
             return await self._send_request("AddAccountQr", payload)
         else:
+            payload = {
+                "OrderId": order_id,
+                "Amount": amount,
+                "Description": description,
+                "NotificationURL": settings.T_BANK_WEBHOOK_URL,
+                "DATA": {
+                    "project_id": project_id,
+                    "user_id": user_id,
+                },
+            }
+
             return await self._send_request("Init", payload)
 
     async def charge_payment(self, payment_id: str, rebill_id: str) -> dict:
