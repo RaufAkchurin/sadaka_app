@@ -1,6 +1,5 @@
 import os
 from typing import Any, Optional
-
 from locust import HttpUser, SequentialTaskSet, between, task
 
 
@@ -11,6 +10,9 @@ def _ensure_leading_slash(path: str) -> str:
 SADAKA_BASE_URL = os.getenv("SADAKA_BASE_URL", "https://sadaka.pro")
 SADAKA_RATING_ENDPOINT = _ensure_leading_slash(
     os.getenv("SADAKA_RATING_ENDPOINT", "/app/v1/ratings/total_info")
+)
+SADAKA_REFRESH_ENDPOINT = _ensure_leading_slash(
+    os.getenv("SADAKA_REFRESH_ENDPOINT", "/app/v1/auth/refresh")
 )
 
 _project_status_default = os.getenv("SADAKA_PROJECT_STATUS", "active").lower()
@@ -32,6 +34,7 @@ class SadakaAnonymousFlow(SequentialTaskSet):
     1. POST /app/v1/auth/login_anonymous/ — создаём анонимного пользователя и получаем куки.
     2. GET <SADAKA_RATING_ENDPOINT> — обращаемся к выбранному рейтинговому эндпоинту.
     3. GET /app/v1/projects/all/<status> — получаем список проектов.
+    4. POST /app/v1/auth/refresh — обновляем пользовательские куки и проверяем refresh-флоу.
     """
 
     @task
@@ -43,6 +46,7 @@ class SadakaAnonymousFlow(SequentialTaskSet):
 
         self._fetch_rating()
         self._fetch_projects()
+        self._refresh_tokens()
 
     def _reset_session_state(self) -> None:
         self.client.cookies.clear()
@@ -89,6 +93,19 @@ class SadakaAnonymousFlow(SequentialTaskSet):
 
             if not isinstance(data, dict) or "items" not in data:
                 response.failure("projects request failed: поле 'items' отсутствует в ответе")
+                return False
+
+            response.success()
+            return True
+
+    def _refresh_tokens(self) -> bool:
+        with self.client.post(
+            SADAKA_REFRESH_ENDPOINT,
+            name=f"POST {SADAKA_REFRESH_ENDPOINT}",
+            catch_response=True,
+        ) as response:
+            if response.status_code != 200:
+                response.failure(f"refresh request failed ({response.status_code}): {response.text}")
                 return False
 
             response.success()

@@ -162,7 +162,9 @@ CRUD-операций.
 ## Нагрузочное тестирование
 
 - Установите dev-зависимости (включая `locust`): `uv sync --group dev`.
+- Запустите Locуст в интерактивном режиме: `uv run locust -f load_tests/locustfile.py`.
 - Запустите Locust: `uv run locust -f load_tests/locustfile.py --headless -u 10 -r 2 --run-time 5m`.
+- Быстрая проверка синтаксиса сценария: `uv run python -m compileall load_tests/locustfile.py`.
 - Параметры можно настраивать через переменные окружения:
   - `SADAKA_BASE_URL` — базовый URL API, по умолчанию `https://sadaka.pro`.
   - `SADAKA_RATING_ENDPOINT` — путь рейтингового эндпоинта, по умолчанию `/app/v1/ratings/total_info`.
