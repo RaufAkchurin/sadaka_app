@@ -1,17 +1,25 @@
-from pydantic import BaseModel
+from enum import Enum
 
+from pydantic import BaseModel
 from app.v1.payment_yookassa.enums import ModelPaymentStatusEnum
+
+
+class TBankPaymentMethodEnum(str, Enum):
+    CARD = "card"
+    SBP = "sbp"
 
 
 class TBankCreatePaymentRequest(BaseModel):
     amount: int  # в копейках
-    method: str | None = "card"  # card | sbp
+    method: TBankPaymentMethodEnum = TBankPaymentMethodEnum.CARD
     project_id: int
+    recurring: bool = False
 
 
 class TBankPayloadDataSchema(BaseModel):
     project_id: int
     user_id: int
+    is_recurring: bool | None = False
 
 
 class TBankCallbackSchema(BaseModel):
@@ -19,6 +27,8 @@ class TBankCallbackSchema(BaseModel):
     Status: str
     PaymentId: int
     Amount: int
+    RebillId: int | str | None = None
+    CardId: int | str | None = None
 
     Data: TBankPayloadDataSchema
 

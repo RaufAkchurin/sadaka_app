@@ -9,7 +9,7 @@ from app.models.user import User
 from app.settings import settings
 from app.v1.dependencies.auth_dep import get_current_user
 from app.v1.dependencies.dao_dep import get_session_with_commit
-from app.v1.payment_tinkoff.schemas import TBankCreatePaymentRequest
+from app.v1.payment_tinkoff.schemas import TBankCreatePaymentRequest, TBankPaymentMethodEnum
 from app.v1.payment_tinkoff.use_cases.callback import TinkoffCallbackSuccessUseCaseImpl
 from app.v1.payment_tinkoff.use_cases.create import TBankClient
 from app.v1.utils_core.id_validators import project_id_validator
@@ -33,11 +33,12 @@ async def create_payment(
         method=data.method,
         project_id=data.project_id,
         user_id=user_data.id,
+        recurring=data.recurring,
     )
     # SBP → отдадим QR
-    if data.method == "sbp":
+    if data.method == TBankPaymentMethodEnum.SBP:
         return {
-            "qrUrl": result.get("Data", {}).get("Payload"),
+            "qrUrl": result.get("QrPayload"),
             "paymentId": result.get("PaymentId"),
         }
 
