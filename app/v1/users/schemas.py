@@ -48,7 +48,7 @@ class UserContactsSchema(BaseModel):
 
 
 class UserBaseSchema(UserContactsSchema):
-    name: str | None = Field(min_length=3, max_length=50, description="Имя, от 3 до 50 символов")
+    name: str | None = Field(min_length=1, max_length=50, description="Имя, от 1 до 50 символов")
 
 
 class UserPhoneOnlySchema(BaseModel):
