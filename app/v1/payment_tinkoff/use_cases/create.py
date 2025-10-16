@@ -3,6 +3,7 @@ from typing import Any, Literal
 
 import httpx
 from fastapi import HTTPException
+from loguru import logger
 
 from app.settings import settings
 from app.v1.payment_tinkoff.schemas import TBankPaymentMethodEnum
@@ -27,6 +28,10 @@ class TBankClient:
 
         headers = {"Content-Type": "application/json", "Accept": "application/json"}
 
+        logger.success(f"request_url: {self.base_url}/{endpoint}")
+        logger.success(f"request_data: {payload}")
+        logger.success(f"request_headers: {headers}")
+
         async with httpx.AsyncClient() as client:
             resp = await client.post(f"{self.base_url}/{endpoint}", json=payload, headers=headers)
 
@@ -36,6 +41,8 @@ class TBankClient:
         data = resp.json()
         if not data.get("Success", False):
             raise HTTPException(status_code=400, detail=data)
+
+        logger.success(f"T-Bank response: {data}")
         return data
 
     async def init_payment(
@@ -55,14 +62,17 @@ class TBankClient:
             "Amount": amount,
             "Description": description,
             "NotificationURL": settings.T_BANK_WEBHOOK_URL,
+            "CustomerKey": str(user_id),
             "DATA": {
                 "project_id": project_id,
                 "user_id": user_id,
+                "is_recurring": recurring,
             },
         }
 
         if recurring:
-            base_payload["DATA"]["is_recurring"] = True
+            base_payload["Recurrent"] = "Y"
+            base_payload["OperationInitiatorType"] = "1"
 
         if method_value == TBankPaymentMethodEnum.SBP.value:
             base_payload["PayType"] = "SBP"
@@ -84,11 +94,17 @@ class TBankClient:
             init_response["QrData"] = qr_response.get("Data")
             return init_response
 
+        logger.success(f"T-Bank payload: {base_payload}")
+
         return await self._send_request("Init", base_payload)
 
-    async def charge_payment(self, payment_id: str, rebill_id: str) -> dict[str, Any]:
+    async def charge_payment(
+        self,
+        payment_id: int | str,
+        rebill_id: int | str,
+    ) -> dict[str, Any]:
         """Автосписание по сохранённой карте"""
-        payload = {
+        payload: dict[str, Any] = {
             "PaymentId": payment_id,
             "RebillId": rebill_id,
         }

@@ -16,6 +16,11 @@ class TBankCreatePaymentRequest(BaseModel):
     recurring: bool = False
 
 
+class TBankChargePaymentRequest(BaseModel):
+    payment_id: int | str
+    rebill_id: int | str
+
+
 class TBankPayloadDataSchema(BaseModel):
     project_id: int
     user_id: int

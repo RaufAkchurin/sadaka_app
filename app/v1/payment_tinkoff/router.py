@@ -9,7 +9,7 @@ from app.models.user import User
 from app.settings import settings
 from app.v1.dependencies.auth_dep import get_current_user
 from app.v1.dependencies.dao_dep import get_session_with_commit
-from app.v1.payment_tinkoff.schemas import TBankCreatePaymentRequest, TBankPaymentMethodEnum
+from app.v1.payment_tinkoff.schemas import TBankChargePaymentRequest, TBankCreatePaymentRequest, TBankPaymentMethodEnum
 from app.v1.payment_tinkoff.use_cases.callback import TinkoffCallbackSuccessUseCaseImpl
 from app.v1.payment_tinkoff.use_cases.create import TBankClient
 from app.v1.utils_core.id_validators import project_id_validator
@@ -35,6 +35,8 @@ async def create_payment(
         user_id=user_data.id,
         recurring=data.recurring,
     )
+
+    logger.success(f"Init info - {result}")
     # SBP → отдадим QR
     if data.method == TBankPaymentMethodEnum.SBP:
         return {
@@ -43,6 +45,24 @@ async def create_payment(
         }
 
     return {"paymentUrl": result["PaymentURL"], "paymentId": result["PaymentId"]}
+
+
+@v1_tbank_router.post("/charge")
+async def charge_payment(
+    data: TBankChargePaymentRequest,
+    _user: User = Depends(get_current_user),
+):
+    use_case = TBankClient(settings.T_BANK_TERMINAL_KEY, settings.T_BANK_PASSWORD)
+    result = await use_case.charge_payment(
+        payment_id=data.payment_id,
+        rebill_id=data.rebill_id,
+    )
+    return {
+        "success": result.get("Success"),
+        "status": result.get("Status"),
+        "paymentId": result.get("PaymentId"),
+        "rebillId": result.get("RebillId"),
+    }
 
 
 @v1_tbank_router.post("/callback")

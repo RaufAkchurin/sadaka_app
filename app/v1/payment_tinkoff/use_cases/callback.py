@@ -36,7 +36,7 @@ class TinkoffCallbackSuccessUseCaseImpl:
                 "212.233.82.0/24",
                 "212.233.83.0/24",
                 "91.194.226.181",
-                # "127.0.0.1",
+                "127.0.0.1",
             ]
 
             ip_networks = [ip_network(range) for range in ip_ranges]
@@ -91,4 +91,4 @@ class TinkoffCallbackSuccessUseCaseImpl:
                 )
             )
 
-            logger.success(f"✅ TБанк Заказ {webhook_object.PaymentId} успешно оплачен {webhook_object.Amount}")
+            logger.success(f"✅ TБанк Заказ {webhook_object.PaymentId} успешно оплачен {webhook_object.Amount} RebillId - {webhook_object.RebillId}")
