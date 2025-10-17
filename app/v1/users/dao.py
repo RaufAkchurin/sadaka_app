@@ -53,6 +53,7 @@ class UserDAO(BaseDAO):
             User.role,
             User.is_active,
             User.email,
+            User.phone,
             User.name,
             User.is_anonymous,
             User.language,

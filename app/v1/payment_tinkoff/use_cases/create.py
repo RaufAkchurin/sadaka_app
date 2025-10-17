@@ -1,4 +1,5 @@
 import hashlib
+import json
 from typing import Any, Literal
 
 import httpx
@@ -15,11 +16,51 @@ class TBankClient:
         self.password = password
         self.base_url = base_url
 
+    def _build_receipt(
+        self,
+        description: str,
+        amount: int,
+        customer_email: str | None,
+        customer_phone: str | None,
+    ) -> dict[str, Any]:
+        """Минимально допустимый чек для Init: одна позиция на всю сумму + контакт."""
+        if not customer_email and not customer_phone:
+            raise ValueError("Для формирования чека требуется email или phone плательщика.")
+
+        sanitized_name = (description or "Платеж").strip() or "Платеж"
+        receipt: dict[str, Any] = {
+            "Items": [
+                {
+                    "Name": sanitized_name[:128],
+                    "Price": amount,
+                    "Quantity": 1,
+                    "Amount": amount,
+                    "PaymentMethod": "full_payment",
+                    "PaymentObject": "service",
+                    "Tax": "none",
+                }
+            ],
+            "Taxation": "usn_income",
+        }
+        if customer_email:
+            receipt["Email"] = customer_email
+        if customer_phone:
+            receipt["Phone"] = customer_phone
+        return receipt
+
     def _generate_token(self, payload: dict) -> str:
         """Собираем токен: сортировка + sha256"""
         payload_with_password = {**payload, "Password": self.password}
         sorted_items = sorted(payload_with_password.items())
-        values_str = "".join(str(v) for _, v in sorted_items if v is not None and _ != "DATA")
+        values = []
+        for key, value in sorted_items:
+            if value is None or key in ["DATA", "Receipt"]:
+                continue
+            if isinstance(value, dict):
+                values.append(json.dumps(value, ensure_ascii=False, separators=(",", ":")))
+            else:
+                values.append(str(value))
+        values_str = "".join(values)
         return hashlib.sha256(values_str.encode("utf-8")).hexdigest()
 
     async def _send_request(self, endpoint: str, payload: dict) -> dict:
@@ -54,8 +95,20 @@ class TBankClient:
         description: str,
         method: TBankPaymentMethodEnum | Literal["card", "sbp"] = TBankPaymentMethodEnum.CARD,
         recurring: bool = False,
+        customer_email: str | None = None,
+        customer_phone: str | None = None,
     ) -> dict[str, Any]:
         method_value = method.value if isinstance(method, TBankPaymentMethodEnum) else method
+
+        try:
+            receipt = self._build_receipt(
+                description=description,
+                amount=amount,
+                customer_email=customer_email,
+                customer_phone=customer_phone,
+            )
+        except ValueError as err:
+            raise HTTPException(status_code=400, detail=str(err)) from err
 
         base_payload: dict[str, Any] = {
             "OrderId": order_id,
@@ -68,6 +121,7 @@ class TBankClient:
                 "user_id": user_id,
                 "is_recurring": recurring,
             },
+            "Receipt": receipt,
         }
 
         if recurring:
