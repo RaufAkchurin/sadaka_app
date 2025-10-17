@@ -69,9 +69,9 @@ class TBankClient:
 
         headers = {"Content-Type": "application/json", "Accept": "application/json"}
 
-        logger.success(f"request_url: {self.base_url}/{endpoint}")
-        logger.success(f"request_data: {payload}")
-        logger.success(f"request_headers: {headers}")
+        logger.info(f"request_url: {self.base_url}/{endpoint}")
+        logger.info(f"request_data: {payload}")
+        logger.info(f"request_headers: {headers}")
 
         async with httpx.AsyncClient() as client:
             resp = await client.post(f"{self.base_url}/{endpoint}", json=payload, headers=headers)
@@ -148,7 +148,7 @@ class TBankClient:
             init_response["QrData"] = qr_response.get("Data")
             return init_response
 
-        logger.success(f"T-Bank payload: {base_payload}")
+        logger.info(f"T-Bank payload: {base_payload}")
 
         return await self._send_request("Init", base_payload)
 
