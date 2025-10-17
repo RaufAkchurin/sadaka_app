@@ -1,5 +1,4 @@
 import datetime
-import uuid
 
 from httpx import AsyncClient
 from pydantic import BaseModel
@@ -43,7 +42,7 @@ class TestUserAddSchema(BaseModel):
 
 
 class TestPaymentAddSchema(BaseModel):
-    id: uuid.UUID
+    provider_payment_id: str
     user_id: int
     project_id: int
     stage_id: int
@@ -52,7 +51,6 @@ class TestPaymentAddSchema(BaseModel):
     income_amount: float = 0.0
     created_at: datetime.datetime | None = datetime.datetime.now()  # передавать значения всеравно приходится(
     updated_at: datetime.datetime | None = datetime.datetime.now()
-    captured_at: datetime.datetime | None = datetime.datetime.now()
 
 
 class CookiesModel(BaseModel):

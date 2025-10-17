@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.user import User
@@ -7,7 +9,19 @@ from app.v1.users.dao import UserDAO
 from app.v1.users.schemas import UserContactsSchema
 
 
-async def google_auth_service(code: str, session: AsyncSession) -> User:
+@dataclass
+class GoogleAuthResult:
+    """Wraps authenticated user with additional Google specific data."""
+
+    user: User
+    picture: str
+
+    def __getattr__(self, item: str):
+        # Forward attribute access to the underlying User instance.
+        return getattr(self.user, item)
+
+
+async def google_auth_service(code: str, session: AsyncSession) -> GoogleAuthResult:
     user_data = google_client.get_google_user_info(code)
     user_dao = UserDAO(session)
     user = await user_dao.find_one_or_none(filters=UserContactsSchema(email=user_data.email))
@@ -23,4 +37,4 @@ async def google_auth_service(code: str, session: AsyncSession) -> User:
         await user_dao.update(filters=UserContactsSchema(email=user_data.email), values=update_data)
         authorized_user = user
 
-    return authorized_user
+    return GoogleAuthResult(user=authorized_user, picture=str(user_data.picture))

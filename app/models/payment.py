@@ -1,33 +1,34 @@
 from dataclasses import dataclass
-from datetime import datetime
 
-from sqlalchemy import TIMESTAMP, UUID
 from sqlalchemy import Enum as SqlEnum
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.v1.dao.database import Base
-from app.v1.payment_yookassa.enums import PaymentStatusEnum
+from app.v1.payment_yookassa.enums import ModelPaymentStatusEnum, PaymentProviderEnum
 
 
 @dataclass
 class Payment(Base):
-    # TODO При добавлении других провайдеров оплаты помимо юкассы - наследоваться от пеймента
-    # и делать отдельную модель, затем уже добавлять новые поля при необходимости!!!
+    # Constraints
+    __table_args__ = (
+        UniqueConstraint("provider", "provider_payment_id", name="uq_payments_provider_payment_id"),
+    )  # provider_payment_id unique for provider
 
-    # Base info
-    id: Mapped[UUID] = mapped_column(UUID, primary_key=True)
-    created_at: Mapped[datetime] = mapped_column(TIMESTAMP)
-    captured_at: Mapped[datetime] = mapped_column(TIMESTAMP)
+    # Provider specific data
+    provider: Mapped[PaymentProviderEnum] = mapped_column(
+        SqlEnum(PaymentProviderEnum, name="payment_provider_enum"), default=PaymentProviderEnum.TBANK.value, index=True
+    )
+    provider_payment_id: Mapped[str] = mapped_column(nullable=False)
 
     # Core data
     amount: Mapped[float | None] = mapped_column(default=None)
-    income_amount: Mapped[float | None] = mapped_column(default=None)
+    income_amount: Mapped[float | None] = mapped_column(default=None)  # Only for YOOKASSA
     test: Mapped[bool] = mapped_column(default=False)
 
     # With default values
-    status: Mapped[PaymentStatusEnum] = mapped_column(
-        SqlEnum(PaymentStatusEnum, name="payment_status_enum"), default=PaymentStatusEnum.PENDING, index=True
+    status: Mapped[ModelPaymentStatusEnum] = mapped_column(
+        SqlEnum(ModelPaymentStatusEnum, name="payment_status_enum"), default=ModelPaymentStatusEnum.PENDING, index=True
     )
 
     # Project relations
@@ -37,7 +38,7 @@ class Payment(Base):
     project_id: Mapped[int] = mapped_column(ForeignKey("projects.id"), nullable=False, index=True)
     project: Mapped["Project"] = relationship("Project", back_populates="payments", lazy="selectin")  # noqa F821
 
-    stage_id: Mapped[int] = mapped_column(ForeignKey("stages.id"), nullable=False, index=True)
+    stage_id: Mapped[int] = mapped_column(ForeignKey("stages.id"), nullable=True, index=True)
     stage: Mapped["Stage"] = relationship("Stage", back_populates="payments", lazy="noload")  # noqa F821
 
     referral_id: Mapped[int | None] = mapped_column(
@@ -46,7 +47,7 @@ class Payment(Base):
     referral: Mapped["Referral"] = relationship("Referral", back_populates="payments", lazy="noload")  # noqa F821
 
     def __str__(self):
-        return f"{self.id}, {self.income_amount}, {self.status}, test - {self.test}"
+        return f"{self.id}, {self.amount}, {self.status}, test - {self.test}"
 
     @property
     def project_name(self) -> str | None:

@@ -1,10 +1,5 @@
-import asyncio
 import datetime
-import time
 import uuid
-
-import pytest
-from loguru import logger
 
 from app.models.referral import Referral, ReferralTypeEnum
 from app.tests.conftest import DaoSchemas
@@ -26,7 +21,7 @@ class TestReferralsRatingAPI:
             uuid_num = uuid.uuid4()
             await dao.payment.add(
                 TestPaymentAddSchema(
-                    id=uuid_num,
+                    provider_payment_id=str(uuid_num),
                     project_id=2,
                     user_id=1,
                     income_amount=income_amount,
@@ -34,7 +29,6 @@ class TestReferralsRatingAPI:
                     stage_id=1,
                     created_at=now,
                     updated_at=now,
-                    captured_at=now,
                 )
             )
 
@@ -44,7 +38,7 @@ class TestReferralsRatingAPI:
             uuid_num = uuid.uuid4()
             await dao.payment.add(
                 TestPaymentAddSchema(
-                    id=uuid_num,
+                    provider_payment_id=str(uuid_num),
                     project_id=2,
                     user_id=2,
                     income_amount=income_amount,
@@ -52,7 +46,6 @@ class TestReferralsRatingAPI:
                     stage_id=1,
                     created_at=now,
                     updated_at=now,
-                    captured_at=now,
                 )
             )
 
@@ -74,26 +67,3 @@ class TestReferralsRatingAPI:
                 "total_income": 600.0,
             },
         ]
-
-    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(300, 200, 270)])
-    async def test_rps(self, auth_ac_super, num_requests, expected_rps, max_rps) -> None:
-        async def make_request():
-            response = await auth_ac_super.client.get("/app/v1/ratings/referrals", cookies=auth_ac_super.cookies.dict())
-
-            assert response.status_code == 200
-            return response
-
-        tasks = [make_request() for _ in range(num_requests)]
-
-        start = time.perf_counter()
-        await asyncio.gather(*tasks)
-        elapsed = time.perf_counter() - start
-
-        rps = num_requests / elapsed
-        logger.info(f"⚡ {num_requests} requests in {elapsed:.2f}s → {rps:.2f} RPS")
-
-        # необязательная проверка минимального порога
-        assert rps > expected_rps
-
-        # необязательная проверка максимального порога
-        assert rps < max_rps

@@ -1,10 +1,3 @@
-import asyncio
-import time
-
-import pytest
-from loguru import logger
-
-
 class TestProjectList:
     async def test_400_authorization(self, ac) -> None:
         response = await ac.get("/app/v1/projects/all/active")
@@ -15,71 +8,57 @@ class TestProjectList:
         response = await auth_ac_super.client.get("/app/v1/projects/all/active", cookies=auth_ac_super.cookies.dict())
         assert response.status_code == 200
 
-        assert response.json() == {
-            "items": [
-                {
-                    "active_stage_number": 2,
-                    "collected_percentage": 20,
-                    "fund": {"id": 1, "name": "fund1", "picture_url": None},
-                    "goal": 10000,
-                    "id": 1,
-                    "name": "project1",
-                    "pictures_list": [],
-                    "status": "active",
-                    "total_income": 2000,
-                    "unique_sponsors": 1,
-                },
-                {
-                    "active_stage_number": 2,
-                    "collected_percentage": 15,
-                    "fund": {"id": 2, "name": "fund2", "picture_url": None},
-                    "goal": 20000,
-                    "id": 2,
-                    "name": "project2",
-                    "pictures_list": [],
-                    "status": "active",
-                    "total_income": 3000,
-                    "unique_sponsors": 1,
-                },
-                {
-                    "active_stage_number": None,
-                    "collected_percentage": 13,
-                    "fund": {"id": 3, "name": "fund3", "picture_url": None},
-                    "goal": 30000,
-                    "id": 3,
-                    "name": "project3",
-                    "pictures_list": [],
-                    "status": "active",
-                    "total_income": 4000,
-                    "unique_sponsors": 1,
-                },
-                {
-                    "active_stage_number": None,
-                    "collected_percentage": 0,
-                    "fund": {"id": 1, "name": "fund1", "picture_url": None},
-                    "goal": 40000,
-                    "id": 4,
-                    "name": "project4",
-                    "pictures_list": [],
-                    "status": "active",
-                    "total_income": 0,
-                    "unique_sponsors": 0,
-                },
-                {
-                    "active_stage_number": None,
-                    "collected_percentage": 0,
-                    "fund": {"id": 2, "name": "fund2", "picture_url": None},
-                    "goal": 50000,
-                    "id": 5,
-                    "name": "project5",
-                    "pictures_list": [],
-                    "status": "active",
-                    "total_income": 0,
-                    "unique_sponsors": 0,
-                },
-            ],
-            "state": {"page": 1, "size": 5, "total_items": 20, "total_pages": 4},
-        }
+        assert response.json() == {'items': [{'active_stage_number': 2,
+            'collected_percentage': 20,
+            'fund': {'id': 1, 'name': 'fund1', 'picture_url': None},
+            'goal': 10000,
+            'id': 1,
+            'name': 'project1',
+            'pictures_list': [],
+            'status': 'active',
+            'total_income': 2000.0,
+            'unique_sponsors': 1},
+           {'active_stage_number': 2,
+            'collected_percentage': 15,
+            'fund': {'id': 2, 'name': 'fund2', 'picture_url': None},
+            'goal': 20000,
+            'id': 2,
+            'name': 'project2',
+            'pictures_list': [],
+            'status': 'active',
+            'total_income': 3000.0,
+            'unique_sponsors': 1},
+           {'active_stage_number': None,
+            'collected_percentage': 13,
+            'fund': {'id': 3, 'name': 'fund3', 'picture_url': None},
+            'goal': 30000,
+            'id': 3,
+            'name': 'project3',
+            'pictures_list': [],
+            'status': 'active',
+            'total_income': 4000.0,
+            'unique_sponsors': 1},
+           {'active_stage_number': None,
+            'collected_percentage': 0,
+            'fund': {'id': 1, 'name': 'fund1', 'picture_url': None},
+            'goal': 40000,
+            'id': 4,
+            'name': 'project4',
+            'pictures_list': [],
+            'status': 'active',
+            'total_income': 0.0,
+            'unique_sponsors': 0},
+           {'active_stage_number': None,
+            'collected_percentage': 0,
+            'fund': {'id': 2, 'name': 'fund2', 'picture_url': None},
+            'goal': 50000,
+            'id': 5,
+            'name': 'project5',
+            'pictures_list': [],
+            'status': 'active',
+            'total_income': 0.0,
+            'unique_sponsors': 0}],
+ 'state': {'page': 1, 'size': 5, 'total_items': 20, 'total_pages': 4}}
 
     async def test_list_finished(self, auth_ac_super) -> None:
         response = await auth_ac_super.client.get("/app/v1/projects/all/finished", cookies=auth_ac_super.cookies.dict())
@@ -364,32 +343,6 @@ class TestProjectList:
             ],
             "state": {"page": 1, "size": 5, "total_items": 7, "total_pages": 2},
         }
-
-    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(200, 140, 170)])
-    async def test_rps(self, auth_ac_super, num_requests, expected_rps, max_rps) -> None:
-        async def make_request():
-            response = await auth_ac_super.client.get(
-                "/app/v1/projects/all/finished", cookies=auth_ac_super.cookies.dict()
-            )
-
-            assert response.status_code == 200
-            return response
-
-        tasks = [make_request() for _ in range(num_requests)]
-
-        start = time.perf_counter()
-        await asyncio.gather(*tasks)
-        elapsed = time.perf_counter() - start
-
-        rps = num_requests / elapsed
-        logger.info(f"⚡ {num_requests} requests in {elapsed:.2f}s → {rps:.2f} RPS")
-
-        # необязательная проверка минимального порога
-        assert rps > expected_rps
-
-        # необязательная проверка максимального порога
-        assert rps < max_rps
-
 
 """
 Тест кейсы

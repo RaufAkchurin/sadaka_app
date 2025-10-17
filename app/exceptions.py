@@ -79,6 +79,11 @@ FundNotFoundException = HTTPException(status_code=status.HTTP_404_NOT_FOUND, det
 
 YookassaCallbackForbiddenException = HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
+# ТИнькофф
+
+TinkoffCallbackForbiddenException = HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+
+
 # Комменты
 
 CommentsNotFoundException = HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Комментарии не найдены")

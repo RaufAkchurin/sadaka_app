@@ -4,20 +4,20 @@ from datetime import datetime
 from pydantic import BaseModel
 from pydantic_core import Url
 
-from app.v1.payment_yookassa.enums import PaymentStatusEnum
+from app.v1.payment_yookassa.enums import ModelPaymentStatusEnum, TBankPaymentStatusEnum
 
 
-class PaymentCreateSchema(BaseModel):
-    id: uuid.UUID
+class YooPaymentCreateSchema(BaseModel):
+    provider_payment_id: str
     amount: float
     income_amount: float
     test: bool = True
-    status: PaymentStatusEnum = PaymentStatusEnum.PENDING
+    status: ModelPaymentStatusEnum = ModelPaymentStatusEnum.PENDING
     user_id: int
     project_id: int
     stage_id: int
     created_at: datetime
-    captured_at: datetime
+    # captured_at: datetime
 
     class Config:
         use_enum_values = True
@@ -54,15 +54,19 @@ class YooMetadataCallbackSchema(BaseModel):
     user_id: int
 
 
+class TBankWebhookStatusSchema(BaseModel):
+    status: TBankPaymentStatusEnum
+
+
 class YooWebhookDataSchema(BaseModel):
     amount: YooAmount
     authorization_details: YooAuthorizationDetails
-    captured_at: datetime
+    # captured_at: datetime
     created_at: datetime
     description: str
     id: uuid.UUID
     income_amount: YooAmount
     metadata: YooMetadataCallbackSchema
     paid: bool
-    status: PaymentStatusEnum = PaymentStatusEnum.PENDING
+    status: ModelPaymentStatusEnum
     test: bool

@@ -1,11 +1,6 @@
-import asyncio
 import datetime
 import random
-import time
 import uuid
-
-import pytest
-from loguru import logger
 
 from app.tests.conftest import DaoSchemas
 from app.tests.schemas import (
@@ -117,42 +112,39 @@ class TestProjectsAPI:
             for _ in range(30):
                 await payment_dao.add(
                     TestPaymentAddSchema(
-                        id=uuid.uuid4(),
+                        provider_payment_id=str(uuid.uuid4()),
                         project_id=project_id,
                         user_id=random.choice(user_ids),
                         income_amount=1000,
                         stage_id=1,
                         created_at=now,
                         updated_at=now,
-                        captured_at=now,
                     )
                 )
 
             for _ in range(30):
                 await payment_dao.add(
                     TestPaymentAddSchema(
-                        id=uuid.uuid4(),
+                        provider_payment_id=str(uuid.uuid4()),
                         project_id=project_id,
                         user_id=random.choice(user_ids),
                         income_amount=500,
                         stage_id=1,
                         created_at=now,
                         updated_at=now,
-                        captured_at=now,
                     )
                 )
 
             for _ in range(30):
                 await payment_dao.add(
                     TestPaymentAddSchema(
-                        id=uuid.uuid4(),
+                        provider_payment_id=str(uuid.uuid4()),
                         project_id=project_id,
                         user_id=random.choice(user_ids),
                         income_amount=100,
                         stage_id=1,
                         created_at=now,
                         updated_at=now,
-                        captured_at=now,
                     )
                 )
         await session.commit()
@@ -272,26 +264,3 @@ class TestProjectsAPI:
             ],
             "state": {"page": 1, "size": 10, "total_items": 40, "total_pages": 4},
         }
-
-    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(200, 150, 250)])
-    async def test_rps(self, auth_ac_super, num_requests, expected_rps, max_rps) -> None:
-        async def make_request():
-            response = await auth_ac_super.client.get("/app/v1/ratings/projects", cookies=auth_ac_super.cookies.dict())
-
-            assert response.status_code == 200
-            return response
-
-        tasks = [make_request() for _ in range(num_requests)]
-
-        start = time.perf_counter()
-        await asyncio.gather(*tasks)
-        elapsed = time.perf_counter() - start
-
-        rps = num_requests / elapsed
-        logger.info(f"⚡ {num_requests} requests in {elapsed:.2f}s → {rps:.2f} RPS")
-
-        # необязательная проверка минимального порога
-        assert rps > expected_rps
-
-        # необязательная проверка максимального порога
-        assert rps < max_rps

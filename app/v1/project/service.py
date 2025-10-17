@@ -2,8 +2,8 @@ from math import ceil
 
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
+from app.v1.project.dao import ProjectDAO
 from app.v1.project.schemas import ProjectDetailAPISchema, ProjectForListAPISchema
-from app.v1.users.dao import ProjectDAO
 
 
 class ProjectService:

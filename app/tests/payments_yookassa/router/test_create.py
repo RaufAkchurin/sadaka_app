@@ -1,4 +1,4 @@
-class TestPaymentCreate:
+class TestYOOKASSAPaymentCreate:
     project_id = 1
     amount = 100
 

@@ -1,6 +1,6 @@
 [
     {
-        "id": "aca67d3a-3f83-4b99-8ef0-21a5e222f47e",
+        "provider_payment_id": "aca67d3a-3f83-4b99-8ef0-21a5e222f47e",
         "amount": "1100",
         "user_id": 1,
         "project_id": 1,
@@ -8,7 +8,7 @@
         "income_amount": 1000.0
     },
     {
-        "id": "b97fd7c5-30ed-456b-9b13-671336ddbddb",
+        "provider_payment_id": "b97fd7c5-30ed-456b-9b13-671336ddbddb",
         "amount": "1200",
         "user_id": 1,
         "project_id": 1,
@@ -16,7 +16,7 @@
         "income_amount": 1000.0
     },
     {
-        "id": "3e8f257f-fdec-44d6-8abc-5d6b16eadffb",
+        "provider_payment_id": "3e8f257f-fdec-44d6-8abc-5d6b16eadffb",
         "amount": "1100",
         "user_id": 2,
         "project_id": 2,
@@ -24,7 +24,7 @@
         "income_amount": 1000.0
     },
     {
-        "id": "d057adf7-cb7f-4f4e-b5a3-87cd396abf59",
+        "provider_payment_id": "d057adf7-cb7f-4f4e-b5a3-87cd396abf59",
         "amount": "2200",
         "user_id": 2,
         "project_id": 2,
@@ -32,7 +32,7 @@
         "income_amount": 2000.0
     },
     {
-        "id": "9865e036-6513-4391-a403-d62d10f5e0a1",
+        "provider_payment_id": "9865e036-6513-4391-a403-d62d10f5e0a1",
         "amount": "2200",
         "user_id": 3,
         "project_id": 3,
@@ -40,7 +40,7 @@
         "income_amount": 2000.0
     },
     {
-        "id": "f5a171c9-8534-4868-9734-b412832d5d67",
+        "provider_payment_id": "f5a171c9-8534-4868-9734-b412832d5d67",
         "amount": "2200",
         "user_id": 3,
         "project_id": 3,

@@ -8,7 +8,10 @@ from app.v1.project.enums import ProjectStatusEnum
 
 
 class Stage(Base):
+    # Constraints:
     __table_args__ = (UniqueConstraint("project_id", "number", name="unique_stage_number_per_project"),)
+
+    # Base columns:
     number: Mapped[int] = mapped_column(Integer, nullable=False)
     name: Mapped[str]
     goal: Mapped[int]
@@ -41,7 +44,7 @@ class Stage(Base):
 
     @property
     def collected(self):
-        collected: int = sum(payment.income_amount for payment in self.payments)
+        collected: int = sum(payment.amount for payment in self.payments)
         return collected
 
     # TODO Add validation as active stage only one for project!
