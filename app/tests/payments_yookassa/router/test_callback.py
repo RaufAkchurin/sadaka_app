@@ -93,7 +93,7 @@ class TestYOOKASSAPaymentCallback:
 
         payment_dao = PaymentDAO(session=session)
         payments: list[Payment] = await payment_dao.find_all()
-        assert len(payments) == 7
+        assert len(payments) == 6
 
         current_payment = payments[-1]
         assert current_payment.provider_payment_id == str(uuid.UUID("2fc64f42-000f-5000-8000-14945ca734f5"))

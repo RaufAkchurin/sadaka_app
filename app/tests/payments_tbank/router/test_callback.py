@@ -122,7 +122,7 @@ class TestTbankPaymentCallback:
         sink = StringIO()
         logger.add(sink, level="SUCCESS")
 
-        authorized_callback = self.callback_mock_success
+        authorized_callback = copy.deepcopy(self.callback_mock_success)
         authorized_callback["Status"] = "AUTHORIZED"
 
         response = await auth_ac_super.client.post(
@@ -176,7 +176,7 @@ class TestTbankPaymentCallback:
         elapsed = time.perf_counter() - start
 
         payments_count = await dao.payment.count()
-        assert payments_count == 106
+        assert payments_count == 107
 
         rps = num_requests / elapsed
         logger.info(f"⚡ {num_requests} requests in {elapsed:.2f}s → {rps:.2f} RPS")

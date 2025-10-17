@@ -1,4 +1,5 @@
 import asyncio
+from unittest.mock import MagicMock, patch
 
 import pytest
 from fastapi import HTTPException
@@ -8,23 +9,22 @@ from app.v1.payment_tinkoff.use_cases.create import TBankClient
 
 
 class TestTBankClientInit:
-    def test_init_payment_card_uses_init_only(self, mocker):
+    def test_init_payment_card_uses_init_only(self):
         client = TBankClient(terminal_key="test", password="secret", base_url="https://example.tbank.ru")
         init_response = {"Success": True, "PaymentURL": "https://pay.tbank.ru/example", "PaymentId": 100500}
 
-        send_mock = mocker.patch.object(client, "_send_request", return_value=init_response)
-
-        result = asyncio.run(
-            client.init_payment(
-                project_id=1,
-                user_id=2,
-                order_id="ord-1",
-                amount=10_00,
-                description="test",
-                method=TBankPaymentMethodEnum.CARD,
-                customer_email="user@example.com",
+        with patch.object(client, "_send_request", return_value=init_response) as send_mock:
+            result = asyncio.run(
+                client.init_payment(
+                    project_id=1,
+                    user_id=2,
+                    order_id="ord-1",
+                    amount=10_00,
+                    description="test",
+                    method=TBankPaymentMethodEnum.CARD,
+                    customer_email="user@example.com",
+                )
             )
-        )
 
         # возвращаем то, что отдал API
         assert result is init_response
@@ -39,24 +39,23 @@ class TestTBankClientInit:
         assert payload["Receipt"]["Taxation"] == "usn_income"
         assert payload["Receipt"]["Email"] == "user@example.com"
 
-    def test_init_payment_sbp_requests_qr_payload(self, mocker):
+    def test_init_payment_sbp_requests_qr_payload(self):
         client = TBankClient(terminal_key="test", password="secret", base_url="https://example.tbank.ru")
         init_response = {"Success": True, "PaymentURL": "https://pay", "PaymentId": 12345}
         qr_response = {"Success": True, "Data": {"Payload": "some-qr"}}
 
-        send_mock = mocker.patch.object(client, "_send_request", side_effect=[init_response, qr_response])
-
-        result = asyncio.run(
-            client.init_payment(
-                project_id=3,
-                user_id=4,
-                order_id="ord-2",
-                amount=500_00,
-                description="sbp test",
-                method=TBankPaymentMethodEnum.SBP,
-                customer_phone="+79001234567",
+        with patch.object(client, "_send_request", side_effect=[init_response, qr_response]) as send_mock:
+            result = asyncio.run(
+                client.init_payment(
+                    project_id=3,
+                    user_id=4,
+                    order_id="ord-2",
+                    amount=500_00,
+                    description="sbp test",
+                    method=TBankPaymentMethodEnum.SBP,
+                    customer_phone="+79001234567",
+                )
             )
-        )
 
         assert result["QrPayload"] == "some-qr"
         assert result["PaymentId"] == init_response["PaymentId"]
@@ -75,47 +74,170 @@ class TestTBankClientInit:
         assert qr_call_endpoint == "GetQr"
         assert qr_payload == {"PaymentId": init_response["PaymentId"], "DataType": "PAYLOAD"}
 
-    def test_init_payment_sbp_without_payload_raises(self, mocker):
+    def test_init_payment_sbp_without_payload_raises(self):
         client = TBankClient(terminal_key="test", password="secret", base_url="https://example.tbank.ru")
         init_response = {"Success": True, "PaymentId": 1}
         qr_response = {"Success": True, "Data": {}}
 
-        mocker.patch.object(client, "_send_request", side_effect=[init_response, qr_response])
-
-        with pytest.raises(HTTPException) as excinfo:
-            asyncio.run(
-                client.init_payment(
-                    project_id=1,
-                    user_id=1,
-                    order_id="ord-3",
-                    amount=100,
-                    description="sbp fail",
-                    method=TBankPaymentMethodEnum.SBP,
-                    customer_email="fail@example.com",
+        with patch.object(client, "_send_request", side_effect=[init_response, qr_response]):
+            with pytest.raises(HTTPException) as excinfo:
+                asyncio.run(
+                    client.init_payment(
+                        project_id=1,
+                        user_id=1,
+                        order_id="ord-3",
+                        amount=100,
+                        description="sbp fail",
+                        method=TBankPaymentMethodEnum.SBP,
+                        customer_email="fail@example.com",
+                    )
                 )
-            )
 
         assert excinfo.value.status_code == 500
         assert "did not return SBP QR payload" in str(excinfo.value.detail)
 
-    def test_init_payment_without_contact_uses_default_email(self, mocker):
+    def test_init_payment_without_contact_uses_default_email(self):
         client = TBankClient(terminal_key="test", password="secret", base_url="https://example.tbank.ru")
         init_response = {"Success": True, "PaymentURL": "https://pay.tbank.ru/example", "PaymentId": 42}
 
-        send_mock = mocker.patch.object(client, "_send_request", return_value=init_response)
-
-        result = asyncio.run(
-            client.init_payment(
-                project_id=7,
-                user_id=8,
-                order_id="ord-5",
-                amount=20_00,
-                description="support",
+        with patch.object(client, "_send_request", return_value=init_response) as send_mock:
+            result = asyncio.run(
+                client.init_payment(
+                    project_id=7,
+                    user_id=8,
+                    order_id="ord-5",
+                    amount=20_00,
+                    description="support",
+                )
             )
-        )
 
         assert result is init_response
         send_mock.assert_called_once()
         _, payload = send_mock.call_args.args
         assert payload["Receipt"]["Email"] == "support@sdkapp.ru"
         assert "Phone" not in payload["Receipt"]
+
+    def test_init_payment_recurring_adds_flags(self):
+        client = TBankClient(terminal_key="test", password="secret", base_url="https://example.tbank.ru")
+        init_response = {"Success": True, "PaymentURL": "https://pay.tbank.ru/example", "PaymentId": 24}
+
+        with patch.object(client, "_send_request", return_value=init_response) as send_mock:
+            result = asyncio.run(
+                client.init_payment(
+                    project_id=9,
+                    user_id=10,
+                    order_id="ord-rec",
+                    amount=30_00,
+                    description="recurring",
+                    recurring=True,
+                )
+            )
+
+        assert result is init_response
+        send_mock.assert_called_once()
+        _, payload = send_mock.call_args.args
+        assert payload["Recurrent"] == "Y"
+        assert payload["OperationInitiatorType"] == "1"
+        assert payload["DATA"] == {"project_id": 9, "user_id": 10, "is_recurring": True}
+
+
+class TestTBankClientInternals:
+    def test_generate_token_skips_receipt_and_data(self):
+        client = TBankClient(terminal_key="test", password="secret", base_url="https://example.tbank.ru")
+
+        fake_hasher = MagicMock()
+        fake_hasher.hexdigest.return_value = "digest"
+        with patch("app.v1.payment_tinkoff.use_cases.create.hashlib.sha256", return_value=fake_hasher) as sha_mock:
+            payload = {
+                "Amount": 500,
+                "CustomerKey": "user-1",
+                "DATA": {"ignored": "data"},
+                "Receipt": {"ignored": "receipt"},
+                "Nested": {"foo": "bar"},
+                "Optional": None,
+            }
+
+            token = client._generate_token(payload)
+
+        assert token == "digest"
+        sha_mock.assert_called_once()
+        values_bytes = sha_mock.call_args.args[0]
+        values_str = values_bytes.decode("utf-8")
+
+        assert "ignored" not in values_str  # DATA/Receipt не участвуют в подписи
+        assert '{"foo":"bar"}' in values_str  # словарь сериализуется
+        assert "user-1" in values_str
+
+    def test_send_request_raises_on_http_error(self):
+        client = TBankClient(terminal_key="test", password="secret", base_url="https://example.tbank.ru")
+
+        class DummyResponse:
+            def __init__(self, status_code, payload):
+                self.status_code = status_code
+                self._payload = payload
+
+            def json(self):
+                return self._payload
+
+        response = DummyResponse(status_code=502, payload={"Success": False})
+
+        class DummyAsyncClient:
+            def __init__(self, resp):
+                self.response = resp
+                self.calls = []
+
+            async def __aenter__(self):
+                return self
+
+            async def __aexit__(self, exc_type, exc, tb):
+                return False
+
+            async def post(self, *args, **kwargs):
+                self.calls.append((args, kwargs))
+                return self.response
+
+        dummy_client = DummyAsyncClient(response)
+        with patch("app.v1.payment_tinkoff.use_cases.create.httpx.AsyncClient", return_value=dummy_client):
+            with pytest.raises(HTTPException) as excinfo:
+                asyncio.run(client._send_request("Init", {"Amount": 100}))
+
+        assert excinfo.value.status_code == 500
+        assert excinfo.value.detail == "T-Bank API error 502"
+        assert dummy_client.calls, "httpx.AsyncClient.post не вызывался"
+
+    def test_send_request_raises_on_failed_success_flag(self):
+        client = TBankClient(terminal_key="test", password="secret", base_url="https://example.tbank.ru")
+
+        class DummyResponse:
+            def __init__(self, status_code, payload):
+                self.status_code = status_code
+                self._payload = payload
+
+            def json(self):
+                return self._payload
+
+        response = DummyResponse(status_code=200, payload={"Success": False, "ErrorCode": "123"})
+
+        class DummyAsyncClient:
+            def __init__(self, resp):
+                self.response = resp
+                self.calls = []
+
+            async def __aenter__(self):
+                return self
+
+            async def __aexit__(self, exc_type, exc, tb):
+                return False
+
+            async def post(self, *args, **kwargs):
+                self.calls.append((args, kwargs))
+                return self.response
+
+        dummy_client = DummyAsyncClient(response)
+        with patch("app.v1.payment_tinkoff.use_cases.create.httpx.AsyncClient", return_value=dummy_client):
+            with pytest.raises(HTTPException) as excinfo:
+                asyncio.run(client._send_request("Init", {"Amount": 200}))
+
+        assert excinfo.value.status_code == 400
+        assert excinfo.value.detail == {"Success": False, "ErrorCode": "123"}
+        assert dummy_client.calls, "httpx.AsyncClient.post не вызывался"
