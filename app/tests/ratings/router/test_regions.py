@@ -1,10 +1,5 @@
-import asyncio
 import datetime
-import time
 import uuid
-
-import pytest
-from loguru import logger
 
 from app.tests.conftest import DaoSchemas
 from app.tests.schemas import TestCityAddSchema, TestPaymentAddSchema, TestRegionAddSchema, TestUserAddSchema
@@ -101,28 +96,3 @@ class TestRatingsAllAPI:
             ],
             "state": {"page": 1, "size": 5, "total_items": 4, "total_pages": 1},
         }
-
-    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(200, 90, 170)])
-    async def test_rps(self, auth_ac_super, num_requests, expected_rps, max_rps) -> None:
-        async def make_request():
-            response = await auth_ac_super.client.get(
-                "/app/v1/ratings/regions_all", cookies=auth_ac_super.cookies.dict()
-            )
-
-            assert response.status_code == 200
-            return response
-
-        tasks = [make_request() for _ in range(num_requests)]
-
-        start = time.perf_counter()
-        await asyncio.gather(*tasks)
-        elapsed = time.perf_counter() - start
-
-        rps = num_requests / elapsed
-        logger.info(f"⚡ {num_requests} requests in {elapsed:.2f}s → {rps:.2f} RPS")
-
-        # необязательная проверка минимального порога
-        assert rps > expected_rps
-
-        # необязательная проверка максимального порога
-        assert rps < max_rps

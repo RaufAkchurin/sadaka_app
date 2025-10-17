@@ -140,6 +140,30 @@ class TestTBankClientInit:
         assert payload["OperationInitiatorType"] == "1"
         assert payload["DATA"] == {"project_id": 9, "user_id": 10, "is_recurring": True}
 
+    def test_init_payment_for_rebilling_disables_recurring(self):
+        client = TBankClient(terminal_key="test", password="secret", base_url="https://example.tbank.ru")
+        init_response = {"Success": True, "PaymentURL": "https://pay.tbank.ru/example", "PaymentId": 55}
+
+        with patch.object(client, "_send_request", return_value=init_response) as send_mock:
+            result = asyncio.run(
+                client.init_payment(
+                    project_id=11,
+                    user_id=12,
+                    order_id="ord-no-rec",
+                    amount=40_00,
+                    description="for rebilling",
+                    recurring=True,
+                    for_rebilling=True,
+                )
+            )
+
+        assert result is init_response
+        send_mock.assert_called_once()
+        _, payload = send_mock.call_args.args
+        assert "Recurrent" not in payload
+        assert "OperationInitiatorType" not in payload
+        assert payload["DATA"] == {"project_id": 11, "user_id": 12, "is_recurring": False}
+
 
 class TestTBankClientInternals:
     def test_generate_token_skips_receipt_and_data(self):

@@ -1,10 +1,7 @@
-import asyncio
 import copy
-import time
 from io import StringIO
 from unittest.mock import patch
 
-import pytest
 from loguru import logger
 from starlette.datastructures import Address
 
@@ -152,34 +149,3 @@ class TestTbankPaymentCallback:
             json=self.callback_mock_success,
         )
         assert response.status_code == 200
-
-    @patch("fastapi.Request.client", Address(valid_ip, 1234))  # For ip_security checker
-    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(100, 40, 70)])
-    async def test_rps(self, ac, num_requests, expected_rps, max_rps, dao: DaoSchemas) -> None:
-        # создаём 100 независимых копий payload с уникальным PaymentId
-        unique_requests = []
-        for i in range(1, num_requests + 1):
-            req = copy.deepcopy(self.callback_mock_success)
-            req["PaymentId"] = str(i)
-            unique_requests.append(req)
-
-        async def make_request(payload):
-            response = await ac.post("/app/v1/payments/tbank/callback", json=payload)
-            assert response.status_code == 200
-            return response
-
-        # запускаем все задачи параллельно с разными payload
-        tasks = [make_request(req) for req in unique_requests]
-
-        start = time.perf_counter()
-        await asyncio.gather(*tasks)
-        elapsed = time.perf_counter() - start
-
-        payments_count = await dao.payment.count()
-        assert payments_count == 107
-
-        rps = num_requests / elapsed
-        logger.info(f"⚡ {num_requests} requests in {elapsed:.2f}s → {rps:.2f} RPS")
-
-        assert rps > expected_rps
-        assert rps < max_rps

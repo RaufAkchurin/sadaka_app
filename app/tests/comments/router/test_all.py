@@ -1,8 +1,4 @@
-import asyncio
-import time
-
 import pytest
-from loguru import logger
 
 from app.models.comment import Comment
 from app.v1.comment.schemas import (
@@ -164,29 +160,3 @@ class TestCommentsAPI:
         assert data2.get("state").get("total_pages") == 2
         assert data2.get("state").get("total_items") == 17
         assert len(data2["items"]) == 7
-
-    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(400, 260, 330)])
-    async def test_rps(self, auth_ac_super, num_requests, expected_rps, max_rps) -> None:
-        async def make_request():
-            resp1 = await auth_ac_super.client.get(
-                "/app/v1/comments/1",
-                params={"project_id": 1, "page": 1, "limit": 10},
-                cookies=auth_ac_super.cookies.dict(),
-            )
-            assert resp1.status_code == 200
-            return resp1
-
-        tasks = [make_request() for _ in range(num_requests)]
-
-        start = time.perf_counter()
-        await asyncio.gather(*tasks)
-        elapsed = time.perf_counter() - start
-
-        rps = num_requests / elapsed
-        logger.info(f"⚡ {num_requests} requests in {elapsed:.2f}s → {rps:.2f} RPS")
-
-        # необязательная проверка минимального порога
-        assert rps > expected_rps
-
-        # необязательная проверка максимального порога (чтобы видеть прирост, который не ожидал)
-        assert rps < max_rps

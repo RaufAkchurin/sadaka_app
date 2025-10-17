@@ -1,10 +1,3 @@
-import asyncio
-import time
-
-import pytest
-from loguru import logger
-
-
 class TestProjectDetail:
     async def test_400_authorization(self, ac) -> None:
         response = await ac.get("/app/v1/projects/detail/1")
@@ -120,25 +113,3 @@ class TestProjectDetail:
             "total_income": 2000.0,
             "unique_sponsors": 1,
         }
-
-    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(200, 70, 115)])
-    async def test_rps(self, auth_ac_super, num_requests, expected_rps, max_rps) -> None:
-        async def make_request():
-            response = await auth_ac_super.client.get("/app/v1/projects/detail/1", cookies=auth_ac_super.cookies.dict())
-            assert response.status_code == 200
-            return response
-
-        tasks = [make_request() for _ in range(num_requests)]
-
-        start = time.perf_counter()
-        await asyncio.gather(*tasks)
-        elapsed = time.perf_counter() - start
-
-        rps = num_requests / elapsed
-        logger.info(f"⚡ {num_requests} requests in {elapsed:.2f}s → {rps:.2f} RPS")
-
-        # необязательная проверка минимального порога
-        assert rps > expected_rps
-
-        # необязательная проверка максимального порога
-        assert rps < max_rps

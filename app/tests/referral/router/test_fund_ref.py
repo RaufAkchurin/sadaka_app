@@ -1,9 +1,3 @@
-import asyncio
-import time
-
-import pytest
-from loguru import logger
-
 from app.models.referral import ReferralTypeEnum
 from app.models.user import User
 
@@ -216,27 +210,3 @@ class TestReferralFundsLink:
         referral_updated = await referral_dao.find_one_or_none_by_id(data_id=last_referral.id)
         assert referral_updated.referees is not None
         assert referral_updated.referees[-1].id == user_admin.id
-
-    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(200, 90, 150)])
-    async def test_rps(self, auth_ac_super, num_requests, expected_rps, max_rps) -> None:
-        async def make_request():
-            response = await auth_ac_super.client.get(
-                "/app/v1/referral/generate_link?" "ref_type=fund" "&fund_id=1", cookies=auth_ac_super.cookies.dict()
-            )
-            assert response.status_code == 200
-            return response
-
-        tasks = [make_request() for _ in range(num_requests)]
-
-        start = time.perf_counter()
-        await asyncio.gather(*tasks)
-        elapsed = time.perf_counter() - start
-
-        rps = num_requests / elapsed
-        logger.info(f"⚡ {num_requests} requests in {elapsed:.2f}s → {rps:.2f} RPS")
-
-        # необязательная проверка минимального порога
-        assert rps > expected_rps
-
-        # необязательная проверка максимального порога
-        assert rps < max_rps

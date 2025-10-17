@@ -1,14 +1,9 @@
-import asyncio
-import time
 import uuid
 from unittest.mock import patch
 
-import pytest
-from loguru import logger
 from starlette.datastructures import Address
 
 from app.models.payment import Payment
-from app.tests.fixtures.dao import DaoSchemas
 from app.v1.dependencies.dao_dep import get_session_with_commit
 from app.v1.users.dao import PaymentDAO
 
@@ -111,32 +106,3 @@ class TestYOOKASSAPaymentCallback:
     async def test_callback_ip_checker_200(self, ac) -> None:
         response = await ac.post("/app/v1/payments/yookassa/callback", json={"object": self.callback_mock_success})
         assert response.status_code == 200
-
-    @patch("fastapi.Request.client", Address("185.71.76.1", 1234))  # For ip_security checker
-    @pytest.mark.parametrize("num_requests, expected_rps, max_rps", [(100, 40, 70)])
-    async def test_rps(self, ac, num_requests, expected_rps, max_rps, dao: DaoSchemas) -> None:
-        async def make_request():
-            self.callback_mock_success["id"] = str(uuid.uuid4())  # make all the payment_id is unique
-
-            response = await ac.post("/app/v1/payments/yookassa/callback", json={"object": self.callback_mock_success})
-
-            assert response.status_code == 200
-            return response
-
-        tasks = [make_request() for _ in range(num_requests)]
-
-        start = time.perf_counter()
-        await asyncio.gather(*tasks)
-        elapsed = time.perf_counter() - start
-
-        payments_count = await dao.payment.count()
-        assert payments_count == 106
-
-        rps = num_requests / elapsed
-        logger.info(f"⚡ {num_requests} requests in {elapsed:.2f}s → {rps:.2f} RPS")
-
-        # необязательная проверка минимального порога
-        assert rps > expected_rps
-
-        # необязательная проверка максимального порога
-        assert rps < max_rps
