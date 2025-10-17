@@ -161,6 +161,19 @@ uv run locust -f load_tests/locustfile.py --headless -u 10 -r 2 --run-time 5m
   ```
 - Для фоновой работы можно использовать `systemd` или `supervisor`. Логи Gunicorn настраиваются ключами `--access-logfile` и `--error-logfile`.
 
+## ОСНОВНОЙ ЗАПУСК С ВОРКЕРАМИ БЕЗ ЛОГОВ СКРЫТО
+```bash
+cd /var/www/sadaka_app
+source venv/bin/activate
+nohup gunicorn app.main:app   --workers 4   --worker-class uvicorn.workers.UvicornWorker   --bind 127.0.0.1:8000 
+```
+
+```bash
+cd /var/www/sadaka_app
+source venv/bin/activate
+gunicorn app.main:app   --workers 4   --worker-class uvicorn.workers.UvicornWorker   --bind 127.0.0.1:8000 --log-level debug 
+```
+
 ## Структура проекта
 ```text
 app/
