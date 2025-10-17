@@ -14,6 +14,7 @@ class TBankCreatePaymentRequest(BaseModel):
     method: TBankPaymentMethodEnum = TBankPaymentMethodEnum.CARD
     project_id: int
     recurring: bool = False
+    for_rebilling: bool = False
 
 
 class TBankChargePaymentRequest(BaseModel):

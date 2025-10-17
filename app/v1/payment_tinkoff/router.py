@@ -34,6 +34,7 @@ async def create_payment(
         project_id=data.project_id,
         user_id=user_data.id,
         recurring=data.recurring,
+        for_rebilling=data.for_rebilling,
         customer_email=user_data.email,
         customer_phone=user_data.phone,
     )

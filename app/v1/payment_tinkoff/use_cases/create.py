@@ -95,10 +95,13 @@ class TBankClient:
         description: str,
         method: TBankPaymentMethodEnum | Literal["card", "sbp"] = TBankPaymentMethodEnum.CARD,
         recurring: bool = False,
+        for_rebilling: bool = False,
         customer_email: str | None = None,
         customer_phone: str | None = None,
     ) -> dict[str, Any]:
         method_value = method.value if isinstance(method, TBankPaymentMethodEnum) else method
+
+        effective_recurring = False if for_rebilling else recurring
 
         receipt = self._build_receipt(
             description=description,
@@ -116,12 +119,12 @@ class TBankClient:
             "DATA": {
                 "project_id": project_id,
                 "user_id": user_id,
-                "is_recurring": recurring,
+                "is_recurring": effective_recurring,
             },
             "Receipt": receipt,
         }
 
-        if recurring:
+        if effective_recurring:
             base_payload["Recurrent"] = "Y"
             base_payload["OperationInitiatorType"] = "1"
 
