@@ -1,7 +1,7 @@
 import json
 import uuid
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, Request
 from loguru import logger
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -25,9 +25,6 @@ async def create_payment(
 ):
     await project_id_validator(project_id=data.project_id, session=session)
     use_case = TBankClient(settings.T_BANK_TERMINAL_KEY, settings.T_BANK_PASSWORD)
-
-    if not (user_data.email or user_data.phone):
-        raise HTTPException(status_code=400, detail="Для платежа T-Bank требуется email или phone пользователя.")
 
     result = await use_case.init_payment(
         order_id=f"test_u{user_data.id}-{uuid.uuid4()}",

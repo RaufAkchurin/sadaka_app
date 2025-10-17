@@ -69,6 +69,7 @@ class TestTBankClientInit:
         assert init_payload["DATA"] == {"project_id": 3, "user_id": 4, "is_recurring": False}
         assert init_payload["Receipt"]["Items"][0]["Name"] == "sbp test"
         assert init_payload["Receipt"]["Phone"] == "+79001234567"
+        assert "Email" not in init_payload["Receipt"]
 
         qr_call_endpoint, qr_payload = send_mock.call_args_list[1].args
         assert qr_call_endpoint == "GetQr"
@@ -97,19 +98,24 @@ class TestTBankClientInit:
         assert excinfo.value.status_code == 500
         assert "did not return SBP QR payload" in str(excinfo.value.detail)
 
-    def test_init_payment_without_contact_raises(self):
+    def test_init_payment_without_contact_uses_default_email(self, mocker):
         client = TBankClient(terminal_key="test", password="secret", base_url="https://example.tbank.ru")
+        init_response = {"Success": True, "PaymentURL": "https://pay.tbank.ru/example", "PaymentId": 42}
 
-        with pytest.raises(HTTPException) as excinfo:
-            asyncio.run(
-                client.init_payment(
-                    project_id=1,
-                    user_id=2,
-                    order_id="ord-4",
-                    amount=10_00,
-                    description="no contact",
-                )
+        send_mock = mocker.patch.object(client, "_send_request", return_value=init_response)
+
+        result = asyncio.run(
+            client.init_payment(
+                project_id=7,
+                user_id=8,
+                order_id="ord-5",
+                amount=20_00,
+                description="support",
             )
+        )
 
-        assert excinfo.value.status_code == 400
-        assert "email или phone" in str(excinfo.value.detail).lower()
+        assert result is init_response
+        send_mock.assert_called_once()
+        _, payload = send_mock.call_args.args
+        assert payload["Receipt"]["Email"] == "support@sdkapp.ru"
+        assert "Phone" not in payload["Receipt"]
