@@ -13,6 +13,7 @@ from app.v1.payment_tinkoff.schemas import TBankChargePaymentRequest, TBankCreat
 from app.v1.payment_tinkoff.use_cases.callback import TinkoffCallbackSuccessUseCaseImpl
 from app.v1.payment_tinkoff.use_cases.create import TBankClient
 from app.v1.utils_core.id_validators import project_id_validator
+from app.v1.utils_core.money import kopecks_to_rub
 
 v1_tbank_router = APIRouter()
 
@@ -26,9 +27,11 @@ async def create_payment(
     await project_id_validator(project_id=data.project_id, session=session)
     use_case = TBankClient(settings.T_BANK_TERMINAL_KEY, settings.T_BANK_PASSWORD)
 
+    amount_rub = kopecks_to_rub(data.amount)
+
     result = await use_case.init_payment(
         order_id=f"test_u{user_data.id}-{uuid.uuid4()}",
-        amount=data.amount,
+        amount_rub=amount_rub,
         description="Благотворительный взнос sadaka app",
         method=data.method,
         project_id=data.project_id,
