@@ -130,9 +130,7 @@ class TBankClient:
             base_payload["OperationInitiatorType"] = "1"
 
         if method_value == TBankPaymentMethodEnum.SBP.value:
-            base_payload["PayType"] = "SBP"
             init_response = await self._send_request("Init", base_payload)
-
             qr_response = await self._send_request(
                 "GetQr",
                 {
@@ -141,9 +139,9 @@ class TBankClient:
                 },
             )
 
-            qr_payload = qr_response.get("Data", {}).get("Payload")
-            if not qr_payload:
-                raise HTTPException(status_code=500, detail="T-Bank API did not return SBP QR payload")
+            logger.info(f"T-Bank qr_response: {qr_response}")
+            qr_payload = qr_response.get("Data", {})
+
 
             init_response["QrPayload"] = qr_payload
             init_response["QrData"] = qr_response.get("Data")
