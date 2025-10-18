@@ -61,6 +61,7 @@ class TBankClient:
             else:
                 values.append(str(value))
         values_str = "".join(values)
+        logger.info(f"T-Bank token payload: {values_str}")
         return hashlib.sha256(values_str.encode("utf-8")).hexdigest()
 
     async def _send_request(self, endpoint: str, payload: dict) -> dict:
