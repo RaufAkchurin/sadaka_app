@@ -94,7 +94,7 @@ class TBankClient:
         order_id: str,
         amount: int,
         description: str,
-        method: TBankPaymentMethodEnum | Literal["card", "sbp"] = TBankPaymentMethodEnum.CARD,
+        method: TBankPaymentMethodEnum | Literal["card", "sbp"] = TBankPaymentMethodEnum.CARD,# CARD get all methods
         recurring: bool = False,
         for_rebilling: bool = False,
         customer_email: str | None = None,

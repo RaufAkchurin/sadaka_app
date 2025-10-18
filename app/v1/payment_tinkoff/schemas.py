@@ -11,7 +11,7 @@ class TBankPaymentMethodEnum(str, Enum):
 
 class TBankCreatePaymentRequest(BaseModel):
     amount: int = Field(ge=1_000, description="Минимальная сумма платежа — 1000 копеек")  # в копейках
-    method: TBankPaymentMethodEnum = TBankPaymentMethodEnum.SBP
+    method: TBankPaymentMethodEnum = TBankPaymentMethodEnum.CARD
     project_id: int
     recurring: bool = False
     for_rebilling: bool = False
