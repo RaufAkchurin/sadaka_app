@@ -1,6 +1,6 @@
 from enum import Enum
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from app.v1.payment_yookassa.enums import ModelPaymentStatusEnum
 
 
@@ -10,8 +10,8 @@ class TBankPaymentMethodEnum(str, Enum):
 
 
 class TBankCreatePaymentRequest(BaseModel):
-    amount: int  # в копейках
-    method: TBankPaymentMethodEnum = TBankPaymentMethodEnum.CARD
+    amount: int = Field(ge=1_000, description="Минимальная сумма платежа — 1000 копеек")  # в копейках
+    method: TBankPaymentMethodEnum = TBankPaymentMethodEnum.SBP
     project_id: int
     recurring: bool = False
     for_rebilling: bool = False
