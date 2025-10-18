@@ -1,5 +1,6 @@
 import hashlib
 import json
+from decimal import Decimal
 from typing import Any, Literal
 
 import httpx
@@ -8,6 +9,7 @@ from loguru import logger
 
 from app.settings import settings
 from app.v1.payment_tinkoff.schemas import TBankPaymentMethodEnum
+from app.v1.utils_core.money import kopecks_to_rub, rub_to_kopecks
 
 
 class TBankClient:
@@ -19,7 +21,7 @@ class TBankClient:
     def _build_receipt(
         self,
         description: str,
-        amount: int,
+        amount_minor_units: int,
         customer_email: str | None,
         customer_phone: str | None,
     ) -> dict[str, Any]:
@@ -29,9 +31,9 @@ class TBankClient:
             "Items": [
                 {
                     "Name": sanitized_name[:128],
-                    "Price": amount,
+                    "Price": amount_minor_units,
                     "Quantity": 1,
-                    "Amount": amount,
+                    "Amount": amount_minor_units,
                     "PaymentMethod": "full_payment",
                     "PaymentObject": "service",
                     "Tax": "none",
@@ -92,7 +94,7 @@ class TBankClient:
         project_id: int,
         user_id: int,
         order_id: str,
-        amount: int,
+        amount_rub: Decimal | int | float,
         description: str,
         method: TBankPaymentMethodEnum | Literal["card", "sbp"] = TBankPaymentMethodEnum.CARD,# CARD get all methods
         recurring: bool = False,
@@ -104,16 +106,20 @@ class TBankClient:
 
         effective_recurring = False if for_rebilling else recurring
 
+        amount_minor_units = rub_to_kopecks(amount_rub)
+
         receipt = self._build_receipt(
             description=description,
-            amount=amount,
+            amount_minor_units=amount_minor_units,
             customer_email=customer_email,
             customer_phone=customer_phone,
         )
 
+        amount_rub_decimal = kopecks_to_rub(amount_minor_units)
+
         base_payload: dict[str, Any] = {
             "OrderId": order_id,
-            "Amount": amount,
+            "Amount": amount_minor_units,
             "Description": description,
             "NotificationURL": settings.T_BANK_WEBHOOK_URL,
             "CustomerKey": str(user_id),
@@ -130,6 +136,7 @@ class TBankClient:
             base_payload["OperationInitiatorType"] = "1"
 
         if method_value == TBankPaymentMethodEnum.SBP.value:
+            base_payload["PayType"] = "SBP"
             init_response = await self._send_request("Init", base_payload)
             qr_response = await self._send_request(
                 "GetQr",
@@ -141,13 +148,16 @@ class TBankClient:
 
             logger.info(f"T-Bank qr_response: {qr_response}")
             qr_payload = qr_response.get("Data", {})
+            payload_value = qr_payload.get("Payload") if isinstance(qr_payload, dict) else None
+            if not payload_value:
+                raise HTTPException(status_code=500, detail="T-Bank GetQr did not return SBP QR payload")
 
-
-            init_response["QrPayload"] = qr_payload
-            init_response["QrData"] = qr_response.get("Data")
+            init_response["QrPayload"] = payload_value
+            init_response["QrData"] = qr_payload
             return init_response
 
-        logger.info(f"T-Bank payload: {base_payload}")
+        logger.info(f"T-Bank payload (Amount RUB): {amount_rub_decimal}")
+        logger.info(f"T-Bank payload RAW: {base_payload}")
 
         return await self._send_request("Init", base_payload)
 

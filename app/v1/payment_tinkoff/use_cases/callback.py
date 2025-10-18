@@ -11,6 +11,7 @@ from app.v1.payment_yookassa.enums import ModelPaymentStatusEnum, PaymentProvide
 from app.v1.project.schemas import ProjectDetailAPISchema
 from app.v1.project.service import ProjectService
 from app.v1.users.dao import PaymentDAO
+from app.v1.utils_core.money import kopecks_to_rub
 
 
 class TinkoffCallbackSuccessUseCaseImpl:
@@ -78,16 +79,20 @@ class TinkoffCallbackSuccessUseCaseImpl:
 
         else:
             project: ProjectDetailAPISchema = await self.__get_project()
+            amount_rub = kopecks_to_rub(webhook_object.Amount)
             await payment_dao.add(
                 values=TBankSuccessPaymentCreateSchema(
                     provider=PaymentProviderEnum.TBANK,
                     provider_payment_id=str(webhook_object.PaymentId),
                     status=ModelPaymentStatusEnum.SUCCEEDED,
-                    amount=webhook_object.Amount,
+                    amount=float(amount_rub),
+                    income_amount=float(amount_rub),
                     user_id=webhook_object.Data.user_id,
                     project_id=webhook_object.Data.project_id,
                     stage_id=project.active_stage_number,
                 )
             )
 
-            logger.success(f"✅ TБанк Заказ {webhook_object.PaymentId} успешно оплачен {webhook_object.Amount} RebillId - {webhook_object.RebillId}")
+            logger.success(
+                f"✅ TБанк Заказ {webhook_object.PaymentId} успешно оплачен {amount_rub} RebillId - {webhook_object.RebillId}"
+            )

@@ -78,7 +78,8 @@ class TestTbankPaymentCallback:
         assert current_payment.project_id == 1
         assert current_payment.user_id == 1
         assert current_payment.stage_id == 2
-        assert current_payment.amount == 1000.0
+        assert current_payment.amount == 10.0
+        assert current_payment.income_amount == 10.0
 
     @patch("fastapi.Request.client", Address(valid_ip, 1234))  # For ip_security checker
     async def test_callback_success_doubled_same_request(self, auth_ac_super, session, dao: DaoSchemas) -> None:
@@ -135,6 +136,8 @@ class TestTbankPaymentCallback:
         current_payment = payments[-1]
         assert current_payment.provider_payment_id == "7160853973"
         assert current_payment.status == "succeeded"
+        assert current_payment.amount == 10.0
+        assert current_payment.income_amount == 10.0
 
         # CHECK LOGS
         logs = sink.getvalue().lower()
