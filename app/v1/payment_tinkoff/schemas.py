@@ -57,7 +57,6 @@ class TBankSuccessPaymentCreateSchema(BaseModel):
     stage_id: int
 
     amount: float
-    income_amount: float
     status: ModelPaymentStatusEnum
 
     class Config:
