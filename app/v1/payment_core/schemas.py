@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict
 
-from app.v1.payment_core.enums import RecurringPaymentIntervalEnum, RecurringPaymentStatusEnum
+from app.v1.payment_core.enums import PaymentMethodEnum, RecurringPaymentIntervalEnum, RecurringPaymentStatusEnum
 
 
 class InstanceIdFilterSchema(BaseModel):
@@ -16,6 +16,7 @@ class RecurringPaymentFilterSchema(BaseModel):
     project_id: int | None = None
     status: RecurringPaymentStatusEnum | None = None
     interval: RecurringPaymentIntervalEnum | None = None
+    payment_method: PaymentMethodEnum | None = None
 
     model_config = ConfigDict(use_enum_values=True)
 

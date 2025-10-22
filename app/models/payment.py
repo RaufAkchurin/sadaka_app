@@ -5,6 +5,7 @@ from sqlalchemy import ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.v1.dao.database import Base
+from app.v1.payment_core.enums import PaymentMethodEnum
 from app.v1.payment_yookassa.enums import ModelPaymentStatusEnum, PaymentProviderEnum
 
 
@@ -20,6 +21,12 @@ class Payment(Base):
         SqlEnum(PaymentProviderEnum, name="payment_provider_enum"), default=PaymentProviderEnum.TBANK.value, index=True
     )
     provider_payment_id: Mapped[str] = mapped_column(nullable=False)
+    payment_method: Mapped[PaymentMethodEnum] = mapped_column(
+        SqlEnum(PaymentMethodEnum, name="payment_method_enum"),
+        default=PaymentMethodEnum.CARD,
+        nullable=False,
+        index=True,
+    )
 
     # Core data
     amount: Mapped[float | None] = mapped_column(default=None)
