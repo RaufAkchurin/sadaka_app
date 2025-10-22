@@ -46,6 +46,18 @@ class Payment(Base):
     )
     referral: Mapped["Referral"] = relationship("Referral", back_populates="payments", lazy="noload")  # noqa F821
 
+    recurring_payment_id: Mapped[int | None] = mapped_column(
+        ForeignKey("recurringpayments.id", name="fk_payments_recurring_payment_id"),
+        nullable=True,
+        default=None,
+        index=True,
+    )
+    recurring_payment: Mapped["RecurringPayment"] = relationship(  # noqa: F821
+        "RecurringPayment",
+        back_populates="payments",
+        lazy="noload",
+    )
+
     def __str__(self):
         return f"{self.id}, {self.amount}, {self.status}, test - {self.test}"
 

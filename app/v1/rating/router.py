@@ -6,6 +6,8 @@ from app.v1.api_utils.pagination import Pagination, PaginationParams, Pagination
 from app.v1.dependencies.auth_dep import get_current_user
 from app.v1.dependencies.dao_dep import get_session_with_commit
 from app.v1.project.dao import ProjectDAO
+from app.v1.payment_core.enums import RecurringPaymentStatusEnum
+from app.v1.payment_core.schemas import RecurringPaymentFilterSchema
 from app.v1.rating.schemas import (
     ProjectRatingSchema,
     RatingTotalInfoResponseSchema,
@@ -13,7 +15,7 @@ from app.v1.rating.schemas import (
     UserModelTotalIncomeSchema,
 )
 from app.v1.referrals.dao import ReferralDAO
-from app.v1.users.dao import PaymentDAO, RegionDAO, UserDAO
+from app.v1.users.dao import PaymentDAO, RecurringPaymentDAO, RegionDAO, UserDAO
 from app.v1.utils_core.id_validators import project_id_validator
 
 v1_rating_router = APIRouter()
@@ -29,13 +31,17 @@ async def get_total_info(
     payments_count = await payment_dao.count()
     total_income = await payment_dao.count_payments_total_income()
     cities_count = await payment_dao.count_payment_cities()
+    recurring_payment_dao = RecurringPaymentDAO(session=session)
+    active_recurring = await recurring_payment_dao.count(
+        filters=RecurringPaymentFilterSchema(status=RecurringPaymentStatusEnum.ACTIVE)
+    )
 
     project_dao = ProjectDAO(session=session)
     projects = await project_dao.count()
 
     return RatingTotalInfoResponseSchema(
         payments=payments_count,
-        autopayments=0,  # TODO after adding payment system change it
+        autopayments=active_recurring or 0,
         cities=cities_count,
         projects=projects,
         total_income=total_income,

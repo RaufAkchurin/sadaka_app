@@ -8,6 +8,7 @@ from app.models.file import File
 from app.models.fund import Fund
 from app.models.one_time_pass import OneTimePass
 from app.models.payment import Payment
+from app.models.recurring_payment import RecurringPayment
 from app.models.project import Project
 from app.models.region import Region
 from app.models.stage import Stage
@@ -222,3 +223,7 @@ class PaymentDAO(BaseDAO):
 
 class CommentDAO(BaseDAO):
     model = Comment
+
+
+class RecurringPaymentDAO(BaseDAO):
+    model = RecurringPayment

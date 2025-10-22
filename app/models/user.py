@@ -68,6 +68,11 @@ class User(Base):
 
     # RELATIONS
     payments: Mapped[list["Payment"]] = relationship(back_populates="user")
+    recurring_payments: Mapped[list["RecurringPayment"]] = relationship(  # noqa: F821
+        "RecurringPayment",
+        back_populates="user",
+        lazy="noload",
+    )
     comments: Mapped[list["Comment"]] = relationship(back_populates="user")
 
     referral_gens: Mapped[list["Referral"]] = relationship(
