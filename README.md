@@ -50,6 +50,11 @@ uv sync --frozen
 ```
 > Убедитесь, что `uv` установлен глобально (инструкции доступны на странице проекта `astral-sh/uv`).
 
+**Альтернатива через pip:**
+```bash
+pip install -r requirements.txt
+```
+
 ### 3. Создание `.env`
 Создайте файл `.env` в корне проекта (если в команде есть готовый шаблон — воспользуйтесь им) и заполните значения переменных (см. раздел ниже).
 
@@ -87,6 +92,15 @@ uv sync --frozen
 - `SMSC_LOGIN`
 - `SMSC_PASSWORD`
 
+### Celery
+- `CELERY_BROKER_URL` — URL брокера сообщений (по умолчанию `redis://redis:6379/0` для docker-compose).
+- `CELERY_RESULT_BACKEND` — backend хранения результатов (по умолчанию `redis://redis:6379/1`).
+- `CELERY_TIMEZONE` — таймзона для планировщика Celery Beat (по умолчанию `Europe/Moscow`).
+- `CELERY_TEST_SMS_PHONE` — номер, на который отправляется тестовое SMS.
+- `CELERY_TEST_SMS_MESSAGE` — текст тестового SMS.
+- `CELERY_TEST_SMS_SENDER` — подпись отправителя (используется SMSC).
+- `CELERY_TEST_SMS_CRONTAB` — cron-выражение в формате `m h dom mon dow` для ежедневной задачи (по умолчанию `0 10 * * *`).
+
 ## Локальный запуск
 1. Установите `MODE=DEV` в `.env`.
 2. Подготовьте базу данных (создайте БД в PostgreSQL и выдайте доступ пользователю).
@@ -102,6 +116,31 @@ uv sync --frozen
    - API документация Swagger UI: `http://localhost:8000/docs`
    - ReDoc: `http://localhost:8000/redoc`
    - Админ-панель SQLAdmin: `http://localhost:8000/admin`
+
+## Фоновые задачи (Celery)
+- Celery-приложение находится в `app/celery_app.py`, задачи — в пакете `app/tasks`.
+- Запуск воркера и планировщика вручную:
+  ```bash
+  uv run celery -A app.celery_app:celery_app worker --loglevel=info
+  uv run celery -A app.celery_app:celery_app beat --loglevel=info
+  ```
+- Мониторинг через Flower:
+  ```bash
+  uv run celery -A app.celery_app:celery_app flower --port 5555
+  ```
+- Ежедневная задача `app.tasks.sms.send_daily_test_sms` отправляет тестовое SMS на номер из `CELERY_TEST_SMS_PHONE`. В режиме `MODE=TEST` задача пропускает отправку.
+
+## Docker Compose
+1. Убедитесь, что `.env` заполнен (по умолчанию Celery ожидает `redis://redis:6379` из docker-compose) и что в корне проекта есть актуальный `requirements.txt`.
+2. Запустите стек:
+   ```bash
+   docker compose up
+   ```
+3. При старте сервисы на базе образа `python:3.12` устанавливают системные пакеты (`build-essential`, `libpq-dev`) и зависимости из `requirements.txt`, затем запускают свои команды:
+   - `fastapi` — `uvicorn app.main:app` (FastAPI на `http://localhost:8010`)
+   - `celery_worker` и `celery_beat` — Celery worker и beat
+   - `flower` — официальный образ Flower (`mher/flower`), получает настройки брокера из `.env` и доступен на `http://localhost:5557`
+4. FastAPI и Celery-контейнеры разделяют том с кодом проекта (`.:/app`) и автоматически подключаются к Redis.
 
 ## Миграции базы данных
 - Создать новую миграцию:

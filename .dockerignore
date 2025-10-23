@@ -1,0 +1,10 @@
+.git
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env
+data/
+frontend/node_modules/
+frontend/.next/
+frontend/dist/
+load_tests/

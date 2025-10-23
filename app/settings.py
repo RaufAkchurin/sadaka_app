@@ -49,6 +49,16 @@ class Settings(BaseSettings):
     SMSC_LOGIN: str
     SMSC_PASSWORD: str
 
+    CELERY_BROKER_URL: str = "redis://redis:6379/0"
+    CELERY_RESULT_BACKEND: str = "redis://redis:6379/1"
+    CELERY_TIMEZONE: str = "Europe/Moscow"
+    CELERY_TEST_SMS_PHONE: str = "+79170494397"
+    CELERY_TEST_SMS_MESSAGE: str = "тест"
+    CELERY_TEST_SMS_SENDER: str = "sms"
+    CELERY_TEST_SMS_CRONTAB: str = "0 10 * * *"
+
+    FLOWER_BASIC_AUTH: str = "admin:admin"
+
     model_config = SettingsConfigDict(env_file=f"{BASE_DIR}/.env")
 
     @property
