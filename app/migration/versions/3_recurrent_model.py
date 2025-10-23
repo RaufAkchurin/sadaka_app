@@ -1,8 +1,8 @@
 """recurrent model
 
-Revision ID: 0337a2a58cbe
+Revision ID: 9484a0b85e17
 Revises: f752100ac238
-Create Date: 2025-10-23 11:16:25.245945
+Create Date: 2025-10-23 11:26:43.640478
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '0337a2a58cbe'
+revision: str = '9484a0b85e17'
 down_revision: Union[str, None] = 'f752100ac238'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -25,7 +25,7 @@ def upgrade() -> None:
     sa.Column('provider_rebill_id', sa.String(), nullable=False),
     sa.Column('provider_card_id', sa.String(), nullable=True),
     sa.Column('status', sa.Enum('ACTIVE', 'PENDING', 'PAUSED', 'PAST_DUE', 'FAILED', 'CANCELED', name='recurring_payment_status_enum'), nullable=False),
-    sa.Column('payment_method', sa.Enum('CARD', 'SBP', name='payment_method_enum'), server_default='CARD', nullable=False),
+    sa.Column('payment_method', sa.Enum('CARD', 'SBP', name='payment_method_enum'), nullable=False),
     sa.Column('interval', sa.Enum('DAILY', 'WEEKLY', 'MONTHLY', name='recurring_payment_interval_enum'), nullable=False),
     sa.Column('amount', sa.Float(), nullable=True),
     sa.Column('timezone', sa.String(length=64), nullable=False),

@@ -35,10 +35,7 @@ class RecurringPayment(Base):
         index=True,
     )
     payment_method: Mapped[PaymentMethodEnum] = mapped_column(
-        SqlEnum(PaymentMethodEnum, name="payment_method_enum",
-        ),
-        server_default=PaymentMethodEnum.CARD.name,
-        default=PaymentMethodEnum.CARD.name,
+        SqlEnum(PaymentMethodEnum, name="payment_method_enum",),
         nullable=False,
         index=True,
     )
