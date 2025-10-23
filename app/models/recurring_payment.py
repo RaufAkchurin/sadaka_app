@@ -8,6 +8,8 @@ from app.v1.dao.database import Base
 from app.v1.payment_core.enums import PaymentMethodEnum, RecurringPaymentIntervalEnum, RecurringPaymentStatusEnum
 from app.v1.payment_yookassa.enums import PaymentProviderEnum
 
+MAX_RETRY_COUNT = 3  # единный порог повторных попыток для всех рекуррентных платежей
+
 
 @dataclass
 class RecurringPayment(Base):
@@ -54,7 +56,6 @@ class RecurringPayment(Base):
     last_attempt_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     retry_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
-    max_retry_count: Mapped[int] = mapped_column(Integer, default=3, nullable=False)
 
     processing_task_id: Mapped[str | None] = mapped_column(String(128), nullable=True, index=True)
     locked_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
@@ -129,7 +130,7 @@ class RecurringPayment(Base):
         if next_retry_at is not None:
             self.next_charge_at = next_retry_at
 
-        if self.retry_count >= self.max_retry_count:
+        if self.retry_count >= MAX_RETRY_COUNT:
             self.status = RecurringPaymentStatusEnum.FAILED
         else:
             self.status = RecurringPaymentStatusEnum.PAST_DUE

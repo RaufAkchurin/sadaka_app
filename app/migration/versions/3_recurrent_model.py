@@ -1,8 +1,8 @@
 """recurrent model
 
-Revision ID: 9484a0b85e17
+Revision ID: f44b04f290eb
 Revises: f752100ac238
-Create Date: 2025-10-23 11:26:43.640478
+Create Date: 2025-10-23 12:10:07.882642
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '9484a0b85e17'
+revision: str = 'f44b04f290eb'
 down_revision: Union[str, None] = 'f752100ac238'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -33,7 +33,6 @@ def upgrade() -> None:
     sa.Column('last_charge_at', sa.DateTime(timezone=True), nullable=True),
     sa.Column('last_attempt_at', sa.DateTime(timezone=True), nullable=True),
     sa.Column('retry_count', sa.Integer(), nullable=False),
-    sa.Column('max_retry_count', sa.Integer(), nullable=False),
     sa.Column('processing_task_id', sa.String(length=128), nullable=True),
     sa.Column('locked_until', sa.DateTime(timezone=True), nullable=True),
     sa.Column('last_error', sa.Text(), nullable=True),
