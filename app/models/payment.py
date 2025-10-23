@@ -22,8 +22,9 @@ class Payment(Base):
     )
     provider_payment_id: Mapped[str] = mapped_column(nullable=False)
     payment_method: Mapped[PaymentMethodEnum] = mapped_column(
-        SqlEnum(PaymentMethodEnum, name="payment_method_enum"),
-        default=PaymentMethodEnum.CARD,
+        SqlEnum(PaymentMethodEnum,name="payment_method_enum",),
+        server_default=PaymentMethodEnum.CARD.name,
+        default=PaymentMethodEnum.CARD.name,
         nullable=False,
         index=True,
     )
