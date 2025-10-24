@@ -68,15 +68,14 @@ async def charge_qr_payment(
     )
 
     payment_id = init_payment.get("PaymentId")
+
+    logger.info(f"Init recurring info - {init_payment}")
     if payment_id is None:
         raise HTTPException(status_code=500, detail="Не удалось получить идентификатор платежа от T-Bank")
 
-    await asyncio.sleep(1)
     result = await use_case.charge_qr(
         payment_id=payment_id,
-        account_token=data.account_token,
-        token=data.token,
-    )
+        account_token=data.account_token)
 
     return {
         "success": result.get("Success"),

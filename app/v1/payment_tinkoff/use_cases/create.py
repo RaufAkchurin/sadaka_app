@@ -132,25 +132,25 @@ class TBankClient:
 
         if effective_recurring:
             base_payload["Recurrent"] = "Y"
-            base_payload["OperationInitiatorType"] = "1"
+            # base_payload["OperationInitiatorType"] = "1"
 
-        if method_value == TBankPaymentMethodEnum.SBP.value:
-            init_response = await self._send_request("Init", base_payload)
-            qr_response = await self._send_request(
-                "GetQr",
-                {
-                    "PaymentId": init_response["PaymentId"],
-                    "DataType": "PAYLOAD",
-                },
-            )
-
-            logger.info(f"T-Bank qr_response: {qr_response}")
-            qr_payload = qr_response.get("Data", {})
-
-
-            init_response["QrPayload"] = qr_payload
-            init_response["QrData"] = qr_response.get("Data")
-            return init_response
+        # if method_value == TBankPaymentMethodEnum.SBP.value:
+        #     init_response = await self._send_request("Init", base_payload)
+        #     qr_response = await self._send_request(
+        #         "GetQr",
+        #         {
+        #             "PaymentId": init_response["PaymentId"],
+        #             "DataType": "PAYLOAD",
+        #         },
+        #     )
+        #
+        #     logger.info(f"T-Bank qr_response: {qr_response}")
+        #     qr_payload = qr_response.get("Data", {})
+        #
+        #
+        #     init_response["QrPayload"] = qr_payload
+        #     init_response["QrData"] = qr_response.get("Data")
+        #     return init_response
 
         logger.info(f"T-Bank payload: {base_payload}")
 
@@ -173,12 +173,12 @@ class TBankClient:
         *,
         payment_id: int | str,
         account_token: str,
-        token: str,
+        # token: str,
     ) -> dict[str, Any]:
         payload: dict[str, Any] = {
             "PaymentId": payment_id,
             "AccountToken": account_token,
-            "Token": token,
+            # "Token": token,
         }
 
         return await self._send_request("ChargeQr", payload)

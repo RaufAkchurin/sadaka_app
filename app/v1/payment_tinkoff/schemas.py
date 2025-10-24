@@ -40,7 +40,6 @@ class TBankChargeQrRequest(BaseModel):
     amount: int = Field(ge=1000, description="Минимальная сумма платежа — 1000 копеек")
     project_id: int
     account_token: str = Field(min_length=1, max_length=255, alias="AccountToken")
-    token: str = Field(min_length=1, max_length=255, alias="Token")
 
     @field_validator("account_token")
     @classmethod
