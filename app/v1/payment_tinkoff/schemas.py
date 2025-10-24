@@ -1,6 +1,7 @@
 from enum import Enum
 
 from pydantic import BaseModel, Field, field_validator
+
 from app.v1.payment_yookassa.enums import ModelPaymentStatusEnum
 
 
@@ -12,6 +13,19 @@ class TBankPaymentMethodEnum(str, Enum):
 class TBankCreatePaymentRequest(BaseModel):
     amount: int = Field(ge=100, description="Минимальная сумма платежа — 100 копеек")  # в копейках
     project_id: int
+
+
+class TBankAddAccountQrRequest(BaseModel):
+    description: str = Field(min_length=1, max_length=255)
+    project_id: int
+
+    @field_validator("description")
+    @classmethod
+    def validate_description(cls, value: str) -> str:
+        stripped = value.strip()
+        if not stripped:
+            raise ValueError("Описание не может быть пустым.")
+        return stripped
 
 
 class TBankChargePaymentRequest(BaseModel):

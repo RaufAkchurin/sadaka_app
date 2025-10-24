@@ -54,7 +54,8 @@ class TBankClient:
         sorted_items = sorted(payload_with_password.items())
         values = []
         for key, value in sorted_items:
-            if value is None or key in ["DATA", "Receipt"]:
+            key_lower = str(key).lower()
+            if value is None or key_lower in {"data", "receipt"}:
                 continue
             if isinstance(value, dict):
                 values.append(json.dumps(value, ensure_ascii=False, separators=(",", ":")))
@@ -162,3 +163,24 @@ class TBankClient:
             "RebillId": rebill_id,
         }
         return await self._send_request("Charge", payload)
+
+    async def add_account_qr(
+        self,
+        *,
+        project_id: int,
+        user_id: int,
+        description: str,
+    ) -> dict[str, Any]:
+        payload: dict[str, Any] = {
+            "Description": description,
+            "DataType": "PAYLOAD",
+        }
+
+        payload["Data"] = {
+            "project_id": str(project_id),
+            "user_id": str(user_id),
+        }
+
+        logger.info(f"T-Bank AddAccountQr payload: {payload}")
+
+        return await self._send_request("AddAccountQr", payload)

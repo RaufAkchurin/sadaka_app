@@ -10,6 +10,7 @@ from app.settings import settings
 from app.v1.dependencies.auth_dep import get_current_user
 from app.v1.dependencies.dao_dep import get_session_with_commit
 from app.v1.payment_tinkoff.schemas import (
+    TBankAddAccountQrRequest,
     TBankChargePaymentRequest,
     TBankCreatePaymentRequest,
     TBankPaymentMethodEnum,
@@ -19,6 +20,30 @@ from app.v1.payment_tinkoff.use_cases.create import TBankClient
 from app.v1.utils_core.id_validators import project_id_validator
 
 v1_tbank_router = APIRouter()
+
+@v1_tbank_router.post("/sbp/add_accountQr")
+async def add_account_qr(
+    data: TBankAddAccountQrRequest,
+    user_data: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_session_with_commit),
+):
+    await project_id_validator(project_id=data.project_id, session=session)
+    use_case = TBankClient(settings.T_BANK_TERMINAL_KEY, settings.T_BANK_PASSWORD)
+
+    result = await use_case.add_account_qr(
+        project_id=data.project_id,
+        user_id=user_data.id,
+        description=data.description,
+    )
+
+    return {
+        "data": result.get("Data"),
+        "dataType": result.get("DataType"),
+        "requestKey": result.get("RequestKey"),
+        "message": result.get("Message"),
+        "success": result.get("Success"),
+    }
+
 
 
 @v1_tbank_router.post("/card/create_single")
