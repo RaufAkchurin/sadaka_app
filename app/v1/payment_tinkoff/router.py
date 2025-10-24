@@ -34,23 +34,21 @@ async def create_payment(
     result = await use_case.init_payment(
         order_id=f"test_u{user_data.id}-{uuid.uuid4()}",
         amount=data.amount,
-        description="Благотворительный взнос sadaka app",
+        description="Донат sadaka app",
         method=data.method,
         project_id=data.project_id,
         user_id=user_data.id,
-        # recurring=data.recurring,
-        # for_rebilling=data.for_rebilling,
         customer_email=user_data.email,
         customer_phone=user_data.phone,
     )
 
-    logger.success(f"Init info - {result}")
-    # SBP → отдадим QR
-    if data.method == TBankPaymentMethodEnum.SBP:
-        return {
-            "qrUrl": result.get("QrPayload"),
-            "paymentId": result.get("PaymentId"),
-        }
+    # logger.success(f"Init info - {result}")
+    # # SBP → отдадим QR
+    # if data.method == TBankPaymentMethodEnum.SBP:
+    #     return {
+    #         "qrUrl": result.get("QrPayload"),
+    #         "paymentId": result.get("PaymentId"),
+    #     }
 
     return {"paymentUrl": result["PaymentURL"], "paymentId": result["PaymentId"]}
 
