@@ -12,7 +12,6 @@ from app.v1.dependencies.dao_dep import get_session_with_commit
 from app.v1.payment_tinkoff.schemas import (
     TBankChargePaymentRequest,
     TBankCreatePaymentRequest,
-    TBankCreateRecurringPaymentRequest,
     TBankPaymentMethodEnum,
 )
 from app.v1.payment_tinkoff.use_cases.callback import TinkoffCallbackSuccessUseCaseImpl
@@ -35,7 +34,7 @@ async def create_payment(
         order_id=f"test_u{user_data.id}-{uuid.uuid4()}",
         amount=data.amount,
         description="Донат sadaka app",
-        method=data.method,
+        method=TBankPaymentMethodEnum.CARD,
         project_id=data.project_id,
         user_id=user_data.id,
         customer_email=user_data.email,
@@ -55,7 +54,7 @@ async def create_payment(
 
 @v1_tbank_router.post("/card/create_recurring")
 async def create_recurring_payment(
-    data: TBankCreateRecurringPaymentRequest,
+    data: TBankCreatePaymentRequest,
     user_data: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session_with_commit),
 ):
@@ -65,8 +64,8 @@ async def create_recurring_payment(
     result = await use_case.init_payment(
         order_id=f"recur_u{user_data.id}-{uuid.uuid4()}",
         amount=data.amount,
-        description="Рекуррентный благотворительный взнос sadaka app",
-        method=data.method,
+        description="Рекуррентный донат sadaka app",
+        method=TBankPaymentMethodEnum.CARD,
         project_id=data.project_id,
         user_id=user_data.id,
         recurring=True,
@@ -78,14 +77,27 @@ async def create_recurring_payment(
     return {"paymentUrl": result["PaymentURL"], "paymentId": result["PaymentId"]}
 
 
-@v1_tbank_router.post("/card/card-recurrent")
+@v1_tbank_router.post("/card/charge-recurrent")
 async def charge_payment(
     data: TBankChargePaymentRequest,
-    _user: User = Depends(get_current_user),
+    user_data: User = Depends(get_current_user),
 ):
     use_case = TBankClient(settings.T_BANK_TERMINAL_KEY, settings.T_BANK_PASSWORD)
+
+    new_payment =  await use_case.init_payment(
+        order_id=f"test_u{user_data.id}-{uuid.uuid4()}",
+        amount=data.amount,
+        description="Донат sadaka app",
+        method=TBankPaymentMethodEnum.CARD,
+        project_id=data.project_id,
+        user_id=user_data.id,
+        customer_email=user_data.email,
+        customer_phone=user_data.phone,
+        for_rebilling=True,
+    )
+
     result = await use_case.charge_payment(
-        payment_id=data.payment_id,
+        payment_id=new_payment.get("PaymentId"),
         rebill_id=data.rebill_id,
     )
     return {
