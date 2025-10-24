@@ -100,6 +100,7 @@ class TBankClient:
         for_rebilling: bool = False,
         customer_email: str | None = None, # for receipt
         customer_phone: str | None = None, # for receipt
+        data_payload: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         method_value = method.value if isinstance(method, TBankPaymentMethodEnum) else method
 
@@ -125,6 +126,9 @@ class TBankClient:
             },
             # "Receipt": receipt,
         }
+
+        if data_payload:
+            base_payload["DATA"].update(data_payload)
 
         if effective_recurring:
             base_payload["Recurrent"] = "Y"
@@ -163,6 +167,21 @@ class TBankClient:
             "RebillId": rebill_id,
         }
         return await self._send_request("Charge", payload)
+
+    async def charge_qr(
+        self,
+        *,
+        payment_id: int | str,
+        account_token: str,
+        token: str,
+    ) -> dict[str, Any]:
+        _ = token
+        payload: dict[str, Any] = {
+            "PaymentId": payment_id,
+            "AccountToken": account_token,
+        }
+
+        return await self._send_request("ChargeQr", payload)
 
     async def add_account_qr(
         self,

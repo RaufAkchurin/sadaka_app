@@ -1,7 +1,7 @@
 import json
 import uuid
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 from loguru import logger
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -12,6 +12,7 @@ from app.v1.dependencies.dao_dep import get_session_with_commit
 from app.v1.payment_tinkoff.schemas import (
     TBankAddAccountQrRequest,
     TBankChargePaymentRequest,
+    TBankChargeQrRequest,
     TBankCreatePaymentRequest,
     TBankPaymentMethodEnum,
 )
@@ -44,6 +45,44 @@ async def add_account_qr(
         "success": result.get("Success"),
     }
 
+
+@v1_tbank_router.post("/sbp/charge_qr")
+async def charge_qr_payment(
+    data: TBankChargeQrRequest,
+    user_data: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_session_with_commit),
+):
+    await project_id_validator(project_id=data.project_id, session=session)
+    use_case = TBankClient(settings.T_BANK_TERMINAL_KEY, settings.T_BANK_PASSWORD)
+
+    init_payment = await use_case.init_payment(
+        order_id=f"qr_u{user_data.id}-{uuid.uuid4()}",
+        amount=data.amount,
+        description="Донат sadaka app по QR",
+        method=TBankPaymentMethodEnum.SBP,
+        project_id=data.project_id,
+        user_id=user_data.id,
+        recurring=True,
+        customer_email=user_data.email,
+        customer_phone=user_data.phone,
+        data_payload={"QR": "true"},
+    )
+
+    payment_id = init_payment.get("PaymentId")
+    if payment_id is None:
+        raise HTTPException(status_code=500, detail="Не удалось получить идентификатор платежа от T-Bank")
+
+    result = await use_case.charge_qr(
+        payment_id=payment_id,
+        account_token=data.account_token,
+        token=data.token,
+    )
+
+    return {
+        "success": result.get("Success"),
+        "status": result.get("Status"),
+        "paymentId": result.get("PaymentId"),
+    }
 
 
 @v1_tbank_router.post("/card/create_single")
