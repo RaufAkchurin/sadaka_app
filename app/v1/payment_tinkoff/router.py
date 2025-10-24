@@ -9,7 +9,12 @@ from app.models.user import User
 from app.settings import settings
 from app.v1.dependencies.auth_dep import get_current_user
 from app.v1.dependencies.dao_dep import get_session_with_commit
-from app.v1.payment_tinkoff.schemas import TBankChargePaymentRequest, TBankCreatePaymentRequest, TBankPaymentMethodEnum
+from app.v1.payment_tinkoff.schemas import (
+    TBankChargePaymentRequest,
+    TBankCreatePaymentRequest,
+    TBankCreateRecurringPaymentRequest,
+    TBankPaymentMethodEnum,
+)
 from app.v1.payment_tinkoff.use_cases.callback import TinkoffCallbackSuccessUseCaseImpl
 from app.v1.payment_tinkoff.use_cases.create import TBankClient
 from app.v1.utils_core.id_validators import project_id_validator
@@ -47,6 +52,31 @@ async def create_payment(
             "paymentId": result.get("PaymentId"),
         }
 
+    return {"paymentUrl": result["PaymentURL"], "paymentId": result["PaymentId"]}
+
+
+@v1_tbank_router.post("/create_recurring")
+async def create_recurring_payment(
+    data: TBankCreateRecurringPaymentRequest,
+    user_data: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_session_with_commit),
+):
+    await project_id_validator(project_id=data.project_id, session=session)
+    use_case = TBankClient(settings.T_BANK_TERMINAL_KEY, settings.T_BANK_PASSWORD)
+
+    result = await use_case.init_payment(
+        order_id=f"recur_u{user_data.id}-{uuid.uuid4()}",
+        amount=data.amount,
+        description="Рекуррентный благотворительный взнос sadaka app",
+        method=data.method,
+        project_id=data.project_id,
+        user_id=user_data.id,
+        recurring=True,
+        customer_email=user_data.email,
+        customer_phone=user_data.phone,
+    )
+
+    logger.success(f"Init recurring info - {result}")
     return {"paymentUrl": result["PaymentURL"], "paymentId": result["PaymentId"]}
 
 

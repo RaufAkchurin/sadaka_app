@@ -1,6 +1,6 @@
 from enum import Enum
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from app.v1.payment_yookassa.enums import ModelPaymentStatusEnum
 
 
@@ -15,6 +15,20 @@ class TBankCreatePaymentRequest(BaseModel):
     project_id: int
     # recurring: bool = False
     # for_rebilling: bool = False
+
+
+class TBankCreateRecurringPaymentRequest(TBankCreatePaymentRequest):
+    method: TBankPaymentMethodEnum = Field(
+        default=TBankPaymentMethodEnum.CARD,
+        description="Для рекуррентного платежа доступны только операции по банковской карте",
+    )
+
+    @field_validator("method")
+    @classmethod
+    def ensure_card_method(cls, value: TBankPaymentMethodEnum) -> TBankPaymentMethodEnum:
+        if value != TBankPaymentMethodEnum.CARD:
+            raise ValueError("Рекуррентный платеж доступен только для метода card")
+        return value
 
 
 class TBankChargePaymentRequest(BaseModel):
