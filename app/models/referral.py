@@ -55,6 +55,11 @@ class Referral(Base):
     project: Mapped["Project"] = relationship("Project", back_populates="referrals", lazy="selectin")  # noqa F821
 
     payments: Mapped[list["Payment"]] = relationship("Payment", back_populates="referral", lazy="selectin")  # noqa F821
+    recurring_payments: Mapped[list["RecurringPayment"]] = relationship(  # noqa: F821
+        "RecurringPayment",
+        back_populates="referral",
+        lazy="selectin",
+    )
 
 
 @event.listens_for(Referral, "before_insert")

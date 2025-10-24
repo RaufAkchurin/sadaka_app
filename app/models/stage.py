@@ -32,6 +32,12 @@ class Stage(Base):
     payments: Mapped[list["Payment"]] = relationship(  # noqa: F821
         "Payment", back_populates="stage", cascade="all, delete-orphan", lazy="joined"
     )
+    recurring_payments: Mapped[list["RecurringPayment"]] = relationship(  # noqa: F821
+        "RecurringPayment",
+        back_populates="stage",
+        cascade="all, delete-orphan",
+        lazy="noload",
+    )
 
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.project_id}, name={self.status.value})"

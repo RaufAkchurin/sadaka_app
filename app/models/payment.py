@@ -5,6 +5,7 @@ from sqlalchemy import ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.v1.dao.database import Base
+from app.v1.payment_core.enums import PaymentMethodEnum
 from app.v1.payment_yookassa.enums import ModelPaymentStatusEnum, PaymentProviderEnum
 
 
@@ -20,6 +21,13 @@ class Payment(Base):
         SqlEnum(PaymentProviderEnum, name="payment_provider_enum"), default=PaymentProviderEnum.TBANK.value, index=True
     )
     provider_payment_id: Mapped[str] = mapped_column(nullable=False)
+    payment_method: Mapped[PaymentMethodEnum] = mapped_column(
+        SqlEnum(PaymentMethodEnum,name="payment_method_enum",),
+        server_default=PaymentMethodEnum.CARD.name,
+        default=PaymentMethodEnum.CARD.name,
+        nullable=False,
+        index=True,
+    )
 
     # Core data
     amount: Mapped[float | None] = mapped_column(default=None)
@@ -45,6 +53,18 @@ class Payment(Base):
         ForeignKey("referrals.id", name="fk_payments_referral_id"), nullable=True, default=None, index=True
     )
     referral: Mapped["Referral"] = relationship("Referral", back_populates="payments", lazy="noload")  # noqa F821
+
+    recurring_payment_id: Mapped[int | None] = mapped_column(
+        ForeignKey("recurringpayments.id", name="fk_payments_recurring_payment_id"),
+        nullable=True,
+        default=None,
+        index=True,
+    )
+    recurring_payment: Mapped["RecurringPayment"] = relationship(  # noqa: F821
+        "RecurringPayment",
+        back_populates="payments",
+        lazy="noload",
+    )
 
     def __str__(self):
         return f"{self.id}, {self.amount}, {self.status}, test - {self.test}"

@@ -50,6 +50,13 @@ class Project(Base):
         "Payment", back_populates="project", cascade="all, delete-orphan", lazy="noload"
     )
 
+    recurring_payments: Mapped[list["RecurringPayment"]] = relationship(  # noqa: F821
+        "RecurringPayment",
+        back_populates="project",
+        cascade="all, delete-orphan",
+        lazy="noload",
+    )
+
     comments: Mapped[list["Comment"]] = relationship(  # noqa:
         "Comment", back_populates="project", cascade="all, delete-orphan", lazy="noload"
     )
