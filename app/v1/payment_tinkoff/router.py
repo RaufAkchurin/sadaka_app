@@ -1,3 +1,4 @@
+import asyncio
 import json
 import uuid
 
@@ -58,13 +59,11 @@ async def charge_qr_payment(
     init_payment = await use_case.init_payment(
         order_id=f"qr_u{user_data.id}-{uuid.uuid4()}",
         amount=data.amount,
-        description="Донат sadaka app по QR",
+        description="Рекуррентный донат sadaka app по СБП",
         method=TBankPaymentMethodEnum.SBP,
         project_id=data.project_id,
         user_id=user_data.id,
         recurring=True,
-        customer_email=user_data.email,
-        customer_phone=user_data.phone,
         data_payload={"QR": "true"},
     )
 
@@ -72,6 +71,7 @@ async def charge_qr_payment(
     if payment_id is None:
         raise HTTPException(status_code=500, detail="Не удалось получить идентификатор платежа от T-Bank")
 
+    await asyncio.sleep(1)
     result = await use_case.charge_qr(
         payment_id=payment_id,
         account_token=data.account_token,
