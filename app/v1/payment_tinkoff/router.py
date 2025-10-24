@@ -148,5 +148,8 @@ async def tinkoff_callback(
         use_case = TinkoffCallbackSuccessUseCaseImpl(request=request, session=session)
         await use_case.execute()
 
+    elif status == "ACTIVE":
+        logger.success(f"Decoded data: {object_data}")
+
     else:
         logger.success(f"Не предусмотрена обработка для Tbank callback  status: {status}, payment_id: {payment_id}")
