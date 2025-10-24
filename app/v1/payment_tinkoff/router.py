@@ -1,4 +1,3 @@
-import asyncio
 import json
 import uuid
 
@@ -103,14 +102,6 @@ async def create_payment(
         customer_email=user_data.email,
         customer_phone=user_data.phone,
     )
-
-    # logger.success(f"Init info - {result}")
-    # # SBP → отдадим QR
-    # if data.method == TBankPaymentMethodEnum.SBP:
-    #     return {
-    #         "qrUrl": result.get("QrPayload"),
-    #         "paymentId": result.get("PaymentId"),
-    #     }
 
     return {"paymentUrl": result["PaymentURL"], "paymentId": result["PaymentId"]}
 
