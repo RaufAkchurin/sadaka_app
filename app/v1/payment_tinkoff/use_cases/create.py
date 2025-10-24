@@ -55,7 +55,7 @@ class TBankClient:
         values = []
         for key, value in sorted_items:
             key_lower = str(key).lower()
-            if value is None or key_lower in {"data", "receipt"}:
+            if value is None or key_lower in {"data", "receipt", "token"}:
                 continue
             if isinstance(value, dict):
                 values.append(json.dumps(value, ensure_ascii=False, separators=(",", ":")))
