@@ -97,8 +97,8 @@ class TBankClient:
         method: TBankPaymentMethodEnum | Literal["card", "sbp"] = TBankPaymentMethodEnum.CARD,# CARD get all methods
         recurring: bool = False,
         for_rebilling: bool = False,
-        customer_email: str | None = None,
-        customer_phone: str | None = None,
+        customer_email: str | None = None, # for receipt
+        customer_phone: str | None = None, # for receipt
     ) -> dict[str, Any]:
         method_value = method.value if isinstance(method, TBankPaymentMethodEnum) else method
 
