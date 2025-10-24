@@ -16,37 +16,37 @@ class TBankClient:
         self.password = password
         self.base_url = base_url
 
-    def _build_receipt(
-        self,
-        description: str,
-        amount: int,
-        customer_email: str | None,
-        customer_phone: str | None,
-    ) -> dict[str, Any]:
-        """Минимально допустимый чек для Init: одна позиция на всю сумму + контакт."""
-        sanitized_name = (description or "Платеж").strip() or "Платеж"
-        receipt: dict[str, Any] = {
-            "Items": [
-                {
-                    "Name": sanitized_name[:128],
-                    "Price": amount,
-                    "Quantity": 1,
-                    "Amount": amount,
-                    "PaymentMethod": "full_payment",
-                    "PaymentObject": "service",
-                    "Tax": "none",
-                }
-            ],
-            "Taxation": "usn_income",
-        }
-        if customer_email:
-            receipt["Email"] = customer_email
-        elif not customer_phone:
-            receipt["Email"] = "support@sdkapp.ru"
-
-        if customer_phone:
-            receipt["Phone"] = customer_phone
-        return receipt
+    # def _build_receipt(
+    #     self,
+    #     description: str,
+    #     amount: int,
+    #     customer_email: str | None,
+    #     customer_phone: str | None,
+    # ) -> dict[str, Any]:
+    #     """Минимально допустимый чек для Init: одна позиция на всю сумму + контакт."""
+    #     sanitized_name = (description or "Платеж").strip() or "Платеж"
+    #     receipt: dict[str, Any] = {
+    #         "Items": [
+    #             {
+    #                 "Name": sanitized_name[:128],
+    #                 "Price": amount,
+    #                 "Quantity": 1,
+    #                 "Amount": amount,
+    #                 "PaymentMethod": "full_payment",
+    #                 "PaymentObject": "service",
+    #                 "Tax": "none",
+    #             }
+    #         ],
+    #         "Taxation": "usn_income",
+    #     }
+    #     if customer_email:
+    #         receipt["Email"] = customer_email
+    #     elif not customer_phone:
+    #         receipt["Email"] = "support@sdkapp.ru"
+    #
+    #     if customer_phone:
+    #         receipt["Phone"] = customer_phone
+    #     return receipt
 
     def _generate_token(self, payload: dict) -> str:
         """Собираем токен: сортировка + sha256"""
@@ -104,12 +104,12 @@ class TBankClient:
 
         effective_recurring = False if for_rebilling else recurring
 
-        receipt = self._build_receipt(
-            description=description,
-            amount=amount,
-            customer_email=customer_email,
-            customer_phone=customer_phone,
-        )
+        # receipt = self._build_receipt(
+        #     description=description,
+        #     amount=amount,
+        #     customer_email=customer_email,
+        #     customer_phone=customer_phone,
+        # )
 
         base_payload: dict[str, Any] = {
             "OrderId": order_id,
@@ -122,7 +122,7 @@ class TBankClient:
                 "user_id": user_id,
                 "is_recurring": effective_recurring,
             },
-            "Receipt": receipt,
+            # "Receipt": receipt,
         }
 
         if effective_recurring:
