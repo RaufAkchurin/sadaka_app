@@ -175,10 +175,10 @@ class TBankClient:
         account_token: str,
         token: str,
     ) -> dict[str, Any]:
-        _ = token
         payload: dict[str, Any] = {
             "PaymentId": payment_id,
             "AccountToken": account_token,
+            "Token": token,
         }
 
         return await self._send_request("ChargeQr", payload)
