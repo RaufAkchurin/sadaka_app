@@ -22,7 +22,7 @@ from app.v1.utils_core.id_validators import project_id_validator
 v1_tbank_router = APIRouter()
 
 
-@v1_tbank_router.post("/create_single")
+@v1_tbank_router.post("/card/create_single")
 async def create_payment(
     data: TBankCreatePaymentRequest,
     user_data: User = Depends(get_current_user),
@@ -53,7 +53,7 @@ async def create_payment(
     return {"paymentUrl": result["PaymentURL"], "paymentId": result["PaymentId"]}
 
 
-@v1_tbank_router.post("/create_recurring")
+@v1_tbank_router.post("/card/create_recurring")
 async def create_recurring_payment(
     data: TBankCreateRecurringPaymentRequest,
     user_data: User = Depends(get_current_user),
@@ -78,7 +78,7 @@ async def create_recurring_payment(
     return {"paymentUrl": result["PaymentURL"], "paymentId": result["PaymentId"]}
 
 
-@v1_tbank_router.post("/card-recurrent")
+@v1_tbank_router.post("/card/card-recurrent")
 async def charge_payment(
     data: TBankChargePaymentRequest,
     _user: User = Depends(get_current_user),

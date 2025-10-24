@@ -10,7 +10,7 @@ class TBankPaymentMethodEnum(str, Enum):
 
 
 class TBankCreatePaymentRequest(BaseModel):
-    amount: int = Field(ge=1_000, description="Минимальная сумма платежа — 1000 копеек")  # в копейках
+    amount: int = Field(ge=100, description="Минимальная сумма платежа — 100 копеек")  # в копейках
     method: TBankPaymentMethodEnum = TBankPaymentMethodEnum.CARD
     project_id: int
 
